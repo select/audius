@@ -1,0 +1,42 @@
+source: '../app.sass' # replace with your default Sass/SCSS file name
+title: 'Whatsapp Media Player Living Style Guide'
+
+# see all options https://github.com/livingstyleguide/livingstyleguide/blob/master/stylesheets/_livingstyleguide.scss
+style:
+  base-font: Nobile
+  width: 750px
+
+header: |
+  <div class="my-header">
+    <h1>Whatsapp Media Player Living Style Guide</h1>
+  </div>
+
+  <p class="livingstyleguide--paragraph">
+    For coding related questions head over to the <a href="README.html">README</a>
+    <br>
+    So what is this Living Style Guide about? In this guide you can not only see how the HTML and CSS code works that makes the media player come to live, but since the guide is generated from the current SASS code it also adepts to changes in the style files.
+  </p>
+
+styleguide-sass: |
+  @import url('https://fonts.googleapis.com/css?family=Nobile')
+  .livingstyleguide
+    background-color: $color-white
+    font-family: 'Nobile', sans-serif
+  .my-header
+    background: $color-pictonblue
+    color: $color-white
+    text-align: center
+    padding: 100px
+    h1
+      color: $color-white
+  [class^="icon-"]
+    display: inline-block
+  .livingstyleguide--code-span, .livingstyleguide--code-block
+    overflow: auto!important
+    background-color: $color-athensgrey!important
+  @font-face
+    font-family: 'shoutrlabs'
+    src: url('../src/fonts/media-player.eot?-kkzuh')
+    src: url('../src/fonts/media-player.eot?#iefix-kkzuh') format("embedded-opentype"), url('../src/fonts/media-player.ttf?-kkzuh') format("truetype"), url('../src/fonts/media-player.woff?-kkzuh') format("woff"), url('../src/fonts/media-player.svg?-kkzuh#shoutrlabs') format("svg")
+    font-weight: normal
+    font-style: normal

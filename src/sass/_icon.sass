@@ -1,0 +1,52 @@
+@import icon.map
+
+@font-face
+	font-family: 'WampIcons'
+	src: url('./fonts/media-player.ttf')
+	font-weight: normal
+	font-style: normal
+
+$icon-size-small: 1.7em
+$icon-size-big: 2.2em
+[class^="icon-"], [class*=" icon-"]
+	text-align: center
+	position: relative
+	width: $touch-size-medium
+	height: $touch-size-medium
+	display: inline-block
+	&:before
+		/* use !important to prevent issues with browser extensions that change fonts */
+		speak: none
+		font-style: normal
+		font-weight: normal
+		font-variant: normal
+		text-transform: none
+		line-height: 1
+		// Better Font Rendering
+		-webkit-font-smoothing: antialiased
+		-moz-osx-font-smoothing: grayscale
+		font-family: 'WampIcons' !important
+		position: absolute
+		font-size: $icon-size-small
+		display: flex
+		align-items: center
+		justify-content: center
+		width: 100%
+		height: 100%
+
+@each $name, $code in $icon-map
+	@if str-index($name, _L) == null
+		.icon-#{$name}
+			&:before
+				content: $code
+				animation: str-index($name, _L)
+	@else
+		.icon-#{$name}:before
+			content: $code
+			width: $icon-size-big
+			height: $icon-size-big
+			font-size: $icon-size-big
+
+
+
+
