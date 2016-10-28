@@ -9,25 +9,26 @@ To update the fonts go to https://icomoon.io/app/#/select import the `selection.
 
 
 ```
-<span class="icon-headphones"></span>
-<span class="icon-shrink"></span>
-<span class="icon-volume-medium"></span>
-<span class="icon-volume-decrease"></span>
-<span class="icon-volume-increase"></span>
-<span class="icon-volume-mute"></span>
-<span class="icon-youtube"></span>
-<span class="icon-upload"></span>
-<span class="icon-link"></span>
-<span class="icon-bin"></span>
-<span class="icon-search"></span>
-<span class="icon-copy"></span>
-<span class="icon-play"></span>
-<span class="icon-pause"></span>
-<span class="icon-previous"></span>
-<span class="icon-first"></span>
-<span class="icon-last"></span>
-<span class="icon-next"></span>
-<span class="icon-loop"></span>
+<span class="wmp-icon-dehaze"></span>
+<span class="wmp-icon-reorder"></span>
+<span class="wmp-icon-more_vert"></span>
+<span class="wmp-icon-arrow_drop_down"></span>
+<span class="wmp-icon-arrow_drop_up"></span>
+<span class="wmp-icon-previous"></span>
+<span class="wmp-icon-play"></span>
+<span class="wmp-icon-pause"></span>
+<span class="wmp-icon-next"></span>
+<span class="wmp-icon-shuffle"></span>
+<span class="wmp-icon-repeat"></span>
+<span class="wmp-icon-repeat_one"></span>
+<span class="wmp-icon-volume_off"></span>
+<span class="wmp-icon-volume_up"></span>
+<span class="wmp-icon-search"></span>
+<span class="wmp-icon-link"></span>
+<span class="wmp-icon-copy"></span>
+<span class="wmp-icon-delete"></span>
+<span class="wmp-icon-cloud_upload"></span>
+<span class="wmp-icon-youtube"></span>
 ```
 
 

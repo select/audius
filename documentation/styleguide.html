@@ -34,18 +34,21 @@ button.btn--blue {
 }
 
 @font-face {
-  font-family: "shoutrlabs";
-  src: url("../fonts/media-player.ttf?0b722531");
-  src: url("../fonts/media-player.ttf?0b722531") format("truetype"), url("../fonts/media-player.woff?0b722531") format("woff"), url("../fonts/media-player.svg?0b722531#shoutrlabs") format("svg");
+  font-family: "WampIcons";
+  src: url("./fonts/media-player.ttf");
   font-weight: normal;
   font-style: normal;
 }
-/* line 12, src/sass/_icon.sass */
-[class^="icon-"], [class*=" icon-"] {
+/* line 11, src/sass/_icon.sass */
+[class^="wmp-icon-"], [class*=" wmp-icon-"] {
   text-align: center;
+  position: relative;
+  width: 49px;
+  height: 49px;
+  display: inline-block;
 }
-/* line 14, src/sass/_icon.sass */
-[class^="icon-"]:before, [class*=" icon-"]:before {
+/* line 17, src/sass/_icon.sass */
+[class^="wmp-icon-"]:before, [class*=" wmp-icon-"]:before {
   /* use !important to prevent issues with browser extensions that change fonts */
   speak: none;
   font-style: normal;
@@ -55,20 +58,9 @@ button.btn--blue {
   line-height: 1;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  font-family: "shoutrlabs" !important;
-}
-
-/* line 29, src/sass/_icon.sass */
-.icon-headphones {
-  position: relative;
-  width: 49px;
-  height: 49px;
-}
-/* line 33, src/sass/_icon.sass */
-.icon-headphones:before {
-  content: "";
+  font-family: "WampIcons" !important;
   position: absolute;
-  font-size: 22px;
+  font-size: 1.7em;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -76,328 +68,178 @@ button.btn--blue {
   height: 100%;
 }
 
-/* line 29, src/sass/_icon.sass */
-.icon-shrink {
-  position: relative;
-  width: 49px;
-  height: 49px;
-}
-/* line 33, src/sass/_icon.sass */
-.icon-shrink:before {
-  content: "";
-  position: absolute;
-  font-size: 22px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
+/* line 40, src/sass/_icon.sass */
+.wmp-icon-dehaze:before {
+  content: "";
 }
 
-/* line 29, src/sass/_icon.sass */
-.icon-volume-medium {
-  position: relative;
-  width: 49px;
-  height: 49px;
-}
-/* line 33, src/sass/_icon.sass */
-.icon-volume-medium:before {
-  content: "";
-  position: absolute;
-  font-size: 22px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
+/* line 40, src/sass/_icon.sass */
+.wmp-icon-reorder:before {
+  content: "";
 }
 
-/* line 29, src/sass/_icon.sass */
-.icon-volume-decrease {
-  position: relative;
-  width: 49px;
-  height: 49px;
-}
-/* line 33, src/sass/_icon.sass */
-.icon-volume-decrease:before {
-  content: "";
-  position: absolute;
-  font-size: 22px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
+/* line 40, src/sass/_icon.sass */
+.wmp-icon-more_vert:before {
+  content: "";
 }
 
-/* line 29, src/sass/_icon.sass */
-.icon-volume-increase {
-  position: relative;
-  width: 49px;
-  height: 49px;
-}
-/* line 33, src/sass/_icon.sass */
-.icon-volume-increase:before {
-  content: "";
-  position: absolute;
-  font-size: 22px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
+/* line 40, src/sass/_icon.sass */
+.wmp-icon-arrow_drop_down:before {
+  content: "";
 }
 
-/* line 29, src/sass/_icon.sass */
-.icon-volume-mute {
-  position: relative;
-  width: 49px;
-  height: 49px;
-}
-/* line 33, src/sass/_icon.sass */
-.icon-volume-mute:before {
-  content: "";
-  position: absolute;
-  font-size: 22px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
+/* line 40, src/sass/_icon.sass */
+.wmp-icon-arrow_drop_up:before {
+  content: "";
 }
 
-/* line 29, src/sass/_icon.sass */
-.icon-youtube {
-  position: relative;
-  width: 49px;
-  height: 49px;
+/* line 40, src/sass/_icon.sass */
+.wmp-icon-previous:before {
+  content: "";
 }
-/* line 33, src/sass/_icon.sass */
-.icon-youtube:before {
+
+/* line 40, src/sass/_icon.sass */
+.wmp-icon-play:before {
+  content: "";
+}
+
+/* line 40, src/sass/_icon.sass */
+.wmp-icon-pause:before {
+  content: "";
+}
+
+/* line 40, src/sass/_icon.sass */
+.wmp-icon-next:before {
+  content: "";
+}
+
+/* line 40, src/sass/_icon.sass */
+.wmp-icon-shuffle:before {
+  content: "";
+}
+
+/* line 40, src/sass/_icon.sass */
+.wmp-icon-repeat:before {
+  content: "";
+}
+
+/* line 40, src/sass/_icon.sass */
+.wmp-icon-repeat_one:before {
+  content: "";
+}
+
+/* line 40, src/sass/_icon.sass */
+.wmp-icon-volume_off:before {
+  content: "";
+}
+
+/* line 40, src/sass/_icon.sass */
+.wmp-icon-volume_up:before {
+  content: "";
+}
+
+/* line 40, src/sass/_icon.sass */
+.wmp-icon-search:before {
+  content: "";
+}
+
+/* line 40, src/sass/_icon.sass */
+.wmp-icon-link:before {
+  content: "";
+}
+
+/* line 40, src/sass/_icon.sass */
+.wmp-icon-copy:before {
+  content: "";
+}
+
+/* line 40, src/sass/_icon.sass */
+.wmp-icon-delete:before {
+  content: "";
+}
+
+/* line 40, src/sass/_icon.sass */
+.wmp-icon-cloud_upload:before {
+  content: "";
+}
+
+/* line 40, src/sass/_icon.sass */
+.wmp-icon-youtube:before {
   content: "";
-  position: absolute;
-  font-size: 22px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
 }
 
-/* line 29, src/sass/_icon.sass */
-.icon-upload {
-  position: relative;
-  width: 49px;
-  height: 49px;
-}
-/* line 33, src/sass/_icon.sass */
-.icon-upload:before {
-  content: "";
+/* line 8, src/app.sass */
+#whatsapp-web-media-player {
+  font-family: "Nobile", sans-serif;
+  font-size: 2vmin;
   position: absolute;
-  font-size: 22px;
+  top: 0;
+  right: 0;
+  background: #FFF;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 99999;
+}
+/* line 21, src/app.sass */
+#whatsapp-web-media-player ul {
+  list-style: none;
+}
+/* line 23, src/app.sass */
+#whatsapp-web-media-player ul li {
+  height: 55px;
+  padding: 0 7px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
+}
+/* line 28, src/app.sass */
+#whatsapp-web-media-player ul li:hover {
+  background: #EFF1F7;
+}
+/* line 30, src/app.sass */
+#whatsapp-web-media-player ul li .thumbnail {
+  width: 49px;
+  height: 49px;
+  background-size: cover;
+  border-radius: 50%;
+  margin-right: 7px;
+}
+/* line 36, src/app.sass */
+#whatsapp-web-media-player ul li .body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+/* line 40, src/app.sass */
+#whatsapp-web-media-player ul li .body .name {
+  white-space: nowrap;
+}
+/* line 42, src/app.sass */
+#whatsapp-web-media-player ul li .body .duration {
+  color: #A8ADB7;
 }
 
-/* line 29, src/sass/_icon.sass */
-.icon-link {
-  position: relative;
-  width: 49px;
-  height: 49px;
-}
-/* line 33, src/sass/_icon.sass */
-.icon-link:before {
-  content: "";
-  position: absolute;
-  font-size: 22px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
+/* line 45, src/app.sass */
+.wamp-item__controls span {
+  cursor: pointer;
 }
 
-/* line 29, src/sass/_icon.sass */
-.icon-bin {
-  position: relative;
-  width: 49px;
+/* line 47, src/app.sass */
+.wamp-controls {
+  display: inline-flex;
+  align-items: center;
+}
+/* line 50, src/app.sass */
+.wamp-controls span {
+  cursor: pointer;
+}
+/* line 52, src/app.sass */
+.wamp-controls .wamp-controls__play-pause {
   height: 49px;
 }
-/* line 33, src/sass/_icon.sass */
-.icon-bin:before {
-  content: "";
-  position: absolute;
-  font-size: 22px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-}
-
-/* line 29, src/sass/_icon.sass */
-.icon-search {
-  position: relative;
-  width: 49px;
-  height: 49px;
-}
-/* line 33, src/sass/_icon.sass */
-.icon-search:before {
-  content: "";
-  position: absolute;
-  font-size: 22px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-}
-
-/* line 29, src/sass/_icon.sass */
-.icon-copy {
-  position: relative;
-  width: 49px;
-  height: 49px;
-}
-/* line 33, src/sass/_icon.sass */
-.icon-copy:before {
-  content: "";
-  position: absolute;
-  font-size: 22px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-}
-
-/* line 29, src/sass/_icon.sass */
-.icon-play {
-  position: relative;
-  width: 49px;
-  height: 49px;
-}
-/* line 33, src/sass/_icon.sass */
-.icon-play:before {
-  content: "";
-  position: absolute;
-  font-size: 22px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-}
-
-/* line 29, src/sass/_icon.sass */
-.icon-pause {
-  position: relative;
-  width: 49px;
-  height: 49px;
-}
-/* line 33, src/sass/_icon.sass */
-.icon-pause:before {
-  content: "";
-  position: absolute;
-  font-size: 22px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-}
-
-/* line 29, src/sass/_icon.sass */
-.icon-previous {
-  position: relative;
-  width: 49px;
-  height: 49px;
-}
-/* line 33, src/sass/_icon.sass */
-.icon-previous:before {
-  content: "";
-  position: absolute;
-  font-size: 22px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-}
-
-/* line 29, src/sass/_icon.sass */
-.icon-first {
-  position: relative;
-  width: 49px;
-  height: 49px;
-}
-/* line 33, src/sass/_icon.sass */
-.icon-first:before {
-  content: "";
-  position: absolute;
-  font-size: 22px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-}
-
-/* line 29, src/sass/_icon.sass */
-.icon-last {
-  position: relative;
-  width: 49px;
-  height: 49px;
-}
-/* line 33, src/sass/_icon.sass */
-.icon-last:before {
-  content: "";
-  position: absolute;
-  font-size: 22px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-}
-
-/* line 29, src/sass/_icon.sass */
-.icon-next {
-  position: relative;
-  width: 49px;
-  height: 49px;
-}
-/* line 33, src/sass/_icon.sass */
-.icon-next:before {
-  content: "";
-  position: absolute;
-  font-size: 22px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-}
-
-/* line 29, src/sass/_icon.sass */
-.icon-loop {
-  position: relative;
-  width: 49px;
-  height: 49px;
-}
-/* line 33, src/sass/_icon.sass */
-.icon-loop:before {
-  content: "";
-  position: absolute;
-  font-size: 22px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
+/* line 54, src/app.sass */
+.wamp-controls .wamp-controls__play-pause span:before {
+  font-size: 2.5em;
 }
 
 /* line 53, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/_livingstyleguide.scss */
@@ -893,7 +735,7 @@ button.btn--blue {
 
 /* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
 .\$icon-size-small:after {
-  content: "22px";
+  content: "1.7em";
 }
 
 /* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
@@ -1225,17 +1067,17 @@ button.btn--blue {
 
 /* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
 .\$icon-uuid:after {
-  content: '"0b722531"';
+  content: '"32bec963"';
 }
 
 /* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
 .\$icon-map:after {
-  content: '(headphones: "", shrink: "", volume-medium: "", volume-decrease: "", volume-increase: "", volume-mute: "", youtube: "", upload: "", link: "", bin: "", search: "", copy: "", play: "", pause: "", previous: "", first: "", last: "", next: "", loop: "")';
+  content: '(dehaze: "", reorder: "", more_vert: "", arrow_drop_down: "", arrow_drop_up: "", previous: "", play: "", pause: "", next: "", shuffle: "", repeat: "", repeat_one: "", volume_off: "", volume_up: "", search: "", link: "", copy: "", delete: "", cloud_upload: "", youtube: "")';
 }
 
 /* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
 .\$icon-size-big:after {
-  content: "35px";
+  content: "2.2em";
 }
 
 /* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
@@ -1525,6 +1367,15 @@ button.btn--blue {
 </p>
 
 <div class="livingstyleguide--container">
+<h2 class="livingstyleguide--headline" id="fonts"><a class="livingstyleguide--anchor" href="#fonts"></a>Fonts</h2>
+<p class="livingstyleguide--paragraph">The default font is Nobile</p>
+<div class="livingstyleguide--font-example" style="font: 32px Nobile">
+ABCDEFGHIJKLMNOPQRSTUVWXYZ<br>
+  abcdefghijklmnopqrstuvwxyz<br>
+  0123456789<br>
+  !&amp;/()$=@;:,.
+</div>
+<p class="livingstyleguide--paragraph">it&#39;s imported from google fonts.</p>
 <h2 class="livingstyleguide--headline" id="variables"><a class="livingstyleguide--anchor" href="#variables"></a>Variables</h2>
 <h3 class="livingstyleguide--sub-headline" id="time"><a class="livingstyleguide--anchor" href="#time"></a>Time</h3>
 <pre class="livingstyleguide--code-block"><code class="livingstyleguide--code">$transition-time: 250ms</code></pre><h3 class="livingstyleguide--sub-headline" id="space"><a class="livingstyleguide--anchor" href="#space"></a>Space</h3>
@@ -1644,59 +1495,52 @@ $font-size-xxlarge: 38px</code></pre><h2 class="livingstyleguide--headline" id="
 <li class="livingstyleguide--color-swatch -lsg-empty">-</li>
 
 </ul>
-<h2 class="livingstyleguide--headline" id="fonts"><a class="livingstyleguide--anchor" href="#fonts"></a>Fonts</h2>
-<p class="livingstyleguide--paragraph">The default font is Nobile</p>
-<div class="livingstyleguide--font-example" style="font: 32px Nobile">
-ABCDEFGHIJKLMNOPQRSTUVWXYZ<br>
-  abcdefghijklmnopqrstuvwxyz<br>
-  0123456789<br>
-  !&amp;/()$=@;:,.
-</div>
-<p class="livingstyleguide--paragraph">it&#39;s imported from google fonts.</p>
 <h2 class="livingstyleguide--headline" id="icons"><a class="livingstyleguide--anchor" href="#icons"></a>Icons</h2>
 <p class="livingstyleguide--paragraph">All icons were generated with icomoon.</p>
 <p class="livingstyleguide--paragraph">The current icomoon export is here: <a href="../icons/media-player.zip">media-player.zip</a>. If you add new icons please overwrite this file and check it into the git.</p>
 <p class="livingstyleguide--paragraph">To update the fonts go to <a href="https://icomoon.io/app/#/select">https://icomoon.io/app/#/select</a> import the <code class="livingstyleguide--code-span livingstyleguide--code">selection.json</code> file in the zip and generate the new font. Download the <code class="livingstyleguide--code-span livingstyleguide--code">shoutrlabs.zip</code> to <code class="livingstyleguide--code-span livingstyleguide--code">/src/icons</code> and run <code class="livingstyleguide--code-span livingstyleguide--code">npm run icons</code>.</p>
 <div class="livingstyleguide--example">
-  <span class="icon-headphones"></span>
-<span class="icon-shrink"></span>
-<span class="icon-volume-medium"></span>
-<span class="icon-volume-decrease"></span>
-<span class="icon-volume-increase"></span>
-<span class="icon-volume-mute"></span>
-<span class="icon-youtube"></span>
-<span class="icon-upload"></span>
-<span class="icon-link"></span>
-<span class="icon-bin"></span>
-<span class="icon-search"></span>
-<span class="icon-copy"></span>
-<span class="icon-play"></span>
-<span class="icon-pause"></span>
-<span class="icon-previous"></span>
-<span class="icon-first"></span>
-<span class="icon-last"></span>
-<span class="icon-next"></span>
-<span class="icon-loop"></span>
+  <span class="wmp-icon-dehaze"></span>
+<span class="wmp-icon-reorder"></span>
+<span class="wmp-icon-more_vert"></span>
+<span class="wmp-icon-arrow_drop_down"></span>
+<span class="wmp-icon-arrow_drop_up"></span>
+<span class="wmp-icon-previous"></span>
+<span class="wmp-icon-play"></span>
+<span class="wmp-icon-pause"></span>
+<span class="wmp-icon-next"></span>
+<span class="wmp-icon-shuffle"></span>
+<span class="wmp-icon-repeat"></span>
+<span class="wmp-icon-repeat_one"></span>
+<span class="wmp-icon-volume_off"></span>
+<span class="wmp-icon-volume_up"></span>
+<span class="wmp-icon-search"></span>
+<span class="wmp-icon-link"></span>
+<span class="wmp-icon-copy"></span>
+<span class="wmp-icon-delete"></span>
+<span class="wmp-icon-cloud_upload"></span>
+<span class="wmp-icon-youtube"></span>
 </div>
-<pre class="livingstyleguide--code-block"><code class="livingstyleguide--code"><b>&lt;<em>span</em></b> <b>class</b>="icon-headphones"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="icon-shrink"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="icon-volume-medium"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="icon-volume-decrease"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="icon-volume-increase"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="icon-volume-mute"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="icon-youtube"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="icon-upload"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="icon-link"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="icon-bin"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="icon-search"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="icon-copy"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="icon-play"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="icon-pause"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="icon-previous"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="icon-first"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="icon-last"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="icon-next"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="icon-loop"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b></code></pre>
+<pre class="livingstyleguide--code-block"><code class="livingstyleguide--code"><b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-dehaze"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
+<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-reorder"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
+<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-more_vert"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
+<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-arrow_drop_down"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
+<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-arrow_drop_up"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
+<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-previous"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
+<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-play"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
+<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-pause"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
+<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-next"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
+<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-shuffle"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
+<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-repeat"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
+<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-repeat_one"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
+<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-volume_off"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
+<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-volume_up"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
+<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-search"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
+<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-link"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
+<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-copy"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
+<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-delete"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
+<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-cloud_upload"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
+<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-youtube"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b></code></pre>
 </div>
 <div class="livingstyleguide--footer"><a class="livingstyleguide--logo" href="http://livingstyleguide.org">Made with the LivingStyleGuide gem.</a></div>
 

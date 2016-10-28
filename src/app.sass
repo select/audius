@@ -5,51 +5,21 @@
 @import './sass/input'
 @import './sass/icon'
 
+// body
+// 	background: rebeccapurple
+
 #whatsapp-web-media-player
 	font-family: 'Nobile', sans-serif
 	font-size: 2vmin
 	position: absolute
 	top: 0
 	right: 0
-	// width: 200px
-	background: #FFF
 	display: flex
 	flex-direction: column
 	align-items: center
 	z-index: 99999
 
-	ul
-		list-style: none
-		li
-			height: #{$touch-size-medium+6}
-			padding: 0 $grid-space
-			display: flex
-			align-items: center
-			&:hover
-				background: $color-catskillwhite
-			.thumbnail
-				width: $touch-size-medium
-				height: $touch-size-medium
-				background-size: cover
-				border-radius: 50%
-				margin-right: $grid-space
-			.body
-				display: flex
-				flex-direction: column
-				flex: 1
-				.name
-					white-space: nowrap
-				.duration
-					color: $color-aluminium-dark
 .wamp-item__controls
 	span
 		cursor: pointer
-.wamp-controls
-	display: inline-flex
-	align-items: center
-	span
-		cursor: pointer
-	.wamp-controls__play-pause
-		height: $touch-size-medium
-		span:before
-			font-size: 2.5em
+

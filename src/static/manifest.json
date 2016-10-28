@@ -3,8 +3,17 @@
 	"description": "Play media files posted in conversations",
 	"version": "0.0.1",
 	"permissions": [
-		"activeTab"
+		"activeTab",
+		"webview"
 	],
+	"webview": {
+		"partitions": [
+			{
+				"name": "static",
+				"accessible_resources": ["youtube.html", "youtube.js"]
+			}
+		]
+	},
 	"content_scripts": [
 		{
 			"matches": ["http://*/*", "https://*/*", "file://*/*", "*://*/*"],

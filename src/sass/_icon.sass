@@ -8,7 +8,7 @@
 
 $icon-size-small: 1.7em
 $icon-size-big: 2.2em
-[class^="icon-"], [class*=" icon-"]
+[class^="wmp-icon-"], [class*=" wmp-icon-"]
 	text-align: center
 	position: relative
 	width: $touch-size-medium
@@ -36,12 +36,12 @@ $icon-size-big: 2.2em
 
 @each $name, $code in $icon-map
 	@if str-index($name, _L) == null
-		.icon-#{$name}
+		.wmp-icon-#{$name}
 			&:before
 				content: $code
 				animation: str-index($name, _L)
 	@else
-		.icon-#{$name}:before
+		.wmp-icon-#{$name}:before
 			content: $code
 			width: $icon-size-big
 			height: $icon-size-big

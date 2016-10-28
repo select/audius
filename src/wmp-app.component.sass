@@ -1,0 +1,48 @@
+@import './sass/vars'
+@import './sass/color'
+
+ul.wamp__media-list
+	list-style: none
+	padding: 0
+	background: rgba(255, 255, 255, 0.78)
+	li
+		height: #{$touch-size-medium+6}
+		padding: 0 $grid-space
+		display: flex
+		align-items: center
+		&:hover
+			background: $color-catskillwhite
+		.thumbnail
+			width: $touch-size-medium
+			height: $touch-size-medium
+			background-size: cover
+			border-radius: 50%
+			margin-right: $grid-space
+		.body
+			display: flex
+			flex-direction: column
+			flex: 1
+			.name
+				white-space: nowrap
+				max-width: 18em
+				overflow: hidden
+				text-overflow: ellipsis
+			.duration
+				color: $color-aluminium-dark
+.shuffle
+	color: $color-athensgrey
+	&.active
+		color: $color-tuna
+.wamp-controls
+	width: 100%
+	display: inline-flex
+	justify-content: flex-end
+	align-items: center
+	.spacer
+		width: #{2*$grid-space}
+	span
+		cursor: pointer
+	.wamp-controls__play-pause
+		height: $touch-size-medium
+		span:before
+			font-size: 2.5em
