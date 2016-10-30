@@ -11,6 +11,7 @@ const initialState = {
 	isPlaying: false,
 	youtubeId: '',
 	playList: [],
+	showPlayList: true,
 	shuffle: false,
 	repeat1: false,
 	repeatAll: false,
@@ -22,11 +23,15 @@ const mediaPlayer = (state = initialState, action) => {
 	let entities;
 	switch (action.type) {
 		case 'ADD_VIDEOS':
-			entities = {};
+			entities = state.entities;
 			action.videos.forEach(v => {
-			 	v.duration = duration(v.contentDetails.duration);
-			 	v.isPlaying = false;
-				entities[v.id] = v;
+				entities[v.id] = {
+			 		title: v.snippet.title,
+			 		duration: duration(v.contentDetails.duration),
+			 		isPlaying: false,
+			 		id: v.id,
+			 		thumbnail: v.snippet.thumbnails.default.url,
+			 	}
 			});
 			return Object.assign({}, state, {
 				playList: [...state.playList, ...action.videos.map(v => v.id).filter(id => !state.playList.includes(id))],
@@ -61,6 +66,10 @@ const mediaPlayer = (state = initialState, action) => {
 		case 'TOGGLE_SHUFFLE':
 			return Object.assign({}, state, {
 				shuffle: !state.shuffle,
+			});
+		case 'TOGGLE_PLAYLIST':
+			return Object.assign({}, state, {
+				showPlayList: !state.showPlayList,
 			});
 		case 'NEXT_VIDEO':
 			idx = state.playList.indexOf(state.youtubeId)

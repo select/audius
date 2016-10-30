@@ -3,26 +3,25 @@
 	"description": "Play media files posted in conversations",
 	"version": "0.0.1",
 	"permissions": [
+		"tabs",
 		"activeTab",
-		"webview"
+		"webRequest",
+		"webRequestBlocking",
+		"*://*/*"
 	],
-	"webview": {
-		"partitions": [
-			{
-				"name": "static",
-				"accessible_resources": ["youtube.html", "youtube.js"]
-			}
-		]
+	"background": {
+		"scripts": ["background.js"],
+		"persistent": true
 	},
 	"content_scripts": [
 		{
 			"matches": ["http://*/*", "https://*/*", "file://*/*", "*://*/*"],
-			"js": ["content-script.js"]
+			"js": ["content-script.js"],
+			"run_at": "document_end"
 		}
 	],
 	"browser_action": {
-		"default_title": "Append Test Text"
+		"default_title": "WhatsApp Media Player"
 	},
 	"manifest_version": 2
 }
-

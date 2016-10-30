@@ -34,9 +34,3 @@ styleguide-sass: |
   .livingstyleguide--code-span, .livingstyleguide--code-block
     overflow: auto!important
     background-color: $color-athensgrey!important
-  @font-face
-    font-family: 'shoutrlabs'
-    src: url('../src/fonts/media-player.eot?-kkzuh')
-    src: url('../src/fonts/media-player.eot?#iefix-kkzuh') format("embedded-opentype"), url('../src/fonts/media-player.ttf?-kkzuh') format("truetype"), url('../src/fonts/media-player.woff?-kkzuh') format("woff"), url('../src/fonts/media-player.svg?-kkzuh#shoutrlabs') format("svg")
-    font-weight: normal
-    font-style: normal

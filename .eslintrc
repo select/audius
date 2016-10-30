@@ -24,7 +24,6 @@
 		"browser": true,
 		"jasmine": true
 	},
-	//"extends": "eslint:recommended",
 	"extends": "airbnb",
 	"parser": "babel-eslint" // we need to use this since ESLint does not support ES6 Decorators
 }

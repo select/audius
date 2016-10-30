@@ -11,6 +11,7 @@ To update the fonts go to https://icomoon.io/app/#/select import the `selection.
 ```
 <span class="wmp-icon-dehaze"></span>
 <span class="wmp-icon-reorder"></span>
+<span class="wmp-icon-format_list_bulleted"></span>
 <span class="wmp-icon-more_vert"></span>
 <span class="wmp-icon-arrow_drop_down"></span>
 <span class="wmp-icon-arrow_drop_up"></span>

@@ -3,21 +3,17 @@ import './app.sass';
 
 const appEl = document.createElement('div');
 appEl.id = 'whatsapp-web-media-player';
-appEl.innerHTML = require('./index.html');
+appEl.innerHTML = '<wmp-app></wmp-app>';
 const bodyEl = document.querySelector('body');
 bodyEl.insertBefore(appEl, bodyEl.firstChild);
 
 Vue.config.devtools = true
-import './wmp-app.component';
-import './video-item.component';
-import './youtube-player.component';
+import './components/wmp-app.component';
+import './components/video-item.component';
+import './components/youtube-player.component';
 
 var app = new Vue({
-	el: '#wmpApp',
+	el: '#whatsapp-web-media-player',
 });
 
-
-
-
-
-
+import './utils/domObserver';

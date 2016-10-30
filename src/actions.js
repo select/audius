@@ -45,6 +45,12 @@ export const previousVideo = () => {
   }
 }
 
+export const togglePlayList = () => {
+  return {
+    type: 'TOGGLE_PLAYLIST',
+  }
+}
+
 export const toggleShuffle = () => {
   return {
     type: 'TOGGLE_SHUFFLE',

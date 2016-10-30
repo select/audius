@@ -25,8 +25,9 @@ button {
   border-radius: 3px;
   transition: all 250ms;
   outline: 0;
+  cursor: pointer;
 }
-/* line 11, src/sass/_input.sass */
+/* line 12, src/sass/_input.sass */
 button.btn--blue {
   border-color: #2DA7EF;
   background: #2DA7EF;
@@ -66,6 +67,11 @@ button.btn--blue {
   justify-content: center;
   width: 100%;
   height: 100%;
+}
+
+/* line 40, src/sass/_icon.sass */
+.wmp-icon-format_list_bulleted:before {
+  content: "";
 }
 
 /* line 40, src/sass/_icon.sass */
@@ -168,78 +174,22 @@ button.btn--blue {
   content: "";
 }
 
-/* line 8, src/app.sass */
+/* line 11, src/app.sass */
 #whatsapp-web-media-player {
   font-family: "Nobile", sans-serif;
   font-size: 2vmin;
   position: absolute;
   top: 0;
   right: 0;
-  background: #FFF;
   display: flex;
   flex-direction: column;
   align-items: center;
   z-index: 99999;
 }
-/* line 21, src/app.sass */
-#whatsapp-web-media-player ul {
-  list-style: none;
-}
-/* line 23, src/app.sass */
-#whatsapp-web-media-player ul li {
-  height: 55px;
-  padding: 0 7px;
-  display: flex;
-  align-items: center;
-}
-/* line 28, src/app.sass */
-#whatsapp-web-media-player ul li:hover {
-  background: #EFF1F7;
-}
-/* line 30, src/app.sass */
-#whatsapp-web-media-player ul li .thumbnail {
-  width: 49px;
-  height: 49px;
-  background-size: cover;
-  border-radius: 50%;
-  margin-right: 7px;
-}
-/* line 36, src/app.sass */
-#whatsapp-web-media-player ul li .body {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-}
-/* line 40, src/app.sass */
-#whatsapp-web-media-player ul li .body .name {
-  white-space: nowrap;
-}
-/* line 42, src/app.sass */
-#whatsapp-web-media-player ul li .body .duration {
-  color: #A8ADB7;
-}
 
-/* line 45, src/app.sass */
+/* line 23, src/app.sass */
 .wamp-item__controls span {
   cursor: pointer;
-}
-
-/* line 47, src/app.sass */
-.wamp-controls {
-  display: inline-flex;
-  align-items: center;
-}
-/* line 50, src/app.sass */
-.wamp-controls span {
-  cursor: pointer;
-}
-/* line 52, src/app.sass */
-.wamp-controls .wamp-controls__play-pause {
-  height: 49px;
-}
-/* line 54, src/app.sass */
-.wamp-controls .wamp-controls__play-pause span:before {
-  font-size: 2.5em;
 }
 
 /* line 53, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/_livingstyleguide.scss */
@@ -1067,12 +1017,12 @@ button.btn--blue {
 
 /* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
 .\$icon-uuid:after {
-  content: '"32bec963"';
+  content: '"52d2422e"';
 }
 
 /* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
 .\$icon-map:after {
-  content: '(dehaze: "", reorder: "", more_vert: "", arrow_drop_down: "", arrow_drop_up: "", previous: "", play: "", pause: "", next: "", shuffle: "", repeat: "", repeat_one: "", volume_off: "", volume_up: "", search: "", link: "", copy: "", delete: "", cloud_upload: "", youtube: "")';
+  content: '(format_list_bulleted: "", dehaze: "", reorder: "", more_vert: "", arrow_drop_down: "", arrow_drop_up: "", previous: "", play: "", pause: "", next: "", shuffle: "", repeat: "", repeat_one: "", volume_off: "", volume_up: "", search: "", link: "", copy: "", delete: "", cloud_upload: "", youtube: "")';
 }
 
 /* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
@@ -1344,7 +1294,7 @@ button.btn--blue {
 }
 
 @font-face {
-  font-family: "shoutrlabs";
+  font-family: "media-player";
   src: url("../src/fonts/media-player.eot?-kkzuh");
   src: url("../src/fonts/media-player.eot?#iefix-kkzuh") format("embedded-opentype"), url("../src/fonts/media-player.ttf?-kkzuh") format("truetype"), url("../src/fonts/media-player.woff?-kkzuh") format("woff"), url("../src/fonts/media-player.svg?-kkzuh#shoutrlabs") format("svg");
   font-weight: normal;
@@ -1502,6 +1452,7 @@ $font-size-xxlarge: 38px</code></pre><h2 class="livingstyleguide--headline" id="
 <div class="livingstyleguide--example">
   <span class="wmp-icon-dehaze"></span>
 <span class="wmp-icon-reorder"></span>
+<span class="wmp-icon-format_list_bulleted"></span>
 <span class="wmp-icon-more_vert"></span>
 <span class="wmp-icon-arrow_drop_down"></span>
 <span class="wmp-icon-arrow_drop_up"></span>
@@ -1523,6 +1474,7 @@ $font-size-xxlarge: 38px</code></pre><h2 class="livingstyleguide--headline" id="
 </div>
 <pre class="livingstyleguide--code-block"><code class="livingstyleguide--code"><b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-dehaze"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
 <b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-reorder"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
+<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-format_list_bulleted"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
 <b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-more_vert"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
 <b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-arrow_drop_down"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
 <b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-arrow_drop_up"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>

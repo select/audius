@@ -1,6 +1,16 @@
-@import './sass/vars'
-@import './sass/color'
+@import '../sass/vars'
+@import '../sass/color'
 
+.wamp
+	display: flex
+	flex-direction: column
+	height: 394px
+	position: absolute
+	top: 0
+	right: 0
+.wamp__media-list-wrapper
+	flex: 1
+	overflow-y: auto
 ul.wamp__media-list
 	list-style: none
 	padding: 0
@@ -10,12 +20,14 @@ ul.wamp__media-list
 		padding: 0 $grid-space
 		display: flex
 		align-items: center
+		width: 33em
 		&:hover
 			background: $color-catskillwhite
 		.thumbnail
 			width: $touch-size-medium
 			height: $touch-size-medium
 			background-size: cover
+			background-position: center
 			border-radius: 50%
 			margin-right: $grid-space
 		.body
@@ -29,20 +41,29 @@ ul.wamp__media-list
 				text-overflow: ellipsis
 			.duration
 				color: $color-aluminium-dark
-.shuffle
+.wamp__shuffle,
+.wamp__show-play-list
 	color: $color-athensgrey
 	&.active
 		color: $color-tuna
-.wamp-controls
+.wamp__controls
 	width: 100%
 	display: inline-flex
 	justify-content: flex-end
 	align-items: center
-	.spacer
-		width: #{2*$grid-space}
+	&[disabled]
+		span
+			color: $color-athensgrey
+			pointer-events: none
 	span
 		cursor: pointer
-	.wamp-controls__play-pause
+	.spacer
+		width: #{2*$grid-space}
+	.wamp__play-pause
 		height: $touch-size-medium
 		span:before
 			font-size: 2.5em
+
+.wamp__youtube-player
+	display: flex
+	justify-content: flex-end

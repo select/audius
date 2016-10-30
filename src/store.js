@@ -1,4 +1,4 @@
-import './redux-devtools-extension' // chrome-extension://lmhkpmbekcpmknklioeibfkpmmfibljd/js/redux-devtools-extension.js
+import './utils/redux-devtools-extension' // chrome-extension://lmhkpmbekcpmknklioeibfkpmmfibljd/js/redux-devtools-extension.js
 import { createStore } from 'redux';
 import reducers from './reducers';
 
