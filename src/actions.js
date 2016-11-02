@@ -14,6 +14,12 @@ export const menuVideo = (id) => {
   }
 }
 
+export const toggleSearch = () => {
+	return {
+		type: 'TOGGLE_SEARCH'
+	}
+}
+
 export const playVideo = (id) => {
   return {
     type: 'PLAY_VIDEO',

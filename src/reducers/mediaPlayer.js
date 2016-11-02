@@ -16,6 +16,7 @@ const initialState = {
 	repeat1: false,
 	repeatAll: false,
 	entities: {},
+	showSearch: false,
 }
 const mediaPlayer = (state = initialState, action) => {
 	let idx;
@@ -66,6 +67,10 @@ const mediaPlayer = (state = initialState, action) => {
 		case 'TOGGLE_SHUFFLE':
 			return Object.assign({}, state, {
 				shuffle: !state.shuffle,
+			});
+		case 'TOGGLE_SEARCH':
+			return Object.assign({}, state, {
+				showSearch: !state.showSearch,
 			});
 		case 'TOGGLE_PLAYLIST':
 			return Object.assign({}, state, {

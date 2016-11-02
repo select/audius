@@ -2,12 +2,16 @@
 
 const webpack = require('webpack');
 const autoprefixer = require('autoprefixer');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
-	entry: './src/app.js',
+	entry: {
+		'dist-extension/content-script': './src/extension/app.js',
+		'dist-website/app': './src/website/app.js',
+	},
 	output: {
-		path: './dist/',
-		filename: 'content-script.js',
+	  path: './',
+	  filename: '[name].js'
 	},
 	stats: {
 		// Configure the console output
@@ -37,12 +41,10 @@ module.exports = {
 	},
 	postcss: () => [autoprefixer],
 	plugins: [
-		new webpack.DefinePlugin({
-			'process.env': {
-				// NODE_ENV: JSON.stringify('production'),
-				APP_ENV: JSON.stringify('browser'),
-			},
-		}),
+    new CopyWebpackPlugin([
+      { context: './src/extension/static/', from: '**/*', to: './dist-extension/' },
+      { from: './src/website/static/index.html', to: './dist-website/' },
+    ]),
 		// new webpack.optimize.UglifyJsPlugin({
 		// 	compress: {
 		// 		warnings: false,

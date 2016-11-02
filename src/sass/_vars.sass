@@ -15,7 +15,7 @@ $touch-size-medium: 49px
 $touch-size-large: 56px
 $touch-size-huge: 63px
 
-$border-radius: 3px
+$border-radius: 2px
 
 
 // For different touch buttons with icons we need different icon font sizes.
@@ -40,3 +40,15 @@ $font-size-large: 18px
 $font-size-xlarge: 24px
 $font-size-xxlarge: 38px
 
+=optional-at-root($sel)
+	@at-root #{if(not &, $sel, selector-append(&, $sel))}
+		@content
+=placeholder
+	+optional-at-root("::-webkit-input-placeholder")
+		@content
+	+optional-at-root(":-moz-placeholder")
+		@content
+	+optional-at-root("::-moz-placeholder")
+		@content
+	+optional-at-root(":-ms-input-placeholder")
+		@content

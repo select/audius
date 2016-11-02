@@ -8,12 +8,12 @@ const bodyEl = document.querySelector('body');
 bodyEl.insertBefore(appEl, bodyEl.firstChild);
 
 Vue.config.devtools = true
-import './components/wmp-app.component';
-import './components/video-item.component';
-import './components/youtube-player.component';
+import '../components/wmp-app.component';
+import '../components/video-item.component';
+import '../components/youtube-player.component';
 
 var app = new Vue({
 	el: '#whatsapp-web-media-player',
 });
 
-import './utils/domObserver';
+import '../utils/domObserver';

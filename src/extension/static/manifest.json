@@ -1,0 +1,27 @@
+{
+	"name": "WhatsApp Media Player",
+	"description": "Play media files posted in conversations",
+	"version": "0.0.1",
+	"permissions": [
+		"tabs",
+		"activeTab",
+		"webRequest",
+		"webRequestBlocking",
+		"*://*/*"
+	],
+	"background": {
+		"scripts": ["background.js"],
+		"persistent": true
+	},
+	"content_scripts": [
+		{
+			"matches": ["http://*/*", "https://*/*", "file://*/*", "*://*/*"],
+			"js": ["content-script.js"],
+			"run_at": "document_end"
+		}
+	],
+	"browser_action": {
+		"default_title": "WhatsApp Media Player"
+	},
+	"manifest_version": 2
+}

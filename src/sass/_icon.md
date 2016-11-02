@@ -25,6 +25,7 @@ To update the fonts go to https://icomoon.io/app/#/select import the `selection.
 <span class="wmp-icon-volume_off"></span>
 <span class="wmp-icon-volume_up"></span>
 <span class="wmp-icon-search"></span>
+<span class="wmp-icon-close"></span>
 <span class="wmp-icon-link"></span>
 <span class="wmp-icon-copy"></span>
 <span class="wmp-icon-delete"></span>

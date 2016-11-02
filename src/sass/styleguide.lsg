@@ -1,4 +1,4 @@
-source: '../app.sass' # replace with your default Sass/SCSS file name
+source: './entry.sass' # replace with your default Sass/SCSS file name
 title: 'Whatsapp Media Player Living Style Guide'
 
 # see all options https://github.com/livingstyleguide/livingstyleguide/blob/master/stylesheets/_livingstyleguide.scss
@@ -34,3 +34,8 @@ styleguide-sass: |
   .livingstyleguide--code-span, .livingstyleguide--code-block
     overflow: auto!important
     background-color: $color-athensgrey!important
+  @font-face
+    font-family: 'WampIcons'
+    src: url('../src/fonts/media-player.ttf')
+    font-weight: normal
+    font-style: normal

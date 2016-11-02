@@ -36,7 +36,7 @@ button.btn--blue {
 
 @font-face {
   font-family: "WampIcons";
-  src: url("./fonts/media-player.ttf");
+  src: url("../fonts/media-player.ttf");
   font-weight: normal;
   font-style: normal;
 }
@@ -150,13 +150,18 @@ button.btn--blue {
 }
 
 /* line 40, src/sass/_icon.sass */
-.wmp-icon-link:before {
-  content: "";
+.wmp-icon-close:before {
+  content: "";
 }
 
 /* line 40, src/sass/_icon.sass */
 .wmp-icon-copy:before {
   content: "";
+}
+
+/* line 40, src/sass/_icon.sass */
+.wmp-icon-link:before {
+  content: "";
 }
 
 /* line 40, src/sass/_icon.sass */
@@ -172,24 +177,6 @@ button.btn--blue {
 /* line 40, src/sass/_icon.sass */
 .wmp-icon-youtube:before {
   content: "";
-}
-
-/* line 11, src/app.sass */
-#whatsapp-web-media-player {
-  font-family: "Nobile", sans-serif;
-  font-size: 2vmin;
-  position: absolute;
-  top: 0;
-  right: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  z-index: 99999;
-}
-
-/* line 23, src/app.sass */
-.wamp-item__controls span {
-  cursor: pointer;
 }
 
 /* line 53, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/_livingstyleguide.scss */
@@ -1017,12 +1004,12 @@ button.btn--blue {
 
 /* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
 .\$icon-uuid:after {
-  content: '"52d2422e"';
+  content: '"f9c30aaf"';
 }
 
 /* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
 .\$icon-map:after {
-  content: '(format_list_bulleted: "", dehaze: "", reorder: "", more_vert: "", arrow_drop_down: "", arrow_drop_up: "", previous: "", play: "", pause: "", next: "", shuffle: "", repeat: "", repeat_one: "", volume_off: "", volume_up: "", search: "", link: "", copy: "", delete: "", cloud_upload: "", youtube: "")';
+  content: '(format_list_bulleted: "", dehaze: "", reorder: "", more_vert: "", arrow_drop_down: "", arrow_drop_up: "", previous: "", play: "", pause: "", next: "", shuffle: "", repeat: "", repeat_one: "", volume_off: "", volume_up: "", search: "", close: "", copy: "", link: "", delete: "", cloud_upload: "", youtube: "")';
 }
 
 /* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
@@ -1294,9 +1281,8 @@ button.btn--blue {
 }
 
 @font-face {
-  font-family: "media-player";
-  src: url("../src/fonts/media-player.eot?-kkzuh");
-  src: url("../src/fonts/media-player.eot?#iefix-kkzuh") format("embedded-opentype"), url("../src/fonts/media-player.ttf?-kkzuh") format("truetype"), url("../src/fonts/media-player.woff?-kkzuh") format("woff"), url("../src/fonts/media-player.svg?-kkzuh#shoutrlabs") format("svg");
+  font-family: "WampIcons";
+  src: url("../src/fonts/media-player.ttf");
   font-weight: normal;
   font-style: normal;
 }
@@ -1317,15 +1303,6 @@ button.btn--blue {
 </p>
 
 <div class="livingstyleguide--container">
-<h2 class="livingstyleguide--headline" id="fonts"><a class="livingstyleguide--anchor" href="#fonts"></a>Fonts</h2>
-<p class="livingstyleguide--paragraph">The default font is Nobile</p>
-<div class="livingstyleguide--font-example" style="font: 32px Nobile">
-ABCDEFGHIJKLMNOPQRSTUVWXYZ<br>
-  abcdefghijklmnopqrstuvwxyz<br>
-  0123456789<br>
-  !&amp;/()$=@;:,.
-</div>
-<p class="livingstyleguide--paragraph">it&#39;s imported from google fonts.</p>
 <h2 class="livingstyleguide--headline" id="variables"><a class="livingstyleguide--anchor" href="#variables"></a>Variables</h2>
 <h3 class="livingstyleguide--sub-headline" id="time"><a class="livingstyleguide--anchor" href="#time"></a>Time</h3>
 <pre class="livingstyleguide--code-block"><code class="livingstyleguide--code">$transition-time: 250ms</code></pre><h3 class="livingstyleguide--sub-headline" id="space"><a class="livingstyleguide--anchor" href="#space"></a>Space</h3>
@@ -1445,6 +1422,15 @@ $font-size-xxlarge: 38px</code></pre><h2 class="livingstyleguide--headline" id="
 <li class="livingstyleguide--color-swatch -lsg-empty">-</li>
 
 </ul>
+<h2 class="livingstyleguide--headline" id="fonts"><a class="livingstyleguide--anchor" href="#fonts"></a>Fonts</h2>
+<p class="livingstyleguide--paragraph">The default font is Nobile</p>
+<div class="livingstyleguide--font-example" style="font: 32px Nobile">
+ABCDEFGHIJKLMNOPQRSTUVWXYZ<br>
+  abcdefghijklmnopqrstuvwxyz<br>
+  0123456789<br>
+  !&amp;/()$=@;:,.
+</div>
+<p class="livingstyleguide--paragraph">it&#39;s imported from google fonts.</p>
 <h2 class="livingstyleguide--headline" id="icons"><a class="livingstyleguide--anchor" href="#icons"></a>Icons</h2>
 <p class="livingstyleguide--paragraph">All icons were generated with icomoon.</p>
 <p class="livingstyleguide--paragraph">The current icomoon export is here: <a href="../icons/media-player.zip">media-player.zip</a>. If you add new icons please overwrite this file and check it into the git.</p>
@@ -1466,6 +1452,7 @@ $font-size-xxlarge: 38px</code></pre><h2 class="livingstyleguide--headline" id="
 <span class="wmp-icon-volume_off"></span>
 <span class="wmp-icon-volume_up"></span>
 <span class="wmp-icon-search"></span>
+<span class="wmp-icon-close"></span>
 <span class="wmp-icon-link"></span>
 <span class="wmp-icon-copy"></span>
 <span class="wmp-icon-delete"></span>
@@ -1488,6 +1475,7 @@ $font-size-xxlarge: 38px</code></pre><h2 class="livingstyleguide--headline" id="
 <b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-volume_off"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
 <b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-volume_up"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
 <b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-search"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
+<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-close"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
 <b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-link"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
 <b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-copy"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
 <b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-delete"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>

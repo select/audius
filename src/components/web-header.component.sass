@@ -1,0 +1,63 @@
+@import '../sass/vars'
+@import '../sass/color'
+
+header
+	width: 100%
+.wamp__search
+	color: $color-white
+	height: $touch-size-medium
+	background: $color-pictonblue
+	display: flex
+	justify-content: flex-end
+	align-items: center
+.wamp__search-input-group
+	height: $touch-size-small
+	display: flex
+	align-items: center
+	transition: all $transition-time
+	border-radius: $border-radius
+	background: rgba(255, 255, 255, 0.3)
+	// width: 10em
+	&.active
+		background: $color-white
+		color: $color-pictonblue
+		// width: inherit
+		input
+			width: 18em
+			+placeholder
+				color: $color-pictonblue
+	input
+		color: $color-pictonblue
+		background: transparent
+		font-size: 1em
+		border: 0
+		width: 8em
+		+placeholder
+			color: $color-white
+
+.wamp__controls
+	height: $touch-size-large
+	display: flex
+	justify-content: flex-end
+	align-items: center
+	&[disabled]
+		span
+			color: $color-athensgrey
+			pointer-events: none
+	span
+		cursor: pointer
+	.spacer
+		width: #{2*$grid-space}
+	.wamp__play-pause
+		height: $touch-size-medium
+		span:before
+			font-size: 2.5em
+	.wamp__controls-small
+		display: flex
+		align-items: center
+		span:before
+			font-size: 1.5em
+.wamp__progress
+	width: 100%
+	height: 4px
+	background: $color-aluminium
