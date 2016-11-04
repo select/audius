@@ -1,0 +1,37 @@
+@import '../sass/vars'
+@import '../sass/color'
+
+.main-right
+	display: flex
+	flex-direction: column
+ul.main-right__tabs
+	padding: 0
+	margin: 0
+	list-style: none
+	display: flex
+	width: 100%
+	height: $touch-size-small
+	li
+		flex: 1
+		display: flex
+		justify-content: center
+		align-items: center
+		background: $color-catskillwhite
+		color: $color-aluminium-dark
+		cursor: pointer
+		text-transform: uppercase
+		white-space: nowrap
+		font-size: 0.7em
+		transition: all $transition-time
+		&.active,
+		&:hover
+			background: $color-aluminium
+			color: $color-white
+
+.main-right__content
+	flex: 1
+	overflow-y: auto
+
+.main-right__player
+	height: 200px
+	background: $color-catskillwhite

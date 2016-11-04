@@ -1,14 +1,15 @@
 {
 	"rules": {
-		"indent": [2, "tab"], // indent with tabs
-		"quotes": [2, "single"], // always use single quotes
-		"linebreak-style": [2, "unix"], // fuck windows
-		"semi": [2, "always"], // always use semicolons at end of command
-		"no-multiple-empty-lines": [2, {"max": 2}], // only allow one free line
-		"eqeqeq": [2, "smart"], // always use === only if null or something not ... I forgot
-		"strict": [2, "function"],
-		"no-var": [2],
-		 max-len: ["error", 200, 4]
+		"indent": ["error", "tab"], // indent with tabs
+		"quotes": ["error", "single"], // always use single quotes
+		"linebreak-style": ["error", "unix"], // fuck windows
+		"semi": ["error", "always"], // always use semicolons at end of command
+		"no-multiple-empty-lines": ["error", {"max": 2}], // only allow one free line
+		"eqeqeq": ["error", "smart"], // always use === only if null or something not ... I forgot
+		"strict": ["error", "function"],
+		"no-var": ["error"],
+		"max-len": ["error", 200, 4],
+		"no-tabs": ["off"],
 	},
 	"ecmaFeatures": {
 		"modules": true

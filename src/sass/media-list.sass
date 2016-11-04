@@ -1,0 +1,47 @@
+ul.media-list
+	list-style: none
+	padding: 0
+	margin: 0
+	background: rgba(255, 255, 255, 0.78)
+	overflow-x: hidden
+	li
+		height: #{$touch-size-medium+6}
+		padding: 0 $grid-space
+		display: flex
+		align-items: center
+		&:hover
+			background: $color-catskillwhite
+			.media-list__controls
+				display: block
+		&.active
+			background: $color-pictonblue
+			color: $color-white
+			a,
+			span:hover
+				color: $color-white
+.media-list__thumbnail
+	width: $touch-size-medium
+	height: $touch-size-medium
+	background-size: cover
+	background-position: center
+	border-radius: 50%
+	margin-right: $grid-space
+.media-list__body
+	display: flex
+	flex-direction: column
+	flex: 1
+	overflow-x: hidden
+	.media-list__name
+		white-space: nowrap
+		overflow: hidden
+		text-overflow: ellipsis
+	.media-list__duration
+		color: $color-aluminium-dark
+
+.media-list__controls
+	display: none
+	span
+		cursor: pointer
+		transition: all $transition-time
+		&:hover
+			color: $color-pictonblue

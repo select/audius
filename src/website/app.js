@@ -1,13 +1,19 @@
-import Vue from 'vue/dist/vue.js'
-import './app.sass';
-import '../components/web-header.component';
-// import '../components/video-item.component';
-// import '../components/youtube-player.component';
+import Vue from 'vue/dist/vue';
 
-Vue.config.devtools = true
+import './app.sass';
+
+import '../components/web-header.component';
+import '../components/main-right.component';
+import '../components/about-player.component';
+import '../components/search-results.component';
+import '../components/youtube-player.component';
+import '../components/play-list.component';
+import '../components/video-item.component';
+
+Vue.config.devtools = true;
 
 document.addEventListener('DOMContentLoaded', () => {
-	var app = new Vue({
+	new Vue({
 		el: '#app',
 	});
 });

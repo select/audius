@@ -1,5 +1,6 @@
 @import '../sass/vars'
 @import '../sass/color'
+@import '../sass/media-list'
 
 .wamp
 	display: flex
@@ -11,36 +12,7 @@
 .wamp__media-list-wrapper
 	flex: 1
 	overflow-y: auto
-ul.wamp__media-list
-	list-style: none
-	padding: 0
-	background: rgba(255, 255, 255, 0.78)
-	li
-		height: #{$touch-size-medium+6}
-		padding: 0 $grid-space
-		display: flex
-		align-items: center
-		width: 33em
-		&:hover
-			background: $color-catskillwhite
-		.thumbnail
-			width: $touch-size-medium
-			height: $touch-size-medium
-			background-size: cover
-			background-position: center
-			border-radius: 50%
-			margin-right: $grid-space
-		.body
-			display: flex
-			flex-direction: column
-			flex: 1
-			.name
-				white-space: nowrap
-				max-width: 18em
-				overflow: hidden
-				text-overflow: ellipsis
-			.duration
-				color: $color-aluminium-dark
+
 .wamp__shuffle,
 .wamp__show-play-list
 	color: $color-athensgrey

@@ -43,7 +43,7 @@ module.exports = {
 	plugins: [
     new CopyWebpackPlugin([
       { context: './src/extension/static/', from: '**/*', to: './dist-extension/' },
-      { from: './src/website/static/index.html', to: './dist-website/' },
+      { from: './src/website/static/', from: '**/*', to: './dist-website/' },
     ]),
 		// new webpack.optimize.UglifyJsPlugin({
 		// 	compress: {

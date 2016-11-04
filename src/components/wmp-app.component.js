@@ -1,7 +1,7 @@
 import Vue from 'vue/dist/vue.js';
 import store from '../store';
 import { findVideos } from '../utils';
-import * as Actions from '../actions';
+import Actions from '../actions';
 import './wmp-app.component.sass';
 
 Vue.component('wmp-app', {
@@ -49,7 +49,7 @@ Vue.component('wmp-app', {
 		... playlist is empty
 	</div>
 	<div class="wamp__media-list-wrapper" v-if="mediaPlayer.showPlayList">
-		<ul class="wamp__media-list">
+		<ul class="media-list">
 			<video-item v-for="id in mediaPlayer.playList" :video="mediaPlayer.entities[id]"></video-item>
 		</ul>
 	</div>

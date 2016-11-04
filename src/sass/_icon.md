@@ -5,7 +5,7 @@ All icons were generated with icomoon.
 
 The current icomoon export is here: <a href="../icons/media-player.zip">media-player.zip</a>. If you add new icons please overwrite this file and check it into the git.
 
-To update the fonts go to https://icomoon.io/app/#/select import the `selection.json` file in the zip and generate the new font. Download the `shoutrlabs.zip` to `/src/icons` and run `npm run icons`.
+To update the fonts go to https://icomoon.io/app/#/select import the `selection.json` file in the zip and generate the new font. Download the `media-player.zip` to `/src/icons` and run `npm run icons`.
 
 
 ```
@@ -26,6 +26,9 @@ To update the fonts go to https://icomoon.io/app/#/select import the `selection.
 <span class="wmp-icon-volume_up"></span>
 <span class="wmp-icon-search"></span>
 <span class="wmp-icon-close"></span>
+<span class="wmp-icon-add"></span>
+<span class="wmp-icon-queue2"></span>
+<span class="wmp-icon-local_offer2"></span>
 <span class="wmp-icon-link"></span>
 <span class="wmp-icon-copy"></span>
 <span class="wmp-icon-delete"></span>

@@ -1,8 +1,8 @@
-import * as Actions from '../actions';
 import store from '../store';
+import Actions from '../actions';
 import ajax from './ajax';
 
-const YOUTUBE_API_KEY = 'AIzaSyCHVgsa5owudn4G79IX9pcRcrVNOmgKHuM';
+const YOUTUBE_API_KEY = store.getState().config.youtubeApiKey;
 
 const youtubeRegEx = /(youtube.com)|(youtu.be)/;
 const youtubeExtract1 = /youtu.be\/([\w-]+)/;
@@ -30,6 +30,6 @@ export default function() {
 		.filter(id => id) // filter empty
 		.filter((item, pos, self) => self.indexOf(item) === pos) // filter dublicates
 		.filter(id => !entities[id]); // filter one already in store
-	const url = `https://www.googleapis.com/youtube/v3/videos?&part=snippet,contentDetails&id=${ids.join(',')}&key=${YOUTUBE_API_KEY}`;
+	const url = `https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails&id=${ids.join(',')}&key=${YOUTUBE_API_KEY}`;
 	ajax(url, data => {store.dispatch(Actions.addVideos(data.items));});
 }

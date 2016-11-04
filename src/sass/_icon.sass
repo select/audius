@@ -33,6 +33,8 @@ $icon-size-big: 2.2em
 		justify-content: center
 		width: 100%
 		height: 100%
+.icon--small:before
+	font-size: 1.2em
 
 @each $name, $code in $icon-map
 	@if str-index($name, _L) == null
