@@ -50,19 +50,19 @@
 	
 	var _vue2 = _interopRequireDefault(_vue);
 	
-	__webpack_require__(55);
-	
 	__webpack_require__(57);
 	
-	__webpack_require__(61);
+	__webpack_require__(59);
 	
-	__webpack_require__(64);
+	__webpack_require__(63);
 	
-	__webpack_require__(67);
+	__webpack_require__(66);
 	
-	__webpack_require__(50);
+	__webpack_require__(69);
 	
-	__webpack_require__(68);
+	__webpack_require__(52);
+	
+	__webpack_require__(70);
 	
 	__webpack_require__(48);
 	
@@ -11135,6 +11135,13 @@
 					}))),
 					entities: entities
 				});
+			case 'IMPORT_PLAYLIST':
+				return Object.assign({}, state, {
+					playList: [].concat(_toConsumableArray(state.playList), _toConsumableArray(action.data.playList.filter(function (id) {
+						return !state.playList.includes(id);
+					}))),
+					entities: Object.assign({}, state.entities, action.data.entities)
+				});
 			case 'REMOVE_VIDEO':
 				entities = Object.assign({}, state.entities);
 				entities[action.id].deleted = true;
@@ -11621,6 +11628,13 @@
 		};
 	};
 	
+	var importPlayList = exports.importPlayList = function importPlayList(data) {
+		return {
+			type: 'IMPORT_PLAYLIST',
+			data: data
+		};
+	};
+	
 	var removeVideo = exports.removeVideo = function removeVideo(id) {
 		return {
 			type: 'REMOVE_VIDEO',
@@ -11752,12 +11766,20 @@
 	
 	var db = _interopRequireWildcard(_indexDB);
 	
+	__webpack_require__(50);
+	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	_vue2.default.component('video-item', {
 		props: ['video'],
+		data: function data() {
+			return {
+				copyActive: false
+			};
+		},
+	
 		methods: {
 			play: function play() {
 				_store2.default.dispatch(_actions2.default.playVideo(this.video.id));
@@ -11773,7 +11795,8 @@
 				db.setMediaEntity(this.video);
 			},
 			copyToClip: function copyToClip() {
-				console.log('copy to clipe');
+				var _this = this;
+	
 				window.getSelection().removeAllRanges();
 				var tmpEl = document.createElement('div');
 				tmpEl.innerHTML = this.video.title + ' https://youtu.be/' + this.video.id;
@@ -11783,13 +11806,12 @@
 				range.selectNode(tmpEl);
 				window.getSelection().addRange(range);
 	
-				// let classes = event.target.getAttribute('class');
-				// event.target.setAttribute('class', classes + ' donger--active');
-				// setTimeout(() => {
-				//   event.target.setAttribute('class', classes);
-				// }, 800)
 				try {
 					var successful = document.execCommand('copy');
+					this.copyActive = true;
+					setTimeout(function () {
+						_this.copyActive = false;
+					}, 800);
 				} catch (err) {
 					console.log('execCommand Error', err);
 				}
@@ -11797,7 +11819,7 @@
 				tmpEl.parentNode.removeChild(tmpEl);
 			}
 		},
-		template: '\n\t<li v-bind:class="{ active: video.isPlaying }">\n\t\t<div class="media-list__thumbnail" v-bind:style="{ backgroundImage: \'url(\' + video.thumbnail + \')\' }"></div>\n\t\t<div class="media-list__body">\n\t\t\t<div class="media-list__name">{{video.title}}</div>\n\t\t\t<div class="media-list__duration" v-if="video.duration">{{video.duration.m}}:{{video.duration.s}}</div>\n\t\t</div>\n\t\t<div class="media-list__controls">\n\t\t\t<span class="wmp-icon-pause" v-if="video.isPlaying" v-on:click="pause"></span>\n\t\t\t<span class="wmp-icon-play" v-else v-on:click="play"></span>\n\t\t\t<span class="wmp-icon-queue2 icon--small"></span>\n\t\t\t<span class="wmp-icon-copy icon--small" v-on:click="copyToClip"></span>\n\t\t\t<a v-bind:href="\'https://youtu.be/\'+video.id" title="watch on YouTube" target="_blank">\n\t\t\t\t<span class="wmp-icon-youtube icon--small"></span>\n\t\t\t</a>\n\t\t\t<span class="wmp-icon-close" v-on:click="remove"></span>\n\t\t</div>\n\t</li>\n\t'
+		template: '\n\t<li v-bind:class="{ active: video.isPlaying }">\n\t\t<div class="media-list__thumbnail" v-bind:style="{ backgroundImage: \'url(\' + video.thumbnail + \')\' }"></div>\n\t\t<div class="media-list__body">\n\t\t\t<div class="media-list__name">{{video.title}}</div>\n\t\t\t<div class="media-list__duration" v-if="video.duration">{{video.duration.m}}:{{video.duration.s}}</div>\n\t\t</div>\n\t\t<div class="media-list__controls">\n\t\t\t<span class="wmp-icon-pause" v-if="video.isPlaying" v-on:click="pause"></span>\n\t\t\t<span class="wmp-icon-play" v-else v-on:click="play"></span>\n\t\t\t<span class="wmp-icon-queue2 icon--small"></span>\n\t\t\t<span class="copy wmp-icon-copy icon--small" v-on:click="copyToClip" v-bind:class="{ active: copyActive }"></span>\n\t\t\t<a v-bind:href="\'https://youtu.be/\'+video.id" title="watch on YouTube" target="_blank">\n\t\t\t\t<span class="wmp-icon-youtube icon--small"></span>\n\t\t\t</a>\n\t\t\t<span class="wmp-icon-close" v-on:click="remove"></span>\n\t\t</div>\n\t</li>\n\t'
 	});
 
 /***/ },
@@ -11824,7 +11846,7 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	function getAllMediaEntities(db) {
+	function getAllMediaEntities(db, callback) {
 		var request = db.transaction('mediaEntities', 'readonly').objectStore('mediaEntities').openCursor();
 		request.onerror = function () {
 			return _store2.default.dispatch(_actions2.default.error('DB Error can not get entities from DB'));
@@ -11837,9 +11859,18 @@
 				cursor.continue();
 			} else {
 				_store2.default.dispatch(_actions2.default.getAllDbSuccess(entities));
+				callback();
 			}
 		};
 	}
+	function exists(storeName, id, callback) {
+		var request = _store2.default.getState().mediaPlayer.db.transaction(['playLists'], 'readonly').objectStore('playLists').get('default');
+		request.onerror = function (event) {
+			return _store2.default.dispatch(_actions2.default.error('DB Error ' + event.target.error.name));
+		};
+		request.onsuccess = callback;
+	}
+	
 	function getPlayList(db) {
 		var request = db.transaction(['playLists'], 'readonly').objectStore('playLists').get('default');
 		request.onsuccess = function (event) {
@@ -11864,8 +11895,9 @@
 			}
 		};
 		openRequest.onsuccess = function (event) {
-			getAllMediaEntities(event.target.result);
-			getPlayList(event.target.result);
+			getAllMediaEntities(event.target.result, function () {
+				return getPlayList(event.target.result);
+			});
 			_store2.default.dispatch(_actions2.default.initDbSuccess(event.target.result));
 		};
 		openRequest.onerror = function () {
@@ -11874,31 +11906,32 @@
 	}
 	
 	function setPlayList() {
-		var requestExists = _store2.default.getState().mediaPlayer.db.transaction(['playLists'], 'readonly').objectStore('playLists').get('default');
-		requestExists.onerror = function (event) {
-			return _store2.default.dispatch(_actions2.default.error('DB Error ' + event.target.error.name));
-		};
-		requestExists.onsuccess = function (event) {
+		exists('playList', 'default', function (event) {
 			var dbStore = _store2.default.getState().mediaPlayer.db.transaction(['playLists'], 'readwrite').objectStore('playLists');
 			var action = event.target.result ? 'put' : 'add';
 			var request = dbStore[action]({ id: 'default', playList: _store2.default.getState().mediaPlayer.playList });
 			request.onerror = function (event2) {
 				return _store2.default.dispatch(_actions2.default.error('DB Error ' + event2.target.error.name));
 			};
-		};
+		});
 	}
 	
 	function setMediaEntity(data) {
-		var request = _store2.default.getState().mediaPlayer.db.transaction(['mediaEntities'], 'readwrite').objectStore('mediaEntities').add(data);
-		request.onsuccess = function () {
-			return _store2.default.dispatch(_actions2.default.setDbSuccess(data));
-		};
-		request.onerror = function (event) {
-			return _store2.default.dispatch(_actions2.default.error('DB Error ' + event.target.error.name));
-		};
-		setPlayList();
+		exists('mediaEntities', 'default', function (event) {
+			var dbStore = _store2.default.getState().mediaPlayer.db.transaction(['mediaEntities'], 'readwrite').objectStore('mediaEntities');
+			var action = event.target.result ? 'put' : 'add';
+			var request = dbStore[action](data);
+			request.onsuccess = function () {
+				return _store2.default.dispatch(_actions2.default.setDbSuccess(data));
+			};
+			request.onerror = function (event2) {
+				return _store2.default.dispatch(_actions2.default.error('DB Error ' + event2.target.error.name));
+			};
+			setPlayList();
+		});
 	}
 	
+	// -----------------
 	function getMediaEntity(id) {
 		var request = _store2.default.getState().mediaPlayer.db.transaction(['mediaEntities'], 'readonly').objectStore('mediaEntities').get(id);
 		request.onsuccess = function (event) {
@@ -11907,7 +11940,6 @@
 		request.onerror = function (event) {
 			return _store2.default.dispatch(_actions2.default.error('DB Error ' + event.target.error.name));
 		};
-		setPlayList();
 	}
 	
 	// Request storage usage and capacity left
@@ -11926,6 +11958,46 @@
 /* 50 */
 /***/ function(module, exports, __webpack_require__) {
 
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(51);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(6)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../node_modules/css-loader/index.js!./../../node_modules/postcss-loader/index.js!./../../node_modules/sass-loader/index.js!./video-item.component.sass", function() {
+				var newContent = require("!!./../../node_modules/css-loader/index.js!./../../node_modules/postcss-loader/index.js!./../../node_modules/sass-loader/index.js!./video-item.component.sass");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 51 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(4)();
+	// imports
+	
+	
+	// module
+	exports.push([module.id, ".copy {\n  -webkit-transition: all 250ms;\n  transition: all 250ms; }\n  .copy.active, .copy.active:hover {\n    background: #a1c616;\n    color: #fff; }\n", ""]);
+	
+	// exports
+
+
+/***/ },
+/* 52 */
+/***/ function(module, exports, __webpack_require__) {
+
 	'use strict';
 	
 	var _vue = __webpack_require__(1);
@@ -11940,11 +12012,11 @@
 	
 	var _actions2 = _interopRequireDefault(_actions);
 	
-	var _youtubeIframeApi = __webpack_require__(51);
+	var _youtubeIframeApi = __webpack_require__(53);
 	
 	var _youtubeIframeApi2 = _interopRequireDefault(_youtubeIframeApi);
 	
-	__webpack_require__(52);
+	__webpack_require__(54);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -12009,7 +12081,7 @@
 	});
 
 /***/ },
-/* 51 */
+/* 53 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -12806,13 +12878,13 @@
 	};
 
 /***/ },
-/* 52 */
+/* 54 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(53);
+	var content = __webpack_require__(55);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(6)(content, {});
@@ -12832,7 +12904,7 @@
 	}
 
 /***/ },
-/* 53 */
+/* 55 */
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(4)();
@@ -12846,14 +12918,14 @@
 
 
 /***/ },
-/* 54 */,
-/* 55 */
+/* 56 */,
+/* 57 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(56);
+	var content = __webpack_require__(58);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(6)(content, {});
@@ -12873,7 +12945,7 @@
 	}
 
 /***/ },
-/* 56 */
+/* 58 */
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(4)();
@@ -12881,13 +12953,13 @@
 	
 	
 	// module
-	exports.push([module.id, "@charset \"UTF-8\";\nbutton {\n  padding: 0 7px;\n  height: 35px;\n  border: 1px solid #C8CCD5;\n  color: #C8CCD5;\n  background: transparent;\n  text-transform: uppercase;\n  border-radius: 2px;\n  -webkit-transition: all 250ms;\n  transition: all 250ms;\n  outline: 0;\n  cursor: pointer; }\n  button.btn--blue {\n    border-color: #2DA7EF;\n    background: #2DA7EF;\n    color: #fff; }\n\n@font-face {\n  font-family: 'WampIcons';\n  src: url(" + __webpack_require__(5) + ");\n  font-weight: normal;\n  font-style: normal; }\n\n[class^=\"wmp-icon-\"], [class*=\" wmp-icon-\"] {\n  text-align: center;\n  position: relative;\n  width: 49px;\n  height: 49px;\n  display: inline-block; }\n  [class^=\"wmp-icon-\"]:before, [class*=\" wmp-icon-\"]:before {\n    /* use !important to prevent issues with browser extensions that change fonts */\n    speak: none;\n    font-style: normal;\n    font-weight: normal;\n    font-variant: normal;\n    text-transform: none;\n    line-height: 1;\n    -webkit-font-smoothing: antialiased;\n    -moz-osx-font-smoothing: grayscale;\n    font-family: 'WampIcons' !important;\n    position: absolute;\n    font-size: 1.7em;\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: flex;\n    -webkit-box-align: center;\n        -ms-flex-align: center;\n            align-items: center;\n    -webkit-box-pack: center;\n        -ms-flex-pack: center;\n            justify-content: center;\n    width: 100%;\n    height: 100%; }\n\n.icon--small:before {\n  font-size: 1.2em; }\n\n.wmp-icon-queue:before {\n  content: \"\\E03C\"; }\n\n.wmp-icon-local_offer:before {\n  content: \"\\E54E\"; }\n\n.wmp-icon-local_offer2:before {\n  content: \"\\E54F\"; }\n\n.wmp-icon-format_list_bulleted:before {\n  content: \"\\E242\"; }\n\n.wmp-icon-dehaze:before {\n  content: \"\\E3C7\"; }\n\n.wmp-icon-reorder:before {\n  content: \"\\E8FE\"; }\n\n.wmp-icon-more_vert:before {\n  content: \"\\E5D4\"; }\n\n.wmp-icon-arrow_drop_down:before {\n  content: \"\\E5C5\"; }\n\n.wmp-icon-arrow_drop_up:before {\n  content: \"\\E5C7\"; }\n\n.wmp-icon-previous:before {\n  content: \"\\E045\"; }\n\n.wmp-icon-play:before {\n  content: \"\\E037\"; }\n\n.wmp-icon-pause:before {\n  content: \"\\E034\"; }\n\n.wmp-icon-next:before {\n  content: \"\\E044\"; }\n\n.wmp-icon-shuffle:before {\n  content: \"\\E043\"; }\n\n.wmp-icon-repeat:before {\n  content: \"\\E040\"; }\n\n.wmp-icon-repeat_one:before {\n  content: \"\\E041\"; }\n\n.wmp-icon-volume_off:before {\n  content: \"\\E04F\"; }\n\n.wmp-icon-volume_up:before {\n  content: \"\\E050\"; }\n\n.wmp-icon-search:before {\n  content: \"\\E8B6\"; }\n\n.wmp-icon-close:before {\n  content: \"\\E5CD\"; }\n\n.wmp-icon-add:before {\n  content: \"\\E900\"; }\n\n.wmp-icon-queue2:before {\n  content: \"\\E03D\"; }\n\n.wmp-icon-copy:before {\n  content: \"\\E14D\"; }\n\n.wmp-icon-local_offer22:before {\n  content: \"\\E550\"; }\n\n.wmp-icon-link:before {\n  content: \"\\E157\"; }\n\n.wmp-icon-delete:before {\n  content: \"\\E872\"; }\n\n.wmp-icon-cloud_upload:before {\n  content: \"\\E2C3\"; }\n\n.wmp-icon-youtube:before {\n  content: \"\\E906\"; }\n\nul.media-list {\n  list-style: none;\n  padding: 0;\n  margin: 0;\n  background: rgba(255, 255, 255, 0.78);\n  overflow-x: hidden; }\n  ul.media-list li {\n    height: 55px;\n    padding: 0 7px;\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: flex;\n    -webkit-box-align: center;\n        -ms-flex-align: center;\n            align-items: center; }\n    ul.media-list li:hover {\n      background: #EFF1F7; }\n      ul.media-list li:hover .media-list__controls {\n        display: block; }\n    ul.media-list li.active {\n      background: #2DA7EF;\n      color: #fff; }\n      ul.media-list li.active a,\n      ul.media-list li.active span:hover {\n        color: #fff; }\n\n.media-list__thumbnail {\n  width: 49px;\n  height: 49px;\n  background-size: cover;\n  background-position: center;\n  border-radius: 50%;\n  margin-right: 7px; }\n\n.media-list__body {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: column;\n          flex-direction: column;\n  -webkit-box-flex: 1;\n      -ms-flex: 1;\n          flex: 1;\n  overflow-x: hidden; }\n  .media-list__body .media-list__name {\n    white-space: nowrap;\n    overflow: hidden;\n    text-overflow: ellipsis; }\n  .media-list__body .media-list__duration {\n    color: #A8ADB7; }\n\n.media-list__controls {\n  display: none; }\n  .media-list__controls span {\n    cursor: pointer;\n    -webkit-transition: all 250ms;\n    transition: all 250ms; }\n    .media-list__controls span:hover {\n      color: #2DA7EF; }\n\nbody,\nhtml,\n#app {\n  height: 100%;\n  overflow: hidden; }\n\nbody {\n  font-family: 'Nobile', sans-serif;\n  font-size: 2vmin;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: column;\n          flex-direction: column;\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n  color: #303641;\n  margin: 0; }\n  body a {\n    color: #303641; }\n    body a:visited {\n      color: #303641; }\n  body input:focus {\n    outline: 0; }\n\n#app {\n  width: 100%;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: column;\n          flex-direction: column; }\n\nmain {\n  -webkit-box-flex: 1;\n      -ms-flex: 1;\n          flex: 1;\n  overflow-y: auto; }\n  main .box-1-1 {\n    height: 100%; }\n    main .box-1-1 > div:first-child {\n      border-right: 1px solid #C8CCD5; }\n\n.box-1-1 {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex; }\n  .box-1-1 > div {\n    -webkit-box-flex: 1;\n        -ms-flex: 1;\n            flex: 1;\n    overflow-x: auto; }\n", ""]);
+	exports.push([module.id, "@charset \"UTF-8\";\nbutton {\n  padding: 0 7px;\n  height: 35px;\n  border: 1px solid #C8CCD5;\n  color: #C8CCD5;\n  background: transparent;\n  text-transform: uppercase;\n  border-radius: 2px;\n  -webkit-transition: all 250ms;\n  transition: all 250ms;\n  outline: 0;\n  cursor: pointer; }\n  button.btn--blue {\n    border-color: #2DA7EF;\n    background: #2DA7EF;\n    color: #fff; }\n\n@font-face {\n  font-family: 'WampIcons';\n  src: url(" + __webpack_require__(5) + ");\n  font-weight: normal;\n  font-style: normal; }\n\n[class^=\"wmp-icon-\"], [class*=\" wmp-icon-\"] {\n  text-align: center;\n  position: relative;\n  width: 49px;\n  height: 49px;\n  display: inline-block; }\n  [class^=\"wmp-icon-\"]:before, [class*=\" wmp-icon-\"]:before {\n    /* use !important to prevent issues with browser extensions that change fonts */\n    speak: none;\n    font-style: normal;\n    font-weight: normal;\n    font-variant: normal;\n    text-transform: none;\n    line-height: 1;\n    -webkit-font-smoothing: antialiased;\n    -moz-osx-font-smoothing: grayscale;\n    font-family: 'WampIcons' !important;\n    position: absolute;\n    font-size: 1.7em;\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: flex;\n    -webkit-box-align: center;\n        -ms-flex-align: center;\n            align-items: center;\n    -webkit-box-pack: center;\n        -ms-flex-pack: center;\n            justify-content: center;\n    width: 100%;\n    height: 100%; }\n\n.icon--small:before {\n  font-size: 1.2em; }\n\n.wmp-icon-queue:before {\n  content: \"\\E03C\"; }\n\n.wmp-icon-local_offer:before {\n  content: \"\\E54E\"; }\n\n.wmp-icon-local_offer2:before {\n  content: \"\\E54F\"; }\n\n.wmp-icon-format_list_bulleted:before {\n  content: \"\\E242\"; }\n\n.wmp-icon-dehaze:before {\n  content: \"\\E3C7\"; }\n\n.wmp-icon-reorder:before {\n  content: \"\\E8FE\"; }\n\n.wmp-icon-more_vert:before {\n  content: \"\\E5D4\"; }\n\n.wmp-icon-arrow_drop_down:before {\n  content: \"\\E5C5\"; }\n\n.wmp-icon-arrow_drop_up:before {\n  content: \"\\E5C7\"; }\n\n.wmp-icon-previous:before {\n  content: \"\\E045\"; }\n\n.wmp-icon-play:before {\n  content: \"\\E037\"; }\n\n.wmp-icon-pause:before {\n  content: \"\\E034\"; }\n\n.wmp-icon-next:before {\n  content: \"\\E044\"; }\n\n.wmp-icon-shuffle:before {\n  content: \"\\E043\"; }\n\n.wmp-icon-repeat:before {\n  content: \"\\E040\"; }\n\n.wmp-icon-repeat_one:before {\n  content: \"\\E041\"; }\n\n.wmp-icon-volume_off:before {\n  content: \"\\E04F\"; }\n\n.wmp-icon-volume_up:before {\n  content: \"\\E050\"; }\n\n.wmp-icon-search:before {\n  content: \"\\E8B6\"; }\n\n.wmp-icon-close:before {\n  content: \"\\E5CD\"; }\n\n.wmp-icon-add:before {\n  content: \"\\E900\"; }\n\n.wmp-icon-queue2:before {\n  content: \"\\E03D\"; }\n\n.wmp-icon-copy:before {\n  content: \"\\E14D\"; }\n\n.wmp-icon-local_offer22:before {\n  content: \"\\E550\"; }\n\n.wmp-icon-link:before {\n  content: \"\\E157\"; }\n\n.wmp-icon-delete:before {\n  content: \"\\E872\"; }\n\n.wmp-icon-cloud_upload:before {\n  content: \"\\E2C3\"; }\n\n.wmp-icon-youtube:before {\n  content: \"\\E906\"; }\n\nul.media-list {\n  list-style: none;\n  padding: 0;\n  margin: 0;\n  background: rgba(255, 255, 255, 0.78);\n  overflow-x: hidden; }\n  ul.media-list li {\n    height: 55px;\n    padding: 0 7px;\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: flex;\n    -webkit-box-align: center;\n        -ms-flex-align: center;\n            align-items: center; }\n    ul.media-list li:hover {\n      background: #EFF1F7; }\n      ul.media-list li:hover .media-list__controls {\n        display: -webkit-box;\n        display: -ms-flexbox;\n        display: flex;\n        -webkit-box-align: center;\n            -ms-flex-align: center;\n                align-items: center; }\n    ul.media-list li.active {\n      background: #2DA7EF;\n      color: #fff; }\n      ul.media-list li.active a,\n      ul.media-list li.active span:hover {\n        color: #fff; }\n\n.media-list__thumbnail {\n  width: 49px;\n  height: 49px;\n  background-size: cover;\n  background-position: center;\n  border-radius: 50%;\n  margin-right: 7px; }\n\n.media-list__body {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: column;\n          flex-direction: column;\n  -webkit-box-flex: 1;\n      -ms-flex: 1;\n          flex: 1;\n  overflow-x: hidden; }\n  .media-list__body .media-list__name {\n    white-space: nowrap;\n    overflow: hidden;\n    text-overflow: ellipsis; }\n  .media-list__body .media-list__duration {\n    color: #A8ADB7; }\n\n.media-list__controls {\n  display: none; }\n  .media-list__controls span {\n    cursor: pointer;\n    -webkit-transition: all 250ms;\n    transition: all 250ms; }\n    .media-list__controls span:hover {\n      color: #2DA7EF; }\n\nbody,\nhtml,\n#app {\n  height: 100%;\n  overflow: hidden; }\n\nbody {\n  font-family: 'Nobile', sans-serif;\n  font-size: 2vmin;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: column;\n          flex-direction: column;\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n  color: #303641;\n  margin: 0; }\n  body a {\n    color: #303641; }\n    body a:visited {\n      color: #303641; }\n  body input:focus {\n    outline: 0; }\n\n#app {\n  width: 100%;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: column;\n          flex-direction: column; }\n\nmain {\n  -webkit-box-flex: 1;\n      -ms-flex: 1;\n          flex: 1;\n  overflow-y: auto; }\n  main .box-1-1 {\n    height: 100%; }\n    main .box-1-1 > div:first-child {\n      border-right: 1px solid #C8CCD5; }\n\n.box-1-1 {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex; }\n  .box-1-1 > div {\n    -webkit-box-flex: 1;\n        -ms-flex: 1;\n            flex: 1;\n    overflow-x: auto; }\n", ""]);
 	
 	// exports
 
 
 /***/ },
-/* 57 */
+/* 59 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -12904,11 +12976,11 @@
 	
 	var _actions2 = _interopRequireDefault(_actions);
 	
-	__webpack_require__(58);
+	__webpack_require__(60);
 	
 	var _debounce = __webpack_require__(40);
 	
-	var _searchYoutube = __webpack_require__(60);
+	var _searchYoutube = __webpack_require__(62);
 	
 	var _searchYoutube2 = _interopRequireDefault(_searchYoutube);
 	
@@ -12957,19 +13029,19 @@
 			searchYoutube: (0, _debounce.debounce)(function (event) {
 				// store.dispatch(Actions.searchYoutube(event.target.value)); // should use this and middleware
 				(0, _searchYoutube2.default)(event.target.value);
-			}, 500)
+			}, 800)
 		},
 		template: '\n<header>\n\t<div class="wamp__search">\n\t\t<h1>Audius</h1>\n\t\t<div class="wamp__search-controls">\n\t\t\t<div\n\t\t\t\tclass="wamp__search-input-group"\n\t\t\t\tv-on:click="store.dispatch(Actions.toggleSearch())"\n\t\t\t\tv-bind:class="{ active: website.showSearch }">\n\t\t\t\t<span class="wmp-icon-search"></span>\n\t\t\t\t<input\n\t\t\t\t\ttype="text"\n\t\t\t\t\tclass="wamp__search-input"\n\t\t\t\t\tplaceholder="Search"\n\t\t\t\t\tv-on:click="stopPropagation"\n\t\t\t\t\tv-on:keyup="searchYoutube"\n\t\t\t\t\tv-on:blur="store.dispatch(Actions.toggleSearch())"\n\t\t\t\t\tdebounce="500">\n\t\t\t\t<span class="wmp-icon-close" v-show="website.showSearch" v-on:click="clear"></span>\n\t\t\t</div>\n\t\t\t<span class="wmp-icon-volume_up"></span>\n\t\t\t<span class="wmp-icon-more_vert"></span>\n\t\t</div>\n\t</div>\n\t<div class="wamp__controls" :disabled="!mediaPlayer.playList.length">\n\t\t<span class="wmp-icon-previous" v-on:click="store.dispatch(Actions.previousVideo())"></span>\n\t\t<div class="wamp__play-pause" v-on:click="playPauseVideos">\n\t\t\t<span class="wmp-icon-pause" v-if="mediaPlayer.isPlaying"></span>\n\t\t\t<span class="wmp-icon-play" v-else></span>\n\t\t</div>\n\t\t<span class="wmp-icon-next" v-on:click="store.dispatch(Actions.nextVideo())"></span>\n\t\t<div class="spacer"></div>\n\t\t<div class="wamp__controls-small">\n\t\t\t<span class="wamp__shuffle wmp-icon-shuffle" v-on:click="store.dispatch(Actions.toggleShuffle())" v-bind:class="{ active: mediaPlayer.shuffle }"></span>\n\t\t\t<span class="wamp__show-play-list wmp-icon-repeat"  v-on:click="store.dispatch(Actions.togglePlayList())" v-bind:class="{ active: mediaPlayer.showPlayList }"></span>\n\t\t</div>\n\t</div>\n\t<div class="wamp__progress"> </div>\n</header>\n\t'
 	});
 
 /***/ },
-/* 58 */
+/* 60 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(59);
+	var content = __webpack_require__(61);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(6)(content, {});
@@ -12989,7 +13061,7 @@
 	}
 
 /***/ },
-/* 59 */
+/* 61 */
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(4)();
@@ -13003,7 +13075,7 @@
 
 
 /***/ },
-/* 60 */
+/* 62 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -13050,7 +13122,7 @@
 	var YOUTUBE_API_KEY = _store2.default.getState().config.youtubeApiKey;
 
 /***/ },
-/* 61 */
+/* 63 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -13067,7 +13139,7 @@
 	
 	var _actions2 = _interopRequireDefault(_actions);
 	
-	__webpack_require__(62);
+	__webpack_require__(64);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -13098,13 +13170,13 @@
 	});
 
 /***/ },
-/* 62 */
+/* 64 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(63);
+	var content = __webpack_require__(65);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(6)(content, {});
@@ -13124,7 +13196,7 @@
 	}
 
 /***/ },
-/* 63 */
+/* 65 */
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(4)();
@@ -13138,7 +13210,7 @@
 
 
 /***/ },
-/* 64 */
+/* 66 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -13147,7 +13219,7 @@
 	
 	var _vue2 = _interopRequireDefault(_vue);
 	
-	__webpack_require__(65);
+	__webpack_require__(67);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -13156,13 +13228,13 @@
 	});
 
 /***/ },
-/* 65 */
+/* 67 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(66);
+	var content = __webpack_require__(68);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(6)(content, {});
@@ -13182,7 +13254,7 @@
 	}
 
 /***/ },
-/* 66 */
+/* 68 */
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(4)();
@@ -13196,7 +13268,7 @@
 
 
 /***/ },
-/* 67 */
+/* 69 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -13257,7 +13329,7 @@
 	});
 
 /***/ },
-/* 68 */
+/* 70 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -13274,7 +13346,13 @@
 	
 	var _actions2 = _interopRequireDefault(_actions);
 	
-	__webpack_require__(69);
+	var _indexDB = __webpack_require__(49);
+	
+	var db = _interopRequireWildcard(_indexDB);
+	
+	__webpack_require__(71);
+	
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -13299,9 +13377,9 @@
 		},
 	
 		methods: {
-			export: function _export() {
+			exportPlayList: function exportPlayList() {
 				var data = {
-					playList: this.mediaPlayer.playLists,
+					playList: this.mediaPlayer.playList,
 					entities: this.mediaPlayer.entities
 				};
 				var element = document.createElement('a');
@@ -13311,19 +13389,33 @@
 				document.body.appendChild(element);
 				element.click();
 				document.body.removeChild(element);
+			},
+			importPlayList: function importPlayList(event) {
+				var files = event.target.files || event.dataTransfer.files;
+				Array.from(files).forEach(function (file) {
+					var reader = new FileReader();
+					reader.onload = function (event) {
+						var dataJSON = JSON.parse(event.target.result);
+						_store2.default.dispatch(_actions2.default.importPlayList(dataJSON));
+						Object.keys(dataJSON.entities).forEach(function (key) {
+							db.setMediaEntity(dataJSON.entities[key]);
+						});
+					};
+					reader.readAsText(file);
+				});
 			}
 		},
-		template: '\n<div class="play-list">\n\t<h2 v-if="!mediaPlayer.playList.length"> The playlist is empty <br> ... add some music <br>\u2510(\u30FB\u3002\u30FB\u2510) \u266A </h2>\n\t<ul class="media-list">\n\t\t<video-item v-for="id in mediaPlayer.playList" :video="mediaPlayer.entities[id]"></video-item>\n\t</ul>\n\t<div class="play-list-footer">\n\t\t<ul>\n\t\t\t<li>Import</li>\n\t\t\t<li>Export</li>\n\t\t</ul>\n\t</div>\n</div>'
+		template: '\n<div class="play-list">\n\t<h2 v-if="!mediaPlayer.playList.length">\n\t\tThe playlist is empty <br> ... add some music <br>\u2510(\u30FB\u3002\u30FB\u2510) \u266A\n\t</h2>\n\t<ul class="media-list">\n\t\t<video-item v-for="id in mediaPlayer.playList" :video="mediaPlayer.entities[id]"></video-item>\n\t</ul>\n\t<div class="play-list-footer">\n\t\t<ul>\n\t\t\t<li>\n\t\t\t\t<input type="file" id="import-playlist" v-on:change="importPlayList">\n\t\t\t\t<label for="import-playlist">Import </label>\n\t\t\t</li>\n\t\t\t<li v-on:click="exportPlayList">Export</li>\n\t\t</ul>\n\t</div>\n</div>'
 	});
 
 /***/ },
-/* 69 */
+/* 71 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(70);
+	var content = __webpack_require__(72);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(6)(content, {});
@@ -13343,7 +13435,7 @@
 	}
 
 /***/ },
-/* 70 */
+/* 72 */
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(4)();
@@ -13351,7 +13443,7 @@
 	
 	
 	// module
-	exports.push([module.id, ".play-list {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: column;\n          flex-direction: column; }\n  .play-list ul {\n    -webkit-box-flex: 1;\n        -ms-flex: 1;\n            flex: 1; }\n  .play-list h2 {\n    font-weight: 100;\n    width: 100%;\n    text-align: center;\n    line-height: 2em; }\n\n.play-list-footer {\n  background: #EFF1F7; }\n  .play-list-footer ul {\n    padding: 0;\n    margin: 0;\n    list-style: none;\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: flex;\n    width: 100%;\n    height: 35px; }\n    .play-list-footer ul li {\n      -webkit-box-flex: 1;\n          -ms-flex: 1;\n              flex: 1;\n      display: -webkit-box;\n      display: -ms-flexbox;\n      display: flex;\n      -webkit-box-pack: center;\n          -ms-flex-pack: center;\n              justify-content: center;\n      -webkit-box-align: center;\n          -ms-flex-align: center;\n              align-items: center;\n      background: #EFF1F7;\n      color: #A8ADB7;\n      cursor: pointer;\n      text-transform: uppercase;\n      white-space: nowrap;\n      font-size: 0.7em;\n      -webkit-transition: all 250ms;\n      transition: all 250ms; }\n      .play-list-footer ul li.active, .play-list-footer ul li:hover {\n        background: #C8CCD5;\n        color: #fff; }\n", ""]);
+	exports.push([module.id, ".play-list {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: column;\n          flex-direction: column; }\n  .play-list ul {\n    -webkit-box-flex: 1;\n        -ms-flex: 1;\n            flex: 1; }\n  .play-list h2 {\n    font-weight: 100;\n    width: 100%;\n    text-align: center;\n    line-height: 2em; }\n\n.play-list-footer {\n  background: #EFF1F7; }\n  .play-list-footer ul {\n    padding: 0;\n    margin: 0;\n    list-style: none;\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: flex;\n    width: 100%;\n    height: 35px; }\n    .play-list-footer ul li {\n      -webkit-box-flex: 1;\n          -ms-flex: 1;\n              flex: 1;\n      display: -webkit-box;\n      display: -ms-flexbox;\n      display: flex;\n      -webkit-box-pack: center;\n          -ms-flex-pack: center;\n              justify-content: center;\n      -webkit-box-align: center;\n          -ms-flex-align: center;\n              align-items: center;\n      background: #EFF1F7;\n      color: #A8ADB7;\n      cursor: pointer;\n      text-transform: uppercase;\n      white-space: nowrap;\n      font-size: 0.7em;\n      -webkit-transition: all 250ms;\n      transition: all 250ms; }\n      .play-list-footer ul li.active, .play-list-footer ul li:hover {\n        background: #C8CCD5;\n        color: #fff; }\n\n#import-playlist {\n  display: none; }\n  #import-playlist + label {\n    width: 100%;\n    height: 100%;\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: flex;\n    -webkit-box-pack: center;\n        -ms-flex-pack: center;\n            justify-content: center;\n    -webkit-box-align: center;\n        -ms-flex-align: center;\n            align-items: center;\n    cursor: pointer; }\n", ""]);
 	
 	// exports
 

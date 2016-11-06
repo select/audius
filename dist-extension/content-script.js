@@ -56,9 +56,9 @@
 	
 	__webpack_require__(48);
 	
-	__webpack_require__(50);
+	__webpack_require__(52);
 	
-	__webpack_require__(54);
+	__webpack_require__(56);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -11235,6 +11235,13 @@
 					}))),
 					entities: entities
 				});
+			case 'IMPORT_PLAYLIST':
+				return Object.assign({}, state, {
+					playList: [].concat(_toConsumableArray(state.playList), _toConsumableArray(action.data.playList.filter(function (id) {
+						return !state.playList.includes(id);
+					}))),
+					entities: Object.assign({}, state.entities, action.data.entities)
+				});
 			case 'REMOVE_VIDEO':
 				entities = Object.assign({}, state.entities);
 				entities[action.id].deleted = true;
@@ -11805,6 +11812,13 @@
 		};
 	};
 	
+	var importPlayList = exports.importPlayList = function importPlayList(data) {
+		return {
+			type: 'IMPORT_PLAYLIST',
+			data: data
+		};
+	};
+	
 	var removeVideo = exports.removeVideo = function removeVideo(id) {
 		return {
 			type: 'REMOVE_VIDEO',
@@ -11947,7 +11961,7 @@
 	
 	
 	// module
-	exports.push([module.id, "ul.media-list {\n  list-style: none;\n  padding: 0;\n  margin: 0;\n  background: rgba(255, 255, 255, 0.78);\n  overflow-x: hidden; }\n  ul.media-list li {\n    height: 55px;\n    padding: 0 7px;\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: flex;\n    -webkit-box-align: center;\n        -ms-flex-align: center;\n            align-items: center; }\n    ul.media-list li:hover {\n      background: #EFF1F7; }\n      ul.media-list li:hover .media-list__controls {\n        display: block; }\n    ul.media-list li.active {\n      background: #2DA7EF;\n      color: #fff; }\n      ul.media-list li.active a,\n      ul.media-list li.active span:hover {\n        color: #fff; }\n\n.media-list__thumbnail {\n  width: 49px;\n  height: 49px;\n  background-size: cover;\n  background-position: center;\n  border-radius: 50%;\n  margin-right: 7px; }\n\n.media-list__body {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: column;\n          flex-direction: column;\n  -webkit-box-flex: 1;\n      -ms-flex: 1;\n          flex: 1;\n  overflow-x: hidden; }\n  .media-list__body .media-list__name {\n    white-space: nowrap;\n    overflow: hidden;\n    text-overflow: ellipsis; }\n  .media-list__body .media-list__duration {\n    color: #A8ADB7; }\n\n.media-list__controls {\n  display: none; }\n  .media-list__controls span {\n    cursor: pointer;\n    -webkit-transition: all 250ms;\n    transition: all 250ms; }\n    .media-list__controls span:hover {\n      color: #2DA7EF; }\n\n.wamp {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: column;\n          flex-direction: column;\n  height: 394px;\n  position: absolute;\n  top: 0;\n  right: 0; }\n\n.wamp__media-list-wrapper {\n  -webkit-box-flex: 1;\n      -ms-flex: 1;\n          flex: 1;\n  overflow-y: auto; }\n\n.wamp__shuffle,\n.wamp__show-play-list {\n  color: #E2E4E9; }\n  .wamp__shuffle.active,\n  .wamp__show-play-list.active {\n    color: #303641; }\n\n.wamp__controls {\n  width: 100%;\n  display: -webkit-inline-box;\n  display: -ms-inline-flexbox;\n  display: inline-flex;\n  -webkit-box-pack: end;\n      -ms-flex-pack: end;\n          justify-content: flex-end;\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center; }\n  .wamp__controls[disabled] span {\n    color: #E2E4E9;\n    pointer-events: none; }\n  .wamp__controls span {\n    cursor: pointer; }\n  .wamp__controls .spacer {\n    width: 14px; }\n  .wamp__controls .wamp__play-pause {\n    height: 49px; }\n    .wamp__controls .wamp__play-pause span:before {\n      font-size: 2.5em; }\n\n.wamp__youtube-player {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-pack: end;\n      -ms-flex-pack: end;\n          justify-content: flex-end; }\n", ""]);
+	exports.push([module.id, "ul.media-list {\n  list-style: none;\n  padding: 0;\n  margin: 0;\n  background: rgba(255, 255, 255, 0.78);\n  overflow-x: hidden; }\n  ul.media-list li {\n    height: 55px;\n    padding: 0 7px;\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: flex;\n    -webkit-box-align: center;\n        -ms-flex-align: center;\n            align-items: center; }\n    ul.media-list li:hover {\n      background: #EFF1F7; }\n      ul.media-list li:hover .media-list__controls {\n        display: -webkit-box;\n        display: -ms-flexbox;\n        display: flex;\n        -webkit-box-align: center;\n            -ms-flex-align: center;\n                align-items: center; }\n    ul.media-list li.active {\n      background: #2DA7EF;\n      color: #fff; }\n      ul.media-list li.active a,\n      ul.media-list li.active span:hover {\n        color: #fff; }\n\n.media-list__thumbnail {\n  width: 49px;\n  height: 49px;\n  background-size: cover;\n  background-position: center;\n  border-radius: 50%;\n  margin-right: 7px; }\n\n.media-list__body {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: column;\n          flex-direction: column;\n  -webkit-box-flex: 1;\n      -ms-flex: 1;\n          flex: 1;\n  overflow-x: hidden; }\n  .media-list__body .media-list__name {\n    white-space: nowrap;\n    overflow: hidden;\n    text-overflow: ellipsis; }\n  .media-list__body .media-list__duration {\n    color: #A8ADB7; }\n\n.media-list__controls {\n  display: none; }\n  .media-list__controls span {\n    cursor: pointer;\n    -webkit-transition: all 250ms;\n    transition: all 250ms; }\n    .media-list__controls span:hover {\n      color: #2DA7EF; }\n\n.wamp {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: column;\n          flex-direction: column;\n  height: 394px;\n  position: absolute;\n  top: 0;\n  right: 0; }\n\n.wamp__media-list-wrapper {\n  -webkit-box-flex: 1;\n      -ms-flex: 1;\n          flex: 1;\n  overflow-y: auto; }\n\n.wamp__shuffle,\n.wamp__show-play-list {\n  color: #E2E4E9; }\n  .wamp__shuffle.active,\n  .wamp__show-play-list.active {\n    color: #303641; }\n\n.wamp__controls {\n  width: 100%;\n  display: -webkit-inline-box;\n  display: -ms-inline-flexbox;\n  display: inline-flex;\n  -webkit-box-pack: end;\n      -ms-flex-pack: end;\n          justify-content: flex-end;\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center; }\n  .wamp__controls[disabled] span {\n    color: #E2E4E9;\n    pointer-events: none; }\n  .wamp__controls span {\n    cursor: pointer; }\n  .wamp__controls .spacer {\n    width: 14px; }\n  .wamp__controls .wamp__play-pause {\n    height: 49px; }\n    .wamp__controls .wamp__play-pause span:before {\n      font-size: 2.5em; }\n\n.wamp__youtube-player {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-pack: end;\n      -ms-flex-pack: end;\n          justify-content: flex-end; }\n", ""]);
 	
 	// exports
 
@@ -11974,12 +11988,20 @@
 	
 	var db = _interopRequireWildcard(_indexDB);
 	
+	__webpack_require__(50);
+	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	_vue2.default.component('video-item', {
 		props: ['video'],
+		data: function data() {
+			return {
+				copyActive: false
+			};
+		},
+	
 		methods: {
 			play: function play() {
 				_store2.default.dispatch(_actions2.default.playVideo(this.video.id));
@@ -11995,7 +12017,8 @@
 				db.setMediaEntity(this.video);
 			},
 			copyToClip: function copyToClip() {
-				console.log('copy to clipe');
+				var _this = this;
+	
 				window.getSelection().removeAllRanges();
 				var tmpEl = document.createElement('div');
 				tmpEl.innerHTML = this.video.title + ' https://youtu.be/' + this.video.id;
@@ -12005,13 +12028,12 @@
 				range.selectNode(tmpEl);
 				window.getSelection().addRange(range);
 	
-				// let classes = event.target.getAttribute('class');
-				// event.target.setAttribute('class', classes + ' donger--active');
-				// setTimeout(() => {
-				//   event.target.setAttribute('class', classes);
-				// }, 800)
 				try {
 					var successful = document.execCommand('copy');
+					this.copyActive = true;
+					setTimeout(function () {
+						_this.copyActive = false;
+					}, 800);
 				} catch (err) {
 					console.log('execCommand Error', err);
 				}
@@ -12019,7 +12041,7 @@
 				tmpEl.parentNode.removeChild(tmpEl);
 			}
 		},
-		template: '\n\t<li v-bind:class="{ active: video.isPlaying }">\n\t\t<div class="media-list__thumbnail" v-bind:style="{ backgroundImage: \'url(\' + video.thumbnail + \')\' }"></div>\n\t\t<div class="media-list__body">\n\t\t\t<div class="media-list__name">{{video.title}}</div>\n\t\t\t<div class="media-list__duration" v-if="video.duration">{{video.duration.m}}:{{video.duration.s}}</div>\n\t\t</div>\n\t\t<div class="media-list__controls">\n\t\t\t<span class="wmp-icon-pause" v-if="video.isPlaying" v-on:click="pause"></span>\n\t\t\t<span class="wmp-icon-play" v-else v-on:click="play"></span>\n\t\t\t<span class="wmp-icon-queue2 icon--small"></span>\n\t\t\t<span class="wmp-icon-copy icon--small" v-on:click="copyToClip"></span>\n\t\t\t<a v-bind:href="\'https://youtu.be/\'+video.id" title="watch on YouTube" target="_blank">\n\t\t\t\t<span class="wmp-icon-youtube icon--small"></span>\n\t\t\t</a>\n\t\t\t<span class="wmp-icon-close" v-on:click="remove"></span>\n\t\t</div>\n\t</li>\n\t'
+		template: '\n\t<li v-bind:class="{ active: video.isPlaying }">\n\t\t<div class="media-list__thumbnail" v-bind:style="{ backgroundImage: \'url(\' + video.thumbnail + \')\' }"></div>\n\t\t<div class="media-list__body">\n\t\t\t<div class="media-list__name">{{video.title}}</div>\n\t\t\t<div class="media-list__duration" v-if="video.duration">{{video.duration.m}}:{{video.duration.s}}</div>\n\t\t</div>\n\t\t<div class="media-list__controls">\n\t\t\t<span class="wmp-icon-pause" v-if="video.isPlaying" v-on:click="pause"></span>\n\t\t\t<span class="wmp-icon-play" v-else v-on:click="play"></span>\n\t\t\t<span class="wmp-icon-queue2 icon--small"></span>\n\t\t\t<span class="copy wmp-icon-copy icon--small" v-on:click="copyToClip" v-bind:class="{ active: copyActive }"></span>\n\t\t\t<a v-bind:href="\'https://youtu.be/\'+video.id" title="watch on YouTube" target="_blank">\n\t\t\t\t<span class="wmp-icon-youtube icon--small"></span>\n\t\t\t</a>\n\t\t\t<span class="wmp-icon-close" v-on:click="remove"></span>\n\t\t</div>\n\t</li>\n\t'
 	});
 
 /***/ },
@@ -12046,7 +12068,7 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	function getAllMediaEntities(db) {
+	function getAllMediaEntities(db, callback) {
 		var request = db.transaction('mediaEntities', 'readonly').objectStore('mediaEntities').openCursor();
 		request.onerror = function () {
 			return _store2.default.dispatch(_actions2.default.error('DB Error can not get entities from DB'));
@@ -12059,9 +12081,18 @@
 				cursor.continue();
 			} else {
 				_store2.default.dispatch(_actions2.default.getAllDbSuccess(entities));
+				callback();
 			}
 		};
 	}
+	function exists(storeName, id, callback) {
+		var request = _store2.default.getState().mediaPlayer.db.transaction(['playLists'], 'readonly').objectStore('playLists').get('default');
+		request.onerror = function (event) {
+			return _store2.default.dispatch(_actions2.default.error('DB Error ' + event.target.error.name));
+		};
+		request.onsuccess = callback;
+	}
+	
 	function getPlayList(db) {
 		var request = db.transaction(['playLists'], 'readonly').objectStore('playLists').get('default');
 		request.onsuccess = function (event) {
@@ -12086,8 +12117,9 @@
 			}
 		};
 		openRequest.onsuccess = function (event) {
-			getAllMediaEntities(event.target.result);
-			getPlayList(event.target.result);
+			getAllMediaEntities(event.target.result, function () {
+				return getPlayList(event.target.result);
+			});
 			_store2.default.dispatch(_actions2.default.initDbSuccess(event.target.result));
 		};
 		openRequest.onerror = function () {
@@ -12096,31 +12128,32 @@
 	}
 	
 	function setPlayList() {
-		var requestExists = _store2.default.getState().mediaPlayer.db.transaction(['playLists'], 'readonly').objectStore('playLists').get('default');
-		requestExists.onerror = function (event) {
-			return _store2.default.dispatch(_actions2.default.error('DB Error ' + event.target.error.name));
-		};
-		requestExists.onsuccess = function (event) {
+		exists('playList', 'default', function (event) {
 			var dbStore = _store2.default.getState().mediaPlayer.db.transaction(['playLists'], 'readwrite').objectStore('playLists');
 			var action = event.target.result ? 'put' : 'add';
 			var request = dbStore[action]({ id: 'default', playList: _store2.default.getState().mediaPlayer.playList });
 			request.onerror = function (event2) {
 				return _store2.default.dispatch(_actions2.default.error('DB Error ' + event2.target.error.name));
 			};
-		};
+		});
 	}
 	
 	function setMediaEntity(data) {
-		var request = _store2.default.getState().mediaPlayer.db.transaction(['mediaEntities'], 'readwrite').objectStore('mediaEntities').add(data);
-		request.onsuccess = function () {
-			return _store2.default.dispatch(_actions2.default.setDbSuccess(data));
-		};
-		request.onerror = function (event) {
-			return _store2.default.dispatch(_actions2.default.error('DB Error ' + event.target.error.name));
-		};
-		setPlayList();
+		exists('mediaEntities', 'default', function (event) {
+			var dbStore = _store2.default.getState().mediaPlayer.db.transaction(['mediaEntities'], 'readwrite').objectStore('mediaEntities');
+			var action = event.target.result ? 'put' : 'add';
+			var request = dbStore[action](data);
+			request.onsuccess = function () {
+				return _store2.default.dispatch(_actions2.default.setDbSuccess(data));
+			};
+			request.onerror = function (event2) {
+				return _store2.default.dispatch(_actions2.default.error('DB Error ' + event2.target.error.name));
+			};
+			setPlayList();
+		});
 	}
 	
+	// -----------------
 	function getMediaEntity(id) {
 		var request = _store2.default.getState().mediaPlayer.db.transaction(['mediaEntities'], 'readonly').objectStore('mediaEntities').get(id);
 		request.onsuccess = function (event) {
@@ -12129,7 +12162,6 @@
 		request.onerror = function (event) {
 			return _store2.default.dispatch(_actions2.default.error('DB Error ' + event.target.error.name));
 		};
-		setPlayList();
 	}
 	
 	// Request storage usage and capacity left
@@ -12148,6 +12180,46 @@
 /* 50 */
 /***/ function(module, exports, __webpack_require__) {
 
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(51);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(6)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../node_modules/css-loader/index.js!./../../node_modules/postcss-loader/index.js!./../../node_modules/sass-loader/index.js!./video-item.component.sass", function() {
+				var newContent = require("!!./../../node_modules/css-loader/index.js!./../../node_modules/postcss-loader/index.js!./../../node_modules/sass-loader/index.js!./video-item.component.sass");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 51 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(4)();
+	// imports
+	
+	
+	// module
+	exports.push([module.id, ".copy {\n  -webkit-transition: all 250ms;\n  transition: all 250ms; }\n  .copy.active, .copy.active:hover {\n    background: #a1c616;\n    color: #fff; }\n", ""]);
+	
+	// exports
+
+
+/***/ },
+/* 52 */
+/***/ function(module, exports, __webpack_require__) {
+
 	'use strict';
 	
 	var _vue = __webpack_require__(1);
@@ -12162,11 +12234,11 @@
 	
 	var _actions2 = _interopRequireDefault(_actions);
 	
-	var _youtubeIframeApi = __webpack_require__(51);
+	var _youtubeIframeApi = __webpack_require__(53);
 	
 	var _youtubeIframeApi2 = _interopRequireDefault(_youtubeIframeApi);
 	
-	__webpack_require__(52);
+	__webpack_require__(54);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -12231,7 +12303,7 @@
 	});
 
 /***/ },
-/* 51 */
+/* 53 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -13028,13 +13100,13 @@
 	};
 
 /***/ },
-/* 52 */
+/* 54 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(53);
+	var content = __webpack_require__(55);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(6)(content, {});
@@ -13054,7 +13126,7 @@
 	}
 
 /***/ },
-/* 53 */
+/* 55 */
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(4)();
@@ -13068,7 +13140,7 @@
 
 
 /***/ },
-/* 54 */
+/* 56 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
