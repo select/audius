@@ -1,5 +1,5 @@
 source: './entry.sass' # replace with your default Sass/SCSS file name
-title: 'Whatsapp Media Player Living Style Guide'
+title: 'Audius Living Style Guide'
 
 # see all options https://github.com/livingstyleguide/livingstyleguide/blob/master/stylesheets/_livingstyleguide.scss
 style:
@@ -8,7 +8,7 @@ style:
 
 header: |
   <div class="my-header">
-    <h1>Whatsapp Media Player Living Style Guide</h1>
+    <h1>Audius Living Style Guide</h1>
   </div>
 
   <p class="livingstyleguide--paragraph">
