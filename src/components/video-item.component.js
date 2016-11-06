@@ -2,10 +2,15 @@ import Vue from 'vue/dist/vue';
 import store from '../store';
 import Actions from '../actions';
 import * as db from '../utils/indexDB';
-
+import './video-item.component.sass';
 
 Vue.component('video-item', {
 	props: ['video'],
+	data() {
+		return {
+			copyActive: false
+		}
+	},
 	methods: {
 		play() { store.dispatch(Actions.playVideo(this.video.id)); },
 		pause() { store.dispatch(Actions.pause()); },
@@ -15,7 +20,6 @@ Vue.component('video-item', {
 			db.setMediaEntity(this.video);
 		},
 		copyToClip() {
-			console.log('copy to clipe')
 			window.getSelection().removeAllRanges();
 			const tmpEl = document.createElement('div')
 			tmpEl.innerHTML = `${this.video.title} https://youtu.be/${this.video.id}`;
@@ -25,13 +29,14 @@ Vue.component('video-item', {
 	    range.selectNode(tmpEl);
 	    window.getSelection().addRange(range);
 
-	    // let classes = event.target.getAttribute('class');
-	    // event.target.setAttribute('class', classes + ' donger--active');
-	    // setTimeout(() => {
-	    //   event.target.setAttribute('class', classes);
-	    // }, 800)
+
+			console.log('copy to clipppp')
 	    try {
 	      const successful = document.execCommand('copy');
+		    this.copyActive = true;
+		    setTimeout(() => {
+		    	this.copyActive = false;
+		    }, 800)
 	    } catch (err) {
 	      console.log('execCommand Error', err);
 	    }
@@ -50,7 +55,7 @@ Vue.component('video-item', {
 			<span class="wmp-icon-pause" v-if="video.isPlaying" v-on:click="pause"></span>
 			<span class="wmp-icon-play" v-else v-on:click="play"></span>
 			<span class="wmp-icon-queue2 icon--small"></span>
-			<span class="wmp-icon-copy icon--small" v-on:click="copyToClip"></span>
+			<span class="copy wmp-icon-copy icon--small" v-on:click="copyToClip" v-bind:class="{ active: copyActive }"></span>
 			<a v-bind:href="'https://youtu.be/'+video.id" title="watch on YouTube" target="_blank">
 				<span class="wmp-icon-youtube icon--small"></span>
 			</a>
