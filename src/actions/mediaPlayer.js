@@ -20,6 +20,11 @@ export const getAllDbSuccess = (entities) => ({
 	entities,
 });
 
+export const getDbPlayListSuccess = (playList) => ({
+	type: 'DB_GET_PLAYLIST_SUCCESS',
+	playList,
+});
+
 export const addVideos = (videos = []) => ({
 	type: 'ADD_VIDEOS',
 	videos,

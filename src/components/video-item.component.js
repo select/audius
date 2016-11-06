@@ -12,7 +12,7 @@ Vue.component('video-item', {
 		menu(){ store.dispatch(Actions.menuVideo(this.video.id)); },
 		remove() {
 			store.dispatch(Actions.removeVideo(this.video.id));
-			db.set(this.video);
+			db.setMediaEntity(this.video);
 		},
 		copyToClip() {
 			console.log('copy to clipe')

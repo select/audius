@@ -32,10 +32,12 @@ const mediaPlayer = (state = initialState, action) => {
 	// case 'DB_GET_SUCCESS':
 	case 'DB_GETALL_SUCCESS':
 		return Object.assign({}, state, {
-			playList: Object.keys(action.entities).filter(id => action.entities[id].deleted === false),
 			entities: Object.assign({}, state.entities, action.entities),
 		});
-
+	case 'DB_GET_PLAYLIST_SUCCESS':
+		return Object.assign({}, state, {
+			playList: action.playList,
+		});
 	case 'ADD_VIDEOS':
 		entities = Object.assign({}, state.entities);
 		action.videos.forEach((v) => {

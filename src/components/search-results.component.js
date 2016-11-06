@@ -29,7 +29,7 @@ Vue.component('search-results', {
 		},
 		addToPlaylist(video) {
 			store.dispatch(Actions.addSearchResult(video));
-			db.set(video);
+			db.setMediaEntity(video);
 		}
 	},
 	template: `
