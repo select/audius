@@ -1,7 +1,7 @@
 import Actions from '../actions';
 import store from '../store';
 
-function getAllMediaEntities(db) {
+function getAllMediaEntities(db, callback) {
 	const request = db
 		.transaction('mediaEntities', 'readonly')
 		.objectStore('mediaEntities')
@@ -15,9 +15,19 @@ function getAllMediaEntities(db) {
 			cursor.continue();
 		} else {
 			store.dispatch(Actions.getAllDbSuccess(entities));
+			callback();
 		}
 	};
 }
+function exists(storeName, id, callback) {
+	const request = store.getState().mediaPlayer.db
+		.transaction(['playLists'], 'readonly')
+		.objectStore('playLists')
+		.get('default');
+	request.onerror = event => store.dispatch(Actions.error(`DB Error ${event.target.error.name}`));
+	request.onsuccess = callback;
+}
+
 export function getPlayList(db) {
 	const request = db
 		.transaction(['playLists'], 'readonly')
@@ -41,8 +51,7 @@ if (!('indexedDB' in window)) {
 		}
 	};
 	openRequest.onsuccess = (event) => {
-		getAllMediaEntities(event.target.result);
-		getPlayList(event.target.result);
+		getAllMediaEntities(event.target.result, () => getPlayList(event.target.result));
 		store.dispatch(Actions.initDbSuccess(event.target.result));
 	};
 	openRequest.onerror = () => store.dispatch(Actions.error('Error: could not connect to indexDB.'));
@@ -50,31 +59,30 @@ if (!('indexedDB' in window)) {
 
 
 function setPlayList() {
-	const requestExists = store.getState().mediaPlayer.db
-		.transaction(['playLists'], 'readonly')
-		.objectStore('playLists')
-		.get('default');
-	requestExists.onerror = event => store.dispatch(Actions.error(`DB Error ${event.target.error.name}`));
-	requestExists.onsuccess = (event) => {
+	exists('playList', 'default', (event) => {
 		const dbStore = store.getState().mediaPlayer.db
 			.transaction(['playLists'], 'readwrite')
 			.objectStore('playLists');
 		const action = event.target.result ? 'put' : 'add';
 		const request = dbStore[action]({ id: 'default', playList: store.getState().mediaPlayer.playList });
 		request.onerror = event2 => store.dispatch(Actions.error(`DB Error ${event2.target.error.name}`));
-	};
+	});
 }
 
 export function setMediaEntity(data) {
-	const request = store.getState().mediaPlayer.db
-		.transaction(['mediaEntities'], 'readwrite')
-		.objectStore('mediaEntities')
-		.add(data);
-	request.onsuccess = () => store.dispatch(Actions.setDbSuccess(data));
-	request.onerror = event => store.dispatch(Actions.error(`DB Error ${event.target.error.name}`));
-	setPlayList();
+	exists('mediaEntities', 'default', (event) => {
+		const dbStore = store.getState().mediaPlayer.db
+			.transaction(['mediaEntities'], 'readwrite')
+			.objectStore('mediaEntities');
+		const action = event.target.result ? 'put' : 'add';
+		const request = dbStore[action](data);
+		request.onsuccess = () => store.dispatch(Actions.setDbSuccess(data));
+		request.onerror = event2 => store.dispatch(Actions.error(`DB Error ${event2.target.error.name}`));
+		setPlayList();
+	});
 }
 
+// -----------------
 export function getMediaEntity(id) {
 	const request = store.getState().mediaPlayer.db
 		.transaction(['mediaEntities'], 'readonly')
@@ -82,7 +90,6 @@ export function getMediaEntity(id) {
 		.get(id);
 	request.onsuccess = event => store.dispatch(Actions.getDbSuccess(event.target.result));
 	request.onerror = event => store.dispatch(Actions.error(`DB Error ${event.target.error.name}`));
-	setPlayList();
 }
 
 
