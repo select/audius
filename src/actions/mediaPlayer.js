@@ -1,6 +1,33 @@
+export const initDbSuccess = (db) => ({
+	type: 'DB_INIT_SUCCESS',
+	db,
+});
+export const error = (message) => ({
+	type: 'DB_ERROR',
+	message,
+});
+export const setDbSuccess = (data) => ({
+	type: 'DB_SET_SUCCESS',
+	data,
+});
+export const getDbSuccess = (data) => ({
+	type: 'DB_GET_SUCCESS',
+	data,
+
+});
+export const getAllDbSuccess = (entities) => ({
+	type: 'DB_GETALL_SUCCESS',
+	entities,
+});
+
 export const addVideos = (videos = []) => ({
 	type: 'ADD_VIDEOS',
 	videos,
+});
+
+export const removeVideo = (id) => ({
+	type: 'REMOVE_VIDEO',
+	id,
 });
 
 export const addSearchResult = (video = {}) => ({

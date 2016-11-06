@@ -1,6 +1,7 @@
 import Vue from 'vue/dist/vue';
 import store from '../store';
 import Actions from '../actions';
+import * as db from '../utils/indexDB';
 
 Vue.component('search-results', {
 	data() {
@@ -27,7 +28,8 @@ Vue.component('search-results', {
 			console.log('pause');
 		},
 		addToPlaylist(video) {
-			store.dispatch(Actions.addSearchResult(video))
+			store.dispatch(Actions.addSearchResult(video));
+			db.set(video);
 		}
 	},
 	template: `

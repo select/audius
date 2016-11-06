@@ -1,6 +1,8 @@
-import duration from '../utils/duration.js';
+import duration from '../utils/duration';
 
 const initialState = {
+	db: undefined,
+	dbErrorMessage: '',
 	isPlaying: false,
 	youtubeId: '',
 	playList: [],
@@ -17,8 +19,25 @@ const mediaPlayer = (state = initialState, action) => {
 	let youtubeId;
 	let entities;
 	switch (action.type) {
+	case 'DB_INIT_SUCCESS':
+		return Object.assign({}, state, { db: action.db });
+	case 'DB_ERROR':
+		return Object.assign({}, state, { dbErrorMessage: action.message });
+	case 'DB_SET_SUCCESS':
+		entities = Object.assign({}, state.entities);
+		entities[action.data.id].saved = true;
+		return Object.assign({}, state, {
+			entities,
+		});
+	// case 'DB_GET_SUCCESS':
+	case 'DB_GETALL_SUCCESS':
+		return Object.assign({}, state, {
+			playList: Object.keys(action.entities).filter(id => action.entities[id].deleted === false),
+			entities: Object.assign({}, state.entities, action.entities),
+		});
+
 	case 'ADD_VIDEOS':
-		entities = Object.assign({}, state.entities)
+		entities = Object.assign({}, state.entities);
 		action.videos.forEach((v) => {
 			entities[v.id] = {
 				title: v.snippet.title,
@@ -26,14 +45,22 @@ const mediaPlayer = (state = initialState, action) => {
 				isPlaying: false,
 				id: v.id,
 				thumbnail: v.snippet.thumbnails.default.url,
+				deleted: false,
 			};
 		});
 		return Object.assign({}, state, {
 			playList: [...state.playList, ...action.videos.map(v => v.id).filter(id => !state.playList.includes(id))],
 			entities,
 		});
+	case 'REMOVE_VIDEO':
+		entities = Object.assign({}, state.entities);
+		entities[action.id].deleted = true;
+		return Object.assign({}, state, {
+			playList: state.playList.filter(id => id !== action.id),
+			entities,
+		});
 	case 'ADD_SEARCH_RESULT':
-		entities = Object.assign({}, state.entities)
+		entities = Object.assign({}, state.entities);
 		entities[action.video.id] = action.video;
 		return Object.assign({}, state, {
 			playList: [...state.playList, action.video.id],

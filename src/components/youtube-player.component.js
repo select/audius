@@ -22,7 +22,7 @@ Vue.component('youtube-player', {
 			}
 			if (mediaPlayer.isPlaying) {
 				if (this.player.getPlayerState() !== 1) this.player.playVideo();
-			} else {
+			} else if (this.player.getPlayerState) {
 				if (![0, 2].includes(this.player.getPlayerState())) this.player.pauseVideo();
 			}
 

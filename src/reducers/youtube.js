@@ -25,6 +25,7 @@ const config = (state = initialState, action) => {
 					isPlaying: false,
 					id: v.id.videoId,
 					thumbnail: v.snippet.thumbnails.default.url,
+					deleted: false,
 				})),
 			})
 		default:
