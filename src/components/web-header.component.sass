@@ -13,6 +13,19 @@ header
 	h1
 		font-weight: 100
 		padding-left: #{2*$grid-space}
+.wamp__control-bar
+	display: flex
+	justify-content: space-between
+	padding: 0 #{2*$grid-space}
+.wamp__current-song
+	display: flex
+	flex-direction: column
+	justify-content: center
+	.wamp__current-song-name
+		font-size: 1.1em
+		// font-weight: bold
+	.wamp__current-song-time
+		color: $color-aluminium-dark
 .wamp__search-controls
 	display: flex
 	align-items: center
