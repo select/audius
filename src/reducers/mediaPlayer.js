@@ -54,6 +54,11 @@ const mediaPlayer = (state = initialState, action) => {
 			playList: [...state.playList, ...action.videos.map(v => v.id).filter(id => !state.playList.includes(id))],
 			entities,
 		});
+	case 'IMPORT_PLAYLIST':
+		return Object.assign({}, state, {
+			playList: [...state.playList, ...action.data.playList.filter(id => !state.playList.includes(id))],
+			entities: Object.assign({}, state.entities, action.data.entities),
+		});
 	case 'REMOVE_VIDEO':
 		entities = Object.assign({}, state.entities);
 		entities[action.id].deleted = true;

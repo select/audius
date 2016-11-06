@@ -30,6 +30,11 @@ export const addVideos = (videos = []) => ({
 	videos,
 });
 
+export const importPlayList = (data) => ({
+	type: 'IMPORT_PLAYLIST',
+	data,
+});
+
 export const removeVideo = (id) => ({
 	type: 'REMOVE_VIDEO',
 	id,

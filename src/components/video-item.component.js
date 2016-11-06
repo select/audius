@@ -29,8 +29,6 @@ Vue.component('video-item', {
 	    range.selectNode(tmpEl);
 	    window.getSelection().addRange(range);
 
-
-			console.log('copy to clipppp')
 	    try {
 	      const successful = document.execCommand('copy');
 		    this.copyActive = true;
