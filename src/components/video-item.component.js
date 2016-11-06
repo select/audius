@@ -50,14 +50,14 @@ Vue.component('video-item', {
 			<div class="media-list__duration" v-if="video.duration">{{video.duration.m}}:{{video.duration.s}}</div>
 		</div>
 		<div class="media-list__controls">
-			<span class="wmp-icon-pause" v-if="video.isPlaying" v-on:click="pause"></span>
-			<span class="wmp-icon-play" v-else v-on:click="play"></span>
-			<span class="wmp-icon-queue2 icon--small"></span>
-			<span class="copy wmp-icon-copy icon--small" v-on:click="copyToClip" v-bind:class="{ active: copyActive }"></span>
-			<a v-bind:href="'https://youtu.be/'+video.id" title="watch on YouTube" target="_blank">
+			<span class="wmp-icon-pause" v-if="video.isPlaying" v-on:click="pause" title="Pause"></span>
+			<span class="wmp-icon-play" v-else v-on:click="play" title="Play"></span>
+			<span class="wmp-icon-queue2 icon--small" title="Add to queue"></span>
+			<span class="copy wmp-icon-copy icon--small" v-on:click="copyToClip" v-bind:class="{ active: copyActive }" title="Copy name and URL"></span>
+			<a v-bind:href="'https://youtu.be/'+video.id" title="Watch on YouTube" target="_blank">
 				<span class="wmp-icon-youtube icon--small"></span>
 			</a>
-			<span class="wmp-icon-close" v-on:click="remove"></span>
+			<span class="wmp-icon-close" v-on:click="remove" title="Remove"></span>
 		</div>
 	</li>
 	`,
