@@ -27,13 +27,13 @@
 			align-items: center
 			background: $color-catskillwhite
 			color: $color-aluminium-dark
-			cursor: pointer
-			text-transform: uppercase
 			white-space: nowrap
 			font-size: 0.7em
 			transition: all $transition-time
-			&.active,
-			&:hover
+			&:not(.play-list-footer--info)
+				cursor: pointer
+				text-transform: uppercase
+			&:hover:not(.play-list-footer--info)
 				background: $color-aluminium
 				color: $color-white
 #import-playlist

@@ -1,6 +1,7 @@
 import Vue from 'vue/dist/vue';
 import store from '../store';
 import Actions from '../actions';
+import * as db from '../utils/indexDB';
 import './play-list.component.sass';
 
 Vue.component('play-list', {
@@ -39,7 +40,11 @@ Vue.component('play-list', {
 			Array.from(files).forEach(file => {
 				const reader = new FileReader();
 				reader.onload = (event) => {
-					store.dispatch(Actions.importPlayList(JSON.parse(event.target.result)));
+					const dataJSON = JSON.parse(event.target.result)
+					store.dispatch(Actions.importPlayList(dataJSON));
+					Object.keys(dataJSON.entities).forEach(key => {
+						db.setMediaEntity(dataJSON.entities[key]);
+					})
 				};
 				reader.readAsText(file)
 			});
@@ -55,6 +60,9 @@ Vue.component('play-list', {
 	</ul>
 	<div class="play-list-footer">
 		<ul>
+			<li class="play-list-footer--info">
+				{{mediaPlayer.playList.length}} Songs
+			</li>
 			<li>
 				<input type="file" id="import-playlist" v-on:change="importPlayList">
 				<label for="import-playlist">Import </label>
