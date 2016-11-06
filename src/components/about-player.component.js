@@ -6,7 +6,7 @@ Vue.component('about-player', {
 <div class="wmp-about">
 	<h2>Usage</h2>
 	<p>
-		Keyboard shortcuts
+		Keyboard shortcuts ... are planned.
 	</p>
 	<h2>Install as app</h2>
 	<p>
@@ -22,8 +22,22 @@ Vue.component('about-player', {
 		<b>Chrome android:</b><br>
 		Tap the menu button and tap <i>Add to homescreen</i>.
 	</p>
+	<p>
+		<b>Local HTML5:</b><br>
+		Since this player is a pure HTML5 app without server side code you can simply download the HTML and JS code and run it from a local file. You can also download the latest version from the source code repository at github (see <a href="#source-code">Source code</a>). Use the web version to always get the latest updates automatically. A word of caution: I recognized that using this app from a local file block$ a lot of videos on YouTube :(
+	</p>
+	<p>
+		Web apps are true freedom! Support an open and liberal web without geo borders and login screens.
+	</p>
 	<h2>Extension</h2>
 	<p>The extension should have been the actual player since the original idea was to create an extension with a media player for <i>web.whatsapp</i>. This however failed since the conten security policy does not allow the embdding of youtube videos. That meant no player, no music.</p>
+	<h2 id="source-code">Source code</h2>
+	<p>
+		The source code for this project is located at <a href="https://github.com/select/audius" title="Source code on select@github audius">https://github.com/select/audius</a>.
+	</p>
+	<p>
+		If you like this project give it a star ★ and contribute some code!
+	</p>
 	<h2>Other Projects</h2>
 	Here are some other fun projects I created this year.
 	<p>
