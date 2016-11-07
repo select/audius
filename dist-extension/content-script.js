@@ -54,11 +54,11 @@
 	
 	__webpack_require__(7);
 	
-	__webpack_require__(48);
+	__webpack_require__(49);
 	
-	__webpack_require__(52);
+	__webpack_require__(53);
 	
-	__webpack_require__(56);
+	__webpack_require__(57);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -7964,13 +7964,13 @@
 	
 	var _store2 = _interopRequireDefault(_store);
 	
-	var _utils = __webpack_require__(38);
+	var _utils = __webpack_require__(39);
 	
-	var _actions = __webpack_require__(42);
+	var _actions = __webpack_require__(43);
 	
 	var _actions2 = _interopRequireDefault(_actions);
 	
-	__webpack_require__(46);
+	__webpack_require__(47);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -11135,15 +11135,15 @@
 	
 	var _mediaPlayer2 = _interopRequireDefault(_mediaPlayer);
 	
-	var _config = __webpack_require__(35);
+	var _config = __webpack_require__(36);
 	
 	var _config2 = _interopRequireDefault(_config);
 	
-	var _youtube = __webpack_require__(36);
+	var _youtube = __webpack_require__(37);
 	
 	var _youtube2 = _interopRequireDefault(_youtube);
 	
-	var _website = __webpack_require__(37);
+	var _website = __webpack_require__(38);
 	
 	var _website2 = _interopRequireDefault(_website);
 	
@@ -11170,6 +11170,8 @@
 	
 	var _duration2 = _interopRequireDefault(_duration);
 	
+	var _video = __webpack_require__(35);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
@@ -11187,6 +11189,28 @@
 		entities: {},
 		showSearch: false
 	};
+	
+	function next(state) {
+		var idx = state.playList.indexOf(state.youtubeId);
+		// markd the current song as stopped
+		if (state.youtubeId) state.entities[state.youtubeId].isPlaying = false;
+		// if last song stop
+		if (idx === state.playList.length - 1) {
+			return Object.assign({}, state, {
+				isPlaying: false
+			});
+			// next song
+		} else if (idx < state.playList.length - 1) {
+			var youtubeId = state.playList[idx + 1];
+			state.entities[youtubeId].isPlaying = true;
+			return Object.assign({}, state, {
+				youtubeId: youtubeId,
+				isPlaying: true,
+				entities: state.entities
+			});
+		}
+		return state;
+	}
 	
 	var mediaPlayer = function mediaPlayer() {
 		var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : initialState;
@@ -11215,17 +11239,23 @@
 				return Object.assign({}, state, {
 					playList: action.playList
 				});
+			case 'VIDEO_ERROR':
+				state.entities[action.id] = Object.assign({}, state.entities[action.id], {
+					errorMessage: action.message,
+					hasError: true
+				});
+				return Object.assign({}, next(state), {
+					entities: state.entities
+				});
 			case 'ADD_VIDEOS':
 				entities = Object.assign({}, state.entities);
 				action.videos.forEach(function (v) {
-					entities[v.id] = {
+					entities[v.id] = Object.assign(_video.videoBaseObject, {
 						title: v.snippet.title,
 						duration: (0, _duration2.default)(v.contentDetails.duration),
-						isPlaying: false,
 						id: v.id,
-						thumbnail: v.snippet.thumbnails.default.url,
-						deleted: false
-					};
+						thumbnail: v.snippet.thumbnails.default.url
+					});
 				});
 				return Object.assign({}, state, {
 					playList: [].concat(_toConsumableArray(state.playList), _toConsumableArray(action.videos.map(function (v) {
@@ -11294,18 +11324,7 @@
 					showPlayList: !state.showPlayList
 				});
 			case 'NEXT_VIDEO':
-				idx = state.playList.indexOf(state.youtubeId);
-				if (idx < state.playList.length - 1) {
-					youtubeId = state.playList[idx + 1];
-					if (state.youtubeId) state.entities[state.youtubeId].isPlaying = false;
-					state.entities[youtubeId].isPlaying = true;
-					return Object.assign({}, state, {
-						youtubeId: youtubeId,
-						isPlaying: true,
-						entities: state.entities
-					});
-				}
-				return state;
+				return next(state);
 			case 'PREV_VIDEO':
 				idx = state.playList.indexOf(state.youtubeId);
 				if (idx > 0) {
@@ -11376,6 +11395,25 @@
 	Object.defineProperty(exports, "__esModule", {
 		value: true
 	});
+	var videoBaseObject = exports.videoBaseObject = {
+		title: '',
+		duration: {},
+		isPlaying: false,
+		id: '',
+		thumbnail: '',
+		deleted: false,
+		hasError: false
+	};
+
+/***/ },
+/* 36 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
 	var initialState = {
 		youtubeApiKey: 'AIzaSyCHVgsa5owudn4G79IX9pcRcrVNOmgKHuM'
 	};
@@ -11396,7 +11434,7 @@
 	exports.default = config;
 
 /***/ },
-/* 36 */
+/* 37 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -11408,6 +11446,8 @@
 	var _duration = __webpack_require__(34);
 	
 	var _duration2 = _interopRequireDefault(_duration);
+	
+	var _video = __webpack_require__(35);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -11434,14 +11474,14 @@
 				return Object.assign({}, state, {
 					isSearching: false,
 					results: action.results.map(function (v) {
-						return {
+						return Object.assign(_video.videoBaseObject, {
 							title: v.snippet.title,
 							duration: (0, _duration2.default)(v.contentDetails.duration),
 							isPlaying: false,
 							id: v.id.videoId,
 							thumbnail: v.snippet.thumbnails.default.url,
 							deleted: false
-						};
+						});
 					})
 				});
 			default:
@@ -11452,7 +11492,7 @@
 	exports.default = config;
 
 /***/ },
-/* 37 */
+/* 38 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -11490,7 +11530,7 @@
 	exports.default = website;
 
 /***/ },
-/* 38 */
+/* 39 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -11500,11 +11540,11 @@
 	});
 	exports.findVideos = exports.debounce = exports.ajax = undefined;
 	
-	var _ajax = __webpack_require__(39);
+	var _ajax = __webpack_require__(40);
 	
-	var _debounce = __webpack_require__(40);
+	var _debounce = __webpack_require__(41);
 	
-	var _findVideos = __webpack_require__(41);
+	var _findVideos = __webpack_require__(42);
 	
 	var _findVideos2 = _interopRequireDefault(_findVideos);
 	
@@ -11515,7 +11555,7 @@
 	exports.findVideos = _findVideos2.default;
 
 /***/ },
-/* 39 */
+/* 40 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -11536,7 +11576,7 @@
 	}
 
 /***/ },
-/* 40 */
+/* 41 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -11635,7 +11675,7 @@
 	};
 
 /***/ },
-/* 41 */
+/* 42 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -11677,11 +11717,11 @@
 	
 	var _store2 = _interopRequireDefault(_store);
 	
-	var _actions = __webpack_require__(42);
+	var _actions = __webpack_require__(43);
 	
 	var _actions2 = _interopRequireDefault(_actions);
 	
-	var _ajax = __webpack_require__(39);
+	var _ajax = __webpack_require__(40);
 	
 	var _ajax2 = _interopRequireDefault(_ajax);
 	
@@ -11696,7 +11736,7 @@
 	var youtubeExtract2 = /youtube.com\/watch\?v=([\w-]+)/;
 
 /***/ },
-/* 42 */
+/* 43 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -11705,15 +11745,15 @@
 	  value: true
 	});
 	
-	var _youtube = __webpack_require__(43);
+	var _youtube = __webpack_require__(44);
 	
 	var youtube = _interopRequireWildcard(_youtube);
 	
-	var _mediaPlayer = __webpack_require__(44);
+	var _mediaPlayer = __webpack_require__(45);
 	
 	var mediaPlayer = _interopRequireWildcard(_mediaPlayer);
 	
-	var _website = __webpack_require__(45);
+	var _website = __webpack_require__(46);
 	
 	var website = _interopRequireWildcard(_website);
 	
@@ -11724,7 +11764,7 @@
 	exports.default = actions;
 
 /***/ },
-/* 43 */
+/* 44 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -11757,7 +11797,7 @@
 	};
 
 /***/ },
-/* 44 */
+/* 45 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -11771,6 +11811,14 @@
 			db: db
 		};
 	};
+	var videoError = exports.videoError = function videoError(id, message) {
+		return {
+			type: 'VIDEO_ERROR',
+			id: id,
+			message: message
+		};
+	};
+	
 	var error = exports.error = function error(message) {
 		return {
 			type: 'DB_ERROR',
@@ -11904,7 +11952,7 @@
 	};
 
 /***/ },
-/* 45 */
+/* 46 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -11927,13 +11975,13 @@
 	};
 
 /***/ },
-/* 46 */
+/* 47 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(47);
+	var content = __webpack_require__(48);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(6)(content, {});
@@ -11953,7 +12001,7 @@
 	}
 
 /***/ },
-/* 47 */
+/* 48 */
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(4)();
@@ -11961,13 +12009,13 @@
 	
 	
 	// module
-	exports.push([module.id, "ul.media-list {\n  list-style: none;\n  padding: 0;\n  margin: 0;\n  background: rgba(255, 255, 255, 0.78);\n  overflow-x: hidden; }\n  ul.media-list li {\n    height: 55px;\n    padding: 0 7px;\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: flex;\n    -webkit-box-align: center;\n        -ms-flex-align: center;\n            align-items: center; }\n    ul.media-list li:hover {\n      background: #EFF1F7; }\n      ul.media-list li:hover .media-list__controls {\n        display: -webkit-box;\n        display: -ms-flexbox;\n        display: flex;\n        -webkit-box-align: center;\n            -ms-flex-align: center;\n                align-items: center; }\n    ul.media-list li.active {\n      background: #2DA7EF;\n      color: #fff; }\n      ul.media-list li.active a,\n      ul.media-list li.active span:hover {\n        color: #fff; }\n\n.media-list__thumbnail {\n  width: 49px;\n  height: 49px;\n  background-size: cover;\n  background-position: center;\n  border-radius: 50%;\n  margin-right: 7px; }\n\n.media-list__body {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: column;\n          flex-direction: column;\n  -webkit-box-flex: 1;\n      -ms-flex: 1;\n          flex: 1;\n  overflow-x: hidden; }\n  .media-list__body .media-list__name {\n    white-space: nowrap;\n    overflow: hidden;\n    text-overflow: ellipsis; }\n  .media-list__body .media-list__duration {\n    color: #A8ADB7; }\n\n.media-list__controls {\n  display: none; }\n  .media-list__controls span {\n    cursor: pointer;\n    -webkit-transition: all 250ms;\n    transition: all 250ms; }\n    .media-list__controls span:hover {\n      color: #2DA7EF; }\n\n.wamp {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: column;\n          flex-direction: column;\n  height: 394px;\n  position: absolute;\n  top: 0;\n  right: 0; }\n\n.wamp__media-list-wrapper {\n  -webkit-box-flex: 1;\n      -ms-flex: 1;\n          flex: 1;\n  overflow-y: auto; }\n\n.wamp__shuffle,\n.wamp__show-play-list {\n  color: #E2E4E9; }\n  .wamp__shuffle.active,\n  .wamp__show-play-list.active {\n    color: #303641; }\n\n.wamp__controls {\n  width: 100%;\n  display: -webkit-inline-box;\n  display: -ms-inline-flexbox;\n  display: inline-flex;\n  -webkit-box-pack: end;\n      -ms-flex-pack: end;\n          justify-content: flex-end;\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center; }\n  .wamp__controls[disabled] span {\n    color: #E2E4E9;\n    pointer-events: none; }\n  .wamp__controls span {\n    cursor: pointer; }\n  .wamp__controls .spacer {\n    width: 14px; }\n  .wamp__controls .wamp__play-pause {\n    height: 49px; }\n    .wamp__controls .wamp__play-pause span:before {\n      font-size: 2.5em; }\n\n.wamp__youtube-player {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-pack: end;\n      -ms-flex-pack: end;\n          justify-content: flex-end; }\n", ""]);
+	exports.push([module.id, "ul.media-list {\n  list-style: none;\n  padding: 0;\n  margin: 0;\n  background: rgba(255, 255, 255, 0.78);\n  overflow-x: hidden; }\n  ul.media-list li {\n    height: 55px;\n    padding: 0 7px;\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: flex;\n    -webkit-box-align: center;\n        -ms-flex-align: center;\n            align-items: center; }\n    ul.media-list li:hover {\n      background: #EFF1F7; }\n      ul.media-list li:hover .media-list__controls {\n        display: -webkit-box;\n        display: -ms-flexbox;\n        display: flex;\n        -webkit-box-align: center;\n            -ms-flex-align: center;\n                align-items: center; }\n    ul.media-list li.active {\n      background: #2DA7EF;\n      color: #fff; }\n      ul.media-list li.active a,\n      ul.media-list li.active span:hover {\n        color: #fff; }\n\n.media-list__thumbnail {\n  width: 49px;\n  height: 49px;\n  background-size: cover;\n  background-position: center;\n  border-radius: 50%;\n  margin-right: 7px; }\n\n.media-list li.error .media-list__body {\n  text-decoration: line-through; }\n\n.media-list__body {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: column;\n          flex-direction: column;\n  -webkit-box-flex: 1;\n      -ms-flex: 1;\n          flex: 1;\n  overflow-x: hidden; }\n  .media-list__body .media-list__name {\n    white-space: nowrap;\n    overflow: hidden;\n    text-overflow: ellipsis; }\n  .media-list__body .media-list__duration {\n    color: #A8ADB7; }\n\n.media-list__controls {\n  display: none; }\n  .media-list__controls span {\n    cursor: pointer;\n    -webkit-transition: all 250ms;\n    transition: all 250ms; }\n    .media-list__controls span:hover {\n      color: #2DA7EF; }\n\n.wamp {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: column;\n          flex-direction: column;\n  height: 394px;\n  position: absolute;\n  top: 0;\n  right: 0; }\n\n.wamp__media-list-wrapper {\n  -webkit-box-flex: 1;\n      -ms-flex: 1;\n          flex: 1;\n  overflow-y: auto; }\n\n.wamp__shuffle,\n.wamp__show-play-list {\n  color: #E2E4E9; }\n  .wamp__shuffle.active,\n  .wamp__show-play-list.active {\n    color: #303641; }\n\n.wamp__controls {\n  width: 100%;\n  display: -webkit-inline-box;\n  display: -ms-inline-flexbox;\n  display: inline-flex;\n  -webkit-box-pack: end;\n      -ms-flex-pack: end;\n          justify-content: flex-end;\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center; }\n  .wamp__controls[disabled] span {\n    color: #E2E4E9;\n    pointer-events: none; }\n  .wamp__controls span {\n    cursor: pointer; }\n  .wamp__controls .spacer {\n    width: 14px; }\n  .wamp__controls .wamp__play-pause {\n    height: 49px; }\n    .wamp__controls .wamp__play-pause span:before {\n      font-size: 2.5em; }\n\n.wamp__youtube-player {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-pack: end;\n      -ms-flex-pack: end;\n          justify-content: flex-end; }\n", ""]);
 	
 	// exports
 
 
 /***/ },
-/* 48 */
+/* 49 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -11980,15 +12028,15 @@
 	
 	var _store2 = _interopRequireDefault(_store);
 	
-	var _actions = __webpack_require__(42);
+	var _actions = __webpack_require__(43);
 	
 	var _actions2 = _interopRequireDefault(_actions);
 	
-	var _indexDB = __webpack_require__(49);
+	var _indexDB = __webpack_require__(50);
 	
 	var db = _interopRequireWildcard(_indexDB);
 	
-	__webpack_require__(50);
+	__webpack_require__(51);
 	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 	
@@ -12041,11 +12089,11 @@
 				tmpEl.parentNode.removeChild(tmpEl);
 			}
 		},
-		template: '\n\t<li v-bind:class="{ active: video.isPlaying }">\n\t\t<div class="media-list__thumbnail" v-bind:style="{ backgroundImage: \'url(\' + video.thumbnail + \')\' }"></div>\n\t\t<div class="media-list__body">\n\t\t\t<div class="media-list__name">{{video.title}}</div>\n\t\t\t<div class="media-list__duration" v-if="video.duration">{{video.duration.m}}:{{video.duration.s}}</div>\n\t\t</div>\n\t\t<div class="media-list__controls">\n\t\t\t<span class="wmp-icon-pause" v-if="video.isPlaying" v-on:click="pause"></span>\n\t\t\t<span class="wmp-icon-play" v-else v-on:click="play"></span>\n\t\t\t<span class="wmp-icon-queue2 icon--small"></span>\n\t\t\t<span class="copy wmp-icon-copy icon--small" v-on:click="copyToClip" v-bind:class="{ active: copyActive }"></span>\n\t\t\t<a v-bind:href="\'https://youtu.be/\'+video.id" title="watch on YouTube" target="_blank">\n\t\t\t\t<span class="wmp-icon-youtube icon--small"></span>\n\t\t\t</a>\n\t\t\t<span class="wmp-icon-close" v-on:click="remove"></span>\n\t\t</div>\n\t</li>\n\t'
+		template: '\n\t<li v-bind:class="{ active: video.isPlaying, error: video.hasError }">\n\t\t<div class="media-list__thumbnail" v-bind:style="{ backgroundImage: \'url(\' + video.thumbnail + \')\' }"></div>\n\t\t<div class="media-list__body">\n\t\t\t<div class="media-list__name">{{video.title}}</div>\n\t\t\t<div class="media-list__duration" v-if="video.duration">{{video.duration.m}}:{{video.duration.s}}</div>\n\t\t</div>\n\t\t<div class="media-list__controls">\n\t\t\t<div v-if="!video.hasError">\n\t\t\t\t<span class="wmp-icon-pause" v-if="video.isPlaying" v-on:click="pause" title="Pause"></span>\n\t\t\t\t<span class="wmp-icon-play" v-else v-on:click="play" title="Play"></span>\n\t\t\t\t<span class="wmp-icon-queue2 icon--small" title="Add to queue"></span>\n\t\t\t</div>\n\t\t\t<span class="wmp-icon-search" v-else title="Search alternative"></span>\n\t\t\t<span class="copy wmp-icon-copy icon--small" v-on:click="copyToClip" v-bind:class="{ active: copyActive }" title="Copy name and URL"></span>\n\t\t\t<a v-bind:href="\'https://youtu.be/\'+video.id" title="Watch on YouTube" target="_blank">\n\t\t\t\t<span class="wmp-icon-youtube icon--small"></span>\n\t\t\t</a>\n\t\t\t<span class="wmp-icon-close" v-on:click="remove" title="Remove"></span>\n\t\t</div>\n\t</li>\n\t'
 	});
 
 /***/ },
-/* 49 */
+/* 50 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -12058,7 +12106,7 @@
 	exports.getMediaEntity = getMediaEntity;
 	exports.storageStats = storageStats;
 	
-	var _actions = __webpack_require__(42);
+	var _actions = __webpack_require__(43);
 	
 	var _actions2 = _interopRequireDefault(_actions);
 	
@@ -12177,13 +12225,13 @@
 	}
 
 /***/ },
-/* 50 */
+/* 51 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(51);
+	var content = __webpack_require__(52);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(6)(content, {});
@@ -12203,7 +12251,7 @@
 	}
 
 /***/ },
-/* 51 */
+/* 52 */
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(4)();
@@ -12217,7 +12265,7 @@
 
 
 /***/ },
-/* 52 */
+/* 53 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -12230,15 +12278,21 @@
 	
 	var _store2 = _interopRequireDefault(_store);
 	
-	var _actions = __webpack_require__(42);
+	var _actions = __webpack_require__(43);
 	
 	var _actions2 = _interopRequireDefault(_actions);
 	
-	var _youtubeIframeApi = __webpack_require__(53);
+	var _youtubeIframeApi = __webpack_require__(54);
 	
 	var _youtubeIframeApi2 = _interopRequireDefault(_youtubeIframeApi);
 	
-	__webpack_require__(54);
+	var _indexDB = __webpack_require__(50);
+	
+	var db = _interopRequireWildcard(_indexDB);
+	
+	__webpack_require__(55);
+	
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -12279,7 +12333,8 @@
 					width: '100%',
 					videoId: initialVideos[Math.floor(Math.random() * initialVideos.length)],
 					events: {
-						'onStateChange': _this2.onPlayerStateChange
+						onStateChange: _this2.onPlayerStateChange,
+						onError: _this2.onPlayerError
 					}
 				});
 			};
@@ -12287,6 +12342,12 @@
 		},
 	
 		methods: {
+			onPlayerError: function onPlayerError(event) {
+				console.log('error!');
+				var youtubeId = _store2.default.getState().mediaPlayer.youtubeId;
+				_store2.default.dispatch(_actions2.default.videoError(_store2.default.getState().mediaPlayer.youtubeId, event.data));
+				db.setMediaEntity(_store2.default.getState().mediaPlayer.entities[youtubeId]);
+			},
 			onPlayerStateChange: function onPlayerStateChange(event) {
 				var playerState = this.player.getPlayerState();
 				var isPlaying = _store2.default.getState().mediaPlayer.isPlaying;
@@ -12303,7 +12364,7 @@
 	});
 
 /***/ },
-/* 53 */
+/* 54 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -13100,13 +13161,13 @@
 	};
 
 /***/ },
-/* 54 */
+/* 55 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(55);
+	var content = __webpack_require__(56);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(6)(content, {});
@@ -13126,7 +13187,7 @@
 	}
 
 /***/ },
-/* 55 */
+/* 56 */
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(4)();
@@ -13140,12 +13201,12 @@
 
 
 /***/ },
-/* 56 */
+/* 57 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var _findVideos = __webpack_require__(41);
+	var _findVideos = __webpack_require__(42);
 	
 	var _findVideos2 = _interopRequireDefault(_findVideos);
 	
