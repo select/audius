@@ -5,7 +5,7 @@ import * as db from '../utils/indexDB';
 import './video-item.component.sass';
 
 Vue.component('video-item', {
-	props: ['video'],
+	props: ['video', 'isPlaying'],
 	data() {
 		return {
 			copyActive: false
@@ -43,7 +43,7 @@ Vue.component('video-item', {
 	  },
 	},
 	template: `
-	<li v-bind:class="{ active: video.isPlaying, error: video.hasError }" v-on:dblclick="play">
+	<li v-bind:class="{ active: isPlaying, error: video.hasError }" v-on:dblclick="play">
 		<div class="media-list__thumbnail" v-bind:style="{ backgroundImage: 'url(' + video.thumbnail + ')' }"></div>
 		<div class="media-list__body">
 			<div class="media-list__name">{{video.title}}</div>
@@ -51,7 +51,7 @@ Vue.component('video-item', {
 		</div>
 		<div class="media-list__controls">
 			<div v-if="!video.hasError">
-				<span class="wmp-icon-pause" v-if="video.isPlaying" v-on:click="pause" title="Pause"></span>
+				<span class="wmp-icon-pause" v-if="isPlaying" v-on:click="pause" title="Pause"></span>
 				<span class="wmp-icon-play" v-else v-on:click="play" title="Play"></span>
 				<span class="wmp-icon-queue2 icon--small" title="Add to queue"></span>
 			</div>

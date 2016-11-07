@@ -56,7 +56,10 @@ Vue.component('play-list', {
 		The playlist is empty <br> ... add some music <br>┐(・。・┐) ♪
 	</h2>
 	<ul class="media-list">
-		<video-item v-for="id in mediaPlayer.playList" :video="mediaPlayer.entities[id]"></video-item>
+		<video-item
+			v-for="id in mediaPlayer.playList"
+			:video="mediaPlayer.entities[id]"
+			:isPlaying="mediaPlayer.entities[id] && (mediaPlayer.youtubeId == mediaPlayer.entities[id].id)"></video-item>
 	</ul>
 	<div class="play-list-footer">
 		<ul>
