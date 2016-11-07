@@ -6,6 +6,7 @@
 	"main": "index.js",
 	"scripts": {
 		"start": "concurrently --kill-others 'npm run watch:build' 'npm run watch:sync'",
+		"build:prod": "./node_modules/.bin/webpack --config='./config/webpack.production.js' --progress --profile --colors --display-error-details --display-cached",
 		"build": "./node_modules/.bin/webpack --config='./config/webpack.dev.js' --progress --profile --colors --display-error-details --display-cached",
 		"watch:build": "npm run build -- --watch",
 		"docu": "livingstyleguide compile ./src/sass/styleguide.lsg ./documentation/styleguide.html && nodejs node_modules/.bin/generate-md --layout github --input README.md --output ./documentation/",

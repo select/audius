@@ -1,7 +1,5 @@
 import Vue from 'vue/dist/vue';
 
-import '../utils/redux-devtools-extension'; // chrome-extension://lmhkpmbekcpmknklioeibfkpmmfibljd/js/redux-devtools-extension.js
-
 import './app.sass';
 import '../components/web-header.component';
 import '../components/main-right.component';
