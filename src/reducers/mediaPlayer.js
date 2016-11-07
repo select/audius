@@ -1,4 +1,5 @@
 import duration from '../utils/duration';
+import { videoBaseObject } from './video.js';
 
 const initialState = {
 	db: undefined,
@@ -13,6 +14,28 @@ const initialState = {
 	entities: {},
 	showSearch: false,
 };
+
+function next(state) {
+	const idx = state.playList.indexOf(state.youtubeId);
+	// markd the current song as stopped
+	if (state.youtubeId) state.entities[state.youtubeId].isPlaying = false;
+	// if last song stop
+	if (idx === state.playList.length - 1) {
+		return Object.assign({}, state , {
+			isPlaying: false,
+		});
+	// next song
+	} else if (idx < state.playList.length - 1) {
+		const youtubeId = state.playList[idx + 1];
+		state.entities[youtubeId].isPlaying = true;
+		return Object.assign({}, state, {
+			youtubeId,
+			isPlaying: true,
+			entities: state.entities,
+		});
+	}
+	return state;
+}
 
 const mediaPlayer = (state = initialState, action) => {
 	let idx;
@@ -38,17 +61,23 @@ const mediaPlayer = (state = initialState, action) => {
 		return Object.assign({}, state, {
 			playList: action.playList,
 		});
+	case 'VIDEO_ERROR':
+		state.entities[action.id] = Object.assign({}, state.entities[action.id], {
+			errorMessage: action.message,
+			hasError: true,
+		})
+		return Object.assign({}, next(state), {
+			entities: state.entities,
+		});
 	case 'ADD_VIDEOS':
 		entities = Object.assign({}, state.entities);
 		action.videos.forEach((v) => {
-			entities[v.id] = {
+			entities[v.id] = Object.assign(videoBaseObject, {
 				title: v.snippet.title,
 				duration: duration(v.contentDetails.duration),
-				isPlaying: false,
 				id: v.id,
 				thumbnail: v.snippet.thumbnails.default.url,
-				deleted: false,
-			};
+			});
 		});
 		return Object.assign({}, state, {
 			playList: [...state.playList, ...action.videos.map(v => v.id).filter(id => !state.playList.includes(id))],
@@ -109,18 +138,7 @@ const mediaPlayer = (state = initialState, action) => {
 			showPlayList: !state.showPlayList,
 		});
 	case 'NEXT_VIDEO':
-		idx = state.playList.indexOf(state.youtubeId);
-		if (idx < state.playList.length - 1) {
-			youtubeId = state.playList[idx + 1];
-			if (state.youtubeId) state.entities[state.youtubeId].isPlaying = false;
-			state.entities[youtubeId].isPlaying = true;
-			return Object.assign({}, state, {
-				youtubeId,
-				isPlaying: true,
-				entities: state.entities,
-			});
-		}
-		return state;
+		return next(state);
 	case 'PREV_VIDEO':
 		idx = state.playList.indexOf(state.youtubeId);
 		if (idx > 0) {

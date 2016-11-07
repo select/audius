@@ -2,6 +2,12 @@ export const initDbSuccess = (db) => ({
 	type: 'DB_INIT_SUCCESS',
 	db,
 });
+export const videoError = (id, message) => ({
+	type: 'VIDEO_ERROR',
+	id,
+	message,
+});
+
 export const error = (message) => ({
 	type: 'DB_ERROR',
 	message,

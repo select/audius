@@ -53,7 +53,7 @@ Vue.component('about-player', {
 	</p>
 	<h2>Credits</h2>
 	<p>
-		This work is inspired by the incredible Streamus app.<br>
+		This work is inspired by the incredible <a href="https://www.reddit.com/r/streamus/">Streamus</a> app.<br>
 		It was created with:
 		<ul>
 			<li>VueJs</li>

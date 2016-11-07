@@ -43,16 +43,19 @@ Vue.component('video-item', {
 	  },
 	},
 	template: `
-	<li v-bind:class="{ active: video.isPlaying }">
+	<li v-bind:class="{ active: video.isPlaying, error: video.hasError }" v-on:dblclick="play">
 		<div class="media-list__thumbnail" v-bind:style="{ backgroundImage: 'url(' + video.thumbnail + ')' }"></div>
 		<div class="media-list__body">
 			<div class="media-list__name">{{video.title}}</div>
 			<div class="media-list__duration" v-if="video.duration">{{video.duration.m}}:{{video.duration.s}}</div>
 		</div>
 		<div class="media-list__controls">
-			<span class="wmp-icon-pause" v-if="video.isPlaying" v-on:click="pause" title="Pause"></span>
-			<span class="wmp-icon-play" v-else v-on:click="play" title="Play"></span>
-			<span class="wmp-icon-queue2 icon--small" title="Add to queue"></span>
+			<div v-if="!video.hasError">
+				<span class="wmp-icon-pause" v-if="video.isPlaying" v-on:click="pause" title="Pause"></span>
+				<span class="wmp-icon-play" v-else v-on:click="play" title="Play"></span>
+				<span class="wmp-icon-queue2 icon--small" title="Add to queue"></span>
+			</div>
+			<span class="wmp-icon-search" v-else title="Search alternative"></span>
 			<span class="copy wmp-icon-copy icon--small" v-on:click="copyToClip" v-bind:class="{ active: copyActive }" title="Copy name and URL"></span>
 			<a v-bind:href="'https://youtu.be/'+video.id" title="Watch on YouTube" target="_blank">
 				<span class="wmp-icon-youtube icon--small"></span>
