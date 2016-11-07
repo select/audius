@@ -22,7 +22,7 @@ Vue.component('web-header', {
 			this.website = store.getState().website;
 			if (this.website.showSearch) {
 				Vue.nextTick(() => {
-					document.querySelector('.wamp__search-input').focus();
+					document.querySelector('.au-header__search-input').focus();
 				});
 			}
 			if (this.mediaPlayer.youtubeId) {
@@ -46,26 +46,26 @@ Vue.component('web-header', {
 		clear(event) {
 			console.log('cleeeear')
 			event.stopPropagation();
-			document.querySelector('.wamp__search-input').value = '';
+			document.querySelector('.au-header__search-input').value = '';
 		},
 		searchYoutube: debounce((event) => {
 			// store.dispatch(Actions.searchYoutube(event.target.value)); // should use this and middleware
 			searchYoutube(event.target.value);
-		}, 800),
+		}, 500),
 	},
 	template: `
 <header>
-	<div class="wamp__search">
-		<h1>Audius</h1>
-		<div class="wamp__search-controls">
+	<div class="au-header__search">
+		<img class="au-header__logo" src="./audius.logo.white.svg" alt="Audius - music player - logo">
+		<div class="au-header__search-controls">
 			<div
-				class="wamp__search-input-group"
+				class="au-header__search-input-group"
 				v-on:click="store.dispatch(Actions.toggleSearch())"
 				v-bind:class="{ active: website.showSearch }">
 				<span class="wmp-icon-search"></span>
 				<input
 					type="text"
-					class="wamp__search-input"
+					class="au-header__search-input"
 					placeholder="Search"
 					v-on:click="stopPropagation"
 					v-on:keyup="searchYoutube"
@@ -77,26 +77,26 @@ Vue.component('web-header', {
 			<span class="wmp-icon-more_vert"></span>
 		</div>
 	</div>
-	<div class="wamp__control-bar">
-		<div class="wamp__current-song">
-			<div class="wamp__current-song-name" v-if="currentSong">{{currentSong.title}}</div>
-			<div class="wamp__current-song-time" v-if="currentSong"> 3:20 / {{currentSong.duration.m}}:{{currentSong.duration.s}} </div>
+	<div class="au-header__control-bar">
+		<div class="au-header__current-song">
+			<div class="au-header__current-song-name" v-if="currentSong">{{currentSong.title}}</div>
+			<div class="au-header__current-song-time" v-if="currentSong"> 3:20 / {{currentSong.duration.m}}:{{currentSong.duration.s}} </div>
 		</div>
-		<div class="wamp__controls" :disabled="!mediaPlayer.playList.length">
+		<div class="au-header__controls" :disabled="!mediaPlayer.playList.length">
 			<span class="wmp-icon-previous" v-on:click="store.dispatch(Actions.previousVideo())" title="Previous song"></span>
-			<div class="wamp__play-pause" v-on:click="playPauseVideos">
+			<div class="au-header__play-pause" v-on:click="playPauseVideos">
 				<span class="wmp-icon-pause" v-if="mediaPlayer.isPlaying" title="Pause"></span>
 				<span class="wmp-icon-play" v-else  title="Play"></span>
 			</div>
 			<span class="wmp-icon-next" v-on:click="store.dispatch(Actions.nextVideo())"  title="Next song"></span>
 			<div class="spacer"></div>
-			<div class="wamp__controls-small">
-				<span class="wamp__shuffle wmp-icon-shuffle" v-on:click="store.dispatch(Actions.toggleShuffle())" v-bind:class="{ active: mediaPlayer.shuffle }" title="Shuffle"></span>
-				<span class="wamp__show-play-list wmp-icon-repeat"  v-on:click="store.dispatch(Actions.togglePlayList())" v-bind:class="{ active: mediaPlayer.showPlayList }" title="Repeat"></span>
+			<div class="au-header__controls-small">
+				<span class="au-header__shuffle wmp-icon-shuffle" v-on:click="store.dispatch(Actions.toggleShuffle())" v-bind:class="{ active: mediaPlayer.shuffle }" title="Shuffle"></span>
+				<span class="au-header__show-play-list wmp-icon-repeat"  v-on:click="store.dispatch(Actions.togglePlayList())" v-bind:class="{ active: mediaPlayer.showPlayList }" title="Repeat"></span>
 			</div>
 		</div>
 	</div>
-	<div class="wamp__progress"> </div>
+	<div class="au-header__progress"> </div>
 </header>
 	`,
 });

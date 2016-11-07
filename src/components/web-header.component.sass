@@ -3,7 +3,10 @@
 
 header
 	width: 100%
-.wamp__search
+.au-header__logo
+	width: 150px
+	margin-left: #{2*$grid-space}
+.au-header__search
 	color: $color-white
 	height: $touch-size-medium
 	background: $color-pictonblue
@@ -13,23 +16,23 @@ header
 	h1
 		font-weight: 100
 		padding-left: #{2*$grid-space}
-.wamp__control-bar
+.au-header__control-bar
 	display: flex
 	justify-content: space-between
 	padding: 0 #{2*$grid-space}
-.wamp__current-song
+.au-header__current-song
 	display: flex
 	flex-direction: column
 	justify-content: center
-	.wamp__current-song-name
+	.au-header__current-song-name
 		font-size: 1.1em
 		// font-weight: bold
-	.wamp__current-song-time
+	.au-header__current-song-time
 		color: $color-aluminium-dark
-.wamp__search-controls
+.au-header__search-controls
 	display: flex
 	align-items: center
-.wamp__search-input-group
+.au-header__search-input-group
 	height: $touch-size-small
 	display: flex
 	align-items: center
@@ -54,7 +57,7 @@ header
 		+placeholder
 			color: $color-white
 
-.wamp__controls
+.au-header__controls
 	height: $touch-size-large
 	display: flex
 	justify-content: flex-end
@@ -67,16 +70,16 @@ header
 		cursor: pointer
 	.spacer
 		width: #{2*$grid-space}
-	.wamp__play-pause
+	.au-header__play-pause
 		height: $touch-size-medium
 		span:before
 			font-size: 2.5em
-	.wamp__controls-small
+	.au-header__controls-small
 		display: flex
 		align-items: center
 		span:before
 			font-size: 1.5em
-.wamp__progress
+.au-header__progress
 	width: 100%
 	height: 4px
 	background: $color-aluminium
