@@ -1,4 +1,5 @@
-import duration from '../utils/duration.js';
+import duration from '../utils/duration';
+import { videoBaseObject } from './video';
 
 const initialState = {
 	query: '',
@@ -19,7 +20,7 @@ const config = (state = initialState, action) => {
 		case 'YOUTUBE_SEARCH_SUCCESS':
 			return Object.assign({}, state, {
 				isSearching: false,
-				results: action.results.map((v) => ({
+				results: action.results.map((v) => Object.assign({}, videoBaseObject, {
 					title: v.snippet.title,
 					duration: duration(v.contentDetails.duration),
 					isPlaying: false,

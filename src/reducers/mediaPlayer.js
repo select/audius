@@ -17,21 +17,22 @@ const initialState = {
 
 function next(state) {
 	const idx = state.playList.indexOf(state.youtubeId);
-	// markd the current song as stopped
-	if (state.youtubeId) state.entities[state.youtubeId].isPlaying = false;
 	// if last song stop
-	if (idx === state.playList.length - 1) {
+	if (state.shuffle) {
+		return Object.assign({}, state , {
+			youtubeId: state.playList[Math.floor(Math.random()*state.playList.length)],
+			isPlaying: true,
+		});
+	} else if (idx === state.playList.length - 1) {
 		return Object.assign({}, state , {
 			isPlaying: false,
 		});
 	// next song
 	} else if (idx < state.playList.length - 1) {
 		const youtubeId = state.playList[idx + 1];
-		state.entities[youtubeId].isPlaying = true;
 		return Object.assign({}, state, {
 			youtubeId,
 			isPlaying: true,
-			entities: state.entities,
 		});
 	}
 	return state;
@@ -104,15 +105,11 @@ const mediaPlayer = (state = initialState, action) => {
 		});
 	case 'PLAY_VIDEO':
 		youtubeId = action.id;
-		if (state.youtubeId) state.entities[state.youtubeId].isPlaying = false;
-		if (state.entities[youtubeId]) state.entities[youtubeId].isPlaying = true;
 		return Object.assign({}, state, {
 			isPlaying: true,
 			youtubeId,
-			entities: state.entities,
 		});
 	case 'PAUSE':
-		if (state.youtubeId) state.entities[state.youtubeId].isPlaying = false;
 		return Object.assign({}, state, {
 			isPlaying: false,
 			entities: state.entities,
@@ -120,12 +117,9 @@ const mediaPlayer = (state = initialState, action) => {
 	case 'PLAY':
 		if (state.playList.length) {
 			youtubeId = !state.youtubeId ? state.playList[0] : state.youtubeId;
-			if (state.youtubeId) state.entities[state.youtubeId].isPlaying = false;
-			state.entities[youtubeId].isPlaying = true;
 			return Object.assign({}, state, {
 				isPlaying: true,
 				youtubeId,
-				entities: state.entities,
 			});
 		}
 		return state;
@@ -143,12 +137,9 @@ const mediaPlayer = (state = initialState, action) => {
 		idx = state.playList.indexOf(state.youtubeId);
 		if (idx > 0) {
 			youtubeId = state.playList[idx - 1];
-			if (state.youtubeId) state.entities[state.youtubeId].isPlaying = false;
-			state.entities[youtubeId].isPlaying = true;
 			return Object.assign({}, state, {
 				youtubeId: state.playList[idx - 1],
 				isPlaying: true,
-				entities: state.entities,
 			});
 		}
 		return state;
