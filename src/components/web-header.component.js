@@ -44,8 +44,15 @@ Vue.component('web-header', {
 			if (this.website.showSearch) event.stopPropagation();
 		},
 		clear(event) {
+			clearTimeout(this.blurTimer);
 			event.stopPropagation();
 			document.querySelector('.au-header__search-input').value = '';
+			document.querySelector('.au-header__search-input').focus();
+		},
+		delayBlur(event) {
+			this.blurTimer = setTimeout(()=> {
+				store.dispatch(Actions.toggleSearch(false))
+			}, 800)
 		},
 		searchYoutube: debounce((event) => {
 			// store.dispatch(Actions.searchYoutube(event.target.value)); // should use this and middleware
@@ -68,7 +75,7 @@ Vue.component('web-header', {
 					placeholder="Search"
 					v-on:click="stopPropagation"
 					v-on:keyup="searchYoutube"
-					v-on:blur="store.dispatch(Actions.toggleSearch())"
+					v-on:blur="delayBlur"
 					debounce="500">
 				<span class="wmp-icon-close" v-show="website.showSearch" v-on:click="clear"></span>
 			</div>

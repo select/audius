@@ -1,5 +1,6 @@
-export const toggleSearch = () => ({
+export const toggleSearch = (state) => ({
 	type: 'TOGGLE_SEARCH',
+	state,
 });
 
 export const setMainRightTab = (id = 'about') => ({
