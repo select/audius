@@ -31,6 +31,11 @@ export const getDbPlayListSuccess = (playList) => ({
 	playList,
 });
 
+export const setCurrentTime = (time) => ({
+	type: 'SET_CURRENT_TIME',
+	time,
+});
+
 export const addVideos = (videos = []) => ({
 	type: 'ADD_VIDEOS',
 	videos,
@@ -94,6 +99,6 @@ export const changeVolume = volume => ({
 	volume,
 });
 
-export const mute = () => ({
-	type: 'MUTE',
+export const toggleMute = () => ({
+	type: 'TOGGLE_MUTE',
 });

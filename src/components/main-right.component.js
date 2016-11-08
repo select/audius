@@ -10,7 +10,7 @@ Vue.component('main-right', {
 			website: store.getState().website,
 			store,
 			Actions,
-			tabs: ['queue', 'search', 'info', 'about'],
+			tabs: ['queue', 'search', 'about'],
 		};
 	},
 	created() {
@@ -32,11 +32,17 @@ Vue.component('main-right', {
 			v-on:click="store.dispatch(Actions.setMainRightTab(tab))"
 			v-bind:class="{ active: website.mainRightTab == tab }">{{tab}}</li>
 	</ul>
-	<div class="main-right__content">
+	<div class="main-right__content" v-if="website.mainRightTab">
 		<about-player v-if="website.mainRightTab == 'about'"></about-player>
 		<search-results v-if="website.mainRightTab == 'search'"></search-results>
 	</div>
-	<div class="main-right__player">
+	<div
+		class="main-right__player"
+		v-bind:class="{ full: !website.mainRightTab }">
+		<span
+			v-on:click="store.dispatch(Actions.setMainRightTab(''))"
+			v-if="website.mainRightTab"
+			class="main-right__player-full-btn wmp-icon-add"></span>
 		<youtube-player></youtube-player>
 	</div>
 </div>`,

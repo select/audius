@@ -4,10 +4,22 @@ import Actions from '../actions';
 import * as db from '../utils/indexDB';
 import './play-list.component.sass';
 
+function isElementInViewport (el) {
+    var rect = el.getBoundingClientRect();
+    return (
+        rect.top >= 0 &&
+        rect.left >= 0 &&
+        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) && /*or $(window).height() */
+        rect.right <= (window.innerWidth || document.documentElement.clientWidth) /*or $(window).width() */
+    );
+}
+
 Vue.component('play-list', {
 	data() {
+		const mediaPlayer = store.getState().mediaPlayer;
 		return {
-			mediaPlayer: store.getState().mediaPlayer,
+			mediaPlayer: mediaPlayer,
+			currentSong: mediaPlayer.youtubeId,
 			store,
 			Actions,
 			tabs: ['queue', 'search', 'info', 'about'],
@@ -16,6 +28,13 @@ Vue.component('play-list', {
 	created() {
 		this.unsubscribe = store.subscribe(() => {
 			this.mediaPlayer = store.getState().mediaPlayer;
+			if (this.currentSong !== this.mediaPlayer.youtubeId) {
+				Vue.nextTick(() => {
+					const el = document.querySelector(".play-list li.active")
+					if(!isElementInViewport(el)) el.scrollIntoView({block: "start", behavior: "smooth"});
+				});
+				this.currentSong = this.mediaPlayer.youtubeId;
+			}
 		});
 	},
 	beforeDestroy() {
@@ -59,7 +78,7 @@ Vue.component('play-list', {
 		<video-item
 			v-for="id in mediaPlayer.playList"
 			:video="mediaPlayer.entities[id]"
-			:isPlaying="mediaPlayer.entities[id] && (mediaPlayer.youtubeId == mediaPlayer.entities[id].id)"></video-item>
+			:isPlaying="mediaPlayer.isPlaying && mediaPlayer.entities[id] && (mediaPlayer.youtubeId == mediaPlayer.entities[id].id)"></video-item>
 	</ul>
 	<div class="play-list-footer">
 		<ul>

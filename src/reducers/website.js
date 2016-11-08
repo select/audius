@@ -11,7 +11,7 @@ const website = (state = initialState, action) => {
 		});
 	case 'SET_MAINRIGHT_TAB':
 		return Object.assign({}, state, {
-			mainRightTab: action.id,
+			mainRightTab: action.id === state.mainRightTab? '' : action.id,
 		});
 	case 'YOUTUBE_SEARCH_SUCCESS':
 		return Object.assign({}, state, {

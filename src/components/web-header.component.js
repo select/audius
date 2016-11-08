@@ -44,7 +44,6 @@ Vue.component('web-header', {
 			if (this.website.showSearch) event.stopPropagation();
 		},
 		clear(event) {
-			console.log('cleeeear')
 			event.stopPropagation();
 			document.querySelector('.au-header__search-input').value = '';
 		},
@@ -73,8 +72,11 @@ Vue.component('web-header', {
 					debounce="500">
 				<span class="wmp-icon-close" v-show="website.showSearch" v-on:click="clear"></span>
 			</div>
-			<span class="wmp-icon-volume_up"></span>
-			<span class="wmp-icon-more_vert"></span>
+			<div v-on:click="store.dispatch(Actions.toggleMute())">
+				<span class="wmp-icon-volume_up" v-if="!mediaPlayer.mute"></span>
+				<span class="wmp-icon-volume_off" v-else></span>
+			</div>
+			<!-- <span class="wmp-icon-more_vert"></span> -->
 		</div>
 	</div>
 	<div class="au-header__control-bar">
@@ -91,8 +93,16 @@ Vue.component('web-header', {
 			<span class="wmp-icon-next" v-on:click="store.dispatch(Actions.nextVideo())"  title="Next song"></span>
 			<div class="spacer"></div>
 			<div class="au-header__controls-small">
-				<span class="au-header__shuffle wmp-icon-shuffle" v-on:click="store.dispatch(Actions.toggleShuffle())" v-bind:class="{ active: mediaPlayer.shuffle }" title="Shuffle"></span>
-				<span class="au-header__show-play-list wmp-icon-repeat"  v-on:click="store.dispatch(Actions.togglePlayList())" v-bind:class="{ active: mediaPlayer.showPlayList }" title="Repeat"></span>
+				<span
+					class="au-header__shuffle wmp-icon-shuffle"
+					v-on:click="store.dispatch(Actions.toggleShuffle())"
+					v-bind:class="{ active: mediaPlayer.shuffle }"
+					title="Shuffle"></span>
+				<!-- <span
+					class="au-header__repeat wmp-icon-repeat"
+					v-on:click="store.dispatch(Actions.togglePlayList())"
+					v-bind:class="{ active: mediaPlayer.repeatAll }"
+					title="Repeat"></span> -->
 			</div>
 		</div>
 	</div>

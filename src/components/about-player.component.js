@@ -33,7 +33,7 @@ Vue.component('about-player', {
 	<p>The extension should have been the actual player since the original idea was to create an extension with a media player for <i>web.whatsapp</i>. This however failed since the conten security policy does not allow the embdding of youtube videos. That meant no player, no music.</p>
 	<h2 id="source-code">Source code</h2>
 	<p>
-		The source code for this project is located at <a href="https://github.com/select/audius" title="Source code on select@github audius">https://github.com/select/audius</a>.
+		The source code for this project is located at <a href="https://github.com/select/audius" title="Source code on select@github audius" target="_blank">https://github.com/select/audius</a>.
 	</p>
 	<p>
 		If you like this project give it a star ★ and contribute some code!
@@ -42,8 +42,9 @@ Vue.component('about-player', {
 	Here are some other fun projects I created this year.
 	<p>
 		<ul>
-			<li><a href="https://github.com/select/boomnext/">Boom, next video!</a></li>
+			<li><a href="https://github.com/select/boomnext/" target="_blank">Boom, next video!</a></li>
 			<li><a href="http://emoji-text.com/" target="_blank">ッ Emoji-text</a></li>
+			<li><a href="https://www.fantasyplanet.de/" target="_blank">FantasyPlanet</a></li>
 			<li>...</li>
 		</ul>
 	</p>
@@ -53,7 +54,7 @@ Vue.component('about-player', {
 	</p>
 	<h2>Credits</h2>
 	<p>
-		This work is inspired by the incredible <a href="https://www.reddit.com/r/streamus/">Streamus</a> app.<br>
+		This work is inspired by the incredible <a href="https://www.reddit.com/r/streamus/" target="_blank">Streamus</a> app.<br>
 		It was created with:
 		<ul>
 			<li>VueJs</li>

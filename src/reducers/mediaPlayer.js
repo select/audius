@@ -7,6 +7,7 @@ const initialState = {
 	isPlaying: false,
 	youtubeId: '',
 	playList: [],
+	queue: [],
 	showPlayList: true,
 	shuffle: false,
 	repeat1: false,
@@ -99,6 +100,7 @@ const mediaPlayer = (state = initialState, action) => {
 	case 'ADD_SEARCH_RESULT':
 		entities = Object.assign({}, state.entities);
 		entities[action.video.id] = action.video;
+		if (state.playList.includes(action.video.id)) return state;
 		return Object.assign({}, state, {
 			playList: [...state.playList, action.video.id],
 			entities,
@@ -130,6 +132,10 @@ const mediaPlayer = (state = initialState, action) => {
 	case 'TOGGLE_PLAYLIST':
 		return Object.assign({}, state, {
 			showPlayList: !state.showPlayList,
+		});
+	case 'TOGGLE_MUTE':
+		return Object.assign({}, state, {
+			mute: !state.mute,
 		});
 	case 'NEXT_VIDEO':
 		return next(state);

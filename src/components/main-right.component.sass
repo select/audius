@@ -33,5 +33,14 @@ ul.main-right__tabs
 	overflow-y: auto
 
 .main-right__player
+	position: relative
 	height: 200px
 	background: $color-catskillwhite
+	&.full
+		height: 100%
+.main-right__player-full-btn
+	position: absolute
+	top: 0
+	right: 0
+	cursor: pointer
+	color: $color-white
