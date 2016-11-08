@@ -7,7 +7,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 module.exports = {
 	entry: {
 		'dist-extension/content-script': './src/extension/app.js',
-		'dist-website/app': './src/website/app.js',
+		'dist-website/app': './src/website/dev.js',
 	},
 	output: {
 	  path: './',

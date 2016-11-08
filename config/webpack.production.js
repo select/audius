@@ -3,13 +3,12 @@
 const webpack = require('webpack');
 const autoprefixer = require('autoprefixer');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const ClosureCompilerPlugin = require('webpack-closure-compiler');
 new webpack.optimize.DedupePlugin()
 
 const configDev = require('./webpack.dev.js')
 
 module.exports = Object.assign(configDev, {
-	entry: './src/website/app.prod.js',
+	entry: './src/website/app.js',
 	output: {
 		path: './dist-website/',
 		filename: 'app.js'
