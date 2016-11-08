@@ -35,6 +35,7 @@ Vue.component('main-right', {
 	<div class="main-right__content" v-if="website.mainRightTab">
 		<about-player v-if="website.mainRightTab == 'about'"></about-player>
 		<search-results v-if="website.mainRightTab == 'search'"></search-results>
+		<queue v-if="website.mainRightTab == 'queue'"></queue>
 	</div>
 	<div
 		class="main-right__player"

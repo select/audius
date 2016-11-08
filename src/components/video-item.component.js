@@ -5,19 +5,27 @@ import * as db from '../utils/indexDB';
 import './video-item.component.sass';
 
 Vue.component('video-item', {
-	props: ['video', 'isPlaying'],
+	props: ['video', 'isPlaying', 'isQueue', 'queueIndex'],
 	data() {
 		return {
 			copyActive: false
 		}
 	},
 	methods: {
-		play() { store.dispatch(Actions.playVideo(this.video.id)); },
+		play() {
+			console.log('play')
+			if (this.isQueue) store.dispatch(Actions.queuePlayIndex(this.queueIndex));
+			else store.dispatch(Actions.playVideo(this.video.id));
+		},
 		pause() { store.dispatch(Actions.pause()); },
 		menu(){ store.dispatch(Actions.menuVideo(this.video.id)); },
 		remove() {
-			store.dispatch(Actions.removeVideo(this.video.id));
-			db.setMediaEntity(this.video);
+			if (this.isQueue) {
+				store.dispatch(Actions.queueRemoveIndex(this.queueIndex));
+			} else {
+				store.dispatch(Actions.removeVideo(this.video.id));
+				db.setMediaEntity(this.video);
+			}
 		},
 		copyToClip() {
 			window.getSelection().removeAllRanges();
@@ -41,6 +49,9 @@ Vue.component('video-item', {
 	    window.getSelection().removeAllRanges();
 	    tmpEl.parentNode.removeChild(tmpEl);
 	  },
+	  queue() {
+			store.dispatch(Actions.queueMedia(this.video.id));
+	  },
 	},
 	template: `
 	<li v-bind:class="{ active: isPlaying, error: video.hasError }" v-on:dblclick="play">
@@ -53,7 +64,11 @@ Vue.component('video-item', {
 			<div v-if="!video.hasError">
 				<span class="wmp-icon-pause" v-if="isPlaying" v-on:click="pause" title="Pause"></span>
 				<span class="wmp-icon-play" v-else v-on:click="play" title="Play"></span>
-				<span class="wmp-icon-queue2 icon--small" title="Add to queue"></span>
+				<span
+					class="wmp-icon-queue2 icon--small"
+					v-on:click="queue"
+					v-if="!isQueue"
+					title="Add to queue"></span>
 			</div>
 			<span class="wmp-icon-search" v-else title="Search alternative"></span>
 			<span class="copy wmp-icon-copy icon--small" v-on:click="copyToClip" v-bind:class="{ active: copyActive }" title="Copy name and URL"></span>

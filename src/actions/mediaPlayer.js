@@ -102,3 +102,18 @@ export const changeVolume = volume => ({
 export const toggleMute = () => ({
 	type: 'TOGGLE_MUTE',
 });
+
+export const queueMedia = (id) => ({
+	type: 'QUEUE_MEDIA',
+	id,
+});
+
+export const queuePlayIndex = (idx) => ({
+	type: 'QUEUE_PLAY_INDEX',
+	idx,
+});
+
+export const queueRemoveIndex = (idx) => ({
+	type: 'QUEUE_REMOVE_INDEX',
+	idx,
+});

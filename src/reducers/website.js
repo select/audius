@@ -7,7 +7,7 @@ const website = (state = initialState, action) => {
 	switch (action.type) {
 	case 'TOGGLE_SEARCH':
 		return Object.assign({}, state, {
-			showSearch: !state.showSearch,
+			showSearch: action.state !== undefined? action.state : !state.showSearch,
 		});
 	case 'SET_MAINRIGHT_TAB':
 		return Object.assign({}, state, {
@@ -17,6 +17,10 @@ const website = (state = initialState, action) => {
 		return Object.assign({}, state, {
 			mainRightTab: 'search',
 		});
+	case 'QUEUE_MEDIA':
+		return Object.assign({}, state, {
+			mainRightTab: 'queue',
+		})
 	default:
 		return state;
 	}
