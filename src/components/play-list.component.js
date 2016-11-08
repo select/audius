@@ -20,6 +20,7 @@ Vue.component('play-list', {
 		return {
 			mediaPlayer: mediaPlayer,
 			currentSong: mediaPlayer.youtubeId,
+			website: store.getState().website,
 			store,
 			Actions,
 			tabs: ['queue', 'search', 'info', 'about'],
@@ -28,6 +29,7 @@ Vue.component('play-list', {
 	created() {
 		this.unsubscribe = store.subscribe(() => {
 			this.mediaPlayer = store.getState().mediaPlayer;
+			this.website = store.getState().website;
 			if (this.currentSong !== this.mediaPlayer.youtubeId) {
 				Vue.nextTick(() => {
 					const el = document.querySelector(".play-list li.active")
@@ -68,6 +70,29 @@ Vue.component('play-list', {
 				reader.readAsText(file)
 			});
 		},
+		searchJump() {
+			console.log('searchJump');
+		},
+		clear() {
+			clearTimeout(this.blurTimer);
+			event.stopPropagation();
+			document.querySelector('.play-list-footer__search-input').value = '';
+			document.querySelector('.play-list-footer__search-input').focus();
+		},
+		delayBlur() {
+			this.blurTimer = setTimeout(()=> {
+				store.dispatch(Actions.toggleJump(false))
+			}, 800)
+		},
+		stopPropagation() {
+			if (this.website.showJump) event.stopPropagation();
+		},
+		toggleJump() {
+			store.dispatch(Actions.toggleJump());
+			Vue.nextTick(() => {
+				document.querySelector('.play-list-footer__search-input').focus()
+			});
+		}
 	},
 	template: `
 <div class="play-list">
@@ -81,16 +106,36 @@ Vue.component('play-list', {
 			:isPlaying="mediaPlayer.isPlaying && mediaPlayer.entities[id] && (mediaPlayer.youtubeId == mediaPlayer.entities[id].id)"></video-item>
 	</ul>
 	<div class="play-list-footer">
-		<ul>
+		<ul v-show="!website.showJump">
 			<li class="play-list-footer--info">
 				{{mediaPlayer.playList.length}} Songs
 			</li>
 			<li>
-				<input type="file" id="import-playlist" v-on:change="importPlayList">
+				<input type="file" id="import-playlist" v-on:change="importPlayList" title="Import playlist from file">
 				<label for="import-playlist">Import </label>
 			</li>
-			<li v-on:click="exportPlayList">Export</li>
+			<li v-on:click="exportPlayList" title="Export playlist to file">Export</li>
 		</ul>
+
+		<div
+			class="play-list-footer__search"
+			v-bind:class="{ active: website.showJump }"
+			v-on:click="toggleJump">
+			<span class="wmp-icon-search" title="[J] Jump to file"></span>
+			<input
+					type="text"
+					class="play-list-footer__search-input"
+					placeholder="Jump to"
+					v-on:click="stopPropagation"
+					v-on:keyup="searchJump"
+					v-on:blur="delayBlur"
+					v-show="website.showJump"
+					debounce="500">
+			<span
+				class="wmp-icon-close"
+				v-show="website.showJump"
+				v-on:click="clear"></span>
+		</div>
 	</div>
 </div>`,
 });

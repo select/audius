@@ -3,6 +3,11 @@ export const toggleSearch = (state) => ({
 	state,
 });
 
+export const toggleJump = (state) => ({
+	type: 'TOGGLE_JUMP',
+	state,
+});
+
 export const setMainRightTab = (id = 'about') => ({
 	type: 'SET_MAINRIGHT_TAB',
 	id,

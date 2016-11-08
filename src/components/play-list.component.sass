@@ -13,7 +13,12 @@
 		line-height: 2em
 .play-list-footer
 	background: $color-catskillwhite
+	color: $color-aluminium-dark
+	display: flex
+	font-size: 0.7em
+	overflow: hidden
 	ul
+		flex: 1
 		padding: 0
 		margin: 0
 		list-style: none
@@ -25,10 +30,7 @@
 			display: flex
 			justify-content: center
 			align-items: center
-			background: $color-catskillwhite
-			color: $color-aluminium-dark
 			white-space: nowrap
-			font-size: 0.7em
 			transition: all $transition-time
 			&:not(.play-list-footer--info)
 				cursor: pointer
@@ -36,6 +38,31 @@
 			&:hover:not(.play-list-footer--info)
 				background: $color-aluminium
 				color: $color-white
+.play-list-footer__search
+	max-width: $touch-size-medium
+	height: $touch-size-small
+	cursor: pointer
+	display: flex
+	align-items: center
+	&:hover:not(.active)
+		background: $color-aluminium
+		color: $color-white
+	&.active
+		max-width: 100%
+		width: 100%
+		span,
+		input
+			background: $color-white
+			border: none
+			border-top: 1px solid $color-aluminium
+			height: $touch-size-small
+			box-sizing: border-box
+	span
+		height: $touch-size-small
+		width: $touch-size-medium
+	input
+		flex: 1
+
 #import-playlist
 	display: none
 	+ label

@@ -1,5 +1,6 @@
 const initialState = {
 	showSearch: false,
+	showJump: false,
 	mainRightTab: 'about',
 };
 
@@ -8,6 +9,10 @@ const website = (state = initialState, action) => {
 	case 'TOGGLE_SEARCH':
 		return Object.assign({}, state, {
 			showSearch: action.state !== undefined? action.state : !state.showSearch,
+		});
+	case 'TOGGLE_JUMP':
+		return Object.assign({}, state, {
+			showJump: action.state !== undefined? action.state : !state.showJump,
 		});
 	case 'SET_MAINRIGHT_TAB':
 		return Object.assign({}, state, {
