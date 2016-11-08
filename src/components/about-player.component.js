@@ -12,7 +12,7 @@ Vue.component('about-player', {
 	<p>
 		<b>Chrome desktop:</b>
 		<ol>
-			<li> At the top right, click <i>More</i> (Settings Icon). </li>
+			<li> At the top right, click <i>More</i> (Icon <span class="wmp-icon-more_vert" style="font-size: .7em; display: inline-block; height: 1em; width: 1.3em"></span>). </li>
 			<li> Click <i>More Tools</i>. </li>
 			<li> Add the app:<br>
 			Windows users: Click <i>Add to taskbar</i>.<br>
