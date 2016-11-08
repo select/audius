@@ -1,35 +1,45 @@
 import duration from '../utils/duration';
-import { videoBaseObject } from './video.js';
+import { videoBaseObject } from './video';
 
 const initialState = {
 	db: undefined,
 	dbErrorMessage: '',
-	isPlaying: false,
+	entities: {},
 	youtubeId: '',
 	playList: [],
 	queue: [],
+	isPlaying: false,
 	showPlayList: true,
 	shuffle: false,
 	repeat1: false,
 	repeatAll: false,
-	entities: {},
 	showSearch: false,
 };
 
 function next(state) {
 	const idx = state.playList.indexOf(state.youtubeId);
-	// if last song stop
-	if (state.shuffle) {
-		return Object.assign({}, state , {
-			youtubeId: state.playList[Math.floor(Math.random()*state.playList.length)],
+	if (state.queue.length) {
+		// Play next song from queue.
+		const queue = [...state.queue];
+		const mediaId = queue.shift();
+		return Object.assign({}, state, {
+			youtubeId: mediaId,
+			queue: [...queue],
+			isPlaying: true,
+		});
+	} else if (state.shuffle) {
+		// Play a random song.
+		return Object.assign({}, state, {
+			youtubeId: state.playList[Math.floor(Math.random() * state.playList.length)],
 			isPlaying: true,
 		});
 	} else if (idx === state.playList.length - 1) {
-		return Object.assign({}, state , {
+		// If last song on play list, stop playing.
+		return Object.assign({}, state, {
 			isPlaying: false,
 		});
-	// next song
 	} else if (idx < state.playList.length - 1) {
+		// Play the next song.
 		const youtubeId = state.playList[idx + 1];
 		return Object.assign({}, state, {
 			youtubeId,
@@ -43,6 +53,7 @@ const mediaPlayer = (state = initialState, action) => {
 	let idx;
 	let youtubeId;
 	let entities;
+	let queue;
 	switch (action.type) {
 	case 'DB_INIT_SUCCESS':
 		return Object.assign({}, state, { db: action.db });
@@ -54,7 +65,6 @@ const mediaPlayer = (state = initialState, action) => {
 		return Object.assign({}, state, {
 			entities,
 		});
-	// case 'DB_GET_SUCCESS':
 	case 'DB_GETALL_SUCCESS':
 		return Object.assign({}, state, {
 			entities: Object.assign({}, state.entities, action.entities),
@@ -67,7 +77,7 @@ const mediaPlayer = (state = initialState, action) => {
 		state.entities[action.id] = Object.assign({}, state.entities[action.id], {
 			errorMessage: action.message,
 			hasError: true,
-		})
+		});
 		return Object.assign({}, next(state), {
 			entities: state.entities,
 		});
@@ -149,6 +159,24 @@ const mediaPlayer = (state = initialState, action) => {
 			});
 		}
 		return state;
+	case 'QUEUE_MEDIA':
+		return Object.assign({}, state, {
+			queue: [...state.queue, action.id],
+		});
+	case 'QUEUE_PLAY_INDEX':
+		queue = [...state.queue];
+		const mediaId = queue.splice(action.idx, 1);
+		return Object.assign({}, state, {
+			queue: [...queue],
+			youtubeId: mediaId,
+			isPlaying: true,
+		});
+	case 'QUEUE_REMOVE_INDEX':
+		queue = [...state.queue];
+		queue.splice(action.idx, 1);
+		return Object.assign({}, state, {
+			queue: [...queue],
+		});
 	default:
 		return state;
 	}
