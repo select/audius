@@ -42,7 +42,7 @@ Vue.component('main-right', {
 		<span
 			v-on:click="store.dispatch(Actions.setMainRightTab(''))"
 			v-if="website.mainRightTab"
-			class="main-right__player-full-btn wmp-icon-add"></span>
+			class="main-right__player-full-btn wmp-icon-unfold_more"></span>
 		<youtube-player></youtube-player>
 	</div>
 </div>`,
