@@ -45,10 +45,5 @@ module.exports = {
       { context: './src/extension/static/', from: '**/*', to: './dist-extension/' },
       { context: './src/website/static/', from: '**/*', to: './dist-website/' },
     ]),
-		// new webpack.optimize.UglifyJsPlugin({
-		// 	compress: {
-		// 		warnings: false,
-		// 	},
-		// }),
 	],
 };
