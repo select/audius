@@ -20,6 +20,9 @@ Vue.component('web-header', {
 			if (event.target.tagName.toLowerCase() !== 'input') {
 				if (event.key === 'c' && !event.ctrlKey) {
 					this.playPauseMedia();
+				} else if (event.key === 'f' && !event.ctrlKey) {
+					store.dispatch(Actions.toggleSearch(true));
+					setTimeout(() => {document.querySelector('.au-header__search-input').value = '';}, 100);
 				} else if (event.key === 'b') {
 					store.dispatch(Actions.nextVideo());
 				} else if (event.key === 's') {
@@ -86,6 +89,7 @@ Vue.component('web-header', {
 					placeholder="Search"
 					v-on:click="stopPropagation"
 					v-on:keyup="searchYoutube"
+					v-on:keyup.esc="clear"
 					v-on:blur="delayBlur"
 					debounce="500">
 				<span class="wmp-icon-close" v-show="website.showSearch" v-on:click="clear"></span>

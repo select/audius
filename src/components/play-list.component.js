@@ -31,6 +31,7 @@ Vue.component('play-list', {
 		document.addEventListener('keydown', (event) => {
 			if (event.target.tagName.toLowerCase() !== 'input' && event.key === 'j') {
 				this.toggleJump(true);
+				setTimeout(() => {document.querySelector('.play-list-footer__search-input').value = '';}, 100);
 			}
 		}, false);
 
@@ -99,9 +100,6 @@ Vue.component('play-list', {
 			store.dispatch(Actions.toggleJump(state));
 			Vue.nextTick(() => {
 				document.querySelector('.play-list-footer__search-input').focus();
-				if (state) setTimeout(() => {
-					document.querySelector('.play-list-footer__search-input').value = '';
-				}, 100)
 			});
 		},
 	},

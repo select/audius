@@ -11,10 +11,12 @@ Vue.component('about-player', {
 			<dd>Play / pause</dd>
 			<dt>b</dt>
 			<dd>Next song</dd>
-			<dt>j</dt>
-			<dd>Jump to song</dd>
 			<dt>s</dt>
 			<dd>Shuffle on / off</dd>
+			<dt>j</dt>
+			<dd>Jump to song</dd>
+			<dt>f</dt>
+			<dd>Find song on YouTube</dd>
 		</dl>
 	</p>
 	<h2>Install as app</h2>
