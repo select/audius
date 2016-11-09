@@ -99,6 +99,9 @@ Vue.component('play-list', {
 			store.dispatch(Actions.toggleJump(state));
 			Vue.nextTick(() => {
 				document.querySelector('.play-list-footer__search-input').focus();
+				if (state) setTimeout(() => {
+					document.querySelector('.play-list-footer__search-input').value = '';
+				}, 100)
 			});
 		},
 	},
