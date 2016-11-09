@@ -33,25 +33,25 @@ Vue.component('video-item', {
 			tmpEl.innerHTML = `${this.video.title} https://youtu.be/${this.video.id}`;
 			document.body.appendChild(tmpEl);
 
-	    let range = document.createRange();
-	    range.selectNode(tmpEl);
-	    window.getSelection().addRange(range);
+			let range = document.createRange();
+			range.selectNode(tmpEl);
+			window.getSelection().addRange(range);
 
-	    try {
-	      const successful = document.execCommand('copy');
-		    this.copyActive = true;
-		    setTimeout(() => {
-		    	this.copyActive = false;
-		    }, 800)
-	    } catch (err) {
-	      console.log('execCommand Error', err);
-	    }
-	    window.getSelection().removeAllRanges();
-	    tmpEl.parentNode.removeChild(tmpEl);
-	  },
-	  queue() {
+			try {
+				const successful = document.execCommand('copy');
+				this.copyActive = true;
+				setTimeout(() => {
+					this.copyActive = false;
+				}, 800)
+			} catch (err) {
+				console.log('execCommand Error', err);
+			}
+			window.getSelection().removeAllRanges();
+			tmpEl.parentNode.removeChild(tmpEl);
+		},
+		queue() {
 			store.dispatch(Actions.queueMedia(this.video.id));
-	  },
+		},
 	},
 	template: `
 	<li v-bind:class="{ active: isPlaying, error: video.hasError }" v-on:dblclick="play">
