@@ -11,3 +11,20 @@
 		padding: 1em
 		li
 			margin-bottom: $grid-space
+	dl
+		dt
+			float: left
+			width: 3em
+			font-weight: bold
+			padding-left: $grid-space
+			&:nth-child(4n+1)
+				background: $color-catskillwhite
+		dd
+			margin-left: 0
+			&:nth-child(4n+2)
+				background: $color-catskillwhite
+		dt,
+		dd
+			height: $touch-size-small
+			display: flex
+			align-items: center

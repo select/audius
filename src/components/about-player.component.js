@@ -7,6 +7,16 @@ Vue.component('about-player', {
 	<h2>Usage</h2>
 	<p>
 		Keyboard shortcuts ... are planned.
+		<dl>
+			<dt>c</dt>
+			<dd>Pause / unpause</dd>
+			<dt>b</dt>
+			<dd>Next song</dd>
+			<dt>j</dt>
+			<dd>Jump to song</dd>
+			<dt>s</dt>
+			<dd>Shuffle on / off</dd>
+		</dl>
 	</p>
 	<h2>Install as app</h2>
 	<p>
