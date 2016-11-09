@@ -48,6 +48,13 @@ Vue.component('about-player', {
 	<p>
 		If you like this project give it a star ★ and contribute some code!
 	</p>
+	<h2>Migration from Streamus</h2>
+	<p>
+		On Linux use <a href="https://github.com/select/audius/blob/master/src/scripts/streamus-export.sh" target="_blank">this script</a> I created to dump the Streamus WebSql to a JSON file. The JSON can be imported using the IMPORT button below the playlist. Use the script like this:
+		<pre>./streamus-export.sh ~/.config/google-chrome/Profile\ 1/Local\ Storage/chrome-extension_jbnkffmindojffecdhbbmekbmkkfpmjd_0.localstorage
+		</pre>
+		Be sure to validate the JSON output, the script is just a quick hack and you might have to tweak it.
+	</p>
 	<h2>Other Projects</h2>
 	Here are some other fun projects I created this year.
 	<p>
