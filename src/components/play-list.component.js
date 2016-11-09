@@ -142,7 +142,7 @@ Vue.component('play-list', {
 			class="play-list-footer__search"
 			v-bind:class="{ active: website.showJump }"
 			v-on:click="toggleJump()">
-			<span class="wmp-icon-search" title="[J] Jump to file"></span>
+			<span class="wmp-icon-search" title="[j] Jump to file"></span>
 			<input
 					type="text"
 					class="play-list-footer__search-input"

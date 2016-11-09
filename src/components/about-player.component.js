@@ -4,7 +4,7 @@ import './about-player.component.sass';
 Vue.component('about-player', {
 	template: `
 <div class="wmp-about">
-	<h2>Usage</h2>
+	<h2>Keyboard shortcuts</h2>
 	<p>
 		<dl>
 			<dt>c</dt>
@@ -43,9 +43,9 @@ Vue.component('about-player', {
 	<h2>System requirements</h2>
 	<p>
 		<ul>
+			<li> <a href="https://vivaldi.com/download/" target="_blank">Vivaldi</a> </li>
 			<li> Chrome >= 51 </li>
 			<li> FireFox >= 49 </li>
-			<li> Vivaldi >= 51 </li>
 			<li> Internet Explorer & Safari ... not supported, might work though </li>
 		</ul>
 	</p>
