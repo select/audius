@@ -26,11 +26,11 @@ Vue.component('youtube-player', {
 			}
 			if (mediaPlayer.isPlaying) {
 				if (this.player.getPlayerState() !== 1) this.player.playVideo();
-				if (!this.timeInterval) {
-					this.timeInterval = setInterval(() => {
-						store.dispatch(Actions.setCurrentTime(this.player.getCurrentTime()));
-					}, 1000);
-				}
+				// if (!this.timeInterval) {
+				// 	this.timeInterval = setInterval(() => {
+				// 		store.dispatch(Actions.setCurrentTime(this.player.getCurrentTime()));
+				// 	}, 1000);
+				// }
 			} else {
 				clearInterval(this.timeInterval);
 				if (this.player.getPlayerState) {
