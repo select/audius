@@ -82,7 +82,7 @@ Vue.component('web-header', {
 				class="au-header__search-input-group"
 				v-on:click="store.dispatch(Actions.toggleSearch())"
 				v-bind:class="{ active: website.showSearch }">
-				<span class="wmp-icon-search"></span>
+				<span class="wmp-icon-search" title="[f] Search on YouTube"></span>
 				<input
 					type="text"
 					class="au-header__search-input"
@@ -109,17 +109,17 @@ Vue.component('web-header', {
 		<div class="au-header__controls" :disabled="!mediaPlayer.playList.length">
 			<span class="wmp-icon-previous" v-on:click="store.dispatch(Actions.previousVideo())" title="Previous song"></span>
 			<div class="au-header__play-pause" v-on:click="playPauseMedia">
-				<span class="wmp-icon-pause" v-if="mediaPlayer.isPlaying" title="Pause"></span>
-				<span class="wmp-icon-play" v-else  title="Play"></span>
+				<span class="wmp-icon-pause" v-if="mediaPlayer.isPlaying" title="[c] Pause"></span>
+				<span class="wmp-icon-play" v-else  title="[c] Play"></span>
 			</div>
-			<span class="wmp-icon-next" v-on:click="store.dispatch(Actions.nextVideo())"  title="Next song"></span>
+			<span class="wmp-icon-next" v-on:click="store.dispatch(Actions.nextVideo())"  title="[b] Next song"></span>
 			<div class="spacer"></div>
 			<div class="au-header__controls-small">
 				<span
 					class="au-header__shuffle wmp-icon-shuffle"
 					v-on:click="store.dispatch(Actions.toggleShuffle())"
 					v-bind:class="{ active: mediaPlayer.shuffle }"
-					title="Shuffle"></span>
+					title="[s] Shuffle"></span>
 				<!-- <span
 					class="au-header__repeat wmp-icon-repeat"
 					v-on:click="store.dispatch(Actions.togglePlayList())"
