@@ -1,4 +1,4 @@
-import duration from '../utils/duration';
+import { duration } from '../utils/timeConverter';
 import { videoBaseObject } from './video';
 
 const initialState = {
