@@ -25,7 +25,6 @@ const config = (state = initialState, action) => {
 					duration: duration(v.contentDetails.duration),
 					isPlaying: false,
 					id: v.id.videoId,
-					thumbnail: v.snippet.thumbnails.default.url,
 					deleted: false,
 				})),
 			})

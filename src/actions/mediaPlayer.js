@@ -9,7 +9,7 @@ export const videoError = (id, message) => ({
 });
 
 export const error = (message) => ({
-	type: 'DB_ERROR',
+	type: 'ERROR',
 	message,
 });
 export const setDbSuccess = (data) => ({
@@ -45,6 +45,10 @@ export const importPlayList = (data) => ({
 	type: 'IMPORT_PLAYLIST',
 	data,
 });
+
+export const dedupePlayList = () => ({
+	type: 'DEDUPE_PLAYLIST',
+})
 
 export const removeVideo = (id) => ({
 	type: 'REMOVE_VIDEO',

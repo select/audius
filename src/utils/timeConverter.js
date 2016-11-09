@@ -9,7 +9,7 @@ export function s2time(sms) {
 	let s;
 	// s = Math.floor(ms / 1000);
 	s = Math.floor(sms);
-	const ms = sms % 1000;
+	const ms = sms % 1;
 	m = Math.floor(s / 60);
 	s %= 60;
 	h = Math.floor(m / 60);

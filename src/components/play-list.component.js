@@ -3,6 +3,7 @@ import store from '../store';
 import Actions from '../actions';
 import * as db from '../utils/indexDB';
 import './play-list.component.sass';
+import importPlaylist from '../utils/importPlaylist';
 
 function isElementInViewport (el) {
     var rect = el.getBoundingClientRect();
@@ -45,6 +46,7 @@ Vue.component('play-list', {
 	methods: {
 		exportPlayList() {
 			const data = {
+				AudiusDump: true,
 				playList: this.mediaPlayer.playList,
 				entities: this.mediaPlayer.entities,
 			}
@@ -61,11 +63,7 @@ Vue.component('play-list', {
 			Array.from(files).forEach(file => {
 				const reader = new FileReader();
 				reader.onload = (event) => {
-					const dataJSON = JSON.parse(event.target.result)
-					store.dispatch(Actions.importPlayList(dataJSON));
-					Object.keys(dataJSON.entities).forEach(key => {
-						db.setMediaEntity(dataJSON.entities[key]);
-					})
+					importPlaylist(event.target.result);
 				};
 				reader.readAsText(file)
 			});

@@ -3,7 +3,7 @@ import { videoBaseObject } from './video';
 
 const initialState = {
 	db: undefined,
-	dbErrorMessage: '',
+	errorMessages: '',
 	entities: {},
 	youtubeId: '',
 	playList: [],
@@ -55,10 +55,12 @@ const mediaPlayer = (state = initialState, action) => {
 	let entities;
 	let queue;
 	switch (action.type) {
+	case 'ERROR':
+		return Object.assign({}, state, {
+			errorMessages: [...state.errorMessages, action.message],
+		});
 	case 'DB_INIT_SUCCESS':
 		return Object.assign({}, state, { db: action.db });
-	case 'DB_ERROR':
-		return Object.assign({}, state, { dbErrorMessage: action.message });
 	case 'DB_SET_SUCCESS':
 		entities = Object.assign({}, state.entities);
 		entities[action.data.id].saved = true;
@@ -84,16 +86,29 @@ const mediaPlayer = (state = initialState, action) => {
 	case 'ADD_VIDEOS':
 		entities = Object.assign({}, state.entities);
 		action.videos.forEach((v) => {
-			entities[v.id] = Object.assign(videoBaseObject, {
+			entities[v.id] = Object.assign({}, videoBaseObject, {
 				title: v.snippet.title,
 				duration: duration(v.contentDetails.duration),
 				id: v.id,
-				thumbnail: v.snippet.thumbnails.default.url,
 			});
 		});
 		return Object.assign({}, state, {
 			playList: [...state.playList, ...action.videos.map(v => v.id).filter(id => !state.playList.includes(id))],
 			entities,
+		});
+	case 'DEDUPE_PLAYLIST':
+		const seen = {};
+		const filteredPlaylist = [];
+		state.playList.forEach((id) => {
+			if (!seen[id]) {
+				seen[id] = true;
+				filteredPlaylist.push(id);
+			}else {
+				console.log('Filterd dupe: ',state.entities[id].title);
+			}
+		})
+		return Object.assign({}, state, {
+			playList: [...filteredPlaylist],
 		});
 	case 'IMPORT_PLAYLIST':
 		return Object.assign({}, state, {

@@ -3,7 +3,6 @@ export const videoBaseObject = {
 	duration: {},
 	isPlaying: false,
 	id: '',
-	thumbnail: '',
 	deleted: false,
 	hasError: false,
 }
