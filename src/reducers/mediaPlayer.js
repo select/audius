@@ -14,6 +14,7 @@ const initialState = {
 	repeat1: false,
 	repeatAll: false,
 	showSearch: false,
+	filterQuery: '',
 };
 
 function next(state) {
@@ -100,11 +101,11 @@ const mediaPlayer = (state = initialState, action) => {
 		const seen = {};
 		const filteredPlaylist = [];
 		state.playList.forEach((id) => {
-			if (!seen[id]) {
+			if (!seen[id] && state.entities[id]) {
 				seen[id] = true;
 				filteredPlaylist.push(id);
 			}else {
-				console.log('Filterd dupe: ',state.entities[id].title);
+				console.log('Filterd dupe or missing: ',id);
 			}
 		})
 		return Object.assign({}, state, {
@@ -191,6 +192,10 @@ const mediaPlayer = (state = initialState, action) => {
 		queue.splice(action.idx, 1);
 		return Object.assign({}, state, {
 			queue: [...queue],
+		});
+	case 'FILTER_PLAYLIST':
+		return Object.assign({}, state, {
+			filterQuery: action.query,
 		});
 	default:
 		return state;

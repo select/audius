@@ -121,3 +121,8 @@ export const queueRemoveIndex = (idx) => ({
 	type: 'QUEUE_REMOVE_INDEX',
 	idx,
 });
+
+export const filterPlayList = (query) => ({
+	type: 'FILTER_PLAYLIST',
+	query,
+})

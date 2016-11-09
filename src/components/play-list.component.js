@@ -1,25 +1,25 @@
 import Vue from 'vue/dist/vue';
 import store from '../store';
 import Actions from '../actions';
-import * as db from '../utils/indexDB';
 import './play-list.component.sass';
 import importPlaylist from '../utils/importPlaylist';
+import { debounce } from '../utils/debounce';
 
-function isElementInViewport (el) {
-    var rect = el.getBoundingClientRect();
-    return (
-        rect.top >= 0 &&
-        rect.left >= 0 &&
-        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) && /*or $(window).height() */
-        rect.right <= (window.innerWidth || document.documentElement.clientWidth) /*or $(window).width() */
-    );
+function isElementInViewport(el) {
+	const rect = el.getBoundingClientRect();
+	return (
+			rect.top >= 0 &&
+			rect.left >= 0 &&
+			rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) && /*or $(window).height() */
+			rect.right <= (window.innerWidth || document.documentElement.clientWidth) /*or $(window).width() */
+	);
 }
 
 Vue.component('play-list', {
 	data() {
 		const mediaPlayer = store.getState().mediaPlayer;
 		return {
-			mediaPlayer: mediaPlayer,
+			mediaPlayer,
 			currentSong: mediaPlayer.youtubeId,
 			website: store.getState().website,
 			store,
@@ -33,8 +33,8 @@ Vue.component('play-list', {
 			this.website = store.getState().website;
 			if (this.currentSong !== this.mediaPlayer.youtubeId) {
 				Vue.nextTick(() => {
-					const el = document.querySelector(".play-list li.active")
-					if(!isElementInViewport(el)) el.scrollIntoView({block: "start", behavior: "smooth"});
+					const el = document.querySelector('.play-list li.active');
+					if (!isElementInViewport(el)) el.scrollIntoView({ block: 'start', behavior: 'smooth' });
 				});
 				this.currentSong = this.mediaPlayer.youtubeId;
 			}
@@ -49,9 +49,9 @@ Vue.component('play-list', {
 				AudiusDump: true,
 				playList: this.mediaPlayer.playList,
 				entities: this.mediaPlayer.entities,
-			}
-			var element = document.createElement('a');
-			element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(JSON.stringify(data)));
+			};
+			const element = document.createElement('a');
+			element.setAttribute('href', `data:text/plain;charset=utf-8,${encodeURIComponent(JSON.stringify(data))}`);
 			element.setAttribute('download', 'audius.data.json');
 			element.style.display = 'none';
 			document.body.appendChild(element);
@@ -60,27 +60,30 @@ Vue.component('play-list', {
 		},
 		importPlayList(event) {
 			const files = event.target.files || event.dataTransfer.files;
-			Array.from(files).forEach(file => {
+			Array.from(files).forEach((file) => {
 				const reader = new FileReader();
-				reader.onload = (event) => {
-					importPlaylist(event.target.result);
+				reader.onload = (event2) => {
+					importPlaylist(event2.target.result);
 				};
-				reader.readAsText(file)
+				reader.readAsText(file);
 			});
 		},
-		searchJump() {
-			console.log('searchJump');
-		},
+		searchJump: debounce((event) => {
+			store.dispatch(Actions.filterPlayList(event.target.value));
+		}, 500),
 		clear() {
 			clearTimeout(this.blurTimer);
 			event.stopPropagation();
 			document.querySelector('.play-list-footer__search-input').value = '';
 			document.querySelector('.play-list-footer__search-input').focus();
+			store.dispatch(Actions.filterPlayList(''));
 		},
 		delayBlur() {
-			this.blurTimer = setTimeout(()=> {
-				store.dispatch(Actions.toggleJump(false))
-			}, 800)
+			if (!this.mediaPlayer.filterQuery) {
+				this.blurTimer = setTimeout(() => {
+					store.dispatch(Actions.toggleJump(false));
+				}, 800);
+			}
 		},
 		stopPropagation() {
 			if (this.website.showJump) event.stopPropagation();
@@ -88,9 +91,21 @@ Vue.component('play-list', {
 		toggleJump() {
 			store.dispatch(Actions.toggleJump());
 			Vue.nextTick(() => {
-				document.querySelector('.play-list-footer__search-input').focus()
+				document.querySelector('.play-list-footer__search-input').focus();
 			});
-		}
+		},
+	},
+	computed: {
+		filteredPlaylist() {
+			if (!this.mediaPlayer.filterQuery) return this.mediaPlayer.playList;
+			return this.mediaPlayer.playList.filter(id =>
+				this.mediaPlayer
+					.entities[id]
+					.title
+					.toLowerCase()
+					.indexOf(this.mediaPlayer.filterQuery) !== -1
+				);
+		},
 	},
 	template: `
 <div class="play-list">
@@ -99,7 +114,7 @@ Vue.component('play-list', {
 	</h2>
 	<ul class="media-list">
 		<video-item
-			v-for="id in mediaPlayer.playList"
+			v-for="id in filteredPlaylist"
 			:video="mediaPlayer.entities[id]"
 			:isPlaying="mediaPlayer.isPlaying && mediaPlayer.entities[id] && (mediaPlayer.youtubeId == mediaPlayer.entities[id].id)"></video-item>
 	</ul>
