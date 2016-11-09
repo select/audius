@@ -10,13 +10,24 @@ Vue.component('web-header', {
 		return {
 			mediaPlayer: store.getState().mediaPlayer,
 			website: store.getState().website,
-			currentSong: undefined,
-			// search: '',
+			currentMedia: undefined,
 			store,
 			Actions,
 		};
 	},
 	created() {
+		document.addEventListener('keydown', (event) => {
+			if (event.target.tagName.toLowerCase() !== 'input') {
+				if (event.key === 'c' && !event.ctrlKey) {
+					this.playPauseMedia();
+				} else if (event.key === 'b') {
+					store.dispatch(Actions.nextVideo());
+				} else if (event.key === 's') {
+					store.dispatch(Actions.toggleShuffle());
+				}
+			}
+		}, false);
+
 		this.unsubscribe = store.subscribe(() => {
 			this.mediaPlayer = store.getState().mediaPlayer;
 			this.website = store.getState().website;
@@ -26,9 +37,9 @@ Vue.component('web-header', {
 				});
 			}
 			if (this.mediaPlayer.youtubeId) {
-				this.currentSong = this.mediaPlayer.entities[this.mediaPlayer.youtubeId];
+				this.currentMedia = this.mediaPlayer.entities[this.mediaPlayer.youtubeId];
 			} else {
-				this.currentSong = undefined;
+				this.currentMedia = undefined;
 			}
 		});
 	},
@@ -36,7 +47,7 @@ Vue.component('web-header', {
 		this.unsubscribe();
 	},
 	methods: {
-		playPauseVideos() {
+		playPauseMedia() {
 			if (this.mediaPlayer.isPlaying) store.dispatch(Actions.pause());
 			else if (this.mediaPlayer.playList.length) store.dispatch(Actions.play());
 		},
@@ -49,10 +60,10 @@ Vue.component('web-header', {
 			document.querySelector('.au-header__search-input').value = '';
 			document.querySelector('.au-header__search-input').focus();
 		},
-		delayBlur(event) {
-			this.blurTimer = setTimeout(()=> {
-				store.dispatch(Actions.toggleSearch(false))
-			}, 800)
+		delayBlur() {
+			this.blurTimer = setTimeout(() => {
+				store.dispatch(Actions.toggleSearch(false));
+			}, 800);
 		},
 		searchYoutube: debounce((event) => {
 			// store.dispatch(Actions.searchYoutube(event.target.value)); // should use this and middleware
@@ -88,12 +99,12 @@ Vue.component('web-header', {
 	</div>
 	<div class="au-header__control-bar">
 		<div class="au-header__current-song">
-			<div class="au-header__current-song-name" v-if="currentSong">{{currentSong.title}}</div>
-			<div class="au-header__current-song-time" v-if="currentSong"> 3:20 / {{currentSong.duration.m}}:{{currentSong.duration.s}} </div>
+			<div class="au-header__current-song-name" v-if="currentMedia">{{currentMedia.title}}</div>
+			<div class="au-header__current-song-time" v-if="currentMedia"> 3:20 / {{currentMedia.duration.m}}:{{currentMedia.duration.s}} </div>
 		</div>
 		<div class="au-header__controls" :disabled="!mediaPlayer.playList.length">
 			<span class="wmp-icon-previous" v-on:click="store.dispatch(Actions.previousVideo())" title="Previous song"></span>
-			<div class="au-header__play-pause" v-on:click="playPauseVideos">
+			<div class="au-header__play-pause" v-on:click="playPauseMedia">
 				<span class="wmp-icon-pause" v-if="mediaPlayer.isPlaying" title="Pause"></span>
 				<span class="wmp-icon-play" v-else  title="Play"></span>
 			</div>

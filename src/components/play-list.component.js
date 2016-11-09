@@ -28,6 +28,12 @@ Vue.component('play-list', {
 		};
 	},
 	created() {
+		document.addEventListener('keydown', (event) => {
+			if (event.target.tagName.toLowerCase() !== 'input' && event.key === 'j') {
+				this.toggleJump(true);
+			}
+		}, false);
+
 		this.unsubscribe = store.subscribe(() => {
 			this.mediaPlayer = store.getState().mediaPlayer;
 			this.website = store.getState().website;
@@ -72,6 +78,7 @@ Vue.component('play-list', {
 			store.dispatch(Actions.filterPlayList(event.target.value));
 		}, 500),
 		clear() {
+			if (!this.mediaPlayer.filterQuery) this.toggleJump(false);
 			clearTimeout(this.blurTimer);
 			event.stopPropagation();
 			document.querySelector('.play-list-footer__search-input').value = '';
@@ -88,8 +95,8 @@ Vue.component('play-list', {
 		stopPropagation() {
 			if (this.website.showJump) event.stopPropagation();
 		},
-		toggleJump() {
-			store.dispatch(Actions.toggleJump());
+		toggleJump(state) {
+			store.dispatch(Actions.toggleJump(state));
 			Vue.nextTick(() => {
 				document.querySelector('.play-list-footer__search-input').focus();
 			});
@@ -133,7 +140,7 @@ Vue.component('play-list', {
 		<div
 			class="play-list-footer__search"
 			v-bind:class="{ active: website.showJump }"
-			v-on:click="toggleJump">
+			v-on:click="toggleJump()">
 			<span class="wmp-icon-search" title="[J] Jump to file"></span>
 			<input
 					type="text"
@@ -141,6 +148,7 @@ Vue.component('play-list', {
 					placeholder="Jump to"
 					v-on:click="stopPropagation"
 					v-on:keyup="searchJump"
+					v-on:keyup.esc="clear"
 					v-on:blur="delayBlur"
 					v-show="website.showJump"
 					debounce="500">

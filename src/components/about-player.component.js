@@ -6,10 +6,9 @@ Vue.component('about-player', {
 <div class="wmp-about">
 	<h2>Usage</h2>
 	<p>
-		Keyboard shortcuts ... are planned.
 		<dl>
 			<dt>c</dt>
-			<dd>Pause / unpause</dd>
+			<dd>Play / pause</dd>
 			<dt>b</dt>
 			<dd>Next song</dd>
 			<dt>j</dt>
@@ -30,7 +29,7 @@ Vue.component('about-player', {
 			Chromebook users: Click <i>Add to shelf</i>. </li>
 		</ol>
 		<b>Chrome android:</b><br>
-		Tap the menu button and tap <i>Add to homescreen</i>.
+		Tap the menu button and tap <i>Add to homescreen</i>. The app is not yet optimized for mobile phones, it might work on tables.
 	</p>
 	<p>
 		<b>Local HTML5:</b><br>
@@ -38,6 +37,15 @@ Vue.component('about-player', {
 	</p>
 	<p>
 		Web apps are true freedom! Support an open and liberal web without geo borders and login screens.
+	</p>
+	<h2>System requirements</h2>
+	<p>
+		<ul>
+			<li> Chrome >= 51 </li>
+			<li> FireFox >= 49 </li>
+			<li> Vivaldi >= 51 </li>
+			<li> Internet Explorer & Safari ... not supported, might work though </li>
+		</ul>
 	</p>
 	<h2>Extension</h2>
 	<p>The extension should have been the actual player since the original idea was to create an extension with a media player for <i>web.whatsapp</i>. This however failed since the conten security policy does not allow the embdding of youtube videos. That meant no player, no music.</p>
