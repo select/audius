@@ -1,7 +1,7 @@
 import Vue from 'vue/dist/vue.js';
 import store from '../store';
 import Actions from '../actions';
-import youtubeApi from '../utils/youtube-iframe-api';
+// import youtubeApi from '../utils/youtube-iframe-api';
 import * as db from '../utils/indexDB';
 import './youtube-player.component.sass';
 
@@ -35,7 +35,7 @@ Vue.component('youtube-player', {
 			if (mediaPlayer.isPlaying) {
 				if (this.player.getPlayerState() !== 1) this.player.playVideo();
 			} else {
-				if (this.player.getPlayerState) {
+				if (this.player && this.player.getPlayerState) {
 					if (![0, 2].includes(this.player.getPlayerState())) this.player.pauseVideo();
 				}
 			}
@@ -46,6 +46,9 @@ Vue.component('youtube-player', {
 		this.unsubscribe();
 	},
 	mounted() {
+		const tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    document.head.appendChild(tag);
 		const initialVideos = ['Es22YN2stg8', 'strzXKsfRMs', 'qMvLkpQcCKQ', 'KwoVARYA8jw', 'nzwrwfNHn5A'];
 		window.onYouTubeIframeAPIReady = () => {
 			this.player = new YT.Player('youtube-iframe', {
@@ -58,7 +61,7 @@ Vue.component('youtube-player', {
 				}
 			});
 		}
-		youtubeApi();
+		// youtubeApi();
 	},
 	methods: {
 		onPlayerError(event) {
