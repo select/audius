@@ -17,6 +17,7 @@
 	"private": true,
 	"dependencies": {
 		"redux": "^3.6.0",
+		"sortablejs": "^1.4.2",
 		"vue": "^2.0.3",
 		"vue-redux": "0.0.2"
 	},

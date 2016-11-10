@@ -1,4 +1,5 @@
 import Vue from 'vue/dist/vue';
+import Sortable from 'sortablejs';
 import store from '../store';
 import Actions from '../actions';
 import './play-list.component.sass';
@@ -37,6 +38,10 @@ Vue.component('play-list', {
 				this.currentSong = this.mediaPlayer.youtubeId;
 			}
 		});
+	},
+	mounted() {
+		var el = document.querySelector('.media-list');
+		var sortable = Sortable.create(el);
 	},
 	beforeDestroy() {
 		this.unsubscribe();
