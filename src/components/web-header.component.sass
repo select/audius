@@ -83,6 +83,25 @@ header
 	width: 100%
 	height: 4px
 	background: $color-aluminium
+	transition: all $transition-time
+	cursor: pointer
+	&:hover
+		.au-header__progress-current
+			&:after
+				content: ''
+				width: 10px
+				height: 10px
+				border-radius: 50%
+				position: absolute
+				top: -3px
+				right: -3px
+				background: $color-pictonblue
+
+	.au-header__progress-current
+		position: relative
+		background: $color-pictonblue
+		height: 100%
+
 .au-header__shuffle,
 .au-header__repeat
 	color: $color-athensgrey

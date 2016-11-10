@@ -15,6 +15,8 @@ const initialState = {
 	repeatAll: false,
 	showSearch: false,
 	filterQuery: '',
+	currentTime: 0,
+	skipToTime: 0,
 };
 
 function next(state) {
@@ -196,6 +198,14 @@ const mediaPlayer = (state = initialState, action) => {
 	case 'FILTER_PLAYLIST':
 		return Object.assign({}, state, {
 			filterQuery: action.query,
+		});
+	case 'SET_CURRENT_TIME':
+		return Object.assign({}, state, {
+			currentTime: action.time,
+		});
+	case 'SKIP_TO_TIME':
+		return Object.assign({}, state, {
+			skipToTime: action.s
 		});
 	default:
 		return state;

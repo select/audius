@@ -12,6 +12,7 @@ Vue.component('youtube-player', {
 			player: undefined,
 			timeInterval: undefined,
 			duration: 0,
+			skipToTime: 0,
 		};
 	},
 	created() {
@@ -24,15 +25,16 @@ Vue.component('youtube-player', {
 					suggestedQuality: 'large',
 				});
 			}
+			if (this.player && this.player.isMuted && (this.player.isMuted() != mediaPlayer.mute)) {
+				mediaPlayer.mute ? this.player.mute() : this.player.unMute();
+			}
+			if (this.skipToTime !== mediaPlayer.skipToTime) { // bad hack, this sould be some middleware doing it better
+				this.skipToTime = mediaPlayer.skipToTime;
+				this.player.seekTo(mediaPlayer.skipToTime, true);
+			}
 			if (mediaPlayer.isPlaying) {
 				if (this.player.getPlayerState() !== 1) this.player.playVideo();
-				// if (!this.timeInterval) {
-				// 	this.timeInterval = setInterval(() => {
-				// 		store.dispatch(Actions.setCurrentTime(this.player.getCurrentTime()));
-				// 	}, 1000);
-				// }
 			} else {
-				clearInterval(this.timeInterval);
 				if (this.player.getPlayerState) {
 					if (![0, 2].includes(this.player.getPlayerState())) this.player.pauseVideo();
 				}
@@ -60,7 +62,6 @@ Vue.component('youtube-player', {
 	},
 	methods: {
 		onPlayerError(event) {
-			console.log('error!')
 			const youtubeId = store.getState().mediaPlayer.youtubeId;
 			store.dispatch(Actions.videoError(store.getState().mediaPlayer.youtubeId, event.data));
 			db.setMediaEntity(store.getState().mediaPlayer.entities[youtubeId]);
@@ -68,10 +69,17 @@ Vue.component('youtube-player', {
 		onPlayerStateChange(event) {
 			const playerState = this.player.getPlayerState();
 			const isPlaying = store.getState().mediaPlayer.isPlaying;
-			if (playerState === 2 && isPlaying) {
-				store.dispatch(Actions.pause());
-			} else if (playerState === 1 && !isPlaying){
-				store.dispatch(Actions.play());
+			if (playerState === 2) {
+				clearInterval(this.timeInterval);
+				this.timeInterval = undefined;
+				if (isPlaying) store.dispatch(Actions.pause());
+			} else if (playerState === 1){
+				if (!this.timeInterval) {
+					this.timeInterval = setInterval(() => {
+						store.dispatch(Actions.setCurrentTime(this.player.getCurrentTime()));
+					}, 1000);
+				}
+				if(!isPlaying) store.dispatch(Actions.play());
 			} else if (playerState === 0) {
 				store.dispatch(Actions.nextVideo());
 			}
@@ -79,7 +87,6 @@ Vue.component('youtube-player', {
 	},
 	template: `
 	<div class="youtube-player">
-		<!-- <object style="width: 100px; height: 100px;" data="http://www.youtube.com/embed/GlIzuTQGgzs"></object> -->
 		<div id="youtube-iframe"></div>
 	</div>
 	`,

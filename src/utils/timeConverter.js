@@ -12,7 +12,7 @@ function zeroPad(num, size) {
 
 /**
  * Convert milliseconds to hours minutes seconds and milliseconds.
- * @param  {float} sms milliseconds
+ * @param  {float} sms seconds float
  * @return {Object} `{h, m, s, ms}`
  */
 export function s2time(sms) {
@@ -34,8 +34,10 @@ export function s2time(sms) {
  * Convert hours, minutes, seconds to seconds.
  * @return {integer} seconds
  */
-export function time2s(h, m, s) {
-	return ((h * 60 + m) * 60 + s);
+export function time2s(duration) {
+	duration.s = parseInt(duration.s);
+	const t = Object.assign({h: 0, m: 0, s: 0}, duration);
+	return ((t.h * 60 + t.m) * 60 + t.s);
 }
 
 

@@ -36,6 +36,11 @@ export const setCurrentTime = (time) => ({
 	time,
 });
 
+export const skipToTime = (s) => ({
+	type: 'SKIP_TO_TIME',
+	s,
+})
+
 export const addVideos = (videos = []) => ({
 	type: 'ADD_VIDEOS',
 	videos,

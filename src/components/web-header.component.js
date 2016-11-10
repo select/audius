@@ -4,6 +4,7 @@ import Actions from '../actions';
 import './web-header.component.sass';
 import { debounce } from '../utils/debounce';
 import searchYoutube from '../utils/searchYoutube';
+import { s2time, time2s } from '../utils/timeConverter';
 
 Vue.component('web-header', {
 	data() {
@@ -22,7 +23,7 @@ Vue.component('web-header', {
 					this.playPauseMedia();
 				} else if (event.key === 'f' && !event.ctrlKey) {
 					store.dispatch(Actions.toggleSearch(true));
-					setTimeout(() => {document.querySelector('.au-header__search-input').value = '';}, 100);
+					setTimeout(() => { document.querySelector('.au-header__search-input').value = ''; }, 100);
 				} else if (event.key === 'b') {
 					store.dispatch(Actions.nextVideo());
 				} else if (event.key === 's') {
@@ -41,6 +42,7 @@ Vue.component('web-header', {
 			}
 			if (this.mediaPlayer.youtubeId) {
 				this.currentMedia = this.mediaPlayer.entities[this.mediaPlayer.youtubeId];
+				this.currentMedia.durationS = time2s(this.currentMedia.duration);
 			} else {
 				this.currentMedia = undefined;
 			}
@@ -72,6 +74,24 @@ Vue.component('web-header', {
 			// store.dispatch(Actions.searchYoutube(event.target.value)); // should use this and middleware
 			searchYoutube(event.target.value);
 		}, 500),
+		skipToTime(event) {
+			if (this.currentMedia) {
+				store.dispatch(
+					Actions.skipToTime(
+						this.currentMedia.durationS * (event.offsetX / event.currentTarget.offsetWidth)
+					)
+				);
+			}
+		},
+	},
+	computed: {
+		currentTimeObj() {
+			return s2time(this.mediaPlayer.currentTime);
+		},
+		progressWidth() {
+			if (!this.currentMedia) return 0;
+			return (this.mediaPlayer.currentTime / this.currentMedia.durationS) * 100;
+		},
 	},
 	template: `
 <header>
@@ -104,7 +124,7 @@ Vue.component('web-header', {
 	<div class="au-header__control-bar">
 		<div class="au-header__current-song">
 			<div class="au-header__current-song-name" v-if="currentMedia">{{currentMedia.title}}</div>
-			<div class="au-header__current-song-time" v-if="currentMedia"> 3:20 / {{currentMedia.duration.m}}:{{currentMedia.duration.s}} </div>
+			<div class="au-header__current-song-time" v-if="currentMedia"> {{currentTimeObj.m}}:{{currentTimeObj.s}} / {{currentMedia.duration.m}}:{{currentMedia.duration.s}} </div>
 		</div>
 		<div class="au-header__controls" :disabled="!mediaPlayer.playList.length">
 			<span class="wmp-icon-previous" v-on:click="store.dispatch(Actions.previousVideo())" title="Previous song"></span>
@@ -128,7 +148,12 @@ Vue.component('web-header', {
 			</div>
 		</div>
 	</div>
-	<div class="au-header__progress"> </div>
+	<div class="au-header__progress" v-on:click="skipToTime">
+		<div
+			v-if="currentMedia"
+			v-bind:style="{ width: progressWidth + '%' }"
+			class="au-header__progress-current"></div>
+	</div>
 </header>
 	`,
 });
