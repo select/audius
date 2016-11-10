@@ -50,7 +50,8 @@ Vue.component('about-player', {
 		</ul>
 	</p>
 	<h2>Extension</h2>
-	<p>The extension should have been the actual player since the original idea was to create an extension with a media player for <i>web.whatsapp</i>. This however failed since the conten security policy does not allow the embdding of youtube videos. That meant no player, no music.</p>
+	<p>... development started, but now stopped until the main app is ready.</p>
+	<p>The Audius extension allows you to open a music player on any website. It will then automatically collect all linked videos and add it to a playlist similar to the one in this app. The videos will still be played in this app due to <a href="#motivation">restrictions of some websites</a>. This setup allows you to create a "Music" chat group on Whatsapp or Slack and have fresh music from your friends every day playing right where you share it. You can then continue and add this music to you regular playlist with a simple click.</p>
 	<h2 id="source-code">Source code</h2>
 	<p>
 		The source code for this project is located at <a href="https://github.com/select/audius" title="Source code on select@github audius" target="_blank">https://github.com/select/audius</a>.
@@ -75,9 +76,15 @@ Vue.component('about-player', {
 			<li>...</li>
 		</ul>
 	</p>
-	<h2>Motivation</h2>
+	<h2 id="motivation">Motivation</h2>
 	<p>
 		You are writing another music player, seriously? That's what I thought a lot when creating this, but you know ...
+	</p>
+	<p>
+		The extension should have been the actual player since the original idea was to create a Chrome/FireFox extension with a media player for <i>web.whatsapp</i>. This however failed since the conten security policy does not allow the embdding of youtube videos and somehow it is not possible to overwrite the header fields of web.whatsapp. That meant no player, no music. The only way around this issue I could come up with is to create a background process that the extension cummunicates with and that sends messages to a main player web app. This is currently still untested but that is the plan.
+	</p>
+	<p>
+		The
 	</p>
 	<h2>Credits</h2>
 	<p>
