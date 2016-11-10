@@ -2,6 +2,7 @@ import Vue from 'vue/dist/vue';
 import store from '../store';
 import Actions from '../actions';
 import * as db from '../utils/indexDB';
+import isElementInViewport from '../utils/isElementInViewport';
 
 Vue.component('search-results', {
 	data() {
@@ -31,6 +32,12 @@ Vue.component('search-results', {
 		addToPlaylist(video) {
 			store.dispatch(Actions.addSearchResult(video));
 			db.setMediaEntity(video);
+			Vue.nextTick(() => {
+				const el = document.querySelector(`[data-id=${video.id}]`)
+				if (!isElementInViewport(el)) el.scrollIntoView({ block: 'start', behavior: 'smooth' });
+				el.classList.add('au--highlight');
+				setTimeout(() => {el.classList.remove('au--highlight');}, 1000);
+			});
 		},
 		isPlaying(video) {
 			return this.mediaPlayer.youtubeId === video.id;

@@ -13,7 +13,6 @@ Vue.component('video-item', {
 	},
 	methods: {
 		play() {
-			console.log('play')
 			if (this.isQueue) store.dispatch(Actions.queuePlayIndex(this.queueIndex));
 			else store.dispatch(Actions.playVideo(this.video.id));
 		},
@@ -54,7 +53,7 @@ Vue.component('video-item', {
 		},
 	},
 	template: `
-	<li v-bind:class="{ active: isPlaying, error: video.hasError }" v-on:dblclick="play">
+	<li v-bind:class="{ active: isPlaying, error: video.hasError }" v-on:dblclick="play" v-bind:data-id="video.id">
 		<div class="media-list__thumbnail" v-bind:style="{ backgroundImage: 'url(https://i.ytimg.com/vi/' + video.id + '/default.jpg)' }"></div>
 		<div class="media-list__body">
 			<div class="media-list__name">{{video.title}}</div>
