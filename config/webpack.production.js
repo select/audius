@@ -24,18 +24,9 @@ module.exports = Object.assign(configDev, {
 				warnings: false,
 			},
 		}),
-		// new ClosureCompilerPlugin({
-		// 	compiler: {
-		// 		language_in: 'ECMASCRIPT6',
-		// 		language_out: 'ECMASCRIPT5',
-		// 		compilation_level: 'SIMPLE'
-		// 	},
-		// 	concurrency: 3,
-		// }),
 		new webpack.DefinePlugin({
 			'process.env': {
-				// NODE_ENV: JSON.stringify('production'),
-				APP_ENV: JSON.stringify('production'),
+				NODE_ENV: JSON.stringify('production'),
 			},
 		}),
 		new webpack.optimize.DedupePlugin(),
