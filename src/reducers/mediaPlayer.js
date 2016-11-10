@@ -205,7 +205,13 @@ const mediaPlayer = (state = initialState, action) => {
 		});
 	case 'SKIP_TO_TIME':
 		return Object.assign({}, state, {
-			skipToTime: action.s
+			skipToTime: action.s,
+		});
+	case 'MOVE_PLAYLIST_MEDIA':
+		const playList = state.playList.filter(id => id !== action.mediaId);
+		playList.splice(playList.indexOf(action.beforeThisMediaId), 0, action.mediaId);
+		return Object.assign({}, state, {
+			playList,
 		});
 	default:
 		return state;

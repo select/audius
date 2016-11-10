@@ -58,7 +58,7 @@ if (!('indexedDB' in window)) {
 }
 
 
-function setPlayList() {
+export function setPlayList() {
 	exists('playList', 'default', (event) => {
 		const dbStore = store.getState().mediaPlayer.db
 			.transaction(['playLists'], 'readwrite')

@@ -6,6 +6,7 @@ import './play-list.component.sass';
 import importPlaylist from '../utils/importPlaylist';
 import { debounce } from '../utils/debounce';
 import isElementInViewport from '../utils/isElementInViewport';
+import * as db from '../utils/indexDB';
 
 Vue.component('play-list', {
 	data() {
@@ -40,8 +41,20 @@ Vue.component('play-list', {
 		});
 	},
 	mounted() {
-		var el = document.querySelector('.media-list');
-		var sortable = Sortable.create(el);
+		const mediaListEl = document.querySelector('.play-list .media-list');
+		Sortable.create(mediaListEl, {
+			animation: 250,
+			scrollSpeed: 20,
+			handle: '.media-list__thumbnail',
+			// Element dragging ended
+			onUpdate: (event) => {
+				store.dispatch(Actions.movePlayListMedia(
+					event.item.dataset.id,
+					mediaListEl.childNodes[event.newIndex + 1].dataset.id
+				));
+				db.setPlayList();
+			},
+		});
 	},
 	beforeDestroy() {
 		this.unsubscribe();

@@ -131,3 +131,9 @@ export const filterPlayList = (query) => ({
 	type: 'FILTER_PLAYLIST',
 	query,
 })
+
+export const movePlayListMedia = (mediaId, beforeThisMediaId) => ({
+	type: 'MOVE_PLAYLIST_MEDIA',
+	mediaId,
+	beforeThisMediaId,
+})
