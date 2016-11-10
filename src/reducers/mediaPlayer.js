@@ -186,7 +186,7 @@ const mediaPlayer = (state = initialState, action) => {
 		const mediaId = queue.splice(action.idx, 1);
 		return Object.assign({}, state, {
 			queue: [...queue],
-			youtubeId: mediaId,
+			youtubeId: mediaId[0],
 			isPlaying: true,
 		});
 	case 'QUEUE_REMOVE_INDEX':
