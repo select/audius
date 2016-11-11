@@ -2,6 +2,30 @@ import Vue from 'vue/dist/vue';
 import './about-player.component.sass';
 
 Vue.component('about-player', {
+	data() {
+		return {
+			gitter: false
+		}
+	},
+	methods: {
+		openGitter() {
+			if (!this.gitter) {
+				//config
+				((window.gitter = {}).chat = {}).options = {
+					room: 'audius-player/Lobby',
+					activationElement: '.gitter-chat',
+				};
+				//load script
+				const tag = document.createElement('script');
+				tag.onload = () => {
+					document.querySelector('.gitter-chat').click();
+				};
+				tag.src = "https://sidecar.gitter.im/dist/sidecar.v1.js";
+				document.head.appendChild(tag);
+				this.gitter = true;
+			}
+		}
+	},
 	template: `
 <div class="wmp-about">
 	<h2>Keyboard shortcuts</h2>
@@ -18,6 +42,17 @@ Vue.component('about-player', {
 			<dt>f</dt>
 			<dd>Find song on YouTube</dd>
 		</dl>
+	</p>
+	<h2>Community</h2>
+	<p>
+		If you have questions or feedback, join the chat on gitter or create a ticket on github.<br>
+		<div class="about-player__community-btns">
+			<button
+				class="btn--blue"
+				v-on:click="openGitter"
+				v-bind:class="{ 'gitter-chat': gitter }">Join chat</button>
+			<a class="button btn--blue" href="https://github.com/select/audius/issues" target="_blank">Create issue</a>
+		</div>
 	</p>
 	<h2>Install as app</h2>
 	<p>
