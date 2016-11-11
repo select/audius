@@ -44,5 +44,10 @@ module.exports = {
       { context: './src/extension/static/', from: '**/*', to: './dist-extension/' },
       { context: './src/website/static/', from: '**/*', to: './dist-website/' },
     ]),
+    new webpack.DefinePlugin({
+			'process.env': {
+				extension: true,
+			},
+		}),
 	],
 };
