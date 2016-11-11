@@ -13,7 +13,7 @@ Vue.component('play-list', {
 		const mediaPlayer = store.getState().mediaPlayer;
 		return {
 			mediaPlayer,
-			currentSong: mediaPlayer.youtubeId,
+			currentSong: mediaPlayer.mediaId,
 			website: store.getState().website,
 			store,
 			Actions,
@@ -31,12 +31,12 @@ Vue.component('play-list', {
 		this.unsubscribe = store.subscribe(() => {
 			this.mediaPlayer = store.getState().mediaPlayer;
 			this.website = store.getState().website;
-			if (this.currentSong !== this.mediaPlayer.youtubeId) {
+			if (this.currentSong !== this.mediaPlayer.mediaId) {
 				Vue.nextTick(() => {
 					const el = document.querySelector('.play-list li.active');
 					if (!isElementInViewport(el)) el.scrollIntoView({ block: 'start', behavior: 'smooth' });
 				});
-				this.currentSong = this.mediaPlayer.youtubeId;
+				this.currentSong = this.mediaPlayer.mediaId;
 			}
 		});
 	},
@@ -61,6 +61,9 @@ Vue.component('play-list', {
 	},
 	methods: {
 		exportPlayList() {
+			// api_option=paste&api_paste_private=0&api_paste_code=llkjsdfljsdf
+			// https://developer.github.com/v3/gists/#create-a-gist
+			// curl -X POST \--data-binary '{"files": {"file1.txt": {"content": "Hello, SO"}}}' \https://api.github.com/gists
 			const data = {
 				AudiusDump: true,
 				playList: this.mediaPlayer.playList,
@@ -133,7 +136,7 @@ Vue.component('play-list', {
 		<video-item
 			v-for="id in filteredPlaylist"
 			:video="mediaPlayer.entities[id]"
-			:isPlaying="mediaPlayer.isPlaying && mediaPlayer.entities[id] && (mediaPlayer.youtubeId == mediaPlayer.entities[id].id)"></video-item>
+			:isPlaying="mediaPlayer.isPlaying && mediaPlayer.entities[id] && (mediaPlayer.mediaId == mediaPlayer.entities[id].id)"></video-item>
 	</ul>
 	<div class="play-list-footer">
 		<ul v-show="!website.showJump">

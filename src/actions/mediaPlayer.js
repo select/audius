@@ -75,8 +75,9 @@ export const playVideo = id => ({
 	id,
 });
 
-export const play = () => ({
+export const play = (mediaId) => ({
 	type: 'PLAY',
+	mediaId,
 });
 
 export const pause = () => ({

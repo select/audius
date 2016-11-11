@@ -24,7 +24,7 @@ Vue.component('search-results', {
 	},
 	methods: {
 		play(video) {
-			store.dispatch(Actions.playVideo(video.id));
+			store.dispatch(Actions.play(video.id));
 		},
 		pause() {
 			store.dispatch(Actions.pause());
@@ -40,7 +40,7 @@ Vue.component('search-results', {
 			});
 		},
 		isPlaying(video) {
-			return this.mediaPlayer.youtubeId === video.id;
+			return this.mediaPlayer.mediaId === video.id;
 		},
 	},
 	template: `
