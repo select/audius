@@ -30,7 +30,7 @@ are in the making
 
 If you have questions or feedback, join the chat on gitter or [create an issue](https://github.com/select/audius/issues).
 
-[![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/audius-player/Lobb)
+[![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/audius-player/Lobby)
 
 
 ## Install as app
