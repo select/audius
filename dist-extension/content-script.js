@@ -9462,7 +9462,7 @@
 	
 	__webpack_require__(55);
 	
-	__webpack_require__(58);
+	__webpack_require__(56);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -9560,7 +9560,7 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	var store = void 0;
-	if (process && process.env.NODE_ENV === 'production') {
+	if (process && (({"extension":true}).NODE_ENV === 'production' || (true) === true)) {
 		store = (0, _redux.createStore)(_reducers2.default);
 	} else {
 		store = (0, _redux.createStore)(_reducers2.default, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
@@ -9758,7 +9758,7 @@
 /* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
+	'use strict';
 	
 	exports.__esModule = true;
 	exports.compose = exports.applyMiddleware = exports.bindActionCreators = exports.combineReducers = exports.createStore = undefined;
@@ -9795,7 +9795,7 @@
 	*/
 	function isCrushed() {}
 	
-	if (process.env.NODE_ENV !== 'production' && typeof isCrushed.name === 'string' && isCrushed.name !== 'isCrushed') {
+	if (({"extension":true}).NODE_ENV !== 'production' && typeof isCrushed.name === 'string' && isCrushed.name !== 'isCrushed') {
 	  (0, _warning2['default'])('You are currently using minified code outside of NODE_ENV === \'production\'. ' + 'This means that you are running a slower development build of Redux. ' + 'You can use loose-envify (https://github.com/zertosh/loose-envify) for browserify ' + 'or DefinePlugin for webpack (http://stackoverflow.com/questions/30030031) ' + 'to ensure you have the correct code for your production build.');
 	}
 	
@@ -9804,7 +9804,6 @@
 	exports.bindActionCreators = _bindActionCreators2['default'];
 	exports.applyMiddleware = _applyMiddleware2['default'];
 	exports.compose = _compose2['default'];
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)))
 
 /***/ },
 /* 8 */
@@ -10451,7 +10450,7 @@
 /* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
+	'use strict';
 	
 	exports.__esModule = true;
 	exports['default'] = combineReducers;
@@ -10538,7 +10537,7 @@
 	  for (var i = 0; i < reducerKeys.length; i++) {
 	    var key = reducerKeys[i];
 	
-	    if (process.env.NODE_ENV !== 'production') {
+	    if (({"extension":true}).NODE_ENV !== 'production') {
 	      if (typeof reducers[key] === 'undefined') {
 	        (0, _warning2['default'])('No reducer provided for key "' + key + '"');
 	      }
@@ -10550,7 +10549,7 @@
 	  }
 	  var finalReducerKeys = Object.keys(finalReducers);
 	
-	  if (process.env.NODE_ENV !== 'production') {
+	  if (({"extension":true}).NODE_ENV !== 'production') {
 	    var unexpectedKeyCache = {};
 	  }
 	
@@ -10569,7 +10568,7 @@
 	      throw sanityError;
 	    }
 	
-	    if (process.env.NODE_ENV !== 'production') {
+	    if (({"extension":true}).NODE_ENV !== 'production') {
 	      var warningMessage = getUnexpectedStateShapeWarningMessage(state, finalReducers, action, unexpectedKeyCache);
 	      if (warningMessage) {
 	        (0, _warning2['default'])(warningMessage);
@@ -10593,7 +10592,6 @@
 	    return hasChanged ? nextState : state;
 	  };
 	}
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)))
 
 /***/ },
 /* 24 */
@@ -11315,7 +11313,8 @@
 	var initialState = {
 		showSearch: false,
 		showJump: false,
-		mainRightTab: 'about'
+		mainRightTab: 'about',
+		showChat: false
 	};
 	
 	var website = function website() {
@@ -11342,6 +11341,11 @@
 			case 'QUEUE_MEDIA':
 				return Object.assign({}, state, {
 					mainRightTab: 'queue'
+				});
+			case 'SHOW_CHAT':
+				return Object.assign({}, state, {
+					showChat: true,
+					mainRightTab: 'chat'
 				});
 			default:
 				return state;
@@ -11735,6 +11739,12 @@
 		return {
 			type: 'SET_MAINRIGHT_TAB',
 			id: id
+		};
+	};
+	
+	var showChat = exports.showChat = function showChat() {
+		return {
+			type: 'SHOW_CHAT'
 		};
 	};
 
@@ -12538,7 +12548,7 @@
 	
 	if (!document.querySelectorAll('#audius-website').length) {
 		// Watch if the DOM changes, rescan the DOM for new links to music
-		var observer = new MutationObserver(function (mutations) {
+		var observer = new MutationObserver(function () {
 			(0, _findVideos2.default)();
 		});
 	
@@ -12678,15 +12688,13 @@
 	}
 
 /***/ },
-/* 56 */,
-/* 57 */,
-/* 58 */
+/* 56 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(59);
+	var content = __webpack_require__(57);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(44)(content, {});
@@ -12706,7 +12714,7 @@
 	}
 
 /***/ },
-/* 59 */
+/* 57 */
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(43)();
@@ -12714,13 +12722,13 @@
 	exports.push([module.id, "@import url(https://fonts.googleapis.com/css?family=Nobile);", ""]);
 	
 	// module
-	exports.push([module.id, "@charset \"UTF-8\";\n.audius button,\n.audius .button,\n#audius-website button,\n#audius-website .button {\n  font-family: 'Nobile', sans-serif;\n  font-size: 1em;\n  padding: 0 7px;\n  height: 35px;\n  border: 1px solid #C8CCD5;\n  color: #C8CCD5;\n  background: transparent;\n  text-transform: uppercase;\n  border-radius: 2px;\n  -webkit-transition: all 250ms;\n  transition: all 250ms;\n  outline: 0;\n  cursor: pointer; }\n  .audius button.btn--blue,\n  .audius .button.btn--blue,\n  #audius-website button.btn--blue,\n  #audius-website .button.btn--blue {\n    border-color: #2DA7EF;\n    background: #2DA7EF;\n    color: #fff; }\n\n.audius a.button,\n#audius-website a.button {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n  text-decoration: none; }\n\n@font-face {\n  font-family: 'WampIcons';\n  src: url(" + __webpack_require__(60) + ");\n  font-weight: normal;\n  font-style: normal; }\n\n[class^=\"wmp-icon-\"], [class*=\" wmp-icon-\"] {\n  text-align: center;\n  position: relative;\n  width: 49px;\n  height: 49px;\n  display: inline-block; }\n  [class^=\"wmp-icon-\"]:before, [class*=\" wmp-icon-\"]:before {\n    /* use !important to prevent issues with browser extensions that change fonts */\n    speak: none;\n    font-style: normal;\n    font-weight: normal;\n    font-variant: normal;\n    text-transform: none;\n    line-height: 1;\n    -webkit-font-smoothing: antialiased;\n    -moz-osx-font-smoothing: grayscale;\n    font-family: 'WampIcons' !important;\n    position: absolute;\n    font-size: 1.7em;\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: flex;\n    -webkit-box-align: center;\n        -ms-flex-align: center;\n            align-items: center;\n    -webkit-box-pack: center;\n        -ms-flex-pack: center;\n            justify-content: center;\n    width: 100%;\n    height: 100%; }\n\n.icon--small:before {\n  font-size: 1.2em; }\n\n.wmp-icon-local_offer2:before {\n  content: \"\\E54F\"; }\n\n.wmp-icon-format_list_bulleted:before {\n  content: \"\\E242\"; }\n\n.wmp-icon-dehaze:before {\n  content: \"\\E3C7\"; }\n\n.wmp-icon-reorder:before {\n  content: \"\\E8FE\"; }\n\n.wmp-icon-more_vert:before {\n  content: \"\\E5D4\"; }\n\n.wmp-icon-unfold_more:before {\n  content: \"\\E5D7\"; }\n\n.wmp-icon-arrow_drop_down:before {\n  content: \"\\E5C5\"; }\n\n.wmp-icon-arrow_drop_up:before {\n  content: \"\\E5C7\"; }\n\n.wmp-icon-previous:before {\n  content: \"\\E045\"; }\n\n.wmp-icon-play:before {\n  content: \"\\E037\"; }\n\n.wmp-icon-pause:before {\n  content: \"\\E034\"; }\n\n.wmp-icon-next:before {\n  content: \"\\E044\"; }\n\n.wmp-icon-shuffle:before {\n  content: \"\\E043\"; }\n\n.wmp-icon-repeat:before {\n  content: \"\\E040\"; }\n\n.wmp-icon-repeat_one:before {\n  content: \"\\E041\"; }\n\n.wmp-icon-volume_off:before {\n  content: \"\\E04F\"; }\n\n.wmp-icon-volume_up:before {\n  content: \"\\E050\"; }\n\n.wmp-icon-search:before {\n  content: \"\\E8B6\"; }\n\n.wmp-icon-close:before {\n  content: \"\\E5CD\"; }\n\n.wmp-icon-add:before {\n  content: \"\\E900\"; }\n\n.wmp-icon-queue2:before {\n  content: \"\\E03D\"; }\n\n.wmp-icon-copy:before {\n  content: \"\\E14D\"; }\n\n.wmp-icon-local_offer22:before {\n  content: \"\\E550\"; }\n\n.wmp-icon-link:before {\n  content: \"\\E157\"; }\n\n.wmp-icon-delete:before {\n  content: \"\\E872\"; }\n\n.wmp-icon-cloud_upload:before {\n  content: \"\\E2C3\"; }\n\n.wmp-icon-youtube:before {\n  content: \"\\E906\"; }\n\n#audius {\n  position: absolute;\n  top: 0;\n  right: 0;\n  z-index: 99999;\n  font-family: 'Nobile', sans-serif;\n  font-size: 2vmin;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: column;\n          flex-direction: column;\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n  color: #303641;\n  margin: 0; }\n  #audius a {\n    color: #303641; }\n    #audius a:visited {\n      color: #303641; }\n  #audius input:focus {\n    outline: 0; }\n", ""]);
+	exports.push([module.id, "@charset \"UTF-8\";\n.audius .button,\n#audius-website .button {\n  font-family: 'Nobile', sans-serif;\n  font-size: 1em;\n  padding: 0 7px;\n  height: 35px;\n  border: 1px solid #C8CCD5;\n  color: #C8CCD5;\n  background: transparent;\n  text-transform: uppercase;\n  border-radius: 2px;\n  -webkit-transition: all 250ms;\n  transition: all 250ms;\n  outline: 0;\n  cursor: pointer; }\n  .audius .button.btn--blue,\n  #audius-website .button.btn--blue {\n    border-color: #2DA7EF;\n    background: #2DA7EF;\n    color: #fff; }\n\n.audius a.button,\n#audius-website a.button {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n  text-decoration: none; }\n\n@font-face {\n  font-family: 'WampIcons';\n  src: url(" + __webpack_require__(58) + ");\n  font-weight: normal;\n  font-style: normal; }\n\n[class^=\"wmp-icon-\"], [class*=\" wmp-icon-\"] {\n  text-align: center;\n  position: relative;\n  width: 49px;\n  height: 49px;\n  display: inline-block; }\n  [class^=\"wmp-icon-\"]:before, [class*=\" wmp-icon-\"]:before {\n    /* use !important to prevent issues with browser extensions that change fonts */\n    speak: none;\n    font-style: normal;\n    font-weight: normal;\n    font-variant: normal;\n    text-transform: none;\n    line-height: 1;\n    -webkit-font-smoothing: antialiased;\n    -moz-osx-font-smoothing: grayscale;\n    font-family: 'WampIcons' !important;\n    position: absolute;\n    font-size: 1.7em;\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: flex;\n    -webkit-box-align: center;\n        -ms-flex-align: center;\n            align-items: center;\n    -webkit-box-pack: center;\n        -ms-flex-pack: center;\n            justify-content: center;\n    width: 100%;\n    height: 100%; }\n\n.icon--small:before {\n  font-size: 1.2em; }\n\n.wmp-icon-local_offer2:before {\n  content: \"\\E54F\"; }\n\n.wmp-icon-format_list_bulleted:before {\n  content: \"\\E242\"; }\n\n.wmp-icon-dehaze:before {\n  content: \"\\E3C7\"; }\n\n.wmp-icon-reorder:before {\n  content: \"\\E8FE\"; }\n\n.wmp-icon-more_vert:before {\n  content: \"\\E5D4\"; }\n\n.wmp-icon-unfold_more:before {\n  content: \"\\E5D7\"; }\n\n.wmp-icon-arrow_drop_down:before {\n  content: \"\\E5C5\"; }\n\n.wmp-icon-arrow_drop_up:before {\n  content: \"\\E5C7\"; }\n\n.wmp-icon-previous:before {\n  content: \"\\E045\"; }\n\n.wmp-icon-play:before {\n  content: \"\\E037\"; }\n\n.wmp-icon-pause:before {\n  content: \"\\E034\"; }\n\n.wmp-icon-next:before {\n  content: \"\\E044\"; }\n\n.wmp-icon-shuffle:before {\n  content: \"\\E043\"; }\n\n.wmp-icon-repeat:before {\n  content: \"\\E040\"; }\n\n.wmp-icon-repeat_one:before {\n  content: \"\\E041\"; }\n\n.wmp-icon-volume_off:before {\n  content: \"\\E04F\"; }\n\n.wmp-icon-volume_up:before {\n  content: \"\\E050\"; }\n\n.wmp-icon-search:before {\n  content: \"\\E8B6\"; }\n\n.wmp-icon-close:before {\n  content: \"\\E5CD\"; }\n\n.wmp-icon-add:before {\n  content: \"\\E900\"; }\n\n.wmp-icon-queue2:before {\n  content: \"\\E03D\"; }\n\n.wmp-icon-copy:before {\n  content: \"\\E14D\"; }\n\n.wmp-icon-local_offer22:before {\n  content: \"\\E550\"; }\n\n.wmp-icon-link:before {\n  content: \"\\E157\"; }\n\n.wmp-icon-delete:before {\n  content: \"\\E872\"; }\n\n.wmp-icon-cloud_upload:before {\n  content: \"\\E2C3\"; }\n\n.wmp-icon-youtube:before {\n  content: \"\\E906\"; }\n\n#audius {\n  position: absolute;\n  top: 0;\n  right: 0;\n  z-index: 99999;\n  font-family: 'Nobile', sans-serif;\n  font-size: 2vmin;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: column;\n          flex-direction: column;\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n  color: #303641;\n  margin: 0; }\n  #audius a {\n    color: #303641; }\n    #audius a:visited {\n      color: #303641; }\n  #audius input:focus {\n    outline: 0; }\n", ""]);
 	
 	// exports
 
 
 /***/ },
-/* 60 */
+/* 58 */
 /***/ function(module, exports) {
 
 	module.exports = "data:application/x-font-ttf;base64,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"
