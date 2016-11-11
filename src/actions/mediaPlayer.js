@@ -70,11 +70,6 @@ export const menuVideo = id => ({
 	id,
 });
 
-export const playVideo = id => ({
-	type: 'PLAY_VIDEO',
-	id,
-});
-
 export const play = (mediaId) => ({
 	type: 'PLAY',
 	mediaId,

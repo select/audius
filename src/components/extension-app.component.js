@@ -1,7 +1,6 @@
 import Vue from 'vue/dist/vue.js';
 import store from '../store';
 import Actions from '../actions';
-import { findVideos } from '../utils';
 import './extension-app.component.sass';
 
 Vue.component('extension-app', {
@@ -16,9 +15,6 @@ Vue.component('extension-app', {
 		this.unsubscribe = store.subscribe(() => {
 			this.extension = store.getState().extension;
 		});
-	},
-	mounted() {
-		findVideos()
 	},
 	beforeDestroy() {
 		this.unsubscribe();

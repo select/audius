@@ -21,4 +21,3 @@ if (!document.querySelectorAll('#audius-website').length) {
 } else {
 	console.log('is Audius website!');
 }
-
