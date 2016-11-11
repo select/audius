@@ -12,3 +12,7 @@ export const setMainRightTab = (id = 'about') => ({
 	type: 'SET_MAINRIGHT_TAB',
 	id,
 });
+
+export const showChat = () => ({
+	type: 'SHOW_CHAT',
+});

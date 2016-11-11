@@ -2,6 +2,7 @@ const initialState = {
 	showSearch: false,
 	showJump: false,
 	mainRightTab: 'about',
+	showChat: false,
 };
 
 const website = (state = initialState, action) => {
@@ -25,6 +26,11 @@ const website = (state = initialState, action) => {
 	case 'QUEUE_MEDIA':
 		return Object.assign({}, state, {
 			mainRightTab: 'queue',
+		})
+	case 'SHOW_CHAT':
+		return Object.assign({}, state, {
+			showChat: true,
+			mainRightTab: 'chat',
 		})
 	default:
 		return state;

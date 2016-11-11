@@ -34,11 +34,17 @@ Vue.component('main-right', {
 		<li
 			v-on:click="store.dispatch(Actions.setMainRightTab('about'))"
 			v-bind:class="{ active: state.website.mainRightTab == 'about' }">About</li>
+		<li
+			v-if="state.website.showChat"
+			v-on:click="store.dispatch(Actions.setMainRightTab('chat'))"
+			v-bind:class="{ active: state.website.mainRightTab == 'chat' }">Chat</li>
 	</ul>
-	<div class="main-right__content" v-if="state.website.mainRightTab">
-		<about-player v-if="state.website.mainRightTab == 'about'"></about-player>
-		<search-results v-if="state.website.mainRightTab == 'search'"></search-results>
-		<queue v-if="state.website.mainRightTab == 'queue'"></queue>
+	<div class="main-right__content" v-show="state.website.mainRightTab">
+		<about-player v-show="state.website.mainRightTab == 'about'"></about-player>
+		<search-results v-show="state.website.mainRightTab == 'search'"></search-results>
+		<queue v-show="state.website.mainRightTab == 'queue'"></queue>
+		<div class="audius-chat" v-show="state.website.mainRightTab == 'chat'">
+		</div>
 	</div>
 	<div
 		class="main-right__player"

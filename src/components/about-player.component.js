@@ -1,28 +1,26 @@
 import Vue from 'vue/dist/vue';
+import store from '../store';
+import Actions from '../actions';
 import './about-player.component.sass';
 
 Vue.component('about-player', {
-	data() {
-		return {
-			gitter: false
-		}
-	},
 	methods: {
 		openGitter() {
 			if (!this.gitter) {
-				//config
-				((window.gitter = {}).chat = {}).options = {
-					room: 'audius-player/Lobby',
-					activationElement: '.gitter-chat',
-				};
-				//load script
-				const tag = document.createElement('script');
-				tag.onload = () => {
-					document.querySelector('.gitter-chat').click();
-				};
-				tag.src = "https://sidecar.gitter.im/dist/sidecar.v1.js";
-				document.head.appendChild(tag);
-				this.gitter = true;
+				store.dispatch(Actions.showChat());
+				Vue.nextTick(() => {
+					//config
+					((window.gitter = {}).chat = {}).options = {
+						room: 'audius-player/Lobby',
+						activationElement: '.gitter-chat',
+						targetElement: '.audius-chat',
+						preload: true,
+					};
+					//load script
+					const tag = document.createElement('script');
+					tag.src = "https://sidecar.gitter.im/dist/sidecar.v1.js";
+					document.head.appendChild(tag);
+				})
 			}
 		}
 	},
@@ -50,9 +48,8 @@ Vue.component('about-player', {
 		If you have questions or feedback, join the chat on gitter or create an issue on github.<br>
 		<div class="about-player__community-btns">
 			<button
-				class="btn--blue"
-				v-on:click="openGitter"
-				v-bind:class="{ 'gitter-chat': gitter }">Join chat</button>
+				class="button btn--blue gitter-chat"
+				v-on:click="openGitter">Join chat</button>
 			<a class="button btn--blue" href="https://github.com/select/audius/issues" target="_blank">Create issue</a>
 		</div>
 	</p>
