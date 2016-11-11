@@ -1,6 +1,5 @@
 import Vue from 'vue/dist/vue';
 
-import './app.sass';
 import '../components/web-header.component';
 import '../components/main-right.component';
 import '../components/about-player.component';
@@ -10,7 +9,9 @@ import '../components/play-list.component';
 import '../components/video-item.component';
 import '../components/queue.component';
 
-Vue.config.devtools = true;
+import '../utils/websiteMessageManager';
+
+import './app.sass';
 
 document.addEventListener('DOMContentLoaded', () => {
 	new Vue({

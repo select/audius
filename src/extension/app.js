@@ -1,19 +1,24 @@
 import Vue from 'vue/dist/vue.js'
+
+import '../components/extension-app.component';
+import '../components/video-item.component';
+import '../components/youtube-player.component';
+import '../utils/domObserver';
+import '../utils/extensionMessageManager';
+
 import './app.sass';
 
 const appEl = document.createElement('div');
-appEl.id = 'whatsapp-web-media-player';
-appEl.innerHTML = '<wmp-app></wmp-app>';
+appEl.id = 'audius';
+appEl.innerHTML = '<extension-app></extension-app>';
 const bodyEl = document.querySelector('body');
 bodyEl.insertBefore(appEl, bodyEl.firstChild);
 
-Vue.config.devtools = true
-import '../components/wmp-app.component';
-import '../components/video-item.component';
-import '../components/youtube-player.component';
+if (!document.querySelectorAll('#audius-website').length) {
+	var app = new Vue({
+		el: '#audius',
+	});
+} else {
+	console.log('is Audius website!');
+}
 
-var app = new Vue({
-	el: '#whatsapp-web-media-player',
-});
-
-import '../utils/domObserver';

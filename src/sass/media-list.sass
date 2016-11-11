@@ -2,7 +2,6 @@ ul.media-list
 	list-style: none
 	padding: 0
 	margin: 0
-	background: rgba(255, 255, 255, 0.78)
 	overflow-x: hidden
 	li
 		height: #{$touch-size-medium+6}
@@ -35,9 +34,12 @@ ul.media-list
 .media-list__body
 	display: flex
 	flex-direction: column
+	justify-content: center
 	flex: 1
 	overflow-x: hidden
+	height: 100%
 	.media-list__name
+		line-height: 1.2em
 		white-space: nowrap
 		overflow: hidden
 		text-overflow: ellipsis

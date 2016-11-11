@@ -5,17 +5,31 @@
 @import '../sass/input'
 @import '../sass/icon'
 
-#whatsapp-web-media-player
-	font-family: 'Nobile', sans-serif
-	font-size: 2vmin
+// #whatsapp-web-media-player
+// 	font-family: 'Nobile', sans-serif
+// 	font-size: 2vmin
+// 	display: flex
+// 	flex-direction: column
+// 	align-items: center
+// 	color: $color-tuna
+// 	a
+// 		color: $color-tuna
+
+#audius
 	position: absolute
 	top: 0
 	right: 0
+	z-index: 99999
+	font-family: 'Nobile', sans-serif
+	font-size: 2vmin
 	display: flex
 	flex-direction: column
 	align-items: center
-	z-index: 99999
 	color: $color-tuna
+	margin: 0
 	a
 		color: $color-tuna
-
+		&:visited
+			color: $color-tuna
+	input:focus
+		outline: 0

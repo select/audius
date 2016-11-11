@@ -1,6 +1,6 @@
 {
-	"name": "WhatsApp Media Player",
-	"description": "Play media files posted in conversations",
+	"name": "Audius",
+	"description": "Audius - the ultimate streaming audio player",
 	"version": "0.0.1",
 	"permissions": [
 		"tabs",
@@ -13,6 +13,12 @@
 		"scripts": ["background.js"],
 		"persistent": true
 	},
+	"externally_connectable": {
+		"matches": [
+			"*://audius.rockdapus.org/*",
+			"*://localhost/*"
+		]
+	},
 	"content_scripts": [
 		{
 			"matches": ["http://*/*", "https://*/*", "file://*/*", "*://*/*"],
@@ -21,7 +27,15 @@
 		}
 	],
 	"browser_action": {
-		"default_title": "WhatsApp Media Player"
+		"default_title": "Audius"
+	},
+	"web_accessible_resources": [
+		"img/*.png"
+	],
+	"icons": {
+		"16": "img/audius.logo16.png",
+		"48": "img/audius.logo48.png",
+		"128": "img/audius.logo128.png"
 	},
 	"manifest_version": 2
 }
