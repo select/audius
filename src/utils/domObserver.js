@@ -3,7 +3,7 @@ import findVideos from './findVideos';
 
 if (!document.querySelectorAll('#audius-website').length) {
 	// Watch if the DOM changes, rescan the DOM for new links to music
-	var observer = new MutationObserver(mutations => {
+	const observer = new MutationObserver(() => {
 		findVideos();
 	});
 

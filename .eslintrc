@@ -10,6 +10,7 @@
 		"no-var": ["error"],
 		"max-len": ["error", 200, 4],
 		"no-tabs": ["off"],
+		"no-confusing-arrow": ["off"]
 	},
 	"ecmaFeatures": {
 		"modules": true
