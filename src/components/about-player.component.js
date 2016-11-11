@@ -54,6 +54,9 @@ Vue.component('about-player', {
 			<a class="button btn--blue" href="https://github.com/select/audius/issues" target="_blank">Create issue</a>
 		</div>
 	</p>
+	<p>
+		* You must allow 3rd party cookies for the chat to work (default for almost everybody) or chat in a new window.
+	</p>
 	<h2>Install as app</h2>
 	<p>
 		<b>Chrome desktop:</b>
