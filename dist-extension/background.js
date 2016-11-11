@@ -1,22 +1,32 @@
-function requestProcessor(details) {
-	alert(details.url+' => '+JSON.stringify(details.responseHeaders));
-	var headers = details.responseHeaders;
-	const h = headers.filter(h => h.name.toLowerCase() === 'content-security-policy' || h.name.toLowerCase() === 'x-webkit-csp')
-	// for (var j = 0, jLen = headers.length; j !== jLen; ++j) {
-	// 	var header = headers[j];
-	// 	var name = header.name.toLowerCase();
-	// 	if (name !== "content-security-policy" &&
-	// 		name !== "x-webkit-csp") {
-	// 		continue;
-	// 	}
-	// 	for (var k = 0, kLen = subrules.length; k !== kLen; ++k) {
-	// 		header.value = header.value.replace(subrules[k][0],subrules[k][1]);
-	// 	}
-	// }
-	return {responseHeaders: headers};
-}
+let audiusWebsiteTab = undefined;
 
-chrome.webRequest.onHeadersReceived.addListener(requestProcessor, {
-	urls: ["*://*/*"],
-	types: ["main_frame", "sub_frame"]
-}, ["blocking", "responseHeaders"]);
+chrome.tabs.getAllInWindow(null, function(tabs) {
+	let tabsFiltered = tabs.filter(tab => tab.url === 'http://localhost:8080/');
+	if (tabsFiltered.length) {
+		audiusWebsiteTab = tabsFiltered[0];
+	} else {
+		tabsFiltered = tabs.filter(tab => tab.url === 'http://audius.rockdapus.org/');
+		if (tabsFiltered.length) {
+			audiusWebsiteTab = tabsFiltered[0];
+		}
+	}
+	if(audiusWebsiteTab) {
+		console.log('got tab: ', audiusWebsiteTab.url);
+	} else {
+		console.log('failed getting tab');
+	}
+
+});
+
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+	if (request.audius) {
+		chrome.tabs.sendMessage(audiusWebsiteTab.id, request, (response) => {
+			console.log('response from audius player tab');
+		});
+	}
+});
+
+chrome.runtime.onMessageExternal.addListener((request, sender, sendResponse) => {
+	if (['http://localhost:8080', 'http://audius.rockdapus.org'].contains(sender.url))
+		console.log('request from audius: ', request);
+});
