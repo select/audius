@@ -28,6 +28,8 @@ Vue.component('web-header', {
 					store.dispatch(Actions.nextVideo());
 				} else if (event.key === 's') {
 					store.dispatch(Actions.toggleShuffle());
+				} else if (event.key === 'm') {
+					store.dispatch(Actions.toggleMute());
 				}
 			}
 		}, false);
@@ -40,8 +42,8 @@ Vue.component('web-header', {
 					document.querySelector('.au-header__search-input').focus();
 				});
 			}
-			if (this.mediaPlayer.youtubeId) {
-				this.currentMedia = this.mediaPlayer.entities[this.mediaPlayer.youtubeId];
+			if (this.mediaPlayer.mediaId) {
+				this.currentMedia = this.mediaPlayer.entities[this.mediaPlayer.mediaId];
 				this.currentMedia.durationS = time2s(this.currentMedia.duration);
 			} else {
 				this.currentMedia = undefined;
@@ -96,7 +98,7 @@ Vue.component('web-header', {
 	template: `
 <header>
 	<div class="au-header__search">
-		<img class="au-header__logo" src="./audius.logo.white.svg" alt="Audius - music player - logo">
+		<img class="au-header__logo" src="img/audius.logo.white.svg" alt="Audius - music player - logo">
 		<div class="au-header__search-controls">
 			<div
 				class="au-header__search-input-group"

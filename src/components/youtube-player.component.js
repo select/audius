@@ -18,10 +18,10 @@ Vue.component('youtube-player', {
 	created() {
 		this.unsubscribe = store.subscribe(() => {
 			const mediaPlayer = store.getState().mediaPlayer;
-			if (mediaPlayer.youtubeId && (this.player.getVideoData().video_id !== mediaPlayer.youtubeId)) {
+			if (mediaPlayer.mediaId && this.player.getVideoData() && (this.player.getVideoData().video_id !== mediaPlayer.mediaId)) {
 				this.duration = this.player.getDuration()
 				this.player.loadVideoById({
-					videoId: mediaPlayer.youtubeId,
+					videoId: mediaPlayer.mediaId,
 					suggestedQuality: 'large',
 				});
 			}
@@ -65,9 +65,9 @@ Vue.component('youtube-player', {
 	},
 	methods: {
 		onPlayerError(event) {
-			const youtubeId = store.getState().mediaPlayer.youtubeId;
-			store.dispatch(Actions.videoError(store.getState().mediaPlayer.youtubeId, event.data));
-			db.setMediaEntity(store.getState().mediaPlayer.entities[youtubeId]);
+			const mediaId = store.getState().mediaPlayer.mediaId;
+			store.dispatch(Actions.videoError(store.getState().mediaPlayer.mediaId, event.data));
+			db.setMediaEntity(store.getState().mediaPlayer.entities[mediaId]);
 		},
 		onPlayerStateChange(event) {
 			const playerState = this.player.getPlayerState();

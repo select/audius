@@ -5,11 +5,10 @@ const initialState = {
 	db: undefined,
 	errorMessages: '',
 	entities: {},
-	youtubeId: '',
+	mediaId: '',
 	playList: [],
 	queue: [],
 	isPlaying: false,
-	showPlayList: true,
 	shuffle: false,
 	repeat1: false,
 	repeatAll: false,
@@ -17,23 +16,25 @@ const initialState = {
 	filterQuery: '',
 	currentTime: 0,
 	skipToTime: 0,
+	mute: false,
 };
 
 function next(state) {
-	const idx = state.playList.indexOf(state.youtubeId);
+	const idx = state.playList.indexOf(state.mediaId);
+	let mediaId;
 	if (state.queue.length) {
 		// Play next song from queue.
 		const queue = [...state.queue];
-		const mediaId = queue.shift();
+		mediaId = queue.shift();
 		return Object.assign({}, state, {
-			youtubeId: mediaId,
+			mediaId: mediaId,
 			queue: [...queue],
 			isPlaying: true,
 		});
 	} else if (state.shuffle) {
 		// Play a random song.
 		return Object.assign({}, state, {
-			youtubeId: state.playList[Math.floor(Math.random() * state.playList.length)],
+			mediaId: state.playList[Math.floor(Math.random() * state.playList.length)],
 			isPlaying: true,
 		});
 	} else if (idx === state.playList.length - 1) {
@@ -43,9 +44,9 @@ function next(state) {
 		});
 	} else if (idx < state.playList.length - 1) {
 		// Play the next song.
-		const youtubeId = state.playList[idx + 1];
+		mediaId = state.playList[idx + 1];
 		return Object.assign({}, state, {
-			youtubeId,
+			mediaId,
 			isPlaying: true,
 		});
 	}
@@ -54,7 +55,7 @@ function next(state) {
 
 const mediaPlayer = (state = initialState, action) => {
 	let idx;
-	let youtubeId;
+	let mediaId;
 	let entities;
 	let queue;
 	switch (action.type) {
@@ -133,33 +134,33 @@ const mediaPlayer = (state = initialState, action) => {
 			playList: [...state.playList, action.video.id],
 			entities,
 		});
-	case 'PLAY_VIDEO':
-		youtubeId = action.id;
-		return Object.assign({}, state, {
-			isPlaying: true,
-			youtubeId,
-		});
 	case 'PAUSE':
 		return Object.assign({}, state, {
 			isPlaying: false,
 			entities: state.entities,
 		});
 	case 'PLAY':
-		if (state.playList.length) {
-			youtubeId = !state.youtubeId ? state.playList[0] : state.youtubeId;
-			return Object.assign({}, state, {
-				isPlaying: true,
-				youtubeId,
-			});
+		if (action.mediaId) mediaId = action.mediaId;
+		else mediaId = !state.mediaId ? state.playList[0] : state.mediaId;
+		let currentMedia = {};
+		if (action.currentMedia) {
+			var newEntity = {};
+			newEntity[mediaId] = action.currentMedia;
+			entities = Object.assign({}, state.entities, newEntity);
+			currentMedia = action.currentMedia;
+		} else {
+			currentMedia = {};
+			entities = state.entities;
 		}
-		return state;
+		return Object.assign({}, state, {
+			isPlaying: !!(currentMedia || state.playList.length),
+			mediaId,
+			currentMedia,
+			entities,
+		});
 	case 'TOGGLE_SHUFFLE':
 		return Object.assign({}, state, {
 			shuffle: !state.shuffle,
-		});
-	case 'TOGGLE_PLAYLIST':
-		return Object.assign({}, state, {
-			showPlayList: !state.showPlayList,
 		});
 	case 'TOGGLE_MUTE':
 		return Object.assign({}, state, {
@@ -168,11 +169,11 @@ const mediaPlayer = (state = initialState, action) => {
 	case 'NEXT_VIDEO':
 		return next(state);
 	case 'PREV_VIDEO':
-		idx = state.playList.indexOf(state.youtubeId);
+		idx = state.playList.indexOf(state.mediaId);
 		if (idx > 0) {
-			youtubeId = state.playList[idx - 1];
+			mediaId = state.playList[idx - 1];
 			return Object.assign({}, state, {
-				youtubeId: state.playList[idx - 1],
+				mediaId: state.playList[idx - 1],
 				isPlaying: true,
 			});
 		}
@@ -183,10 +184,10 @@ const mediaPlayer = (state = initialState, action) => {
 		});
 	case 'QUEUE_PLAY_INDEX':
 		queue = [...state.queue];
-		const mediaId = queue.splice(action.idx, 1);
+		mediaId = queue.splice(action.idx, 1);
 		return Object.assign({}, state, {
 			queue: [...queue],
-			youtubeId: mediaId[0],
+			mediaId: mediaId[0],
 			isPlaying: true,
 		});
 	case 'QUEUE_REMOVE_INDEX':

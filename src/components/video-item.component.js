@@ -5,7 +5,7 @@ import * as db from '../utils/indexDB';
 import './video-item.component.sass';
 
 Vue.component('video-item', {
-	props: ['video', 'isPlaying', 'isQueue', 'queueIndex'],
+	props: ['video', 'isPlaying', 'isQueue', 'queueIndex', 'isExtension'],
 	data() {
 		return {
 			copyActive: false
@@ -14,7 +14,7 @@ Vue.component('video-item', {
 	methods: {
 		play() {
 			if (this.isQueue) store.dispatch(Actions.queuePlayIndex(this.queueIndex));
-			else store.dispatch(Actions.playVideo(this.video.id));
+			else store.dispatch(Actions.play(this.video.id));
 		},
 		pause() { store.dispatch(Actions.pause()); },
 		menu(){ store.dispatch(Actions.menuVideo(this.video.id)); },
@@ -25,6 +25,9 @@ Vue.component('video-item', {
 				store.dispatch(Actions.removeVideo(this.video.id));
 				db.setMediaEntity(this.video);
 			}
+		},
+		addToPlaylist() {
+			store.dispatch(Actions.addSearchResult(this.video));
 		},
 		copyToClip() {
 			window.getSelection().removeAllRanges();
@@ -74,7 +77,16 @@ Vue.component('video-item', {
 			<a v-bind:href="'https://youtu.be/'+video.id" title="Watch on YouTube" target="_blank">
 				<span class="wmp-icon-youtube icon--small"></span>
 			</a>
-			<span class="wmp-icon-close" v-on:click="remove" title="Remove"></span>
+			<span
+				class="wmp-icon-close"
+				v-if="!isExtension"
+				v-on:click="remove"
+				title="Remove"></span>
+			<span
+				class="wmp-icon-add"
+				v-if="isExtension"
+				v-on:click="addToPlaylist"
+				title="Add to playlist"></span>
 		</div>
 	</li>
 	`,
