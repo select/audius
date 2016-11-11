@@ -37,6 +37,8 @@ Vue.component('about-player', {
 			<dd>Next song</dd>
 			<dt>s</dt>
 			<dd>Shuffle on / off</dd>
+			<dt>m</dt>
+			<dd>Mute / unmute</dd>
 			<dt>j</dt>
 			<dd>Jump to song</dd>
 			<dt>f</dt>
@@ -45,7 +47,7 @@ Vue.component('about-player', {
 	</p>
 	<h2>Community</h2>
 	<p>
-		If you have questions or feedback, join the chat on gitter or create a ticket on github.<br>
+		If you have questions or feedback, join the chat on gitter or create an issue on github.<br>
 		<div class="about-player__community-btns">
 			<button
 				class="btn--blue"
