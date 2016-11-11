@@ -31,5 +31,5 @@ export default function() {
 		.filter((item, pos, self) => self.indexOf(item) === pos) // filter dublicates
 		.filter(id => !entities[id]); // filter one already in store
 	const url = `https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails&id=${ids.join(',')}&key=${YOUTUBE_API_KEY}`;
-	ajax(url, data => {store.dispatch(Actions.addVideos(data.items));});
+	ajax(url, data => {store.dispatch(Actions.extensionAddVideos(data.items));});
 }
