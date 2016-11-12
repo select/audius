@@ -1,7 +1,6 @@
 import Vue from 'vue/dist/vue';
 import store from '../store';
 import Actions from '../actions';
-import * as db from '../utils/indexDB';
 import './video-item.component.sass';
 
 Vue.component('video-item', {
@@ -22,8 +21,7 @@ Vue.component('video-item', {
 			if (this.isQueue) {
 				store.dispatch(Actions.queueRemoveIndex(this.queueIndex));
 			} else {
-				store.dispatch(Actions.removeVideo(this.video.id));
-				db.setMediaEntity(this.video);
+				store.dispatch(Actions.removeVideo(this.video));
 			}
 		},
 		addToPlaylist() {

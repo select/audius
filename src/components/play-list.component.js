@@ -6,7 +6,6 @@ import './play-list.component.sass';
 import importPlaylist from '../utils/importPlaylist';
 import { debounce } from '../utils/debounce';
 import isElementInViewport from '../utils/isElementInViewport';
-import * as db from '../utils/indexDB';
 
 Vue.component('play-list', {
 	data() {
@@ -52,7 +51,6 @@ Vue.component('play-list', {
 					event.item.dataset.id,
 					mediaListEl.childNodes[event.newIndex + 1].dataset.id
 				));
-				db.setPlayList();
 			},
 		});
 	},

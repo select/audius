@@ -2,7 +2,6 @@ import Vue from 'vue/dist/vue.js';
 import store from '../store';
 import Actions from '../actions';
 // import youtubeApi from '../utils/youtube-iframe-api';
-import * as db from '../utils/indexDB';
 import './youtube-player.component.sass';
 
 
@@ -65,9 +64,9 @@ Vue.component('youtube-player', {
 	},
 	methods: {
 		onPlayerError(event) {
-			const mediaId = store.getState().mediaPlayer.mediaId;
-			store.dispatch(Actions.videoError(store.getState().mediaPlayer.mediaId, event.data));
-			db.setMediaEntity(store.getState().mediaPlayer.entities[mediaId]);
+			const mediaPlayer = store.getState().mediaPlayer
+			const video = mediaPlayer.entities[mediaPlayer.mediaId]
+			store.dispatch(Actions.videoError(video, event.data));
 		},
 		onPlayerStateChange(event) {
 			const playerState = this.player.getPlayerState();

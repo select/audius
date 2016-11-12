@@ -2,9 +2,9 @@ export const initDbSuccess = (db) => ({
 	type: 'DB_INIT_SUCCESS',
 	db,
 });
-export const videoError = (id, message) => ({
+export const videoError = (video, message) => ({
 	type: 'VIDEO_ERROR',
-	id,
+	video,
 	message,
 });
 
@@ -55,9 +55,9 @@ export const dedupePlayList = () => ({
 	type: 'DEDUPE_PLAYLIST',
 })
 
-export const removeVideo = (id) => ({
+export const removeVideo = (video) => ({
 	type: 'REMOVE_VIDEO',
-	id,
+	video,
 });
 
 export const addSearchResult = (video = {}) => ({

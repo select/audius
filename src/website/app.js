@@ -9,6 +9,7 @@ import '../components/play-list.component';
 import '../components/video-item.component';
 import '../components/queue.component';
 
+import '../utils/indexDB';
 import '../utils/websiteMessageManager';
 
 import './app.sass';

@@ -80,7 +80,7 @@ const mediaPlayer = (state = initialState, action) => {
 			playList: action.playList,
 		});
 	case 'VIDEO_ERROR':
-		state.entities[action.id] = Object.assign({}, state.entities[action.id], {
+		state.entities[action.video.id] = Object.assign({}, action.video, {
 			errorMessage: action.message,
 			hasError: true,
 		});
@@ -121,9 +121,9 @@ const mediaPlayer = (state = initialState, action) => {
 		});
 	case 'REMOVE_VIDEO':
 		entities = Object.assign({}, state.entities);
-		entities[action.id].deleted = true;
+		entities[action.video.id].deleted = true;
 		return Object.assign({}, state, {
-			playList: state.playList.filter(id => id !== action.id),
+			playList: state.playList.filter(id => id !== action.video.id),
 			entities,
 		});
 	case 'ADD_SEARCH_RESULT':

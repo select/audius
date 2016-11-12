@@ -19,14 +19,6 @@ function getAllMediaEntities(db, callback) {
 		}
 	};
 }
-function exists(storeName, id, callback) {
-	const request = store.getState().mediaPlayer.db
-		.transaction(['playLists'], 'readonly')
-		.objectStore('playLists')
-		.get('default');
-	request.onerror = event => store.dispatch(Actions.error(`DB Error ${event.target.error.name}`));
-	request.onsuccess = callback;
-}
 
 export function getPlayList(db) {
 	const request = db
@@ -55,31 +47,6 @@ if (!('indexedDB' in window)) {
 		store.dispatch(Actions.initDbSuccess(event.target.result));
 	};
 	openRequest.onerror = () => store.dispatch(Actions.error('Error: could not connect to indexDB.'));
-}
-
-
-export function setPlayList() {
-	exists('playList', 'default', (event) => {
-		const dbStore = store.getState().mediaPlayer.db
-			.transaction(['playLists'], 'readwrite')
-			.objectStore('playLists');
-		const action = event.target.result ? 'put' : 'add';
-		const request = dbStore[action]({ id: 'default', playList: store.getState().mediaPlayer.playList });
-		request.onerror = event2 => store.dispatch(Actions.error(`DB Error ${event2.target.error.name}`));
-	});
-}
-
-export function setMediaEntity(data) {
-	exists('mediaEntities', 'default', (event) => {
-		const dbStore = store.getState().mediaPlayer.db
-			.transaction(['mediaEntities'], 'readwrite')
-			.objectStore('mediaEntities');
-		const action = event.target.result ? 'put' : 'add';
-		const request = dbStore[action](data);
-		request.onsuccess = () => store.dispatch(Actions.setDbSuccess(data));
-		request.onerror = event2 => store.dispatch(Actions.error(`DB Error ${event2.target.error.name}`));
-		setPlayList();
-	});
 }
 
 // -----------------
