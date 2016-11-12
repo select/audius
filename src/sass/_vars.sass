@@ -4,16 +4,16 @@ $transition-time: 250ms
 
 // #Grid base `$grid-space`
 // This is the most important variable since all grid values are based on it
-$grid-space: 7px
+$grid-space: 1vmin
 
 // ##Inputs
 // touch sizes are multiples of $grid-size (7px)
-$touch-size-extratiny: 21px
-$touch-size-tiny: 28px
-$touch-size-small: 35px
-$touch-size-medium: 49px
-$touch-size-large: 56px
-$touch-size-huge: 63px
+$touch-size-extratiny: 3*$grid-space
+$touch-size-tiny: 4*$grid-space
+$touch-size-small: 5*$grid-space
+$touch-size-medium: 7*$grid-space
+$touch-size-large: 8*$grid-space
+$touch-size-huge: 9*$grid-space
 
 $border-radius: 2px
 
@@ -33,12 +33,7 @@ $scroll-bar-size: 17px
 
 
 // Font-Sizes
-$font-size-small: 12px
-$font-size-medium: 14px
-$font-size-normal: 16px
-$font-size-large: 18px
-$font-size-xlarge: 24px
-$font-size-xxlarge: 38px
+$font-size-normal: 2vmin
 
 =optional-at-root($sel)
 	@at-root #{if(not &, $sel, selector-append(&, $sel))}
