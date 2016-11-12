@@ -4,21 +4,18 @@
 	"version": "0.0.1",
 	"permissions": [
 		"tabs",
-		"activeTab",
-		"webRequest",
-		"webRequestBlocking",
-		"*://*/*"
+		"activeTab"
 	],
 	"background": {
 		"scripts": ["background.js"],
 		"persistent": true
 	},
-	"externally_connectable": {
-		"matches": [
-			"*://audius.rockdapus.org/*",
-			"*://localhost/*"
-		]
-	},
+	// "externally_connectable": {
+	// 	"matches": [
+	// 		"*://audius.rockdapus.org/*",
+	// 		"*://localhost/*"
+	// 	]
+	// },
 	"content_scripts": [
 		{
 			"matches": ["http://*/*", "https://*/*", "file://*/*", "*://*/*"],
@@ -27,7 +24,7 @@
 		}
 	],
 	"browser_action": {
-		"default_title": "Audius"
+		"default_title": "🔎 Find music 🎶 on this site with Audius."
 	},
 	"web_accessible_resources": [
 		"img/*.png"

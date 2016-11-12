@@ -9454,15 +9454,15 @@
 	
 	__webpack_require__(4);
 	
-	__webpack_require__(45);
+	__webpack_require__(48);
 	
-	__webpack_require__(49);
+	__webpack_require__(51);
 	
-	__webpack_require__(52);
+	__webpack_require__(54);
+	
+	__webpack_require__(28);
 	
 	__webpack_require__(55);
-	
-	__webpack_require__(56);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -9494,11 +9494,15 @@
 	
 	var _store2 = _interopRequireDefault(_store);
 	
-	var _actions = __webpack_require__(36);
+	var _actions = __webpack_require__(29);
 	
 	var _actions2 = _interopRequireDefault(_actions);
 	
-	__webpack_require__(41);
+	__webpack_require__(42);
+	
+	var _findVideos = __webpack_require__(46);
+	
+	var _findVideos2 = _interopRequireDefault(_findVideos);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -9536,9 +9540,17 @@
 			},
 			toggleShuffle: function toggleShuffle() {
 				_store2.default.dispatch(_actions2.default.toggleShuffle());
-			}
+			},
+			toggleExtension: function toggleExtension() {
+				_store2.default.dispatch(_actions2.default.toggleExtension());
+			},
+			searchAudiusTab: function searchAudiusTab() {
+				_store2.default.dispatch(_actions2.default.searchAudiusTab());
+			},
+	
+			findVideos: _findVideos2.default
 		},
-		template: '\n<div class="audius">\n\t<div class="audius__controls">\n\t\t<div class="audius__play-list-controls" :disabled="!extension.playList.length">\n\t\t\t<span class="wmp-icon-previous" v-on:click="previousVideo"></span>\n\t\t\t<div class="audius__play-pause" v-on:click="playPauseVideos">\n\t\t\t\t<span class="wmp-icon-pause" v-if="extension.isPlaying"></span>\n\t\t\t\t<span class="wmp-icon-play" v-else></span>\n\t\t\t</div>\n\t\t\t<span class="wmp-icon-next" v-on:click="nextVideo"></span>\n\t\t</div>\n\t\t<div class="spacer"></div>\n\t\t<div v-on:click="store.dispatch(Actions.toggleMute())">\n\t\t\t<span class="wmp-icon-volume_up" v-if="!extension.mute"></span>\n\t\t\t<span class="wmp-icon-volume_off" v-else></span>\n\t\t</div>\n\t\t<span\n\t\t\tclass="audius__shuffle wmp-icon-shuffle"\n\t\t\tv-on:click="toggleShuffle"\n\t\t\tv-bind:class="{ active: extension.shuffle }"></span>\n\t\t<div class="spacer"></div>\n\t\t<span\n\t\t\tclass="audius__show-play-list wmp-icon-format_list_bulleted"\n\t\t\tv-on:click="togglePlayList"\n\t\t\tv-bind:class="{ active: extension.showPlayList }"></span>\n\t\t<span class="wmp-icon-close"></span>\n\t</div>\n\t<div v-if="!extension.playList.length && extension.showPlayList">\n\t\t... no YouTube videos found\n\t</div>\n\t<div class="audius__media-list-wrapper" v-if="extension.showPlayList">\n\t\t<ul class="media-list">\n\t\t\t<video-item\n\t\t\t\tv-for="id in extension.playList"\n\t\t\t\t:video="extension.entities[id]"\n\t\t\t\t:isExtension="true"></video-item>\n\t\t</ul>\n\t</div>\n</div>\n\t'
+		template: '\n<div class="audius" v-show="extension.show">\n\t<div\n\t\tclass="audius__error"\n\t\tv-if="extension.audiusTabMissing">\n\t\tAudius app is not open! Open the <a href="http://audius.rockdapus.org/" title="Audius App" target="_blank">Audius App</a> in a tab and keep it open\n\t\t<div\n\t\t\tclass="button"\n\t\t\tv-on:click="searchAudiusTab">\n\t\t\tRetry\n\t\t</div>\n\t</div>\n\t<div v-if="!extension.audiusTabMissing">\n\t\t<div class="audius__controls">\n\t\t\t<div class="audius__play-list-controls" :disabled="!extension.playList.length">\n\t\t\t\t<span class="wmp-icon-previous" v-on:click="previousVideo"></span>\n\t\t\t\t<div class="audius__play-pause" v-on:click="playPauseVideos">\n\t\t\t\t\t<span class="wmp-icon-pause" v-if="extension.isPlaying"></span>\n\t\t\t\t\t<span class="wmp-icon-play" v-else></span>\n\t\t\t\t</div>\n\t\t\t\t<span class="wmp-icon-next" v-on:click="nextVideo"></span>\n\t\t\t</div>\n\t\t\t<div class="spacer"></div>\n\t\t\t<div v-on:click="store.dispatch(Actions.toggleMute())">\n\t\t\t\t<span class="wmp-icon-volume_up" v-if="!extension.mute"></span>\n\t\t\t\t<span class="wmp-icon-volume_off" v-else></span>\n\t\t\t</div>\n\t\t\t<span\n\t\t\t\tclass="audius__shuffle wmp-icon-shuffle"\n\t\t\t\tv-on:click="toggleShuffle"\n\t\t\t\tv-bind:class="{ active: extension.shuffle }"></span>\n\t\t\t<div class="spacer"></div>\n\t\t\t<span class="wmp-icon-search" v-on:click="findVideos"></span>\n\t\t\t<span\n\t\t\t\tclass="audius__show-play-list wmp-icon-format_list_bulleted"\n\t\t\t\tv-on:click="togglePlayList"\n\t\t\t\tv-bind:class="{ active: extension.showPlayList }"></span>\n\t\t\t<span\n\t\t\t\tclass="wmp-icon-close"\n\t\t\t\tv-on:click="toggleExtension"></span>\n\t\t</div>\n\t\t<div v-if="!extension.playList.length && extension.showPlayList">\n\t\t\t... no YouTube videos found\n\t\t</div>\n\t\t<div class="audius__media-list-wrapper" v-if="extension.showPlayList">\n\t\t\t<ul class="media-list">\n\t\t\t\t<video-item\n\t\t\t\t\tv-for="id in extension.playList"\n\t\t\t\t\t:video="extension.entities[id]"\n\t\t\t\t\t:isPlaying="extension.isPlaying && extension.entities[id] && (extension.mediaId == extension.entities[id].id)"\n\t\t\t\t\t:isExtension="true"></video-item>\n\t\t\t</ul>\n\t\t</div>\n\t</div>\n</div>\n\t'
 	});
 
 /***/ },
@@ -9553,17 +9565,34 @@
 	
 	var _redux = __webpack_require__(7);
 	
-	var _reducers = __webpack_require__(28);
+	var _messageRelayMiddleware = __webpack_require__(60);
+	
+	var _dbMiddleware = __webpack_require__(58);
+	
+	var _reducers = __webpack_require__(34);
 	
 	var _reducers2 = _interopRequireDefault(_reducers);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	var store = void 0;
-	if (process && (({"extension":true}).NODE_ENV === 'production' || (true) === true)) {
-		store = (0, _redux.createStore)(_reducers2.default);
+	if (process && (true) === true) {
+		if (process && ({"extension":true}).NODE_ENV === 'production' || document.querySelectorAll('#audius-website').length) {
+			console.log('extension store production');
+			store = (0, _redux.createStore)(_reducers2.default, (0, _redux.applyMiddleware)(_messageRelayMiddleware.messageRelayMiddleware));
+		} else {
+			console.log('extension store dev');
+			var composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || _redux.compose;
+			store = (0, _redux.createStore)(_reducers2.default, composeEnhancers(_redux.applyMiddleware.apply(undefined, [_messageRelayMiddleware.messageRelayMiddleware])));
+		}
 	} else {
-		store = (0, _redux.createStore)(_reducers2.default, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
+		console.log('website store production: ', ({"extension":true}).NODE_ENV);
+		if (process && ({"extension":true}).NODE_ENV === 'production') {
+			store = (0, _redux.createStore)(_reducers2.default, (0, _redux.applyMiddleware)(_dbMiddleware.dbMiddleware));
+		} else {
+			var _composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || _redux.compose;
+			store = (0, _redux.createStore)(_reducers2.default, _composeEnhancers(_redux.applyMiddleware.apply(undefined, [_dbMiddleware.dbMiddleware])));
+		}
 	}
 	exports.default = store;
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)))
@@ -10791,29 +10820,403 @@
 
 	'use strict';
 	
+	var _store = __webpack_require__(5);
+	
+	var _store2 = _interopRequireDefault(_store);
+	
+	var _actions = __webpack_require__(29);
+	
+	var _actions2 = _interopRequireDefault(_actions);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var isRunningInAudiusApp = document.querySelectorAll('#audius-website').length;
+	// Listen to messages from background script
+	chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+		// if we are on a audius player page.
+		if (request.audius && isRunningInAudiusApp) {
+			window.dispatchEvent(new CustomEvent('audius', {
+				detail: request.action
+			}));
+			sendResponse('Send custom event to Audius website app ' + request.action.type);
+			// if we are on a regular page where the extension can render
+		} else if (request.audiusToContentScript) {
+			_store2.default.dispatch(request.action);
+			sendResponse('Dispatched Action to extension store: ' + request.action.type);
+		}
+	});
+
+/***/ },
+/* 29 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _youtube = __webpack_require__(30);
+	
+	var youtube = _interopRequireWildcard(_youtube);
+	
+	var _mediaPlayer = __webpack_require__(31);
+	
+	var mediaPlayer = _interopRequireWildcard(_mediaPlayer);
+	
+	var _website = __webpack_require__(32);
+	
+	var website = _interopRequireWildcard(_website);
+	
+	var _extension = __webpack_require__(33);
+	
+	var extension = _interopRequireWildcard(_extension);
+	
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+	
+	var actions = Object.assign({}, youtube, mediaPlayer, website, extension);
+	
+	exports.default = actions;
+
+/***/ },
+/* 30 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	var searchYoutube = exports.searchYoutube = function searchYoutube() {
+		var query = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+		return {
+			type: 'YOUTUBE_SEARCH_REQUEST',
+			query: query
+		};
+	};
+	
+	var searchYoutubeError = exports.searchYoutubeError = function searchYoutubeError() {
+		var reason = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+		return {
+			type: 'YOUTUBE_SEARCH_ERROR',
+			reason: reason
+		};
+	};
+	
+	var searchYoutubeSuccess = exports.searchYoutubeSuccess = function searchYoutubeSuccess() {
+		var results = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+		return {
+			type: 'YOUTUBE_SEARCH_SUCCESS',
+			results: results
+		};
+	};
+
+/***/ },
+/* 31 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	var initDbSuccess = exports.initDbSuccess = function initDbSuccess(db) {
+		return {
+			type: 'DB_INIT_SUCCESS',
+			db: db
+		};
+	};
+	var videoError = exports.videoError = function videoError(video, message) {
+		return {
+			type: 'VIDEO_ERROR',
+			video: video,
+			message: message
+		};
+	};
+	
+	var error = exports.error = function error(message) {
+		return {
+			type: 'ERROR',
+			message: message
+		};
+	};
+	var setDbSuccess = exports.setDbSuccess = function setDbSuccess(data) {
+		return {
+			type: 'DB_SET_SUCCESS',
+			data: data
+		};
+	};
+	var getDbSuccess = exports.getDbSuccess = function getDbSuccess(data) {
+		return {
+			type: 'DB_GET_SUCCESS',
+			data: data
+	
+		};
+	};
+	var getAllDbSuccess = exports.getAllDbSuccess = function getAllDbSuccess(entities) {
+		return {
+			type: 'DB_GETALL_SUCCESS',
+			entities: entities
+		};
+	};
+	
+	var getDbPlayListSuccess = exports.getDbPlayListSuccess = function getDbPlayListSuccess(playList) {
+		return {
+			type: 'DB_GET_PLAYLIST_SUCCESS',
+			playList: playList
+		};
+	};
+	
+	var setCurrentTime = exports.setCurrentTime = function setCurrentTime(time) {
+		return {
+			type: 'SET_CURRENT_TIME',
+			time: time
+		};
+	};
+	
+	var skipToTime = exports.skipToTime = function skipToTime(s) {
+		return {
+			type: 'SKIP_TO_TIME',
+			s: s
+		};
+	};
+	
+	var addVideos = exports.addVideos = function addVideos() {
+		var videos = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+		return {
+			type: 'ADD_VIDEOS',
+			videos: videos
+		};
+	};
+	
+	var importPlayList = exports.importPlayList = function importPlayList(data) {
+		return {
+			type: 'IMPORT_PLAYLIST',
+			data: data
+		};
+	};
+	
+	var dedupePlayList = exports.dedupePlayList = function dedupePlayList() {
+		return {
+			type: 'DEDUPE_PLAYLIST'
+		};
+	};
+	
+	var removeVideo = exports.removeVideo = function removeVideo(video) {
+		return {
+			type: 'REMOVE_VIDEO',
+			video: video
+		};
+	};
+	
+	var addSearchResult = exports.addSearchResult = function addSearchResult() {
+		var video = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+		return {
+			type: 'ADD_SEARCH_RESULT',
+			video: video
+		};
+	};
+	
+	var menuVideo = exports.menuVideo = function menuVideo(id) {
+		return {
+			type: 'MENU_VIDEO',
+			id: id
+		};
+	};
+	
+	var play = exports.play = function play(mediaId) {
+		return {
+			type: 'PLAY',
+			mediaId: mediaId
+		};
+	};
+	
+	var pause = exports.pause = function pause() {
+		return {
+			type: 'PAUSE'
+		};
+	};
+	
+	var nextVideo = exports.nextVideo = function nextVideo() {
+		return {
+			type: 'NEXT_VIDEO'
+		};
+	};
+	
+	var previousVideo = exports.previousVideo = function previousVideo() {
+		return {
+			type: 'PREV_VIDEO'
+		};
+	};
+	
+	var togglePlayList = exports.togglePlayList = function togglePlayList() {
+		return {
+			type: 'TOGGLE_PLAYLIST'
+		};
+	};
+	
+	var toggleShuffle = exports.toggleShuffle = function toggleShuffle() {
+		return {
+			type: 'TOGGLE_SHUFFLE'
+		};
+	};
+	
+	var toggleRepeat = exports.toggleRepeat = function toggleRepeat() {
+		return {
+			type: 'TOGGLE_REPEAT'
+		};
+	};
+	
+	var changeVolume = exports.changeVolume = function changeVolume(volume) {
+		return {
+			type: 'CHANGE_VOLUME',
+			volume: volume
+		};
+	};
+	
+	var toggleMute = exports.toggleMute = function toggleMute() {
+		return {
+			type: 'TOGGLE_MUTE'
+		};
+	};
+	
+	var queueMedia = exports.queueMedia = function queueMedia(id) {
+		return {
+			type: 'QUEUE_MEDIA',
+			id: id
+		};
+	};
+	
+	var queuePlayIndex = exports.queuePlayIndex = function queuePlayIndex(idx) {
+		return {
+			type: 'QUEUE_PLAY_INDEX',
+			idx: idx
+		};
+	};
+	
+	var queueRemoveIndex = exports.queueRemoveIndex = function queueRemoveIndex(idx) {
+		return {
+			type: 'QUEUE_REMOVE_INDEX',
+			idx: idx
+		};
+	};
+	
+	var filterPlayList = exports.filterPlayList = function filterPlayList(query) {
+		return {
+			type: 'FILTER_PLAYLIST',
+			query: query
+		};
+	};
+	
+	var movePlayListMedia = exports.movePlayListMedia = function movePlayListMedia(mediaId, beforeThisMediaId) {
+		return {
+			type: 'MOVE_PLAYLIST_MEDIA',
+			mediaId: mediaId,
+			beforeThisMediaId: beforeThisMediaId
+		};
+	};
+
+/***/ },
+/* 32 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	var toggleSearch = exports.toggleSearch = function toggleSearch(state) {
+		return {
+			type: 'TOGGLE_SEARCH',
+			state: state
+		};
+	};
+	
+	var toggleJump = exports.toggleJump = function toggleJump(state) {
+		return {
+			type: 'TOGGLE_JUMP',
+			state: state
+		};
+	};
+	
+	var setMainRightTab = exports.setMainRightTab = function setMainRightTab() {
+		var id = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'about';
+		return {
+			type: 'SET_MAINRIGHT_TAB',
+			id: id
+		};
+	};
+	
+	var showChat = exports.showChat = function showChat() {
+		return {
+			type: 'SHOW_CHAT'
+		};
+	};
+
+/***/ },
+/* 33 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	var extensionAddVideos = exports.extensionAddVideos = function extensionAddVideos(videos) {
+		return {
+			type: 'EXTENSION_ADD_VIDEOS',
+			videos: videos
+		};
+	};
+	
+	var toggleExtension = exports.toggleExtension = function toggleExtension(state) {
+		return {
+			type: 'TOGGLE_EXTENSION',
+			state: state
+		};
+	};
+	
+	var searchAudiusTab = exports.searchAudiusTab = function searchAudiusTab() {
+		return {
+			type: 'SEARCH_AUDIUS_TAB'
+		};
+	};
+	
+	var audiusTabFound = exports.audiusTabFound = function audiusTabFound() {
+		return {
+			type: 'AUDIUS_TAB_FOUND'
+		};
+	};
+
+/***/ },
+/* 34 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
 	
 	var _redux = __webpack_require__(7);
 	
-	var _mediaPlayer = __webpack_require__(29);
+	var _mediaPlayer = __webpack_require__(35);
 	
 	var _mediaPlayer2 = _interopRequireDefault(_mediaPlayer);
 	
-	var _config = __webpack_require__(32);
+	var _config = __webpack_require__(38);
 	
 	var _config2 = _interopRequireDefault(_config);
 	
-	var _youtube = __webpack_require__(33);
+	var _youtube = __webpack_require__(39);
 	
 	var _youtube2 = _interopRequireDefault(_youtube);
 	
-	var _website = __webpack_require__(34);
+	var _website = __webpack_require__(40);
 	
 	var _website2 = _interopRequireDefault(_website);
 	
-	var _extension = __webpack_require__(35);
+	var _extension = __webpack_require__(41);
 	
 	var _extension2 = _interopRequireDefault(_extension);
 	
@@ -10828,7 +11231,7 @@
 	});
 
 /***/ },
-/* 29 */
+/* 35 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -10839,9 +11242,9 @@
 	
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 	
-	var _timeConverter = __webpack_require__(30);
+	var _timeConverter = __webpack_require__(36);
 	
-	var _video = __webpack_require__(31);
+	var _video = __webpack_require__(37);
 	
 	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 	
@@ -10940,7 +11343,7 @@
 						})
 					};
 				case 'VIDEO_ERROR':
-					state.entities[action.id] = Object.assign({}, state.entities[action.id], {
+					state.entities[action.video.id] = Object.assign({}, action.video, {
 						errorMessage: action.message,
 						hasError: true
 					});
@@ -10995,11 +11398,11 @@
 					};
 				case 'REMOVE_VIDEO':
 					entities = Object.assign({}, state.entities);
-					entities[action.id].deleted = true;
+					entities[action.video.id].deleted = true;
 					return {
 						v: Object.assign({}, state, {
 							playList: state.playList.filter(function (id) {
-								return id !== action.id;
+								return id !== action.video.id;
 							}),
 							entities: entities
 						})
@@ -11139,7 +11542,7 @@
 	exports.default = mediaPlayer;
 
 /***/ },
-/* 30 */
+/* 36 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -11202,7 +11605,7 @@
 	}
 
 /***/ },
-/* 31 */
+/* 37 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -11221,7 +11624,7 @@
 	};
 
 /***/ },
-/* 32 */
+/* 38 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -11249,7 +11652,7 @@
 	exports.default = config;
 
 /***/ },
-/* 33 */
+/* 39 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -11258,9 +11661,9 @@
 		value: true
 	});
 	
-	var _timeConverter = __webpack_require__(30);
+	var _timeConverter = __webpack_require__(36);
 	
-	var _video = __webpack_require__(31);
+	var _video = __webpack_require__(37);
 	
 	var initialState = {
 		query: '',
@@ -11302,7 +11705,7 @@
 	exports.default = config;
 
 /***/ },
-/* 34 */
+/* 40 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -11355,7 +11758,7 @@
 	exports.default = website;
 
 /***/ },
-/* 35 */
+/* 41 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -11365,9 +11768,9 @@
 	});
 	exports.default = extension;
 	
-	var _timeConverter = __webpack_require__(30);
+	var _timeConverter = __webpack_require__(36);
 	
-	var _video = __webpack_require__(31);
+	var _video = __webpack_require__(37);
 	
 	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 	
@@ -11380,8 +11783,45 @@
 		showPlayList: true,
 		shuffle: false,
 		mute: false,
-		currentMedia: {}
+		currentMedia: {},
+		queue: [],
+		show: true,
+		audiusTabMissing: false
 	};
+	
+	function next(state) {
+		var idx = state.playList.indexOf(state.mediaId);
+		var mediaId = void 0;
+		if (state.queue.length) {
+			// Play next song from queue.
+			var queue = [].concat(_toConsumableArray(state.queue));
+			mediaId = queue.shift();
+			return Object.assign({}, state, {
+				mediaId: mediaId,
+				queue: [].concat(_toConsumableArray(queue)),
+				isPlaying: true
+			});
+		} else if (state.shuffle) {
+			// Play a random song.
+			return Object.assign({}, state, {
+				mediaId: state.playList[Math.floor(Math.random() * state.playList.length)],
+				isPlaying: true
+			});
+		} else if (idx === state.playList.length - 1) {
+			// If last song on play list, stop playing.
+			return Object.assign({}, state, {
+				isPlaying: false
+			});
+		} else if (idx < state.playList.length - 1) {
+			// Play the next song.
+			mediaId = state.playList[idx + 1];
+			return Object.assign({}, state, {
+				mediaId: mediaId,
+				isPlaying: true
+			});
+		}
+		return state;
+	}
 	
 	function extension() {
 		var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : initialState;
@@ -11436,345 +11876,46 @@
 					});
 				}
 				return state;
+			case 'NEXT_VIDEO':
+				return next(state);
+			case 'PREV_VIDEO':
+				idx = state.playList.indexOf(state.mediaId);
+				if (idx > 0) {
+					mediaId = state.playList[idx - 1];
+					return Object.assign({}, state, {
+						mediaId: state.playList[idx - 1],
+						isPlaying: true
+					});
+				}
+				return state;
+			case 'TOGGLE_EXTENSION':
+				return Object.assign({}, state, {
+					show: action.state !== undefined ? action.state : !state.show
+				});
+			case 'ERROR_AUDIUS_TAB_MISSING':
+				return Object.assign({}, state, {
+					audiusTabMissing: true
+				});
+			case 'AUDIUS_TAB_FOUND':
+				return Object.assign({}, state, {
+					audiusTabMissing: false
+				});
 			default:
 				return state;
 		}
 	};
 
 /***/ },
-/* 36 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _youtube = __webpack_require__(37);
-	
-	var youtube = _interopRequireWildcard(_youtube);
-	
-	var _mediaPlayer = __webpack_require__(38);
-	
-	var mediaPlayer = _interopRequireWildcard(_mediaPlayer);
-	
-	var _website = __webpack_require__(39);
-	
-	var website = _interopRequireWildcard(_website);
-	
-	var _extension = __webpack_require__(40);
-	
-	var extension = _interopRequireWildcard(_extension);
-	
-	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-	
-	var actions = Object.assign({}, youtube, mediaPlayer, website, extension);
-	
-	exports.default = actions;
-
-/***/ },
-/* 37 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	var searchYoutube = exports.searchYoutube = function searchYoutube() {
-		var query = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
-		return {
-			type: 'YOUTUBE_SEARCH_REQUEST',
-			query: query
-		};
-	};
-	
-	var searchYoutubeError = exports.searchYoutubeError = function searchYoutubeError() {
-		var reason = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
-		return {
-			type: 'YOUTUBE_SEARCH_ERROR',
-			reason: reason
-		};
-	};
-	
-	var searchYoutubeSuccess = exports.searchYoutubeSuccess = function searchYoutubeSuccess() {
-		var results = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
-		return {
-			type: 'YOUTUBE_SEARCH_SUCCESS',
-			results: results
-		};
-	};
-
-/***/ },
-/* 38 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	var initDbSuccess = exports.initDbSuccess = function initDbSuccess(db) {
-		return {
-			type: 'DB_INIT_SUCCESS',
-			db: db
-		};
-	};
-	var videoError = exports.videoError = function videoError(id, message) {
-		return {
-			type: 'VIDEO_ERROR',
-			id: id,
-			message: message
-		};
-	};
-	
-	var error = exports.error = function error(message) {
-		return {
-			type: 'ERROR',
-			message: message
-		};
-	};
-	var setDbSuccess = exports.setDbSuccess = function setDbSuccess(data) {
-		return {
-			type: 'DB_SET_SUCCESS',
-			data: data
-		};
-	};
-	var getDbSuccess = exports.getDbSuccess = function getDbSuccess(data) {
-		return {
-			type: 'DB_GET_SUCCESS',
-			data: data
-	
-		};
-	};
-	var getAllDbSuccess = exports.getAllDbSuccess = function getAllDbSuccess(entities) {
-		return {
-			type: 'DB_GETALL_SUCCESS',
-			entities: entities
-		};
-	};
-	
-	var getDbPlayListSuccess = exports.getDbPlayListSuccess = function getDbPlayListSuccess(playList) {
-		return {
-			type: 'DB_GET_PLAYLIST_SUCCESS',
-			playList: playList
-		};
-	};
-	
-	var setCurrentTime = exports.setCurrentTime = function setCurrentTime(time) {
-		return {
-			type: 'SET_CURRENT_TIME',
-			time: time
-		};
-	};
-	
-	var skipToTime = exports.skipToTime = function skipToTime(s) {
-		return {
-			type: 'SKIP_TO_TIME',
-			s: s
-		};
-	};
-	
-	var addVideos = exports.addVideos = function addVideos() {
-		var videos = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
-		return {
-			type: 'ADD_VIDEOS',
-			videos: videos
-		};
-	};
-	
-	var importPlayList = exports.importPlayList = function importPlayList(data) {
-		return {
-			type: 'IMPORT_PLAYLIST',
-			data: data
-		};
-	};
-	
-	var dedupePlayList = exports.dedupePlayList = function dedupePlayList() {
-		return {
-			type: 'DEDUPE_PLAYLIST'
-		};
-	};
-	
-	var removeVideo = exports.removeVideo = function removeVideo(id) {
-		return {
-			type: 'REMOVE_VIDEO',
-			id: id
-		};
-	};
-	
-	var addSearchResult = exports.addSearchResult = function addSearchResult() {
-		var video = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-		return {
-			type: 'ADD_SEARCH_RESULT',
-			video: video
-		};
-	};
-	
-	var menuVideo = exports.menuVideo = function menuVideo(id) {
-		return {
-			type: 'MENU_VIDEO',
-			id: id
-		};
-	};
-	
-	var play = exports.play = function play(mediaId) {
-		return {
-			type: 'PLAY',
-			mediaId: mediaId
-		};
-	};
-	
-	var pause = exports.pause = function pause() {
-		return {
-			type: 'PAUSE'
-		};
-	};
-	
-	var nextVideo = exports.nextVideo = function nextVideo() {
-		return {
-			type: 'NEXT_VIDEO'
-		};
-	};
-	
-	var previousVideo = exports.previousVideo = function previousVideo() {
-		return {
-			type: 'PREV_VIDEO'
-		};
-	};
-	
-	var togglePlayList = exports.togglePlayList = function togglePlayList() {
-		return {
-			type: 'TOGGLE_PLAYLIST'
-		};
-	};
-	
-	var toggleShuffle = exports.toggleShuffle = function toggleShuffle() {
-		return {
-			type: 'TOGGLE_SHUFFLE'
-		};
-	};
-	
-	var toggleRepeat = exports.toggleRepeat = function toggleRepeat() {
-		return {
-			type: 'TOGGLE_REPEAT'
-		};
-	};
-	
-	var changeVolume = exports.changeVolume = function changeVolume(volume) {
-		return {
-			type: 'CHANGE_VOLUME',
-			volume: volume
-		};
-	};
-	
-	var toggleMute = exports.toggleMute = function toggleMute() {
-		return {
-			type: 'TOGGLE_MUTE'
-		};
-	};
-	
-	var queueMedia = exports.queueMedia = function queueMedia(id) {
-		return {
-			type: 'QUEUE_MEDIA',
-			id: id
-		};
-	};
-	
-	var queuePlayIndex = exports.queuePlayIndex = function queuePlayIndex(idx) {
-		return {
-			type: 'QUEUE_PLAY_INDEX',
-			idx: idx
-		};
-	};
-	
-	var queueRemoveIndex = exports.queueRemoveIndex = function queueRemoveIndex(idx) {
-		return {
-			type: 'QUEUE_REMOVE_INDEX',
-			idx: idx
-		};
-	};
-	
-	var filterPlayList = exports.filterPlayList = function filterPlayList(query) {
-		return {
-			type: 'FILTER_PLAYLIST',
-			query: query
-		};
-	};
-	
-	var movePlayListMedia = exports.movePlayListMedia = function movePlayListMedia(mediaId, beforeThisMediaId) {
-		return {
-			type: 'MOVE_PLAYLIST_MEDIA',
-			mediaId: mediaId,
-			beforeThisMediaId: beforeThisMediaId
-		};
-	};
-
-/***/ },
-/* 39 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	var toggleSearch = exports.toggleSearch = function toggleSearch(state) {
-		return {
-			type: 'TOGGLE_SEARCH',
-			state: state
-		};
-	};
-	
-	var toggleJump = exports.toggleJump = function toggleJump(state) {
-		return {
-			type: 'TOGGLE_JUMP',
-			state: state
-		};
-	};
-	
-	var setMainRightTab = exports.setMainRightTab = function setMainRightTab() {
-		var id = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'about';
-		return {
-			type: 'SET_MAINRIGHT_TAB',
-			id: id
-		};
-	};
-	
-	var showChat = exports.showChat = function showChat() {
-		return {
-			type: 'SHOW_CHAT'
-		};
-	};
-
-/***/ },
-/* 40 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	var extensionAddVideos = exports.extensionAddVideos = function extensionAddVideos(videos) {
-		return {
-			type: 'EXTENSION_ADD_VIDEOS',
-			videos: videos
-		};
-	};
-
-/***/ },
-/* 41 */
+/* 42 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(42);
+	var content = __webpack_require__(43);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(44)(content, {});
+	var update = __webpack_require__(45)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -11791,21 +11932,21 @@
 	}
 
 /***/ },
-/* 42 */
+/* 43 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(43)();
+	exports = module.exports = __webpack_require__(44)();
 	// imports
 	
 	
 	// module
-	exports.push([module.id, "ul.media-list {\n  list-style: none;\n  padding: 0;\n  margin: 0;\n  overflow-x: hidden; }\n  ul.media-list li {\n    height: 55px;\n    padding: 0 7px;\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: flex;\n    -webkit-box-align: center;\n        -ms-flex-align: center;\n            align-items: center;\n    -webkit-transition: all 250ms;\n    transition: all 250ms; }\n    ul.media-list li:hover {\n      background: #EFF1F7; }\n      ul.media-list li:hover .media-list__controls {\n        display: -webkit-box;\n        display: -ms-flexbox;\n        display: flex;\n        -webkit-box-align: center;\n            -ms-flex-align: center;\n                align-items: center; }\n    ul.media-list li.active {\n      background: #2DA7EF;\n      color: #fff; }\n      ul.media-list li.active a,\n      ul.media-list li.active span:hover {\n        color: #fff; }\n\n.media-list__thumbnail {\n  cursor: move;\n  width: 49px;\n  height: 49px;\n  background-size: cover;\n  background-position: center;\n  border-radius: 50%;\n  margin-right: 7px; }\n\n.media-list li.error .media-list__body {\n  text-decoration: line-through; }\n\n.media-list__body {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: column;\n          flex-direction: column;\n  -webkit-box-pack: center;\n      -ms-flex-pack: center;\n          justify-content: center;\n  -webkit-box-flex: 1;\n      -ms-flex: 1;\n          flex: 1;\n  overflow-x: hidden;\n  height: 100%; }\n  .media-list__body .media-list__name {\n    line-height: 1.2em;\n    white-space: nowrap;\n    overflow: hidden;\n    text-overflow: ellipsis; }\n  .media-list__body .media-list__duration {\n    color: #A8ADB7; }\n\n.media-list__controls {\n  display: none; }\n  .media-list__controls span {\n    cursor: pointer;\n    -webkit-transition: all 250ms;\n    transition: all 250ms; }\n    .media-list__controls span:hover {\n      color: #2DA7EF; }\n\n.audius {\n  background: rgba(255, 255, 255, 0.9);\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: column;\n          flex-direction: column;\n  max-height: 394px;\n  overflow: hidden;\n  position: absolute;\n  top: 0;\n  right: 0; }\n  .audius ::-webkit-scrollbar {\n    width: 5px; }\n    .audius ::-webkit-scrollbar:hover {\n      width: 10px; }\n  .audius ::-webkit-scrollbar-track {\n    background: #EFF1F7; }\n  .audius ::-webkit-scrollbar-thumb {\n    background: #A8ADB7; }\n\n.audius__media-list-wrapper {\n  width: 33em;\n  -webkit-box-flex: 1;\n      -ms-flex: 1;\n          flex: 1;\n  overflow-y: auto; }\n\n.audius__shuffle,\n.audius__repeat,\n.audius__show-play-list {\n  color: #E2E4E9; }\n  .audius__shuffle.active,\n  .audius__repeat.active,\n  .audius__show-play-list.active {\n    color: #2DA7EF; }\n\n.audius__controls {\n  width: 100%;\n  display: -webkit-inline-box;\n  display: -ms-inline-flexbox;\n  display: inline-flex;\n  -webkit-box-pack: end;\n      -ms-flex-pack: end;\n          justify-content: flex-end;\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n  min-height: 49px; }\n  .audius__controls span {\n    cursor: pointer; }\n  .audius__controls .spacer {\n    width: 14px; }\n  .audius__controls .audius__play-pause {\n    height: 49px; }\n    .audius__controls .audius__play-pause span:before {\n      font-size: 2.5em; }\n\n.audius__play-list-controls {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: horizontal;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: row;\n          flex-direction: row; }\n  .audius__play-list-controls[disabled] span {\n    color: #E2E4E9;\n    pointer-events: none; }\n\n.audius__youtube-player {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-pack: end;\n      -ms-flex-pack: end;\n          justify-content: flex-end; }\n", ""]);
+	exports.push([module.id, "ul.media-list {\n  list-style: none;\n  padding: 0;\n  margin: 0;\n  overflow-x: hidden; }\n  ul.media-list li {\n    height: 8vmin;\n    padding: 0 1vmin;\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: flex;\n    -webkit-box-align: center;\n        -ms-flex-align: center;\n            align-items: center;\n    -webkit-transition: all 250ms;\n    transition: all 250ms; }\n    ul.media-list li:hover {\n      background: #EFF1F7; }\n      ul.media-list li:hover .media-list__controls {\n        display: -webkit-box;\n        display: -ms-flexbox;\n        display: flex;\n        -webkit-box-align: center;\n            -ms-flex-align: center;\n                align-items: center; }\n    ul.media-list li.active {\n      background: #2DA7EF;\n      color: #fff; }\n      ul.media-list li.active a,\n      ul.media-list li.active span:hover {\n        color: #fff; }\n\n.media-list__thumbnail {\n  cursor: move;\n  width: 7vmin;\n  height: 7vmin;\n  background-size: cover;\n  background-position: center;\n  border-radius: 50%;\n  margin-right: 1vmin; }\n\n.media-list li.error .media-list__body {\n  text-decoration: line-through; }\n\n.media-list__body {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: column;\n          flex-direction: column;\n  -webkit-box-pack: center;\n      -ms-flex-pack: center;\n          justify-content: center;\n  -webkit-box-flex: 1;\n      -ms-flex: 1;\n          flex: 1;\n  overflow-x: hidden;\n  height: 100%; }\n  .media-list__body .media-list__name {\n    line-height: 1.2em;\n    white-space: nowrap;\n    overflow: hidden;\n    text-overflow: ellipsis; }\n  .media-list__body .media-list__duration {\n    color: #A8ADB7; }\n\n.media-list__controls {\n  display: none; }\n  .media-list__controls span {\n    cursor: pointer;\n    -webkit-transition: all 250ms;\n    transition: all 250ms; }\n    .media-list__controls span:hover {\n      color: #2DA7EF; }\n\n.audius {\n  background: rgba(255, 255, 255, 0.9);\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: column;\n          flex-direction: column;\n  max-height: 394px;\n  overflow: hidden;\n  position: absolute;\n  top: 0;\n  right: 0; }\n  .audius ::-webkit-scrollbar {\n    width: 5px; }\n    .audius ::-webkit-scrollbar:hover {\n      width: 10px; }\n  .audius ::-webkit-scrollbar-track {\n    background: #EFF1F7; }\n  .audius ::-webkit-scrollbar-thumb {\n    background: #A8ADB7; }\n\n.audius__error {\n  color: #d0021b;\n  text-align: center;\n  width: 14em; }\n  .audius__error .button {\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: flex;\n    -webkit-box-pack: center;\n        -ms-flex-pack: center;\n            justify-content: center;\n    -webkit-box-align: center;\n        -ms-flex-align: center;\n            align-items: center; }\n\n.audius__media-list-wrapper {\n  width: 33em;\n  -webkit-box-flex: 1;\n      -ms-flex: 1;\n          flex: 1;\n  overflow-y: auto; }\n\n.audius__shuffle,\n.audius__repeat,\n.audius__show-play-list {\n  color: #E2E4E9; }\n  .audius__shuffle.active,\n  .audius__repeat.active,\n  .audius__show-play-list.active {\n    color: #2DA7EF; }\n\n.audius__controls {\n  width: 100%;\n  display: -webkit-inline-box;\n  display: -ms-inline-flexbox;\n  display: inline-flex;\n  -webkit-box-pack: end;\n      -ms-flex-pack: end;\n          justify-content: flex-end;\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n  min-height: 7vmin; }\n  .audius__controls span {\n    cursor: pointer; }\n  .audius__controls .spacer {\n    width: 2vmin; }\n  .audius__controls .audius__play-pause {\n    height: 7vmin; }\n    .audius__controls .audius__play-pause span:before {\n      font-size: 2.5em; }\n\n.audius__play-list-controls {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: horizontal;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: row;\n          flex-direction: row; }\n  .audius__play-list-controls[disabled] span {\n    color: #E2E4E9;\n    pointer-events: none; }\n\n.audius__youtube-player {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-pack: end;\n      -ms-flex-pack: end;\n          justify-content: flex-end; }\n", ""]);
 	
 	// exports
 
 
 /***/ },
-/* 43 */
+/* 44 */
 /***/ function(module, exports) {
 
 	/*
@@ -11861,7 +12002,7 @@
 
 
 /***/ },
-/* 44 */
+/* 45 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -12113,7 +12254,105 @@
 
 
 /***/ },
-/* 45 */
+/* 46 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	exports.default = findVideos;
+	
+	var _store = __webpack_require__(5);
+	
+	var _store2 = _interopRequireDefault(_store);
+	
+	var _actions = __webpack_require__(29);
+	
+	var _actions2 = _interopRequireDefault(_actions);
+	
+	var _ajax = __webpack_require__(47);
+	
+	var _ajax2 = _interopRequireDefault(_ajax);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+	
+	var YOUTUBE_API_KEY = _store2.default.getState().config.youtubeApiKey;
+	
+	var youtubeRegEx = /(youtube.com)|(youtu.be)/;
+	var youtubeExtract1 = /youtu.be\/([\w-]+)/;
+	var youtubeExtract2 = /youtube.com\/watch\?v=([\w-]+)/;
+	
+	function findVideos() {
+		var youtubeUrls = Array.from(document.querySelectorAll('a')).map(function (el) {
+			return el.href.match(youtubeRegEx) ? el.href : null;
+		}).filter(function (link) {
+			return link;
+		});
+		console.log('youtubeUrls 1', youtubeUrls.length);
+	
+		Array.from(document.querySelectorAll('iframe')).forEach(function (iframe) {
+			console.log('searching iframe');
+			var innerDoc = iframe.contentDocument || iframe.contentWindow.document;
+			youtubeUrls.concat(Array.from(innerDoc.querySelectorAll('a')).map(function (el) {
+				return el.href.match(youtubeRegEx) ? el.href : null;
+			}).filter(function (link) {
+				return link;
+			}));
+			console.log('youtubeUrls 2', youtubeUrls.length);
+		});
+	
+		// too many ids! must split up
+	
+		var ids = [].concat(_toConsumableArray(youtubeUrls.map(function (link) {
+			var match = link.match(youtubeExtract1);
+			return match ? match[1] : undefined;
+		})), _toConsumableArray(youtubeUrls.map(function (link) {
+			var match = link.match(youtubeExtract2);
+			return match ? match[1] : undefined;
+		})));
+		var entities = _store2.default.getState().mediaPlayer.entities;
+		ids = ids.filter(function (id) {
+			return id;
+		}) // filter empty
+		.filter(function (item, pos, self) {
+			return self.indexOf(item) === pos;
+		}) // filter dublicates
+		.filter(function (id) {
+			return !entities[id];
+		}); // filter one already in store
+		var url = 'https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails&id=' + ids.join(',') + '&key=' + YOUTUBE_API_KEY;
+		(0, _ajax2.default)(url, function (data) {
+			_store2.default.dispatch(_actions2.default.extensionAddVideos(data.items));
+		});
+	}
+
+/***/ },
+/* 47 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	exports.default = ajax;
+	function ajax(url, callback) {
+		var xmlhttp = new XMLHttpRequest();
+		xmlhttp.onreadystatechange = function () {
+			if (xmlhttp.readyState === 4) {
+				if (xmlhttp.status === 200) callback(JSON.parse(xmlhttp.responseText));else console.warn('error loading ' + url);
+			}
+		};
+		xmlhttp.open('GET', url, true);
+		xmlhttp.send();
+	}
+
+/***/ },
+/* 48 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -12126,17 +12365,11 @@
 	
 	var _store2 = _interopRequireDefault(_store);
 	
-	var _actions = __webpack_require__(36);
+	var _actions = __webpack_require__(29);
 	
 	var _actions2 = _interopRequireDefault(_actions);
 	
-	var _indexDB = __webpack_require__(46);
-	
-	var db = _interopRequireWildcard(_indexDB);
-	
-	__webpack_require__(47);
-	
-	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+	__webpack_require__(49);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -12162,8 +12395,7 @@
 				if (this.isQueue) {
 					_store2.default.dispatch(_actions2.default.queueRemoveIndex(this.queueIndex));
 				} else {
-					_store2.default.dispatch(_actions2.default.removeVideo(this.video.id));
-					db.setMediaEntity(this.video);
+					_store2.default.dispatch(_actions2.default.removeVideo(this.video));
 				}
 			},
 			addToPlaylist: function addToPlaylist() {
@@ -12201,149 +12433,16 @@
 	});
 
 /***/ },
-/* 46 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	exports.getPlayList = getPlayList;
-	exports.setPlayList = setPlayList;
-	exports.setMediaEntity = setMediaEntity;
-	exports.getMediaEntity = getMediaEntity;
-	exports.storageStats = storageStats;
-	
-	var _actions = __webpack_require__(36);
-	
-	var _actions2 = _interopRequireDefault(_actions);
-	
-	var _store = __webpack_require__(5);
-	
-	var _store2 = _interopRequireDefault(_store);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function getAllMediaEntities(db, callback) {
-		var request = db.transaction('mediaEntities', 'readonly').objectStore('mediaEntities').openCursor();
-		request.onerror = function () {
-			return _store2.default.dispatch(_actions2.default.error('DB Error can not get entities from DB'));
-		};
-		var entities = {};
-		request.onsuccess = function (event) {
-			var cursor = event.target.result;
-			if (cursor) {
-				entities[cursor.value.id] = cursor.value;
-				cursor.continue();
-			} else {
-				_store2.default.dispatch(_actions2.default.getAllDbSuccess(entities));
-				callback();
-			}
-		};
-	}
-	function exists(storeName, id, callback) {
-		var request = _store2.default.getState().mediaPlayer.db.transaction(['playLists'], 'readonly').objectStore('playLists').get('default');
-		request.onerror = function (event) {
-			return _store2.default.dispatch(_actions2.default.error('DB Error ' + event.target.error.name));
-		};
-		request.onsuccess = callback;
-	}
-	
-	function getPlayList(db) {
-		var request = db.transaction(['playLists'], 'readonly').objectStore('playLists').get('default');
-		request.onsuccess = function (event) {
-			return _store2.default.dispatch(_actions2.default.getDbPlayListSuccess(event.target.result.playList));
-		};
-		request.onerror = function (event) {
-			return _store2.default.dispatch(_actions2.default.error('DB Error ' + event.target.error.name));
-		};
-	}
-	
-	if (!('indexedDB' in window)) {
-		_store2.default.dispatch(_actions2.default.error('Error: indexDB missing.'));
-	} else {
-		var openRequest = indexedDB.open('audius_0.02', 1);
-		openRequest.onupgradeneeded = function (event) {
-			var thisDB = event.target.result;
-			if (!thisDB.objectStoreNames.contains('mediaEntities')) {
-				thisDB.createObjectStore('mediaEntities', { keyPath: 'id' });
-			}
-			if (!thisDB.objectStoreNames.contains('playLists')) {
-				thisDB.createObjectStore('playLists', { keyPath: 'id' });
-			}
-		};
-		openRequest.onsuccess = function (event) {
-			getAllMediaEntities(event.target.result, function () {
-				return getPlayList(event.target.result);
-			});
-			_store2.default.dispatch(_actions2.default.initDbSuccess(event.target.result));
-		};
-		openRequest.onerror = function () {
-			return _store2.default.dispatch(_actions2.default.error('Error: could not connect to indexDB.'));
-		};
-	}
-	
-	function setPlayList() {
-		exists('playList', 'default', function (event) {
-			var dbStore = _store2.default.getState().mediaPlayer.db.transaction(['playLists'], 'readwrite').objectStore('playLists');
-			var action = event.target.result ? 'put' : 'add';
-			var request = dbStore[action]({ id: 'default', playList: _store2.default.getState().mediaPlayer.playList });
-			request.onerror = function (event2) {
-				return _store2.default.dispatch(_actions2.default.error('DB Error ' + event2.target.error.name));
-			};
-		});
-	}
-	
-	function setMediaEntity(data) {
-		exists('mediaEntities', 'default', function (event) {
-			var dbStore = _store2.default.getState().mediaPlayer.db.transaction(['mediaEntities'], 'readwrite').objectStore('mediaEntities');
-			var action = event.target.result ? 'put' : 'add';
-			var request = dbStore[action](data);
-			request.onsuccess = function () {
-				return _store2.default.dispatch(_actions2.default.setDbSuccess(data));
-			};
-			request.onerror = function (event2) {
-				return _store2.default.dispatch(_actions2.default.error('DB Error ' + event2.target.error.name));
-			};
-			setPlayList();
-		});
-	}
-	
-	// -----------------
-	function getMediaEntity(id) {
-		var request = _store2.default.getState().mediaPlayer.db.transaction(['mediaEntities'], 'readonly').objectStore('mediaEntities').get(id);
-		request.onsuccess = function (event) {
-			return _store2.default.dispatch(_actions2.default.getDbSuccess(event.target.result));
-		};
-		request.onerror = function (event) {
-			return _store2.default.dispatch(_actions2.default.error('DB Error ' + event.target.error.name));
-		};
-	}
-	
-	// Request storage usage and capacity left
-	function storageStats() {
-		navigator.webkitTemporaryStorage.queryUsageAndQuota(function (used, granted) {
-			console.log('granted: ', granted);
-			var percent = 100 * used / granted;
-			if (percent === 100) gui.warn('IndexDB full!');
-			console.log('## ' + percent.toPrecision(2) + '% storage used');
-		}, function (error) {
-			console.log('Error', error);
-		});
-	}
-
-/***/ },
-/* 47 */
+/* 49 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(48);
+	var content = __webpack_require__(50);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(44)(content, {});
+	var update = __webpack_require__(45)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -12360,10 +12459,10 @@
 	}
 
 /***/ },
-/* 48 */
+/* 50 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(43)();
+	exports = module.exports = __webpack_require__(44)();
 	// imports
 	
 	
@@ -12374,7 +12473,7 @@
 
 
 /***/ },
-/* 49 */
+/* 51 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -12387,21 +12486,14 @@
 	
 	var _store2 = _interopRequireDefault(_store);
 	
-	var _actions = __webpack_require__(36);
+	var _actions = __webpack_require__(29);
 	
 	var _actions2 = _interopRequireDefault(_actions);
 	
-	var _indexDB = __webpack_require__(46);
-	
-	var db = _interopRequireWildcard(_indexDB);
-	
-	__webpack_require__(50);
-	
-	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+	__webpack_require__(52);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	// import youtubeApi from '../utils/youtube-iframe-api';
 	_vue2.default.component('youtube-player', {
 		data: function data() {
 			return {
@@ -12466,9 +12558,9 @@
 	
 		methods: {
 			onPlayerError: function onPlayerError(event) {
-				var mediaId = _store2.default.getState().mediaPlayer.mediaId;
-				_store2.default.dispatch(_actions2.default.videoError(_store2.default.getState().mediaPlayer.mediaId, event.data));
-				db.setMediaEntity(_store2.default.getState().mediaPlayer.entities[mediaId]);
+				var mediaPlayer = _store2.default.getState().mediaPlayer;
+				var video = mediaPlayer.entities[mediaPlayer.mediaId];
+				_store2.default.dispatch(_actions2.default.videoError(video, event.data));
 			},
 			onPlayerStateChange: function onPlayerStateChange(event) {
 				var _this3 = this;
@@ -12493,18 +12585,19 @@
 		},
 		template: '\n\t<div class="youtube-player">\n\t\t<div id="youtube-iframe"></div>\n\t</div>\n\t'
 	});
+	// import youtubeApi from '../utils/youtube-iframe-api';
 
 /***/ },
-/* 50 */
+/* 52 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(51);
+	var content = __webpack_require__(53);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(44)(content, {});
+	var update = __webpack_require__(45)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -12521,10 +12614,10 @@
 	}
 
 /***/ },
-/* 51 */
+/* 53 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(43)();
+	exports = module.exports = __webpack_require__(44)();
 	// imports
 	
 	
@@ -12535,12 +12628,12 @@
 
 
 /***/ },
-/* 52 */
+/* 54 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var _findVideos = __webpack_require__(53);
+	var _findVideos = __webpack_require__(46);
 	
 	var _findVideos2 = _interopRequireDefault(_findVideos);
 	
@@ -12562,142 +12655,16 @@
 	}
 
 /***/ },
-/* 53 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	
-	exports.default = function () {
-		var youtubeUrls = Array.from(document.querySelectorAll('a')).map(function (el) {
-			return el.href.match(youtubeRegEx) ? el.href : null;
-		}).filter(function (link) {
-			return link;
-		});
-		var ids = [].concat(_toConsumableArray(youtubeUrls.map(function (link) {
-			var match = link.match(youtubeExtract1);
-			return match ? match[1] : undefined;
-		})), _toConsumableArray(youtubeUrls.map(function (link) {
-			var match = link.match(youtubeExtract2);
-			return match ? match[1] : undefined;
-		})));
-		var entities = _store2.default.getState().mediaPlayer.entities;
-		ids = ids.filter(function (id) {
-			return id;
-		}) // filter empty
-		.filter(function (item, pos, self) {
-			return self.indexOf(item) === pos;
-		}) // filter dublicates
-		.filter(function (id) {
-			return !entities[id];
-		}); // filter one already in store
-		var url = 'https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails&id=' + ids.join(',') + '&key=' + YOUTUBE_API_KEY;
-		(0, _ajax2.default)(url, function (data) {
-			_store2.default.dispatch(_actions2.default.extensionAddVideos(data.items));
-		});
-	};
-	
-	var _store = __webpack_require__(5);
-	
-	var _store2 = _interopRequireDefault(_store);
-	
-	var _actions = __webpack_require__(36);
-	
-	var _actions2 = _interopRequireDefault(_actions);
-	
-	var _ajax = __webpack_require__(54);
-	
-	var _ajax2 = _interopRequireDefault(_ajax);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-	
-	var YOUTUBE_API_KEY = _store2.default.getState().config.youtubeApiKey;
-	
-	var youtubeRegEx = /(youtube.com)|(youtu.be)/;
-	var youtubeExtract1 = /youtu.be\/([\w-]+)/;
-	var youtubeExtract2 = /youtube.com\/watch\?v=([\w-]+)/;
-
-/***/ },
-/* 54 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	exports.default = ajax;
-	function ajax(url, callback) {
-		var xmlhttp = new XMLHttpRequest();
-		xmlhttp.onreadystatechange = function () {
-			if (xmlhttp.readyState === 4) {
-				if (xmlhttp.status === 200) callback(JSON.parse(xmlhttp.responseText));else console.warn('error loading ' + url);
-			}
-		};
-		xmlhttp.open('GET', url, true);
-		xmlhttp.send();
-	}
-
-/***/ },
 /* 55 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var _store = __webpack_require__(5);
-	
-	var _store2 = _interopRequireDefault(_store);
-	
-	var _actions = __webpack_require__(36);
-	
-	var _actions2 = _interopRequireDefault(_actions);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	var mediaId = '';
-	_store2.default.subscribe(function () {
-		var extension = _store2.default.getState().extension;
-		if (extension.mediaId !== mediaId) {
-			mediaId = extension.mediaId;
-			console.log('extension play ', extension.entities[mediaId].title);
-			// Send message to background script.
-			chrome.runtime.sendMessage({
-				audius: true,
-				action: {
-					type: 'PLAY',
-					mediaId: mediaId,
-					currentMedia: extension.entities[mediaId]
-				}
-			});
-		}
-	});
-	
-	if (document.querySelectorAll('#audius-website').length) {
-		// Listen to messages from background script if we are on a audius player page.
-		chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-			if (request.audius) {
-				window.dispatchEvent(new CustomEvent('audius', { detail: request.action }));
-				sendResponse('revieved message!');
-			}
-		});
-	}
-
-/***/ },
-/* 56 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(57);
+	var content = __webpack_require__(56);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(44)(content, {});
+	var update = __webpack_require__(45)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -12714,24 +12681,125 @@
 	}
 
 /***/ },
-/* 57 */
+/* 56 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(43)();
+	exports = module.exports = __webpack_require__(44)();
 	// imports
 	exports.push([module.id, "@import url(https://fonts.googleapis.com/css?family=Nobile);", ""]);
 	
 	// module
-	exports.push([module.id, "@charset \"UTF-8\";\n.audius .button,\n#audius-website .button {\n  font-family: 'Nobile', sans-serif;\n  font-size: 1em;\n  padding: 0 7px;\n  height: 35px;\n  border: 1px solid #C8CCD5;\n  color: #C8CCD5;\n  background: transparent;\n  text-transform: uppercase;\n  border-radius: 2px;\n  -webkit-transition: all 250ms;\n  transition: all 250ms;\n  outline: 0;\n  cursor: pointer; }\n  .audius .button.btn--blue,\n  #audius-website .button.btn--blue {\n    border-color: #2DA7EF;\n    background: #2DA7EF;\n    color: #fff; }\n\n.audius a.button,\n#audius-website a.button {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n  text-decoration: none; }\n\n@font-face {\n  font-family: 'WampIcons';\n  src: url(" + __webpack_require__(58) + ");\n  font-weight: normal;\n  font-style: normal; }\n\n[class^=\"wmp-icon-\"], [class*=\" wmp-icon-\"] {\n  text-align: center;\n  position: relative;\n  width: 49px;\n  height: 49px;\n  display: inline-block; }\n  [class^=\"wmp-icon-\"]:before, [class*=\" wmp-icon-\"]:before {\n    /* use !important to prevent issues with browser extensions that change fonts */\n    speak: none;\n    font-style: normal;\n    font-weight: normal;\n    font-variant: normal;\n    text-transform: none;\n    line-height: 1;\n    -webkit-font-smoothing: antialiased;\n    -moz-osx-font-smoothing: grayscale;\n    font-family: 'WampIcons' !important;\n    position: absolute;\n    font-size: 1.7em;\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: flex;\n    -webkit-box-align: center;\n        -ms-flex-align: center;\n            align-items: center;\n    -webkit-box-pack: center;\n        -ms-flex-pack: center;\n            justify-content: center;\n    width: 100%;\n    height: 100%; }\n\n.icon--small:before {\n  font-size: 1.2em; }\n\n.wmp-icon-local_offer2:before {\n  content: \"\\E54F\"; }\n\n.wmp-icon-format_list_bulleted:before {\n  content: \"\\E242\"; }\n\n.wmp-icon-dehaze:before {\n  content: \"\\E3C7\"; }\n\n.wmp-icon-reorder:before {\n  content: \"\\E8FE\"; }\n\n.wmp-icon-more_vert:before {\n  content: \"\\E5D4\"; }\n\n.wmp-icon-unfold_more:before {\n  content: \"\\E5D7\"; }\n\n.wmp-icon-arrow_drop_down:before {\n  content: \"\\E5C5\"; }\n\n.wmp-icon-arrow_drop_up:before {\n  content: \"\\E5C7\"; }\n\n.wmp-icon-previous:before {\n  content: \"\\E045\"; }\n\n.wmp-icon-play:before {\n  content: \"\\E037\"; }\n\n.wmp-icon-pause:before {\n  content: \"\\E034\"; }\n\n.wmp-icon-next:before {\n  content: \"\\E044\"; }\n\n.wmp-icon-shuffle:before {\n  content: \"\\E043\"; }\n\n.wmp-icon-repeat:before {\n  content: \"\\E040\"; }\n\n.wmp-icon-repeat_one:before {\n  content: \"\\E041\"; }\n\n.wmp-icon-volume_off:before {\n  content: \"\\E04F\"; }\n\n.wmp-icon-volume_up:before {\n  content: \"\\E050\"; }\n\n.wmp-icon-search:before {\n  content: \"\\E8B6\"; }\n\n.wmp-icon-close:before {\n  content: \"\\E5CD\"; }\n\n.wmp-icon-add:before {\n  content: \"\\E900\"; }\n\n.wmp-icon-queue2:before {\n  content: \"\\E03D\"; }\n\n.wmp-icon-copy:before {\n  content: \"\\E14D\"; }\n\n.wmp-icon-local_offer22:before {\n  content: \"\\E550\"; }\n\n.wmp-icon-link:before {\n  content: \"\\E157\"; }\n\n.wmp-icon-delete:before {\n  content: \"\\E872\"; }\n\n.wmp-icon-cloud_upload:before {\n  content: \"\\E2C3\"; }\n\n.wmp-icon-youtube:before {\n  content: \"\\E906\"; }\n\n#audius {\n  position: absolute;\n  top: 0;\n  right: 0;\n  z-index: 99999;\n  font-family: 'Nobile', sans-serif;\n  font-size: 2vmin;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: column;\n          flex-direction: column;\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n  color: #303641;\n  margin: 0; }\n  #audius a {\n    color: #303641; }\n    #audius a:visited {\n      color: #303641; }\n  #audius input:focus {\n    outline: 0; }\n", ""]);
+	exports.push([module.id, "@charset \"UTF-8\";\n.audius .button,\n#audius-website .button {\n  font-family: 'Nobile', sans-serif;\n  font-size: 1em;\n  padding: 0 1vmin;\n  height: 5vmin;\n  border: 1px solid #C8CCD5;\n  color: #C8CCD5;\n  background: transparent;\n  text-transform: uppercase;\n  border-radius: 2px;\n  -webkit-transition: all 250ms;\n  transition: all 250ms;\n  outline: 0;\n  cursor: pointer; }\n  .audius .button.btn--blue,\n  #audius-website .button.btn--blue {\n    border-color: #2DA7EF;\n    background: #2DA7EF;\n    color: #fff; }\n\n.audius a.button,\n#audius-website a.button {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n  text-decoration: none; }\n\n@font-face {\n  font-family: 'WampIcons';\n  src: url(" + __webpack_require__(57) + ");\n  font-weight: normal;\n  font-style: normal; }\n\n[class^=\"wmp-icon-\"], [class*=\" wmp-icon-\"] {\n  text-align: center;\n  position: relative;\n  width: 7vmin;\n  height: 7vmin;\n  display: inline-block; }\n  [class^=\"wmp-icon-\"]:before, [class*=\" wmp-icon-\"]:before {\n    /* use !important to prevent issues with browser extensions that change fonts */\n    speak: none;\n    font-style: normal;\n    font-weight: normal;\n    font-variant: normal;\n    text-transform: none;\n    line-height: 1;\n    -webkit-font-smoothing: antialiased;\n    -moz-osx-font-smoothing: grayscale;\n    font-family: 'WampIcons' !important;\n    position: absolute;\n    font-size: 1.7em;\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: flex;\n    -webkit-box-align: center;\n        -ms-flex-align: center;\n            align-items: center;\n    -webkit-box-pack: center;\n        -ms-flex-pack: center;\n            justify-content: center;\n    width: 100%;\n    height: 100%; }\n\n.icon--small:before {\n  font-size: 1.2em; }\n\n.wmp-icon-local_offer2:before {\n  content: \"\\E54F\"; }\n\n.wmp-icon-format_list_bulleted:before {\n  content: \"\\E242\"; }\n\n.wmp-icon-dehaze:before {\n  content: \"\\E3C7\"; }\n\n.wmp-icon-reorder:before {\n  content: \"\\E8FE\"; }\n\n.wmp-icon-more_vert:before {\n  content: \"\\E5D4\"; }\n\n.wmp-icon-unfold_more:before {\n  content: \"\\E5D7\"; }\n\n.wmp-icon-arrow_drop_down:before {\n  content: \"\\E5C5\"; }\n\n.wmp-icon-arrow_drop_up:before {\n  content: \"\\E5C7\"; }\n\n.wmp-icon-previous:before {\n  content: \"\\E045\"; }\n\n.wmp-icon-play:before {\n  content: \"\\E037\"; }\n\n.wmp-icon-pause:before {\n  content: \"\\E034\"; }\n\n.wmp-icon-next:before {\n  content: \"\\E044\"; }\n\n.wmp-icon-shuffle:before {\n  content: \"\\E043\"; }\n\n.wmp-icon-repeat:before {\n  content: \"\\E040\"; }\n\n.wmp-icon-repeat_one:before {\n  content: \"\\E041\"; }\n\n.wmp-icon-volume_off:before {\n  content: \"\\E04F\"; }\n\n.wmp-icon-volume_up:before {\n  content: \"\\E050\"; }\n\n.wmp-icon-search:before {\n  content: \"\\E8B6\"; }\n\n.wmp-icon-close:before {\n  content: \"\\E5CD\"; }\n\n.wmp-icon-add:before {\n  content: \"\\E900\"; }\n\n.wmp-icon-queue2:before {\n  content: \"\\E03D\"; }\n\n.wmp-icon-copy:before {\n  content: \"\\E14D\"; }\n\n.wmp-icon-local_offer22:before {\n  content: \"\\E550\"; }\n\n.wmp-icon-link:before {\n  content: \"\\E157\"; }\n\n.wmp-icon-delete:before {\n  content: \"\\E872\"; }\n\n.wmp-icon-cloud_upload:before {\n  content: \"\\E2C3\"; }\n\n.wmp-icon-youtube:before {\n  content: \"\\E906\"; }\n\n#audius {\n  position: absolute;\n  top: 0;\n  right: 0;\n  z-index: 99999;\n  font-family: 'Nobile', sans-serif;\n  font-size: 2.3vmin;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: column;\n          flex-direction: column;\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n  color: #303641;\n  margin: 0; }\n  #audius a {\n    color: #303641; }\n    #audius a:visited {\n      color: #303641; }\n  #audius input:focus {\n    outline: 0; }\n", ""]);
 	
 	// exports
 
 
 /***/ },
-/* 58 */
+/* 57 */
 /***/ function(module, exports) {
 
 	module.exports = "data:application/x-font-ttf;base64,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"
+
+/***/ },
+/* 58 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	exports.dbMiddleware = undefined;
+	exports.setPlayList = setPlayList;
+	exports.setMediaEntity = setMediaEntity;
+	
+	var _actions = __webpack_require__(29);
+	
+	var _actions2 = _interopRequireDefault(_actions);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function exists(store, storeName, id, callback) {
+		var request = store.getState().mediaPlayer.db.transaction(['playLists'], 'readonly').objectStore('playLists').get('default');
+		request.onerror = function (event) {
+			return store.dispatch(_actions2.default.error('DB Error ' + event.target.error.name));
+		};
+		request.onsuccess = callback;
+	}
+	
+	function setPlayList(store) {
+		exists(store, 'playList', 'default', function (event) {
+			var dbStore = store.getState().mediaPlayer.db.transaction(['playLists'], 'readwrite').objectStore('playLists');
+			var action = event.target.result ? 'put' : 'add';
+			var request = dbStore[action]({ id: 'default', playList: store.getState().mediaPlayer.playList });
+			request.onerror = function (event2) {
+				return store.dispatch(_actions2.default.error('DB Error ' + event2.target.error.name));
+			};
+		});
+	}
+	
+	function setMediaEntity(store, data, actionType) {
+		console.log('setMediaEntity middleware!');
+		exists(store, 'mediaEntities', 'default', function (event) {
+			var dbStore = store.getState().mediaPlayer.db.transaction(['mediaEntities'], 'readwrite').objectStore('mediaEntities');
+			var action = event.target.result ? 'put' : 'add';
+			var request = dbStore[action](data);
+			request.onsuccess = function () {
+				return store.dispatch({ type: '${actionType}_SUCCESS' });
+			};
+			request.onerror = function (event2) {
+				return store.dispatch(_actions2.default.error('DB Error ' + event2.target.error.name));
+			};
+			setPlayList(store);
+		});
+	}
+	
+	var dbMiddleware = exports.dbMiddleware = function dbMiddleware(store) {
+		return function (next) {
+			return function (action) {
+				var result = next(action);
+				if (action.type === 'MOVE_PLAYLIST_MEDIA') {
+					setPlayList(store);
+				}
+				if (['ADD_SEARCH_RESULT', 'REMOVE_VIDEO', 'VIDEO_ERROR'].includes(action.type)) {
+					console.log('middleware!!');
+					setMediaEntity(store, action.video, action.type);
+				}
+				return result;
+			};
+		};
+	};
+
+/***/ },
+/* 59 */,
+/* 60 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	// relay messages from store to background script
+	var messageRelayMiddleware = exports.messageRelayMiddleware = function messageRelayMiddleware(store) {
+		return function (next) {
+			return function (action) {
+				var extension = store.getState().extension;
+				var result = next(action);
+				if (['NEXT_VIDEO', 'PREV_VIDEO'].includes(action.type)) {
+					var _extension = store.getState().extension;
+					chrome.runtime.sendMessage({ audius: true, action: {
+							type: 'PLAY',
+							mediaId: _extension.mediaId,
+							currentMedia: _extension.currentMedia
+						} }); // Send message to background script.
+				} else if (['PLAY', 'PAUSE', 'TOGGLE_MUTE', 'QUEUE_MEDIA', 'ADD_SEARCH_RESULT', 'SEARCH_AUDIUS_TAB'].includes(action.type)) {
+					chrome.runtime.sendMessage({ audius: true, action: action }); // Send message to background script.
+				}
+				return result;
+			};
+		};
+	};
 
 /***/ }
 /******/ ]);
