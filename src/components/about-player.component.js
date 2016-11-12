@@ -118,7 +118,7 @@ Vue.component('about-player', {
 		You are writing another music player, seriously? That's what I thought a lot when creating this, but you know ...
 	</p>
 	<p>
-		The extension should have been the actual player since the original idea was to create a Chrome/FireFox extension with a media player for <i>web.whatsapp</i>. This however failed since the conten security policy does not allow the embdding of youtube videos and somehow it is not possible to overwrite the header fields of web.whatsapp. That meant no player, no music. The only way around this issue I could come up with is to create a background process that the extension cummunicates with and that sends messages to a main player web app. This is currently still untested but that is the plan.
+		The extension should have been the actual player since the original idea was to create a Chrome/FireFox extension with a media player for <i>web.whatsapp</i>. This however failed since the conten security policy does not allow the embdding of youtube videos and somehow it is not possible to overwrite the header fields of web.whatsapp. That meant no player, no music. The only way around this issue I could come up with is to create a background process that the extension communicates with and that sends messages to a main player web app. This is currently still untested but that is the plan.
 	</p>
 	<p>
 		The
@@ -126,7 +126,9 @@ Vue.component('about-player', {
 	<h2>Credits</h2>
 	<p>
 		This work is inspired by the incredible <a href="https://www.reddit.com/r/streamus/" target="_blank">Streamus</a> app.<br>
-		It was created with:
+	</p>
+	<p>
+		Here are the tools I used to create Audius.
 		<ul>
 			<li>VueJs</li>
 			<li>Redux</li>
@@ -137,4 +139,6 @@ Vue.component('about-player', {
 		</ul>
 	</p>
 </div>`,
+
+
 });
