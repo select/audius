@@ -12,7 +12,45 @@ const initialState = {
 	shuffle: false,
 	mute: false,
 	currentMedia: {},
+	queue: [],
+	show: true,
+	audiusTabMissing: false,
 };
+
+
+function next(state) {
+	const idx = state.playList.indexOf(state.mediaId);
+	let mediaId;
+	if (state.queue.length) {
+		// Play next song from queue.
+		const queue = [...state.queue];
+		mediaId = queue.shift();
+		return Object.assign({}, state, {
+			mediaId: mediaId,
+			queue: [...queue],
+			isPlaying: true,
+		});
+	} else if (state.shuffle) {
+		// Play a random song.
+		return Object.assign({}, state, {
+			mediaId: state.playList[Math.floor(Math.random() * state.playList.length)],
+			isPlaying: true,
+		});
+	} else if (idx === state.playList.length - 1) {
+		// If last song on play list, stop playing.
+		return Object.assign({}, state, {
+			isPlaying: false,
+		});
+	} else if (idx < state.playList.length - 1) {
+		// Play the next song.
+		mediaId = state.playList[idx + 1];
+		return Object.assign({}, state, {
+			mediaId,
+			isPlaying: true,
+		});
+	}
+	return state;
+}
 
 export default function extension(state = initialState, action) {
 	let idx;
@@ -61,6 +99,30 @@ export default function extension(state = initialState, action) {
 			});
 		}
 		return state;
+	case 'NEXT_VIDEO':
+		return next(state);
+	case 'PREV_VIDEO':
+		idx = state.playList.indexOf(state.mediaId);
+		if (idx > 0) {
+			mediaId = state.playList[idx - 1];
+			return Object.assign({}, state, {
+				mediaId: state.playList[idx - 1],
+				isPlaying: true,
+			});
+		}
+		return state;
+	case 'TOGGLE_EXTENSION':
+		return Object.assign({}, state, {
+			show: action.state !== undefined ? action.state : !state.show,
+		})
+	case 'ERROR_AUDIUS_TAB_MISSING':
+		return Object.assign({}, state, {
+			audiusTabMissing: true,
+		});
+	case 'AUDIUS_TAB_FOUND':
+		return Object.assign({}, state, {
+			audiusTabMissing: false,
+		});
 	default:
 		return state;
 	}

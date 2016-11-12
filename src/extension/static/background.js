@@ -1,32 +1,58 @@
-let audiusWebsiteTab = undefined;
+function sendMessageToContentScriptInCurrentTab(action) {
+	chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+    chrome.tabs.sendMessage(
+    	tabs[0].id,
+    	{
+				audiusToContentScript: true,
+				action,
+    	},
+    	(response) => {console.log('current tab replied: ', response)}
+    );
+	});
+}
 
-chrome.tabs.getAllInWindow(null, function(tabs) {
-	let tabsFiltered = tabs.filter(tab => tab.url === 'http://localhost:8080/');
-	if (tabsFiltered.length) {
-		audiusWebsiteTab = tabsFiltered[0];
-	} else {
-		tabsFiltered = tabs.filter(tab => tab.url === 'http://audius.rockdapus.org/');
-		if (tabsFiltered.length) {
-			audiusWebsiteTab = tabsFiltered[0];
-		}
-	}
-	if(audiusWebsiteTab) {
-		console.log('got tab: ', audiusWebsiteTab.url);
-	} else {
-		console.log('failed getting tab');
-	}
-
+// On click of extension icon show or hide the extension HTML in the current page.
+chrome.browserAction.onClicked.addListener((tab) => {
+	sendMessageToContentScriptInCurrentTab({type: 'TOGGLE_EXTENSION'});
 });
+
+// Get the tab where Audius is running.
+function getTab(callback) {
+	let tab;
+	chrome.tabs.getAllInWindow(null, (tabs) => {
+		let tabsFiltered = tabs.filter(tab => tab.url === 'http://localhost:8080/');
+		if (tabsFiltered.length) {
+			callback(tabsFiltered[0]);
+			return;
+		} else {
+			tabsFiltered = tabs.filter(tab => tab.url === 'http://audius.rockdapus.org/');
+			if (tabsFiltered.length) {
+				callback(tabsFiltered[0]);
+				return;
+			}
+		}
+		callback();
+	});
+}
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 	if (request.audius) {
-		chrome.tabs.sendMessage(audiusWebsiteTab.id, request, (response) => {
-			console.log('response from audius player tab');
+		getTab((tab) => {
+			if (!tab) sendMessageToContentScriptInCurrentTab({ type: 'ERROR_AUDIUS_TAB_MISSING' });
+			else {
+				if(request.action.type === 'SEARCH_AUDIUS_TAB') {
+					sendMessageToContentScriptInCurrentTab({type: 'AUDIUS_TAB_FOUND'});
+				} else {
+					chrome.tabs.sendMessage(tab.id, request, (response) => {
+						console.log('Response from audius player tab: ' + response);
+					});
+				}
+			}
 		});
 	}
 });
 
-chrome.runtime.onMessageExternal.addListener((request, sender, sendResponse) => {
-	if (['http://localhost:8080', 'http://audius.rockdapus.org'].contains(sender.url))
-		console.log('request from audius: ', request);
-});
+// chrome.runtime.onMessageExternal.addListener((request, sender, sendResponse) => {
+// 	if (['http://localhost:8080', 'http://audius.rockdapus.org'].contains(sender.url))
+// 		console.log('request from audius: ', request);
+// });

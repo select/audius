@@ -4,7 +4,7 @@ import '../components/extension-app.component';
 import '../components/video-item.component';
 import '../components/youtube-player.component';
 import '../utils/domObserver';
-import '../utils/extensionMessageManager';
+import '../utils/extensionMessenger';
 
 import './app.sass';
 
