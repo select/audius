@@ -3,14 +3,15 @@
 const webpack = require('webpack');
 const autoprefixer = require('autoprefixer');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const CircularDependencyPlugin = require('circular-dependency-plugin');
 
 module.exports = {
 	entry: {
 		'dist-extension/content-script': './src/extension/dev.js',
 	},
 	output: {
-	  path: './',
-	  filename: '[name].js'
+		path: './',
+		filename: '[name].js'
 	},
 	stats: {
 		// Configure the console output
@@ -21,8 +22,8 @@ module.exports = {
 	devtool: 'source-map',
 	module: {
 		loaders: [
-      // { test: /\.jpe?g$|\.gif$|\.png$|\.svg$|\.woff$|\.ttf$|\.wav$|\.mp3$/, loader: 'file' },
-      { test: /\.ttf$/, loader: 'url-loader' },
+			// { test: /\.jpe?g$|\.gif$|\.png$|\.svg$|\.woff$|\.ttf$|\.wav$|\.mp3$/, loader: 'file' },
+			{ test: /\.ttf$/, loader: 'url-loader' },
 			{ test: /\.sass$/, loaders: ['style', 'css', 'postcss-loader', 'sass'] },
 			{ test: /\.css$/, loader: 'raw-loader' },
 			{ test: /\.html$/, loader: 'raw-loader' },
@@ -40,14 +41,17 @@ module.exports = {
 	},
 	postcss: () => [autoprefixer],
 	plugins: [
-    new CopyWebpackPlugin([
-      { context: './src/extension/static/', from: '**/*', to: './dist-extension/' },
-      { context: './src/website/static/', from: '**/*', to: './dist-website/' },
-    ]),
-    new webpack.DefinePlugin({
+		new CopyWebpackPlugin([
+			{ context: './src/extension/static/', from: '**/*', to: './dist-extension/' },
+			{ context: './src/website/static/', from: '**/*', to: './dist-website/' },
+		]),
+		new webpack.DefinePlugin({
 			'process.env': {
 				extension: true,
 			},
+		}),
+		new CircularDependencyPlugin({
+			failOnError: true
 		}),
 	],
 };

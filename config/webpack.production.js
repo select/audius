@@ -3,7 +3,7 @@
 const webpack = require('webpack');
 const autoprefixer = require('autoprefixer');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-new webpack.optimize.DedupePlugin()
+const CircularDependencyPlugin = require('circular-dependency-plugin');
 
 const configDev = require('./webpack.dev.js')
 
@@ -27,8 +27,12 @@ module.exports = Object.assign(configDev, {
 		new webpack.DefinePlugin({
 			'process.env': {
 				NODE_ENV: JSON.stringify('production'),
+				extension: false,
 			},
 		}),
 		new webpack.optimize.DedupePlugin(),
+		new CircularDependencyPlugin({
+			failOnError: true
+		}),
 	],
 });
