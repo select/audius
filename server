@@ -2,6 +2,7 @@
 
 const WebpackDevServer = require('webpack-dev-server');
 const webpack = require('webpack');
+const CircularDependencyPlugin = require('circular-dependency-plugin');
 
 const config = require('./config/webpack.dev.js');
 
@@ -16,6 +17,15 @@ config.output = {
 	publicPath: '/',
 	filename: 'app.js',
 };
+
+config.plugins = [
+	new webpack.DefinePlugin({
+		'process.env': {
+			website: true,
+		},
+	}),
+	new CircularDependencyPlugin(),
+];
 
 new WebpackDevServer(webpack(config), {
 	contentBase: './src/website/static/',
