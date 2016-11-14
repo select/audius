@@ -3,6 +3,7 @@ import { videoBaseObject } from './video';
 import { time2s } from '../utils/timeConverter';
 
 const initialState = {
+	show: false,
 	errorMessages: '',
 	entities: {},
 	mediaId: '',
@@ -13,7 +14,6 @@ const initialState = {
 	mute: false,
 	currentMedia: {},
 	queue: [],
-	show: true,
 	audiusTabMissing: false,
 };
 

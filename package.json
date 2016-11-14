@@ -1,16 +1,17 @@
 {
-	"name": "whatsapp-web-media-player",
+	"name": "audius",
 	"version": "0.0.1",
 	"author": "Falko Krause",
 	"description": "Play media files posted in conversations",
 	"main": "index.js",
 	"scripts": {
 		"start": "npm run watch:build",
-		"build:prod": "./node_modules/.bin/webpack --config='./config/webpack.production.js' --progress --profile --colors --display-error-details --display-cached",
+		"build:prod:app": "./node_modules/.bin/webpack --config='./config/webpack.production.app.js' --progress --profile --colors --display-error-details --display-cached",
+		"build:prod:extension": "./node_modules/.bin/webpack --config='./config/webpack.production.extension.js' --progress --profile --colors --display-error-details --display-cached",
 		"build": "./node_modules/.bin/webpack --config='./config/webpack.dev.js' --progress --profile --colors --display-error-details --display-cached",
 		"watch:build": "npm run build -- --watch",
 		"docu": "livingstyleguide compile ./src/sass/styleguide.lsg ./documentation/styleguide.html && nodejs node_modules/.bin/generate-md --layout github --input README.md --output ./documentation/",
-		"zip": "npm run sync; npm run build; cd dist/; zip -r ../whatsapp-web-media-player.chrome.app.zip . *",
+		"zip": "npm run build:prod:extension; cd dist-extension/; zip -r ../audius.extension.zip . *",
 		"icons": "./config/convert-icomoon.js ./src/icons/media-player.zip ./src/sass/_icon.map.sass ./src/fonts/"
 	},
 	"license": "MIT",

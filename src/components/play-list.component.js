@@ -17,6 +17,7 @@ Vue.component('play-list', {
 			store,
 			Actions,
 			tabs: ['queue', 'search', 'info', 'about'],
+			importURLinput: false,
 		};
 	},
 	created() {
@@ -62,13 +63,19 @@ Vue.component('play-list', {
 			// api_option=paste&api_paste_private=0&api_paste_code=llkjsdfljsdf
 			// https://developer.github.com/v3/gists/#create-a-gist
 			// curl -X POST \--data-binary '{"files": {"file1.txt": {"content": "Hello, SO"}}}' \https://api.github.com/gists
+			const entities = {};
+			Object.keys(this.mediaPlayer.entities).forEach(key => {
+				if(!this.mediaPlayer.entities[key].deleted) entities[key] = this.mediaPlayer.entities[key];
+			})
+			this.mediaPlayer.entities
 			const data = {
 				AudiusDump: true,
 				playList: this.mediaPlayer.playList,
-				entities: this.mediaPlayer.entities,
+				entities,
 			};
 			const element = document.createElement('a');
-			element.setAttribute('href', `data:text/plain;charset=utf-8,${encodeURIComponent(JSON.stringify(data))}`);
+			const output = `window.getAudiusPlaylist = function(){ return ${JSON.stringify(data)}; }`;
+			element.setAttribute('href', `data:text/plain;charset=utf-8,${encodeURIComponent(output)}`);
 			element.setAttribute('download', 'audius.data.json');
 			element.style.display = 'none';
 			document.body.appendChild(element);
@@ -88,13 +95,14 @@ Vue.component('play-list', {
 		searchJump: debounce((event) => {
 			store.dispatch(Actions.filterPlayList(event.target.value));
 		}, 500),
-		clear() {
+		clear(close) {
 			if (!this.mediaPlayer.filterQuery) this.toggleJump(false);
 			clearTimeout(this.blurTimer);
 			event.stopPropagation();
 			document.querySelector('.play-list-footer__search-input').value = '';
 			document.querySelector('.play-list-footer__search-input').focus();
 			store.dispatch(Actions.filterPlayList(''));
+			if(close === true) store.dispatch(Actions.toggleJump(false));
 		},
 		delayBlur() {
 			if (!this.mediaPlayer.filterQuery) {
@@ -112,6 +120,20 @@ Vue.component('play-list', {
 				document.querySelector('.play-list-footer__search-input').focus();
 			});
 		},
+		toggleImport() {
+			store.dispatch(Actions.toggleImport());
+		},
+		showImportURL() {
+			this.importURLinput = true;
+			Vue.nextTick(() => {
+				document.querySelector('.play-list__import-url-input').focus();
+			});
+		},
+		importURL() {
+			const el = document.querySelector('.play-list__import-url-input');
+			store.dispatch(Actions.importURL(el.value));
+			el.value = '';
+		},
 	},
 	computed: {
 		filteredPlaylist() {
@@ -127,23 +149,53 @@ Vue.component('play-list', {
 	},
 	template: `
 <div class="play-list">
-	<h2 v-if="!mediaPlayer.playList.length">
-		The playlist is empty <br> ... add some music <br>┐(・。・┐) ♪
-	</h2>
-	<ul class="media-list">
-		<video-item
-			v-for="id in filteredPlaylist"
-			:video="mediaPlayer.entities[id]"
-			:isPlaying="mediaPlayer.isPlaying && mediaPlayer.entities[id] && (mediaPlayer.mediaId == mediaPlayer.entities[id].id)"></video-item>
-	</ul>
+	<div class="play-list__body">
+		<h2 v-if="!mediaPlayer.playList.length">
+			The playlist is empty <br> ... add some music <br>┐(・。・┐) ♪
+		</h2>
+
+		<div class="paly-list__import" v-show="website.showImport" >
+			<h1>Import playlist</h1>
+			<input type="file" id="import-playlist" v-on:change="importPlayList" title="Import playlist from file">
+			<label for="import-playlist" class="button btn--blue">from file</label>
+			<button
+				class="button btn--blue"
+				v-show="!importURLinput"
+				v-on:click="showImportURL">from URL</button>
+			<div v-show="importURLinput">
+				<input
+					class="play-list__import-url-input"
+					type="text"
+					placeholder="http://pasetbin.com/x23kc">
+				<button class="button btn--blue" v-on:click="importURL">load</button>
+			</div>
+		</div>
+		<div
+			class="play-list__jump-header"
+			v-show="website.showJump">
+			<div> Jump to file </div>
+			<span
+				class="wmp-icon-close"
+				v-on:click="clear(true)"></span>
+		</div>
+		<ul
+			class="media-list"
+			v-show="!website.showImport">
+			<video-item
+				v-for="id in filteredPlaylist"
+				:video="mediaPlayer.entities[id]"
+				:isPlaying="mediaPlayer.isPlaying && mediaPlayer.entities[id] && (mediaPlayer.mediaId == mediaPlayer.entities[id].id)"></video-item>
+		</ul>
+	</div>
 	<div class="play-list-footer">
 		<ul v-show="!website.showJump">
 			<li class="play-list-footer--info">
 				{{mediaPlayer.playList.length}} Songs
 			</li>
-			<li>
-				<input type="file" id="import-playlist" v-on:change="importPlayList" title="Import playlist from file">
-				<label for="import-playlist">Import </label>
+			<li
+				v-bind:class="{ active: website.showImport }"
+				v-on:click="toggleImport">
+				Import
 			</li>
 			<li v-on:click="exportPlayList" title="Export playlist to file">Export</li>
 		</ul>

@@ -11,7 +11,7 @@ Vue.component('web-header', {
 		return {
 			mediaPlayer: store.getState().mediaPlayer,
 			website: store.getState().website,
-			currentMedia: undefined,
+			currentMedia: store.getState().mediaPlayer.currentMedia,
 			store,
 			Actions,
 		};
@@ -43,7 +43,7 @@ Vue.component('web-header', {
 				});
 			}
 			if (this.mediaPlayer.mediaId) {
-				this.currentMedia = this.mediaPlayer.entities[this.mediaPlayer.mediaId];
+				this.currentMedia = this.mediaPlayer.currentMedia;
 				this.currentMedia.durationS = time2s(this.currentMedia.duration);
 			} else {
 				this.currentMedia = undefined;

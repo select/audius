@@ -1,7 +1,9 @@
 import Vue from 'vue/dist/vue';
 
+import '../components/web-app.component';
 import '../components/web-header.component';
 import '../components/main-right.component';
+// import '../components/main-left.component';
 import '../components/about-player.component';
 import '../components/search-results.component';
 import '../components/youtube-player.component';
@@ -19,3 +21,4 @@ document.addEventListener('DOMContentLoaded', () => {
 		el: '#app',
 	});
 });
+

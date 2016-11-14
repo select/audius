@@ -23,7 +23,7 @@ Vue.component('search-results', {
 	},
 	methods: {
 		play(video) {
-			store.dispatch(Actions.play(video.id));
+			store.dispatch(Actions.play(video.id, video));
 		},
 		pause() {
 			store.dispatch(Actions.pause());

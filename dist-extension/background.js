@@ -25,7 +25,7 @@ function getTab(callback) {
 			callback(tabsFiltered[0]);
 			return;
 		} else {
-			tabsFiltered = tabs.filter(tab => tab.url === 'http://audius.rockdapus.org/');
+			tabsFiltered = tabs.filter(tab => tab.url === 'https://audius.rockdapus.org/');
 			if (tabsFiltered.length) {
 				callback(tabsFiltered[0]);
 				return;
@@ -51,8 +51,3 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 		});
 	}
 });
-
-// chrome.runtime.onMessageExternal.addListener((request, sender, sendResponse) => {
-// 	if (['http://localhost:8080', 'http://audius.rockdapus.org'].contains(sender.url))
-// 		console.log('request from audius: ', request);
-// });

@@ -51,6 +51,11 @@ export const importPlayList = (data) => ({
 	data,
 });
 
+export const importURL = (url) => ({
+	type: 'IMPORT_URL',
+	url,
+})
+
 export const dedupePlayList = () => ({
 	type: 'DEDUPE_PLAYLIST',
 })
@@ -70,9 +75,10 @@ export const menuVideo = id => ({
 	id,
 });
 
-export const play = (mediaId) => ({
+export const play = (mediaId, currentMedia) => ({
 	type: 'PLAY',
 	mediaId,
+	currentMedia,
 });
 
 export const pause = () => ({

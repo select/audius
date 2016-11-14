@@ -9454,15 +9454,15 @@
 	
 	__webpack_require__(4);
 	
-	__webpack_require__(48);
+	__webpack_require__(49);
 	
-	__webpack_require__(51);
-	
-	__webpack_require__(54);
-	
-	__webpack_require__(28);
+	__webpack_require__(52);
 	
 	__webpack_require__(55);
+	
+	__webpack_require__(56);
+	
+	__webpack_require__(57);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -9494,13 +9494,13 @@
 	
 	var _store2 = _interopRequireDefault(_store);
 	
-	var _actions = __webpack_require__(29);
+	var _actions = __webpack_require__(30);
 	
 	var _actions2 = _interopRequireDefault(_actions);
 	
-	__webpack_require__(42);
+	__webpack_require__(43);
 	
-	var _findVideos = __webpack_require__(46);
+	var _findVideos = __webpack_require__(47);
 	
 	var _findVideos2 = _interopRequireDefault(_findVideos);
 	
@@ -9550,7 +9550,7 @@
 	
 			findVideos: _findVideos2.default
 		},
-		template: '\n<div class="audius" v-show="extension.show">\n\t<div\n\t\tclass="audius__error"\n\t\tv-if="extension.audiusTabMissing">\n\t\tAudius app is not open! Open the <a href="http://audius.rockdapus.org/" title="Audius App" target="_blank">Audius App</a> in a tab and keep it open\n\t\t<div\n\t\t\tclass="button"\n\t\t\tv-on:click="searchAudiusTab">\n\t\t\tRetry\n\t\t</div>\n\t</div>\n\t<div v-if="!extension.audiusTabMissing">\n\t\t<div class="audius__controls">\n\t\t\t<div class="audius__play-list-controls" :disabled="!extension.playList.length">\n\t\t\t\t<span class="wmp-icon-previous" v-on:click="previousVideo"></span>\n\t\t\t\t<div class="audius__play-pause" v-on:click="playPauseVideos">\n\t\t\t\t\t<span class="wmp-icon-pause" v-if="extension.isPlaying"></span>\n\t\t\t\t\t<span class="wmp-icon-play" v-else></span>\n\t\t\t\t</div>\n\t\t\t\t<span class="wmp-icon-next" v-on:click="nextVideo"></span>\n\t\t\t</div>\n\t\t\t<div class="spacer"></div>\n\t\t\t<div v-on:click="store.dispatch(Actions.toggleMute())">\n\t\t\t\t<span class="wmp-icon-volume_up" v-if="!extension.mute"></span>\n\t\t\t\t<span class="wmp-icon-volume_off" v-else></span>\n\t\t\t</div>\n\t\t\t<span\n\t\t\t\tclass="audius__shuffle wmp-icon-shuffle"\n\t\t\t\tv-on:click="toggleShuffle"\n\t\t\t\tv-bind:class="{ active: extension.shuffle }"></span>\n\t\t\t<div class="spacer"></div>\n\t\t\t<span class="wmp-icon-search" v-on:click="findVideos"></span>\n\t\t\t<span\n\t\t\t\tclass="audius__show-play-list wmp-icon-format_list_bulleted"\n\t\t\t\tv-on:click="togglePlayList"\n\t\t\t\tv-bind:class="{ active: extension.showPlayList }"></span>\n\t\t\t<span\n\t\t\t\tclass="wmp-icon-close"\n\t\t\t\tv-on:click="toggleExtension"></span>\n\t\t</div>\n\t\t<div v-if="!extension.playList.length && extension.showPlayList">\n\t\t\t... no YouTube videos found\n\t\t</div>\n\t\t<div class="audius__media-list-wrapper" v-if="extension.showPlayList">\n\t\t\t<ul class="media-list">\n\t\t\t\t<video-item\n\t\t\t\t\tv-for="id in extension.playList"\n\t\t\t\t\t:video="extension.entities[id]"\n\t\t\t\t\t:isPlaying="extension.isPlaying && extension.entities[id] && (extension.mediaId == extension.entities[id].id)"\n\t\t\t\t\t:isExtension="true"></video-item>\n\t\t\t</ul>\n\t\t</div>\n\t</div>\n</div>\n\t'
+		template: '\n<div class="audius" v-show="extension.show">\n\t<div\n\t\tclass="audius__error"\n\t\tv-if="extension.audiusTabMissing">\n\t\tAudius app is not open! Open the <a href="https://audius.rockdapus.org/" title="Audius app" target="_blank">Audius app</a> in a tab and keep it open\n\t\t<div\n\t\t\tclass="button"\n\t\t\tv-on:click="searchAudiusTab">\n\t\t\tRetry\n\t\t</div>\n\t</div>\n\t<div class="audius__controls" v-if="!extension.audiusTabMissing">\n\t\t<div class="audius__play-list-controls" :disabled="!extension.playList.length">\n\t\t\t<span class="wmp-icon-previous" v-on:click="previousVideo"></span>\n\t\t\t<div class="audius__play-pause" v-on:click="playPauseVideos">\n\t\t\t\t<span class="wmp-icon-pause" v-if="extension.isPlaying"></span>\n\t\t\t\t<span class="wmp-icon-play" v-else></span>\n\t\t\t</div>\n\t\t\t<span class="wmp-icon-next" v-on:click="nextVideo"></span>\n\t\t</div>\n\t\t<div class="spacer"></div>\n\t\t<span\n\t\t\tclass="audius__shuffle wmp-icon-shuffle"\n\t\t\tv-on:click="toggleShuffle"\n\t\t\tv-bind:class="{ active: extension.shuffle }"></span>\n\t\t<div class="spacer"></div>\n\t\t<!-- <span class="wmp-icon-search" v-on:click="findVideos"></span> -->\n\t\t<span\n\t\t\tclass="audius__show-play-list wmp-icon-format_list_bulleted"\n\t\t\tv-on:click="togglePlayList"\n\t\t\tv-bind:class="{ active: extension.showPlayList }"></span>\n\t\t<span\n\t\t\tclass="wmp-icon-close"\n\t\t\tv-on:click="toggleExtension"></span>\n\t</div>\n\t<div v-if="!extension.playList.length && extension.showPlayList">\n\t\t... no YouTube videos found\n\t</div>\n\t<div class="audius__media-list-wrapper" v-if="extension.showPlayList && !extension.audiusTabMissing">\n\t\t<ul class="media-list">\n\t\t\t<video-item\n\t\t\t\tv-for="id in extension.playList"\n\t\t\t\t:video="extension.entities[id]"\n\t\t\t\t:isPlaying="extension.isPlaying && extension.entities[id] && (extension.mediaId == extension.entities[id].id)"\n\t\t\t\t:isExtension="true"></video-item>\n\t\t</ul>\n\t</div>\n\n</div>\n\t'
 	});
 
 /***/ },
@@ -9565,11 +9565,11 @@
 	
 	var _redux = __webpack_require__(7);
 	
-	var _messageRelayMiddleware = __webpack_require__(60);
+	var _messageRelayMiddleware = __webpack_require__(28);
 	
-	var _dbMiddleware = __webpack_require__(58);
+	var _dbMiddleware = __webpack_require__(29);
 	
-	var _reducers = __webpack_require__(34);
+	var _reducers = __webpack_require__(35);
 	
 	var _reducers2 = _interopRequireDefault(_reducers);
 	
@@ -10816,35 +10816,33 @@
 
 /***/ },
 /* 28 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	'use strict';
 	
-	var _store = __webpack_require__(5);
-	
-	var _store2 = _interopRequireDefault(_store);
-	
-	var _actions = __webpack_require__(29);
-	
-	var _actions2 = _interopRequireDefault(_actions);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	var isRunningInAudiusApp = document.querySelectorAll('#audius-website').length;
-	// Listen to messages from background script
-	chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-		// if we are on a audius player page.
-		if (request.audius && isRunningInAudiusApp) {
-			window.dispatchEvent(new CustomEvent('audius', {
-				detail: request.action
-			}));
-			sendResponse('Send custom event to Audius website app ' + request.action.type);
-			// if we are on a regular page where the extension can render
-		} else if (request.audiusToContentScript) {
-			_store2.default.dispatch(request.action);
-			sendResponse('Dispatched Action to extension store: ' + request.action.type);
-		}
+	Object.defineProperty(exports, "__esModule", {
+		value: true
 	});
+	// relay messages from store to background script
+	var messageRelayMiddleware = exports.messageRelayMiddleware = function messageRelayMiddleware(store) {
+		return function (next) {
+			return function (action) {
+				var extension = store.getState().extension;
+				var result = next(action);
+				if (['NEXT_VIDEO', 'PREV_VIDEO'].includes(action.type)) {
+					var _extension = store.getState().extension;
+					chrome.runtime.sendMessage({ audius: true, action: {
+							type: 'PLAY',
+							mediaId: _extension.mediaId,
+							currentMedia: _extension.currentMedia
+						} }); // Send message to background script.
+				} else if (['PLAY', 'PAUSE', 'TOGGLE_MUTE', 'QUEUE_MEDIA', 'ADD_SEARCH_RESULT', 'SEARCH_AUDIUS_TAB'].includes(action.type)) {
+					chrome.runtime.sendMessage({ audius: true, action: action }); // Send message to background script.
+				}
+				return result;
+			};
+		};
+	};
 
 /***/ },
 /* 29 */
@@ -10853,22 +10851,92 @@
 	'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	exports.dbMiddleware = undefined;
+	exports.setPlayList = setPlayList;
+	exports.setMediaEntity = setMediaEntity;
+	
+	var _actions = __webpack_require__(30);
+	
+	var _actions2 = _interopRequireDefault(_actions);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function exists(store, storeName, id, callback) {
+		var request = store.getState().mediaPlayer.db.transaction(['playLists'], 'readonly').objectStore('playLists').get('default');
+		request.onerror = function (event) {
+			return store.dispatch(_actions2.default.error('DB Error ' + event.target.error.name));
+		};
+		request.onsuccess = callback;
+	}
+	
+	function setPlayList(store) {
+		exists(store, 'playList', 'default', function (event) {
+			var dbStore = store.getState().mediaPlayer.db.transaction(['playLists'], 'readwrite').objectStore('playLists');
+			var action = event.target.result ? 'put' : 'add';
+			var request = dbStore[action]({ id: 'default', playList: store.getState().mediaPlayer.playList });
+			request.onerror = function (event2) {
+				return store.dispatch(_actions2.default.error('DB Error ' + event2.target.error.name));
+			};
+		});
+	}
+	
+	function setMediaEntity(store, data, actionType) {
+		console.log('setMediaEntity middleware!');
+		exists(store, 'mediaEntities', 'default', function (event) {
+			var dbStore = store.getState().mediaPlayer.db.transaction(['mediaEntities'], 'readwrite').objectStore('mediaEntities');
+			var action = event.target.result ? 'put' : 'add';
+			var request = dbStore[action](data);
+			request.onsuccess = function () {
+				return store.dispatch({ type: '${actionType}_SUCCESS' });
+			};
+			request.onerror = function (event2) {
+				return store.dispatch(_actions2.default.error('DB Error ' + event2.target.error.name));
+			};
+			setPlayList(store);
+		});
+	}
+	
+	var dbMiddleware = exports.dbMiddleware = function dbMiddleware(store) {
+		return function (next) {
+			return function (action) {
+				var result = next(action);
+				if (action.type === 'MOVE_PLAYLIST_MEDIA') {
+					setPlayList(store);
+				}
+				if (['ADD_SEARCH_RESULT', 'REMOVE_VIDEO', 'VIDEO_ERROR'].includes(action.type)) {
+					console.log('middleware!!');
+					setMediaEntity(store, action.video, action.type);
+				}
+				return result;
+			};
+		};
+	};
+
+/***/ },
+/* 30 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
 	
-	var _youtube = __webpack_require__(30);
+	var _youtube = __webpack_require__(31);
 	
 	var youtube = _interopRequireWildcard(_youtube);
 	
-	var _mediaPlayer = __webpack_require__(31);
+	var _mediaPlayer = __webpack_require__(32);
 	
 	var mediaPlayer = _interopRequireWildcard(_mediaPlayer);
 	
-	var _website = __webpack_require__(32);
+	var _website = __webpack_require__(33);
 	
 	var website = _interopRequireWildcard(_website);
 	
-	var _extension = __webpack_require__(33);
+	var _extension = __webpack_require__(34);
 	
 	var extension = _interopRequireWildcard(_extension);
 	
@@ -10879,7 +10947,7 @@
 	exports.default = actions;
 
 /***/ },
-/* 30 */
+/* 31 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -10912,7 +10980,7 @@
 	};
 
 /***/ },
-/* 31 */
+/* 32 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -11117,7 +11185,7 @@
 	};
 
 /***/ },
-/* 32 */
+/* 33 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -11152,9 +11220,16 @@
 			type: 'SHOW_CHAT'
 		};
 	};
+	
+	var toggleImport = exports.toggleImport = function toggleImport(state) {
+		return {
+			type: 'TOGGLE_IMPORT',
+			state: state
+		};
+	};
 
 /***/ },
-/* 33 */
+/* 34 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -11189,7 +11264,7 @@
 	};
 
 /***/ },
-/* 34 */
+/* 35 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -11200,23 +11275,23 @@
 	
 	var _redux = __webpack_require__(7);
 	
-	var _mediaPlayer = __webpack_require__(35);
+	var _mediaPlayer = __webpack_require__(36);
 	
 	var _mediaPlayer2 = _interopRequireDefault(_mediaPlayer);
 	
-	var _config = __webpack_require__(38);
+	var _config = __webpack_require__(39);
 	
 	var _config2 = _interopRequireDefault(_config);
 	
-	var _youtube = __webpack_require__(39);
+	var _youtube = __webpack_require__(40);
 	
 	var _youtube2 = _interopRequireDefault(_youtube);
 	
-	var _website = __webpack_require__(40);
+	var _website = __webpack_require__(41);
 	
 	var _website2 = _interopRequireDefault(_website);
 	
-	var _extension = __webpack_require__(41);
+	var _extension = __webpack_require__(42);
 	
 	var _extension2 = _interopRequireDefault(_extension);
 	
@@ -11231,7 +11306,7 @@
 	});
 
 /***/ },
-/* 35 */
+/* 36 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -11242,9 +11317,9 @@
 	
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 	
-	var _timeConverter = __webpack_require__(36);
+	var _timeConverter = __webpack_require__(37);
 	
-	var _video = __webpack_require__(37);
+	var _video = __webpack_require__(38);
 	
 	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 	
@@ -11542,7 +11617,7 @@
 	exports.default = mediaPlayer;
 
 /***/ },
-/* 36 */
+/* 37 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -11605,7 +11680,7 @@
 	}
 
 /***/ },
-/* 37 */
+/* 38 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -11624,7 +11699,7 @@
 	};
 
 /***/ },
-/* 38 */
+/* 39 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -11652,7 +11727,7 @@
 	exports.default = config;
 
 /***/ },
-/* 39 */
+/* 40 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -11661,9 +11736,9 @@
 		value: true
 	});
 	
-	var _timeConverter = __webpack_require__(36);
+	var _timeConverter = __webpack_require__(37);
 	
-	var _video = __webpack_require__(37);
+	var _video = __webpack_require__(38);
 	
 	var initialState = {
 		query: '',
@@ -11705,7 +11780,7 @@
 	exports.default = config;
 
 /***/ },
-/* 40 */
+/* 41 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -11717,7 +11792,8 @@
 		showSearch: false,
 		showJump: false,
 		mainRightTab: 'about',
-		showChat: false
+		showChat: false,
+		showImport: false
 	};
 	
 	var website = function website() {
@@ -11750,6 +11826,10 @@
 					showChat: true,
 					mainRightTab: 'chat'
 				});
+			case 'TOGGLE_IMPORT':
+				return Object.assign({}, state, {
+					showImport: action.state !== undefined ? action.state : !state.showImport
+				});
 			default:
 				return state;
 		}
@@ -11758,7 +11838,7 @@
 	exports.default = website;
 
 /***/ },
-/* 41 */
+/* 42 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -11768,13 +11848,14 @@
 	});
 	exports.default = extension;
 	
-	var _timeConverter = __webpack_require__(36);
+	var _timeConverter = __webpack_require__(37);
 	
-	var _video = __webpack_require__(37);
+	var _video = __webpack_require__(38);
 	
 	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 	
 	var initialState = {
+		show: false,
 		errorMessages: '',
 		entities: {},
 		mediaId: '',
@@ -11785,7 +11866,6 @@
 		mute: false,
 		currentMedia: {},
 		queue: [],
-		show: true,
 		audiusTabMissing: false
 	};
 	
@@ -11906,16 +11986,16 @@
 	};
 
 /***/ },
-/* 42 */
+/* 43 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(43);
+	var content = __webpack_require__(44);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(45)(content, {});
+	var update = __webpack_require__(46)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -11932,10 +12012,10 @@
 	}
 
 /***/ },
-/* 43 */
+/* 44 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(44)();
+	exports = module.exports = __webpack_require__(45)();
 	// imports
 	
 	
@@ -11946,7 +12026,7 @@
 
 
 /***/ },
-/* 44 */
+/* 45 */
 /***/ function(module, exports) {
 
 	/*
@@ -12002,7 +12082,7 @@
 
 
 /***/ },
-/* 45 */
+/* 46 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -12254,7 +12334,7 @@
 
 
 /***/ },
-/* 46 */
+/* 47 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -12268,11 +12348,11 @@
 	
 	var _store2 = _interopRequireDefault(_store);
 	
-	var _actions = __webpack_require__(29);
+	var _actions = __webpack_require__(30);
 	
 	var _actions2 = _interopRequireDefault(_actions);
 	
-	var _ajax = __webpack_require__(47);
+	var _ajax = __webpack_require__(48);
 	
 	var _ajax2 = _interopRequireDefault(_ajax);
 	
@@ -12331,7 +12411,7 @@
 	}
 
 /***/ },
-/* 47 */
+/* 48 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -12352,7 +12432,7 @@
 	}
 
 /***/ },
-/* 48 */
+/* 49 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -12365,11 +12445,11 @@
 	
 	var _store2 = _interopRequireDefault(_store);
 	
-	var _actions = __webpack_require__(29);
+	var _actions = __webpack_require__(30);
 	
 	var _actions2 = _interopRequireDefault(_actions);
 	
-	__webpack_require__(49);
+	__webpack_require__(50);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -12433,16 +12513,16 @@
 	});
 
 /***/ },
-/* 49 */
+/* 50 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(50);
+	var content = __webpack_require__(51);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(45)(content, {});
+	var update = __webpack_require__(46)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -12459,10 +12539,10 @@
 	}
 
 /***/ },
-/* 50 */
+/* 51 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(44)();
+	exports = module.exports = __webpack_require__(45)();
 	// imports
 	
 	
@@ -12473,7 +12553,7 @@
 
 
 /***/ },
-/* 51 */
+/* 52 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -12486,11 +12566,11 @@
 	
 	var _store2 = _interopRequireDefault(_store);
 	
-	var _actions = __webpack_require__(29);
+	var _actions = __webpack_require__(30);
 	
 	var _actions2 = _interopRequireDefault(_actions);
 	
-	__webpack_require__(52);
+	__webpack_require__(53);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -12588,16 +12668,16 @@
 	// import youtubeApi from '../utils/youtube-iframe-api';
 
 /***/ },
-/* 52 */
+/* 53 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(53);
+	var content = __webpack_require__(54);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(45)(content, {});
+	var update = __webpack_require__(46)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -12614,10 +12694,10 @@
 	}
 
 /***/ },
-/* 53 */
+/* 54 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(44)();
+	exports = module.exports = __webpack_require__(45)();
 	// imports
 	
 	
@@ -12628,12 +12708,12 @@
 
 
 /***/ },
-/* 54 */
+/* 55 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var _findVideos = __webpack_require__(46);
+	var _findVideos = __webpack_require__(47);
 	
 	var _findVideos2 = _interopRequireDefault(_findVideos);
 	
@@ -12655,16 +12735,48 @@
 	}
 
 /***/ },
-/* 55 */
+/* 56 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _store = __webpack_require__(5);
+	
+	var _store2 = _interopRequireDefault(_store);
+	
+	var _actions = __webpack_require__(30);
+	
+	var _actions2 = _interopRequireDefault(_actions);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var isRunningInAudiusApp = document.querySelectorAll('#audius-website').length;
+	// Listen to messages from background script
+	chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+		// if we are on a audius player page.
+		if (request.audius && isRunningInAudiusApp) {
+			window.dispatchEvent(new CustomEvent('audius', {
+				detail: request.action
+			}));
+			sendResponse('Send custom event to Audius website app ' + request.action.type);
+			// if we are on a regular page where the extension can render
+		} else if (request.audiusToContentScript) {
+			_store2.default.dispatch(request.action);
+			sendResponse('Dispatched Action to extension store: ' + request.action.type);
+		}
+	});
+
+/***/ },
+/* 57 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(56);
+	var content = __webpack_require__(58);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(45)(content, {});
+	var update = __webpack_require__(46)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -12681,125 +12793,24 @@
 	}
 
 /***/ },
-/* 56 */
+/* 58 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(44)();
+	exports = module.exports = __webpack_require__(45)();
 	// imports
 	exports.push([module.id, "@import url(https://fonts.googleapis.com/css?family=Nobile);", ""]);
 	
 	// module
-	exports.push([module.id, "@charset \"UTF-8\";\n.audius .button,\n#audius-website .button {\n  font-family: 'Nobile', sans-serif;\n  font-size: 1em;\n  padding: 0 1vmin;\n  height: 5vmin;\n  border: 1px solid #C8CCD5;\n  color: #C8CCD5;\n  background: transparent;\n  text-transform: uppercase;\n  border-radius: 2px;\n  -webkit-transition: all 250ms;\n  transition: all 250ms;\n  outline: 0;\n  cursor: pointer; }\n  .audius .button.btn--blue,\n  #audius-website .button.btn--blue {\n    border-color: #2DA7EF;\n    background: #2DA7EF;\n    color: #fff; }\n\n.audius a.button,\n#audius-website a.button {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n  text-decoration: none; }\n\n@font-face {\n  font-family: 'WampIcons';\n  src: url(" + __webpack_require__(57) + ");\n  font-weight: normal;\n  font-style: normal; }\n\n[class^=\"wmp-icon-\"], [class*=\" wmp-icon-\"] {\n  text-align: center;\n  position: relative;\n  width: 7vmin;\n  height: 7vmin;\n  display: inline-block; }\n  [class^=\"wmp-icon-\"]:before, [class*=\" wmp-icon-\"]:before {\n    /* use !important to prevent issues with browser extensions that change fonts */\n    speak: none;\n    font-style: normal;\n    font-weight: normal;\n    font-variant: normal;\n    text-transform: none;\n    line-height: 1;\n    -webkit-font-smoothing: antialiased;\n    -moz-osx-font-smoothing: grayscale;\n    font-family: 'WampIcons' !important;\n    position: absolute;\n    font-size: 1.7em;\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: flex;\n    -webkit-box-align: center;\n        -ms-flex-align: center;\n            align-items: center;\n    -webkit-box-pack: center;\n        -ms-flex-pack: center;\n            justify-content: center;\n    width: 100%;\n    height: 100%; }\n\n.icon--small:before {\n  font-size: 1.2em; }\n\n.wmp-icon-local_offer2:before {\n  content: \"\\E54F\"; }\n\n.wmp-icon-format_list_bulleted:before {\n  content: \"\\E242\"; }\n\n.wmp-icon-dehaze:before {\n  content: \"\\E3C7\"; }\n\n.wmp-icon-reorder:before {\n  content: \"\\E8FE\"; }\n\n.wmp-icon-more_vert:before {\n  content: \"\\E5D4\"; }\n\n.wmp-icon-unfold_more:before {\n  content: \"\\E5D7\"; }\n\n.wmp-icon-arrow_drop_down:before {\n  content: \"\\E5C5\"; }\n\n.wmp-icon-arrow_drop_up:before {\n  content: \"\\E5C7\"; }\n\n.wmp-icon-previous:before {\n  content: \"\\E045\"; }\n\n.wmp-icon-play:before {\n  content: \"\\E037\"; }\n\n.wmp-icon-pause:before {\n  content: \"\\E034\"; }\n\n.wmp-icon-next:before {\n  content: \"\\E044\"; }\n\n.wmp-icon-shuffle:before {\n  content: \"\\E043\"; }\n\n.wmp-icon-repeat:before {\n  content: \"\\E040\"; }\n\n.wmp-icon-repeat_one:before {\n  content: \"\\E041\"; }\n\n.wmp-icon-volume_off:before {\n  content: \"\\E04F\"; }\n\n.wmp-icon-volume_up:before {\n  content: \"\\E050\"; }\n\n.wmp-icon-search:before {\n  content: \"\\E8B6\"; }\n\n.wmp-icon-close:before {\n  content: \"\\E5CD\"; }\n\n.wmp-icon-add:before {\n  content: \"\\E900\"; }\n\n.wmp-icon-queue2:before {\n  content: \"\\E03D\"; }\n\n.wmp-icon-copy:before {\n  content: \"\\E14D\"; }\n\n.wmp-icon-local_offer22:before {\n  content: \"\\E550\"; }\n\n.wmp-icon-link:before {\n  content: \"\\E157\"; }\n\n.wmp-icon-delete:before {\n  content: \"\\E872\"; }\n\n.wmp-icon-cloud_upload:before {\n  content: \"\\E2C3\"; }\n\n.wmp-icon-youtube:before {\n  content: \"\\E906\"; }\n\n#audius {\n  position: absolute;\n  top: 0;\n  right: 0;\n  z-index: 99999;\n  font-family: 'Nobile', sans-serif;\n  font-size: 2.3vmin;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: column;\n          flex-direction: column;\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n  color: #303641;\n  margin: 0; }\n  #audius a {\n    color: #303641; }\n    #audius a:visited {\n      color: #303641; }\n  #audius input:focus {\n    outline: 0; }\n", ""]);
+	exports.push([module.id, "@charset \"UTF-8\";\n.audius .button,\n#audius-website .button {\n  font-family: 'Nobile', sans-serif;\n  font-size: 1em;\n  padding: 0 1vmin;\n  height: 5vmin;\n  border: 1px solid #C8CCD5;\n  color: #C8CCD5;\n  background: transparent;\n  text-transform: uppercase;\n  border-radius: 2px;\n  -webkit-transition: all 250ms;\n  transition: all 250ms;\n  outline: 0;\n  cursor: pointer; }\n  .audius .button.btn--blue,\n  #audius-website .button.btn--blue {\n    border-color: #2DA7EF;\n    background: #2DA7EF;\n    color: #fff; }\n\n.audius a.button,\n#audius-website a.button {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n  text-decoration: none; }\n\n@font-face {\n  font-family: 'WampIcons';\n  src: url(" + __webpack_require__(59) + ");\n  font-weight: normal;\n  font-style: normal; }\n\n[class^=\"wmp-icon-\"], [class*=\" wmp-icon-\"] {\n  text-align: center;\n  position: relative;\n  width: 7vmin;\n  height: 7vmin;\n  display: inline-block; }\n  [class^=\"wmp-icon-\"]:before, [class*=\" wmp-icon-\"]:before {\n    /* use !important to prevent issues with browser extensions that change fonts */\n    speak: none;\n    font-style: normal;\n    font-weight: normal;\n    font-variant: normal;\n    text-transform: none;\n    line-height: 1;\n    -webkit-font-smoothing: antialiased;\n    -moz-osx-font-smoothing: grayscale;\n    font-family: 'WampIcons' !important;\n    position: absolute;\n    font-size: 1.7em;\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: flex;\n    -webkit-box-align: center;\n        -ms-flex-align: center;\n            align-items: center;\n    -webkit-box-pack: center;\n        -ms-flex-pack: center;\n            justify-content: center;\n    width: 100%;\n    height: 100%; }\n\n.icon--small:before {\n  font-size: 1.2em; }\n\n.wmp-icon-local_offer2:before {\n  content: \"\\E54F\"; }\n\n.wmp-icon-format_list_bulleted:before {\n  content: \"\\E242\"; }\n\n.wmp-icon-dehaze:before {\n  content: \"\\E3C7\"; }\n\n.wmp-icon-reorder:before {\n  content: \"\\E8FE\"; }\n\n.wmp-icon-more_vert:before {\n  content: \"\\E5D4\"; }\n\n.wmp-icon-unfold_more:before {\n  content: \"\\E5D7\"; }\n\n.wmp-icon-arrow_drop_down:before {\n  content: \"\\E5C5\"; }\n\n.wmp-icon-arrow_drop_up:before {\n  content: \"\\E5C7\"; }\n\n.wmp-icon-previous:before {\n  content: \"\\E045\"; }\n\n.wmp-icon-play:before {\n  content: \"\\E037\"; }\n\n.wmp-icon-pause:before {\n  content: \"\\E034\"; }\n\n.wmp-icon-next:before {\n  content: \"\\E044\"; }\n\n.wmp-icon-shuffle:before {\n  content: \"\\E043\"; }\n\n.wmp-icon-repeat:before {\n  content: \"\\E040\"; }\n\n.wmp-icon-repeat_one:before {\n  content: \"\\E041\"; }\n\n.wmp-icon-volume_off:before {\n  content: \"\\E04F\"; }\n\n.wmp-icon-volume_up:before {\n  content: \"\\E050\"; }\n\n.wmp-icon-search:before {\n  content: \"\\E8B6\"; }\n\n.wmp-icon-close:before {\n  content: \"\\E5CD\"; }\n\n.wmp-icon-add:before {\n  content: \"\\E900\"; }\n\n.wmp-icon-queue2:before {\n  content: \"\\E03D\"; }\n\n.wmp-icon-copy:before {\n  content: \"\\E14D\"; }\n\n.wmp-icon-local_offer22:before {\n  content: \"\\E550\"; }\n\n.wmp-icon-link:before {\n  content: \"\\E157\"; }\n\n.wmp-icon-delete:before {\n  content: \"\\E872\"; }\n\n.wmp-icon-cloud_upload:before {\n  content: \"\\E2C3\"; }\n\n.wmp-icon-youtube:before {\n  content: \"\\E906\"; }\n\n#audius {\n  position: absolute;\n  top: 0;\n  right: 0;\n  z-index: 99999;\n  font-family: 'Nobile', sans-serif;\n  font-size: 2.3vmin;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: column;\n          flex-direction: column;\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n  color: #303641;\n  margin: 0; }\n  #audius a {\n    color: #303641; }\n    #audius a:visited {\n      color: #303641; }\n  #audius input:focus {\n    outline: 0; }\n  #audius ::-webkit-scrollbar {\n    width: 5px; }\n    #audius ::-webkit-scrollbar:hover {\n      width: 10px; }\n  #audius ::-webkit-scrollbar-track {\n    background: #EFF1F7; }\n  #audius ::-webkit-scrollbar-thumb {\n    background: #A8ADB7; }\n", ""]);
 	
 	// exports
 
 
 /***/ },
-/* 57 */
+/* 59 */
 /***/ function(module, exports) {
 
 	module.exports = "data:application/x-font-ttf;base64,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"
-
-/***/ },
-/* 58 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	exports.dbMiddleware = undefined;
-	exports.setPlayList = setPlayList;
-	exports.setMediaEntity = setMediaEntity;
-	
-	var _actions = __webpack_require__(29);
-	
-	var _actions2 = _interopRequireDefault(_actions);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function exists(store, storeName, id, callback) {
-		var request = store.getState().mediaPlayer.db.transaction(['playLists'], 'readonly').objectStore('playLists').get('default');
-		request.onerror = function (event) {
-			return store.dispatch(_actions2.default.error('DB Error ' + event.target.error.name));
-		};
-		request.onsuccess = callback;
-	}
-	
-	function setPlayList(store) {
-		exists(store, 'playList', 'default', function (event) {
-			var dbStore = store.getState().mediaPlayer.db.transaction(['playLists'], 'readwrite').objectStore('playLists');
-			var action = event.target.result ? 'put' : 'add';
-			var request = dbStore[action]({ id: 'default', playList: store.getState().mediaPlayer.playList });
-			request.onerror = function (event2) {
-				return store.dispatch(_actions2.default.error('DB Error ' + event2.target.error.name));
-			};
-		});
-	}
-	
-	function setMediaEntity(store, data, actionType) {
-		console.log('setMediaEntity middleware!');
-		exists(store, 'mediaEntities', 'default', function (event) {
-			var dbStore = store.getState().mediaPlayer.db.transaction(['mediaEntities'], 'readwrite').objectStore('mediaEntities');
-			var action = event.target.result ? 'put' : 'add';
-			var request = dbStore[action](data);
-			request.onsuccess = function () {
-				return store.dispatch({ type: '${actionType}_SUCCESS' });
-			};
-			request.onerror = function (event2) {
-				return store.dispatch(_actions2.default.error('DB Error ' + event2.target.error.name));
-			};
-			setPlayList(store);
-		});
-	}
-	
-	var dbMiddleware = exports.dbMiddleware = function dbMiddleware(store) {
-		return function (next) {
-			return function (action) {
-				var result = next(action);
-				if (action.type === 'MOVE_PLAYLIST_MEDIA') {
-					setPlayList(store);
-				}
-				if (['ADD_SEARCH_RESULT', 'REMOVE_VIDEO', 'VIDEO_ERROR'].includes(action.type)) {
-					console.log('middleware!!');
-					setMediaEntity(store, action.video, action.type);
-				}
-				return result;
-			};
-		};
-	};
-
-/***/ },
-/* 59 */,
-/* 60 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	// relay messages from store to background script
-	var messageRelayMiddleware = exports.messageRelayMiddleware = function messageRelayMiddleware(store) {
-		return function (next) {
-			return function (action) {
-				var extension = store.getState().extension;
-				var result = next(action);
-				if (['NEXT_VIDEO', 'PREV_VIDEO'].includes(action.type)) {
-					var _extension = store.getState().extension;
-					chrome.runtime.sendMessage({ audius: true, action: {
-							type: 'PLAY',
-							mediaId: _extension.mediaId,
-							currentMedia: _extension.currentMedia
-						} }); // Send message to background script.
-				} else if (['PLAY', 'PAUSE', 'TOGGLE_MUTE', 'QUEUE_MEDIA', 'ADD_SEARCH_RESULT', 'SEARCH_AUDIUS_TAB'].includes(action.type)) {
-					chrome.runtime.sendMessage({ audius: true, action: action }); // Send message to background script.
-				}
-				return result;
-			};
-		};
-	};
 
 /***/ }
 /******/ ]);

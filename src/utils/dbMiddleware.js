@@ -28,7 +28,7 @@ export function setMediaEntity(store, data, actionType) {
 			.objectStore('mediaEntities');
 		const action = event.target.result ? 'put' : 'add';
 		const request = dbStore[action](data);
-		request.onsuccess = () => store.dispatch({type: '${actionType}_SUCCESS'});
+		request.onsuccess = () => store.dispatch({type: `${actionType}_SUCCESS`});
 		request.onerror = event2 => store.dispatch(Actions.error(`DB Error ${event2.target.error.name}`));
 		setPlayList(store);
 	});

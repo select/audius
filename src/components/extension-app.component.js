@@ -38,55 +38,50 @@ Vue.component('extension-app', {
 	<div
 		class="audius__error"
 		v-if="extension.audiusTabMissing">
-		Audius app is not open! Open the <a href="http://audius.rockdapus.org/" title="Audius App" target="_blank">Audius App</a> in a tab and keep it open
+		Audius app is not open! Open the <a href="https://audius.rockdapus.org/" title="Audius app" target="_blank">Audius app</a> in a tab and keep it open
 		<div
 			class="button"
 			v-on:click="searchAudiusTab">
 			Retry
 		</div>
 	</div>
-	<div v-if="!extension.audiusTabMissing">
-		<div class="audius__controls">
-			<div class="audius__play-list-controls" :disabled="!extension.playList.length">
-				<span class="wmp-icon-previous" v-on:click="previousVideo"></span>
-				<div class="audius__play-pause" v-on:click="playPauseVideos">
-					<span class="wmp-icon-pause" v-if="extension.isPlaying"></span>
-					<span class="wmp-icon-play" v-else></span>
-				</div>
-				<span class="wmp-icon-next" v-on:click="nextVideo"></span>
+	<div class="audius__controls" v-if="!extension.audiusTabMissing">
+		<div class="audius__play-list-controls" :disabled="!extension.playList.length">
+			<span class="wmp-icon-previous" v-on:click="previousVideo"></span>
+			<div class="audius__play-pause" v-on:click="playPauseVideos">
+				<span class="wmp-icon-pause" v-if="extension.isPlaying"></span>
+				<span class="wmp-icon-play" v-else></span>
 			</div>
-			<div class="spacer"></div>
-			<div v-on:click="store.dispatch(Actions.toggleMute())">
-				<span class="wmp-icon-volume_up" v-if="!extension.mute"></span>
-				<span class="wmp-icon-volume_off" v-else></span>
-			</div>
-			<span
-				class="audius__shuffle wmp-icon-shuffle"
-				v-on:click="toggleShuffle"
-				v-bind:class="{ active: extension.shuffle }"></span>
-			<div class="spacer"></div>
-			<span class="wmp-icon-search" v-on:click="findVideos"></span>
-			<span
-				class="audius__show-play-list wmp-icon-format_list_bulleted"
-				v-on:click="togglePlayList"
-				v-bind:class="{ active: extension.showPlayList }"></span>
-			<span
-				class="wmp-icon-close"
-				v-on:click="toggleExtension"></span>
+			<span class="wmp-icon-next" v-on:click="nextVideo"></span>
 		</div>
-		<div v-if="!extension.playList.length && extension.showPlayList">
-			... no YouTube videos found
-		</div>
-		<div class="audius__media-list-wrapper" v-if="extension.showPlayList">
-			<ul class="media-list">
-				<video-item
-					v-for="id in extension.playList"
-					:video="extension.entities[id]"
-					:isPlaying="extension.isPlaying && extension.entities[id] && (extension.mediaId == extension.entities[id].id)"
-					:isExtension="true"></video-item>
-			</ul>
-		</div>
+		<div class="spacer"></div>
+		<span
+			class="audius__shuffle wmp-icon-shuffle"
+			v-on:click="toggleShuffle"
+			v-bind:class="{ active: extension.shuffle }"></span>
+		<div class="spacer"></div>
+		<!-- <span class="wmp-icon-search" v-on:click="findVideos"></span> -->
+		<span
+			class="audius__show-play-list wmp-icon-format_list_bulleted"
+			v-on:click="togglePlayList"
+			v-bind:class="{ active: extension.showPlayList }"></span>
+		<span
+			class="wmp-icon-close"
+			v-on:click="toggleExtension"></span>
 	</div>
+	<div v-if="!extension.playList.length && extension.showPlayList">
+		... no YouTube videos found
+	</div>
+	<div class="audius__media-list-wrapper" v-if="extension.showPlayList && !extension.audiusTabMissing">
+		<ul class="media-list">
+			<video-item
+				v-for="id in extension.playList"
+				:video="extension.entities[id]"
+				:isPlaying="extension.isPlaying && extension.entities[id] && (extension.mediaId == extension.entities[id].id)"
+				:isExtension="true"></video-item>
+		</ul>
+	</div>
+
 </div>
 	`,
 });

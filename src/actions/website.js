@@ -16,3 +16,8 @@ export const setMainRightTab = (id = 'about') => ({
 export const showChat = () => ({
 	type: 'SHOW_CHAT',
 });
+
+export const toggleImport = (state) => ({
+	type: 'TOGGLE_IMPORT',
+	state,
+});

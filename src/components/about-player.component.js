@@ -1,6 +1,7 @@
 import Vue from 'vue/dist/vue';
 import store from '../store';
 import Actions from '../actions';
+import injectScript from '../utils/injectScript';
 import './about-player.component.sass';
 
 Vue.component('about-player', {
@@ -17,9 +18,7 @@ Vue.component('about-player', {
 						preload: true,
 					};
 					//load script
-					const tag = document.createElement('script');
-					tag.src = "https://sidecar.gitter.im/dist/sidecar.v1.js";
-					document.head.appendChild(tag);
+					injectScript('https://sidecar.gitter.im/dist/sidecar.v1.js');
 				})
 			}
 		}
@@ -56,7 +55,20 @@ Vue.component('about-player', {
 	<p>
 		* You must allow 3rd party cookies for the chat to work (default for almost everybody) or chat in a new window.
 	</p>
-	<h2>Install as app</h2>
+	<h2>Extension</h2>
+	<p class="about-player__community-btns">
+		<a class="button btn--blue" href="https://chrome.google.com/webstore/detail/audius/ekpajajepcojhnjmlibfbjmdjcafajoh" target="_blank">Audius Extension</a>
+	</p>
+	<p>
+		The Audius extension allows you to collect and play music from any website. It will automatically collect all links for you so you can add them to your playlist. The songs will be played on this site (<a href="#motivation">background here</a>).
+	</p>
+	<p>
+		If you like to get fresh music that you like create a "Music" chat group on WhatsApp or Slack with your friends and use the extension!
+	</p>
+	<p>
+		The extension is mostly working but not quite ready for prime time. Don't give up and report a bug.
+	</p>
+	<h2>Install Audius as app</h2>
 	<p>
 		<b>Chrome desktop:</b>
 		<ol>
@@ -72,7 +84,27 @@ Vue.component('about-player', {
 	</p>
 	<p>
 		<b>Local HTML5:</b><br>
-		Since this player is a pure HTML5 app without server side code you can simply download the HTML and JS code and run it from a local file. You can also download the latest version from the source code repository at github (see <a href="#source-code">Source code</a>). Use the web version to always get the latest updates automatically. A word of caution: I recognized that using this app from a local file block$ a lot of videos on YouTube :(
+		Since this player is a pure HTML5 app without server side code you can simply download the HTML and JS code and run it from a local file. You can also download the latest version from the <a href="#source-code">source code</a> repository at github. <br>
+	</p>
+	<p>
+		Why use the web version then?
+		<ol>
+			<li>
+				A click on "reload page" will pull the latests updates.
+			</li>
+			<li>
+				I recognized that using this app from a local file blocks a lot of videos on YouTube (e.g. all Vevo videos) :(
+			</li>
+		</ol>
+	</p>
+	<h2>Legality, security, saftey, and privacy</h2>
+	<p>
+	<ul>
+		<li><b>Legality</b> This app sould be completely legal since it embedds videos from legal streaming providers (currently only YouTube). I do not provide any links to streams (except for the initial playlist containing only legal links from my friends)</li>
+		<li><b>Security</b> This app is open source so you can make sure that there is no malicious code included. In addition to that there is no advertisement (... yet :-O) that could spread malicious code. But to be clear streams and streaming APIs are provided by external entites ... read more below about privacy.</li>
+		<li><b>Safety</b> If you back up your playlist (and this app) to a file it will be save even if this server goes down. Do it now and save your precius playlist!</li>
+		<li><b>Privacy</b> This app stores all your data in your browser (Menu > More tools > Developer tools > Application > IndexDB), nothing is saved on my server. I currently do not use any analytics tool (though it's very tempting). The streams however are provided by external entities (Google-YouTube) that will track you. As stated before I currently have no intentions of showing external advertisement. I think if Audius gets popular there are nicer ways to profit from it. ... how about a song of your band on the initial playlist? It's really cheap (0€) right now :P</li>
+	</ul>
 	</p>
 	<p>
 		Web apps are true freedom! Support an open and liberal web without geo borders and login screens.
@@ -86,9 +118,6 @@ Vue.component('about-player', {
 			<li> Internet Explorer & Safari ... not supported, might work though </li>
 		</ul>
 	</p>
-	<h2>Extension</h2>
-	<p>... development started, but now stopped until the main app is ready.</p>
-	<p>The Audius extension allows you to open a music player on any website. It will then automatically collect all linked videos and add it to a playlist similar to the one in this app. The videos will still be played in this app due to <a href="#motivation">restrictions of some websites</a>. This setup allows you to create a "Music" chat group on Whatsapp or Slack and have fresh music from your friends every day playing right where you share it. You can then continue and add this music to you regular playlist with a simple click.</p>
 	<h2 id="source-code">Source code</h2>
 	<p>
 		The source code for this project is located at <a href="https://github.com/select/audius" title="Source code on select@github audius" target="_blank">https://github.com/select/audius</a>.
@@ -118,10 +147,15 @@ Vue.component('about-player', {
 		You are writing another music player, seriously? That's what I thought a lot when creating this, but you know ...
 	</p>
 	<p>
-		The extension should have been the actual player since the original idea was to create a Chrome/FireFox extension with a media player for <i>web.whatsapp</i>. This however failed since the conten security policy does not allow the embdding of youtube videos and somehow it is not possible to overwrite the header fields of web.whatsapp. That meant no player, no music. The only way around this issue I could come up with is to create a background process that the extension communicates with and that sends messages to a main player web app. This is currently still untested but that is the plan.
+		The extension should have been the actual player since the original idea was to create a Chrome/FireFox extension with a media player for <i>web.whatsapp.com</i>. After struggeling alot with <a href="https://stackoverflow.com/questions/40309872/youtube-video-in-chrome-extension-content-script" target="_blank">getting the YouTube player to run in an extension content script</a> the plan completely failed when the <a href="https://content-security-policy.com/" target="_blank">content security policy</a> did not allow the embdding of youtube videos. Even though it should be possible to overwrite the header fields for the content security policy of web.whatsapp.com I could not get it to work (it worked on every page <a href="https://stackoverflow.com/questions/40322156/chrome-extension-can-not-get-header-with-onheadersreceived" target="_blank">except web.whatsapp.com</a>). That meant no YouTube player, no music. The only way out of this mess was to create an extension with a a content script (grabs links) that communicates with a background script (relays found links) that in turn communicates with the a main player (this web app, that plays the songs). But this also meant that I had to write an extension and a web app. Well what the heck, I was still using Streamus but over the time less and less worked so I needed a replacement anyway. I tried <a href="https://www.tomahawk-player.org/" target="_blank">tomahawk</a> and it seemed quite promising, but I just could not get it to work with dragged in or paste in youtube links. Also the search was quite slow and did not show many results. This kind of left me no other option but to write Audius.
 	</p>
 	<p>
-		The
+		Here are some alternatives to Audius that are also interesting:
+		<ul>
+			<li><a href="http://streamsquid.com/" target="_blank">StreamSquid</a></li>
+			<li><a href="https://mycloudplayers.com" target="_blank">My Cloud Player</a></li>
+		</ul>
+		Just look at them and appreciate the simplicity of the Audius interface ... wait what don't leave X-D
 	</p>
 	<h2>Credits</h2>
 	<p>
@@ -138,6 +172,8 @@ Vue.component('about-player', {
 			<li>LivingStyleGuide</li>
 		</ul>
 	</p>
+	<h2>Impressum</h2>
+	<p>Brauch ich nicht weil: keine kommerziellen Inhalte, keine regelmässigen Inhalte. Hier machst du den Inhalt!</p>
 </div>`,
 
 

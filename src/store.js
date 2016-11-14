@@ -1,6 +1,7 @@
 import { createStore, applyMiddleware, compose } from 'redux';
 import { messageRelayMiddleware } from './utils/messageRelayMiddleware';
 import { dbMiddleware } from './utils/dbMiddleware';
+import { importURLMiddleware } from './utils/importURLMiddleware';
 import reducers from './reducers';
 
 
@@ -16,11 +17,12 @@ if(process && (process.env.extension === true)) {
 	}
 } else {
 	console.log('website store production: ', process.env.NODE_ENV)
+	const middleware = [dbMiddleware, importURLMiddleware];
 	if (process && (process.env.NODE_ENV === 'production')) {
-		store = createStore(reducers, applyMiddleware(dbMiddleware));
+		store = createStore(reducers, applyMiddleware(...middleware));
 	} else {
 		const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-		store = createStore(reducers, composeEnhancers( applyMiddleware(...[dbMiddleware]) ));
+		store = createStore(reducers, composeEnhancers( applyMiddleware(...middleware) ));
 	}
 }
 export default store;

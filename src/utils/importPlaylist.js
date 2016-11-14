@@ -6,19 +6,27 @@ import { videoBaseObject } from '../reducers/video';
 
 export default function importPlaylist(dataString) {
 	let dataJSON;
-
-	try {
-		dataJSON = JSON.parse(dataString);
-	} catch (err) {
-		store.dispatch(Actions.error(err));
-		return;
+	if (dataString[0] === '{') {
+		try {
+			dataJSON = JSON.parse(dataString);
+		} catch (err) {
+			store.dispatch(Actions.error(err));
+			return;
+		}
+	} else if (dataString.indexOf('window.getAudiusPlaylist = function()') !== -1){
+		eval(dataString);
+		dataJSON = window.getAudiusPlaylist();
+	} else {
+		store.dispatch(Actions.error('Cannot import - unknown data format'));
 	}
 
 	if (dataJSON.AudiusDump) {
 		store.dispatch(Actions.importPlayList(dataJSON));
-		Object.keys(dataJSON.entities).forEach((key) => {
-			store.dispatch(Actions.addSearchResult(dataJSON.entities[key]));
-		});
+		Object.keys(dataJSON.entities)
+			.filter(key => !dataJSON.entities[key].deleted)
+			.forEach((key) => {
+				store.dispatch(Actions.addSearchResult(dataJSON.entities[key]));
+			});
 	} else if (dataJSON.StreamusDump) {
 		const entities = {};
 		Object.keys(dataJSON.items).forEach((key) => {
@@ -42,3 +50,5 @@ export default function importPlaylist(dataString) {
 	}
 	store.dispatch(Actions.dedupePlayList());
 }
+
+

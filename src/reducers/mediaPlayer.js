@@ -17,6 +17,7 @@ const initialState = {
 	currentTime: 0,
 	skipToTime: 0,
 	mute: false,
+	currentMedia: {},
 };
 
 function next(state) {
@@ -28,13 +29,16 @@ function next(state) {
 		mediaId = queue.shift();
 		return Object.assign({}, state, {
 			mediaId: mediaId,
+			currentMedia: state.entities[mediaId],
 			queue: [...queue],
 			isPlaying: true,
 		});
 	} else if (state.shuffle) {
 		// Play a random song.
+		mediaId = state.playList[Math.floor(Math.random() * state.playList.length)]
 		return Object.assign({}, state, {
-			mediaId: state.playList[Math.floor(Math.random() * state.playList.length)],
+			mediaId,
+			currentMedia: state.entities[mediaId],
 			isPlaying: true,
 		});
 	} else if (idx === state.playList.length - 1) {
@@ -47,6 +51,7 @@ function next(state) {
 		mediaId = state.playList[idx + 1];
 		return Object.assign({}, state, {
 			mediaId,
+			currentMedia: state.entities[mediaId],
 			isPlaying: true,
 		});
 	}
@@ -149,7 +154,7 @@ const mediaPlayer = (state = initialState, action) => {
 			entities = Object.assign({}, state.entities, newEntity);
 			currentMedia = action.currentMedia;
 		} else {
-			currentMedia = {};
+			currentMedia = state.entities[action.mediaId];
 			entities = state.entities;
 		}
 		return Object.assign({}, state, {
@@ -173,7 +178,8 @@ const mediaPlayer = (state = initialState, action) => {
 		if (idx > 0) {
 			mediaId = state.playList[idx - 1];
 			return Object.assign({}, state, {
-				mediaId: state.playList[idx - 1],
+				mediaId,
+				currentMedia: state.entities[mediaId],
 				isPlaying: true,
 			});
 		}
@@ -184,10 +190,11 @@ const mediaPlayer = (state = initialState, action) => {
 		});
 	case 'QUEUE_PLAY_INDEX':
 		queue = [...state.queue];
-		mediaId = queue.splice(action.idx, 1);
+		mediaId = queue.splice(action.idx, 1)[0];
 		return Object.assign({}, state, {
 			queue: [...queue],
-			mediaId: mediaId[0],
+			mediaId,
+			currentMedia: state.entities[mediaId],
 			isPlaying: true,
 		});
 	case 'QUEUE_REMOVE_INDEX':
