@@ -126,7 +126,7 @@ Vue.component('web-header', {
 	<div class="au-header__control-bar">
 		<div class="au-header__current-song">
 			<div class="au-header__current-song-name" v-if="currentMedia">{{currentMedia.title}}</div>
-			<div class="au-header__current-song-time" v-if="currentMedia"> {{currentTimeObj.m}}:{{currentTimeObj.s}} / {{currentMedia.duration.m}}:{{currentMedia.duration.s}} </div>
+			<div class="au-header__current-song-time" v-if="currentMedia && currentMedia.duration"> {{currentTimeObj.m}}:{{currentTimeObj.s}} / {{currentMedia.duration.m}}:{{currentMedia.duration.s}} </div>
 		</div>
 		<div class="au-header__controls" :disabled="!mediaPlayer.playList.length">
 			<span class="wmp-icon-previous" v-on:click="store.dispatch(Actions.previousVideo())" title="Previous song"></span>
