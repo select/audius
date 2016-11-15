@@ -66,12 +66,33 @@
 		width: $touch-size-medium
 	input
 		flex: 1
+
 .play-list__jump-header
 	display: flex
 	align-items: center
 	justify-content: space-between
-	margin-left: $grid-space
+	margin-left: #{ 2* $grid-space + $touch-size-medium}
+
+.play-list__jump-header,
+.paly-list__import-header
 	font-size: 1.5em
+	span
+		font-size: 0.8em
+		cursor: pointer
+
+.paly-list__import-header
+	position: relative
+	width: 100%
+	text-align: center
+	margin-bottom: $grid-space
+	> div
+		height: $touch-size-medium
+		line-height: $touch-size-medium
+	span
+		position: absolute
+		top: 0
+		right: 0
+
 .paly-list__import
 	display: flex
 	flex-direction: column
@@ -87,9 +108,10 @@
 		font-size: 1em
 		+placeholder
 			color: $color-aluminium
-	> div
+	.paly-list__import-url
 		display: flex
 		flex-direction: column
+
 #import-playlist
 	display: none
 	+ label

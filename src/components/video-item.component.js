@@ -4,7 +4,7 @@ import Actions from '../actions';
 import './video-item.component.sass';
 
 Vue.component('video-item', {
-	props: ['video', 'isPlaying', 'isQueue', 'queueIndex', 'isExtension'],
+	props: ['video', 'isPlaying', 'isQueue', 'queueIndex', 'isExtension', 'isSelected'],
 	data() {
 		return {
 			copyActive: false
@@ -54,7 +54,14 @@ Vue.component('video-item', {
 		},
 	},
 	template: `
-	<li v-bind:class="{ active: isPlaying, error: video.hasError }" v-on:dblclick="play" v-bind:data-id="video.id">
+	<li
+		v-bind:class="{
+			active: isPlaying,
+			error: video.hasError,
+			selected: isSelected
+			}"
+		v-on:dblclick="play"
+		v-bind:data-id="video.id">
 		<div class="media-list__thumbnail" v-bind:style="{ backgroundImage: 'url(https://i.ytimg.com/vi/' + video.id + '/default.jpg)' }"></div>
 		<div class="media-list__body">
 			<div class="media-list__name">{{video.title}}</div>

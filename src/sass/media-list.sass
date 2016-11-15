@@ -20,6 +20,11 @@ ul.media-list
 			a,
 			span:hover
 				color: $color-white
+		&.error
+			.media-list__body
+				text-decoration: line-through
+		&.selected
+			background: $color-aluminium
 .media-list__thumbnail
 	cursor: move
 	width: $touch-size-medium
@@ -28,9 +33,6 @@ ul.media-list
 	background-position: center
 	border-radius: 50%
 	margin-right: $grid-space
-.media-list li.error
-	.media-list__body
-		text-decoration: line-through
 .media-list__body
 	display: flex
 	flex-direction: column

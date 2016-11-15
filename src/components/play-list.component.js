@@ -18,19 +18,39 @@ Vue.component('play-list', {
 			Actions,
 			tabs: ['queue', 'search', 'info', 'about'],
 			importURLinput: false,
+			jumpCursor: '',
 		};
 	},
 	created() {
 		document.addEventListener('keydown', (event) => {
+			console.log('event.key: ', event.key)
 			if (event.target.tagName.toLowerCase() !== 'input' && event.key === 'j') {
 				this.toggleJump(true);
 				setTimeout(() => {document.querySelector('.play-list-footer__search-input').value = '';}, 100);
+			} else if (event.key === 'Escape') {
+				if (this.website.showImport) this.toggleImport(false);
+				if (this.website.showJump) this.clear()
+			}
+			if(this.website.showJump) {
+				if(event.key === 'ArrowDown') {
+					event.preventDefault();
+					if (!this.jumpCursor) this.jumpCursor = this.filteredPlaylist[0];
+					else this.jumpCursor = this.filteredPlaylist[this.filteredPlaylist.indexOf(this.jumpCursor) + 1];
+				} else if(event.key === 'ArrowUp') {
+					event.preventDefault();
+					if (!this.jumpCursor) this.jumpCursor = this.filteredPlaylist[this.filteredPlaylist.length - 1];
+					else this.jumpCursor = this.filteredPlaylist[this.filteredPlaylist.indexOf(this.jumpCursor) - 1];
+				}
+				if (event.key === 'Enter' && this.jumpCursor) {
+					store.dispatch(Actions.play(this.jumpCursor));
+				}
 			}
 		}, false);
 
 		this.unsubscribe = store.subscribe(() => {
 			this.mediaPlayer = store.getState().mediaPlayer;
 			this.website = store.getState().website;
+			if (!this.website.showJump && this.jumpCursor) this.jumpCursor = '';
 			if (this.currentSong !== this.mediaPlayer.mediaId) {
 				Vue.nextTick(() => {
 					const el = document.querySelector('.play-list li.active');
@@ -120,8 +140,8 @@ Vue.component('play-list', {
 				document.querySelector('.play-list-footer__search-input').focus();
 			});
 		},
-		toggleImport() {
-			store.dispatch(Actions.toggleImport());
+		toggleImport(state) {
+			store.dispatch(Actions.toggleImport(state));
 		},
 		showImportURL() {
 			this.importURLinput = true;
@@ -155,14 +175,20 @@ Vue.component('play-list', {
 		</h2>
 
 		<div class="paly-list__import" v-show="website.showImport" >
-			<h1>Import playlist</h1>
+			<div class="paly-list__import-header">
+				<div> Import playlist </div>
+				<span
+					class="wmp-icon-close"
+					title="[Esc] Close"
+					v-on:click="clear(true)"></span>
+			</div>
 			<input type="file" id="import-playlist" v-on:change="importPlayList" title="Import playlist from file">
 			<label for="import-playlist" class="button btn--blue">from file</label>
 			<button
 				class="button btn--blue"
 				v-show="!importURLinput"
 				v-on:click="showImportURL">from URL</button>
-			<div v-show="importURLinput">
+			<div class="paly-list__import-url" v-show="importURLinput">
 				<input
 					class="play-list__import-url-input"
 					type="text"
@@ -176,6 +202,7 @@ Vue.component('play-list', {
 			<div> Jump to file </div>
 			<span
 				class="wmp-icon-close"
+				title="[Esc] Close"
 				v-on:click="clear(true)"></span>
 		</div>
 		<ul
@@ -184,6 +211,7 @@ Vue.component('play-list', {
 			<video-item
 				v-for="id in filteredPlaylist"
 				:video="mediaPlayer.entities[id]"
+				:isSelected="jumpCursor === id"
 				:isPlaying="mediaPlayer.isPlaying && mediaPlayer.entities[id] && (mediaPlayer.mediaId == mediaPlayer.entities[id].id)"></video-item>
 		</ul>
 	</div>
@@ -194,7 +222,7 @@ Vue.component('play-list', {
 			</li>
 			<li
 				v-bind:class="{ active: website.showImport }"
-				v-on:click="toggleImport">
+				v-on:click="toggleImport()">
 				Import
 			</li>
 			<li v-on:click="exportPlayList" title="Export playlist to file">Export</li>
@@ -211,7 +239,6 @@ Vue.component('play-list', {
 					placeholder="Jump to"
 					v-on:click="stopPropagation"
 					v-on:keyup="searchJump"
-					v-on:keyup.esc="clear"
 					v-on:blur="delayBlur"
 					v-show="website.showJump"
 					debounce="500">
