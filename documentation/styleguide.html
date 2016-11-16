@@ -14,10 +14,13 @@ for(var e,l='article aside footer header nav section time picture'.split(' ');e=
 <style>
 @charset "UTF-8";
 @import url("https://fonts.googleapis.com/css?family=Nobile");
-/* line 1, src/sass/_input.sass */
-button {
-  padding: 0 7px;
-  height: 35px;
+/* line 3, src/sass/_input.sass */
+.audius .button,
+#audius-website .button {
+  font-family: "Nobile", sans-serif;
+  font-size: 1em;
+  padding: 0 1vmin;
+  height: 5vmin;
   border: 1px solid #C8CCD5;
   color: #C8CCD5;
   background: transparent;
@@ -27,11 +30,19 @@ button {
   outline: 0;
   cursor: pointer;
 }
-/* line 12, src/sass/_input.sass */
-button.btn--blue {
+/* line 16, src/sass/_input.sass */
+.audius .button.btn--blue,
+#audius-website .button.btn--blue {
   border-color: #2DA7EF;
   background: #2DA7EF;
   color: #fff;
+}
+/* line 20, src/sass/_input.sass */
+.audius a.button,
+#audius-website a.button {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
 }
 
 @font-face {
@@ -44,8 +55,8 @@ button.btn--blue {
 [class^="wmp-icon-"], [class*=" wmp-icon-"] {
   text-align: center;
   position: relative;
-  width: 49px;
-  height: 49px;
+  width: 7vmin;
+  height: 7vmin;
   display: inline-block;
 }
 /* line 17, src/sass/_icon.sass */
@@ -657,37 +668,37 @@ button.btn--blue {
 
 /* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
 .\$grid-space:after {
-  content: "7px";
+  content: "1vmin";
 }
 
 /* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
 .\$touch-size-extratiny:after {
-  content: "21px";
+  content: "3vmin";
 }
 
 /* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
 .\$touch-size-tiny:after {
-  content: "28px";
+  content: "4vmin";
 }
 
 /* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
 .\$touch-size-small:after {
-  content: "35px";
+  content: "5vmin";
 }
 
 /* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
 .\$touch-size-medium:after {
-  content: "49px";
+  content: "7vmin";
 }
 
 /* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
 .\$touch-size-large:after {
-  content: "56px";
+  content: "8vmin";
 }
 
 /* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
 .\$touch-size-huge:after {
-  content: "63px";
+  content: "9vmin";
 }
 
 /* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
@@ -696,53 +707,13 @@ button.btn--blue {
 }
 
 /* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$icon-size:after {
-  content: "28px";
-}
-
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$icon-size-small:after {
-  content: "1.7em";
-}
-
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$icon-size-tiny:after {
-  content: "18px";
-}
-
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
 .\$scroll-bar-size:after {
   content: "17px";
 }
 
 /* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$font-size-small:after {
-  content: "12px";
-}
-
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$font-size-medium:after {
-  content: "14px";
-}
-
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
 .\$font-size-normal:after {
-  content: "16px";
-}
-
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$font-size-large:after {
-  content: "18px";
-}
-
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$font-size-xlarge:after {
-  content: "24px";
-}
-
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$font-size-xxlarge:after {
-  content: "38px";
+  content: "2vmin";
 }
 
 /* line 6, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
@@ -1043,6 +1014,11 @@ button.btn--blue {
 }
 
 /* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
+.\$icon-size-small:after {
+  content: "1.7em";
+}
+
+/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
 .\$icon-size-big:after {
   content: "2.2em";
 }
@@ -1338,32 +1314,35 @@ button.btn--blue {
 <pre class="livingstyleguide--code-block"><code class="livingstyleguide--code">$transition-time: 250ms</code></pre><h3 class="livingstyleguide--sub-headline" id="space"><a class="livingstyleguide--anchor" href="#space"></a>Space</h3>
 <h4 class="livingstyleguide--sub-sub-headline" id="grid-base"><a class="livingstyleguide--anchor" href="#grid-base"></a>Grid base</h4>
 <p class="livingstyleguide--paragraph">This is the most important variable since all grid values are based on it</p>
-<pre class="livingstyleguide--code-block"><code class="livingstyleguide--code">$grid-space: 7px</code></pre><h4 class="livingstyleguide--sub-sub-headline" id="input-shadows"><a class="livingstyleguide--anchor" href="#input-shadows"></a>Input shadows</h4>
+<pre class="livingstyleguide--code-block"><code class="livingstyleguide--code">$grid-space: 1vmin</code></pre><h4 class="livingstyleguide--sub-sub-headline" id="input-shadows"><a class="livingstyleguide--anchor" href="#input-shadows"></a>Input shadows</h4>
 <p class="livingstyleguide--paragraph">Default shadow for buttons that need a shadow.</p>
 <pre class="livingstyleguide--code-block"><code class="livingstyleguide--code">+card(1)
 +card(2)
 +card(3)</code></pre><h4 class="livingstyleguide--sub-sub-headline" id="touch-sizes"><a class="livingstyleguide--anchor" href="#touch-sizes"></a>Touch sizes</h4>
-<p class="livingstyleguide--paragraph">Touch sizes are multiples of <code class="livingstyleguide--code-span livingstyleguide--code">$grid-size</code> (7px) they are used for all buttons and similar elements like striped list.</p>
-<pre class="livingstyleguide--code-block"><code class="livingstyleguide--code">$touch-size-extratiny: 21px
-$touch-size-tiny: 28px
-$touch-size-small: 35px
-$touch-size-medium: 49px
-$touch-size-large: 56px
-$touch-size-huge: 63px</code></pre><h4 class="livingstyleguide--sub-sub-headline" id="border-radius"><a class="livingstyleguide--anchor" href="#border-radius"></a>Border radius</h4>
-<pre class="livingstyleguide--code-block"><code class="livingstyleguide--code">$border-radius: 3px</code></pre><h4 class="livingstyleguide--sub-sub-headline" id="icon-font-sizes"><a class="livingstyleguide--anchor" href="#icon-font-sizes"></a>Icon font sizes</h4>
-<p class="livingstyleguide--paragraph">For different touch buttons with icons we need different icon font sizes.</p>
-<pre class="livingstyleguide--code-block"><code class="livingstyleguide--code">$icon-size: 28px
-$icon-size-small: 23px
-$icon-size-tiny: 18px</code></pre><h4 class="livingstyleguide--sub-sub-headline" id="scrollbar"><a class="livingstyleguide--anchor" href="#scrollbar"></a>Scrollbar</h4>
-<p class="livingstyleguide--paragraph">Scrollbar width, this is sometimes necessary if we expect a scrollbar could appear on overflowing content. This value is not aribtrily chosen. <strong>Don&#39;t change!</strong> Please read, to learn more <a href="https://www.google.de/search?q=scrollbar+width">https://www.google.de/search?q=scrollbar+width</a></p>
-<pre class="livingstyleguide--code-block"><code class="livingstyleguide--code">$scroll-bar-size: 17px</code></pre><h3 class="livingstyleguide--sub-headline" id="font-sizes"><a class="livingstyleguide--anchor" href="#font-sizes"></a>Font-Sizes</h3>
-<p class="livingstyleguide--paragraph">This are all font sizes</p>
-<pre class="livingstyleguide--code-block"><code class="livingstyleguide--code">$font-size-small: 12px
-$font-size-medium: 14px
-$font-size-normal: 16px
-$font-size-large: 18px
-$font-size-xlarge: 24px
-$font-size-xxlarge: 38px</code></pre><h2 class="livingstyleguide--headline" id="colors"><a class="livingstyleguide--anchor" href="#colors"></a>Colors</h2>
+<p class="livingstyleguide--paragraph">Touch sizes are multiples of <code class="livingstyleguide--code-span livingstyleguide--code">$grid-size</code> they are used for all buttons and similar elements like striped list.</p>
+<pre class="livingstyleguide--code-block"><code class="livingstyleguide--code">$touch-size-extratiny: 3*$grid-space
+$touch-size-tiny:      4*$grid-space
+$touch-size-small:     5*$grid-space
+$touch-size-medium:    7*$grid-space
+$touch-size-large:     8*$grid-space
+$touch-size-huge:      9*$grid-space</code></pre><h4 class="livingstyleguide--sub-sub-headline" id="border-radius"><a class="livingstyleguide--anchor" href="#border-radius"></a>Border radius</h4>
+<pre class="livingstyleguide--code-block"><code class="livingstyleguide--code">$border-radius: 2px</code></pre><h4 class="livingstyleguide--sub-sub-headline" id="scrollbar"><a class="livingstyleguide--anchor" href="#scrollbar"></a>Scrollbar</h4>
+<pre class="livingstyleguide--code-block"><code class="livingstyleguide--code">::-webkit-scrollbar
+    width: 5px
+    &amp;:hover
+        width: 10px
+
+::-webkit-scrollbar-track
+  background: $color-catskillwhite
+
+::-webkit-scrollbar-thumb
+  background: $color-aluminium-dark</code></pre><h4 class="livingstyleguide--sub-sub-headline" id="input-placeholder"><a class="livingstyleguide--anchor" href="#input-placeholder"></a>Input Placeholder</h4>
+<p class="livingstyleguide--paragraph">Use the <code class="livingstyleguide--code-span livingstyleguide--code">placeholder</code>  mixin.</p>
+<pre class="livingstyleguide--code-block"><code class="livingstyleguide--code">input
+    width: 18em
+    +placeholder
+        color: $color-pictonblue</code></pre><h4 class="livingstyleguide--sub-sub-headline" id="font-size"><a class="livingstyleguide--anchor" href="#font-size"></a>Font size</h4>
+<pre class="livingstyleguide--code-block"><code class="livingstyleguide--code">$font-size-normal: 2vmin</code></pre><h2 class="livingstyleguide--headline" id="colors"><a class="livingstyleguide--anchor" href="#colors"></a>Colors</h2>
 <ul class="livingstyleguide--color-swatches -lsg-4-columns">
 <li class="livingstyleguide--color-swatch $color-pictonblue">$color-pictonblue</li>
 
@@ -1452,15 +1431,6 @@ $font-size-xxlarge: 38px</code></pre><h2 class="livingstyleguide--headline" id="
 <li class="livingstyleguide--color-swatch -lsg-empty">-</li>
 
 </ul>
-<h2 class="livingstyleguide--headline" id="fonts"><a class="livingstyleguide--anchor" href="#fonts"></a>Fonts</h2>
-<p class="livingstyleguide--paragraph">The default font is Nobile</p>
-<div class="livingstyleguide--font-example" style="font: 32px Nobile">
-ABCDEFGHIJKLMNOPQRSTUVWXYZ<br>
-  abcdefghijklmnopqrstuvwxyz<br>
-  0123456789<br>
-  !&amp;/()$=@;:,.
-</div>
-<p class="livingstyleguide--paragraph">it&#39;s imported from google fonts.</p>
 <h2 class="livingstyleguide--headline" id="icons"><a class="livingstyleguide--anchor" href="#icons"></a>Icons</h2>
 <p class="livingstyleguide--paragraph">All icons were generated with icomoon.</p>
 <p class="livingstyleguide--paragraph">The current icomoon export is here: <a href="../icons/media-player.zip">media-player.zip</a>. If you add new icons please overwrite this file and check it into the git.</p>

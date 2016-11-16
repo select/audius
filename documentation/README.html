@@ -3,27 +3,75 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
-    <title>WhatsApp Media Player</title>
+    <title>Audius</title>
     <link type="text/css" rel="stylesheet" href="assets/css/github-markdown.css">
     <link type="text/css" rel="stylesheet" href="assets/css/pilcrow.css">
     <link type="text/css" rel="stylesheet" href="assets/css/hljs-github.min.css"/>
   </head>
   <body>
-    <article class="markdown-body"><h1 id="whatsapp-media-player"><a class="header-link" href="#whatsapp-media-player"></a>WhatsApp Media Player</h1>
+    <article class="markdown-body"><h1 id="audius"><a class="header-link" href="#audius"></a>Audius</h1>
+<p>Web app</p>
+<p>and extension </p>
+<p>are in the making</p>
 <p><a href="https://chrome.google.com/webstore/detail/???">
 <img alt="Try it now" src="https://camo.githubusercontent.com/334b4f665751356b1f4afb758f8ddde55b9c71b8/68747470733a2f2f7261772e6769746875622e636f6d2f476f6f676c654368726f6d652f6368726f6d652d6170702d73616d706c65732f6d61737465722f74727969746e6f77627574746f6e5f736d616c6c2e706e67" title="Click here to install this app from the Chrome Web Store" data-canonical-src="https://raw.github.com/GoogleChrome/chrome-app-samples/master/tryitnowbutton_small.png" style="max-width:100%;">
 </a></p>
-<h2 id="installation"><a class="header-link" href="#installation"></a>Installation</h2>
-<p>On the Chrome web store or </p>
+<h2 id="keyboard-shortcuts"><a class="header-link" href="#keyboard-shortcuts"></a>Keyboard shortcuts</h2>
+<dl>
+    <dt>c</dt>
+    <dd>Play / pause</dd>
+    <dt>b</dt>
+    <dd>Next song</dd>
+    <dt>s</dt>
+    <dd>Shuffle on / off</dd>
+    <dt>j</dt>
+    <dd>Jump to song</dd>
+    <dt>f</dt>
+    <dd>Find song on YouTube</dd>
+</dl>
+
+<h2 id="community"><a class="header-link" href="#community"></a>Community</h2>
+<p>If you have questions or feedback, join the chat on gitter or <a href="https://github.com/select/audius/issues">create an issue</a>.</p>
+<p><a href="https://gitter.im/audius-player/Lobby"><img src="https://badges.gitter.im/gitterHQ/gitter.png" alt="Gitter chat"></a></p>
+<h2 id="install-as-app"><a class="header-link" href="#install-as-app"></a>Install as app</h2>
+<p><strong>Chrome desktop:</strong></p>
+<ol class="list">
+<li>At the top right, click <em>More</em> (Icon top right).</li>
+<li>Click <em>More Tools</em>.</li>
+<li>Add the app:
+Windows users: Click <em>Add to taskbar</em>.
+Linux users: Click <em>Add to desktop</em>.
+Chromebook users: Click <em>Add to shelf</em>.</li>
+</ol>
+<p><strong>Chrome android:</strong>
+Tap the menu button and tap <em>Add to homescreen</em>. The app is not yet optimized for mobile phones, it might work on tables.</p>
+<p><strong>Local HTML5:</strong>
+Since this player is a pure HTML5 app without server side code you can simply download the HTML and JS code and run it from a local file. You can also download the latest version from the source code repository at github (see <a href="#source-code">Source code</a>). Use the web version to always get the latest updates automatically. A word of caution: I recognized that using this app from a local file block$ a lot of videos on YouTube :(</p>
+<p>Web apps are true freedom! Support an open and liberal web without geo borders and login screens.</p>
+<h2 id="system-requirements"><a class="header-link" href="#system-requirements"></a>System requirements</h2>
 <ul class="list">
-<li>clone this repo <code>git checkout git@github.com:select/whatsapp-web-media-player.git</code></li>
-<li>Install dependencies with <code>npm install</code> </li>
-<li>Build with <code>npm run sync</code> and <code>npm start</code></li>
-<li><code>chrome://extensions/</code> click on &quot;Load unpacked extension&quot;</li>
-<li>reload on extension page with <kbd>ctrl</kbd><kbd>r</kbd></li>
+<li><a href="https://vivaldi.com/download/">Vivaldi</a></li>
+<li>Chrome &gt;= 51</li>
+<li>FireFox &gt;= 49</li>
+<li>Internet Explorer &amp; Safari ... not supported, might work though</li>
 </ul>
-<h2 id="usage"><a class="header-link" href="#usage"></a>Usage</h2>
-<p>:)</p>
+<h2 id="extension"><a class="header-link" href="#extension"></a>Extension</h2>
+<p>... development started, but now stopped until the main app is ready.</p>
+<p>The Audius extension allows you to open a music player on any website. It will then automatically collect all linked videos and add it to a playlist similar to the one in this app. The videos will still be played in this app due to <a href="#motivation">restrictions of some websites</a>. This setup allows you to create a &quot;Music&quot; chat group on Whatsapp or Slack and have fresh music from your friends every day playing right where you share it. You can then continue and add this music to you regular playlist with a simple click.</p>
+<h2 id="migration-from-streamus"><a class="header-link" href="#migration-from-streamus"></a>Migration from Streamus</h2>
+<p>On Linux use <a href="https://github.com/select/audius/blob/master/src/scripts/streamus-export.sh">this script</a> I created to dump the Streamus WebSql to a JSON file. The JSON can be imported using the IMPORT button below the playlist. Use the script like this:</p>
+<pre class="hljs"><code>.<span class="hljs-regexp">/streamus-export.sh ~/</span>.config<span class="hljs-regexp">/google-chrome/</span>Profile\ <span class="hljs-number">1</span><span class="hljs-regexp">/Local\ Storage/</span>chrome-extension_jbnkffmindojffecdhbbmekbmkkfpmjd_0.localstorage</code></pre><p>Be sure to validate the JSON output, the script is just a quick hack and you might have to tweak it.</p>
+<h2 id="other-projects"><a class="header-link" href="#other-projects"></a>Other Projects</h2>
+<p>Here are some other fun projects I created this year.</p>
+<ul class="list">
+<li><a href="https://github.com/select/boomnext/">Boom, next video!</a></li>
+<li><a href="http://emoji-text.com/">ッ Emoji-text</a></li>
+<li><a href="https://www.fantasyplanet.de/">FantasyPlanet</a></li>
+<li>...</li>
+</ul>
+<h2 id="motivation"><a class="header-link" href="#motivation"></a>Motivation</h2>
+<p>You are writing another music player, seriously? That&#39;s what I thought a lot when creating this, but you know ...</p>
+<p>The extension should have been the actual player since the original idea was to create a Chrome/FireFox extension with a media player for <em>web.whatsapp</em>. This however failed since the conten security policy does not allow the embdding of youtube videos and somehow it is not possible to overwrite the header fields of web.whatsapp. That meant no player, no music. The only way around this issue I could come up with is to create a background process that the extension cummunicates with and that sends messages to a main player web app. This is currently still untested but that is the plan.</p>
 <h2 id="contributing"><a class="header-link" href="#contributing"></a>Contributing</h2>
 <ol class="list">
 <li>Fork it!</li>
@@ -32,16 +80,19 @@
 <li>Push to the branch: <code>git push origin my-new-feature</code></li>
 <li>Submit a pull request :D</li>
 </ol>
-<h2 id="history"><a class="header-link" href="#history"></a>History</h2>
-<p>v 0.0.1 - 2016-08-26</p>
-<ul class="list">
-<li>Added a plugin system</li>
-<li>4 channels working</li>
-<li>Skip watched videos with <kbd>N</kbd> or click <code>»</code></li>
-</ul>
 <h2 id="credits"><a class="header-link" href="#credits"></a>Credits</h2>
-<p><a href="https://icomoon.io/app">https://icomoon.io/app</a> <br>
-<a href="https://github.com/webpack/webpack">https://github.com/webpack/webpack</a></p>
+<p>This work is inspired by the incredible <a href="https://www.reddit.com/r/streamus/">Streamus</a> app.
+It was created with:</p>
+<ul class="list">
+<li>VueJs</li>
+<li>Redux</li>
+<li>Icomoon</li>
+<li>Google material icons</li>
+<li>Webpack</li>
+<li>LivingStyleGuide</li>
+</ul>
+<h2 id="history"><a class="header-link" href="#history"></a>History</h2>
+<p>... still working on version 0.0.1</p>
 <h2 id="license"><a class="header-link" href="#license"></a>License</h2>
 <p>MIT</p>
     </article>
