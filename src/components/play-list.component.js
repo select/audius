@@ -23,7 +23,6 @@ Vue.component('play-list', {
 	},
 	created() {
 		document.addEventListener('keydown', (event) => {
-			console.log('event.key: ', event.key)
 			if (event.target.tagName.toLowerCase() !== 'input' && event.key === 'j') {
 				this.toggleJump(true);
 				setTimeout(() => {document.querySelector('.play-list-footer__search-input').value = '';}, 100);
@@ -32,7 +31,9 @@ Vue.component('play-list', {
 				if (this.website.showJump) this.clear()
 			}
 			if(this.website.showJump) {
-				if(event.key === 'ArrowDown') {
+				if(this.jumpCursor && event.key === 'q') {
+					store.dispatch(Actions.queueMedia(this.jumpCursor));
+				} else if(event.key === 'ArrowDown') {
 					event.preventDefault();
 					if (!this.jumpCursor) this.jumpCursor = this.filteredPlaylist[0];
 					else this.jumpCursor = this.filteredPlaylist[this.filteredPlaylist.indexOf(this.jumpCursor) + 1];
@@ -154,6 +155,9 @@ Vue.component('play-list', {
 			store.dispatch(Actions.importURL(el.value));
 			el.value = '';
 		},
+		addMusic() {
+			store.dispatch(Actions.importURL('http://audius.rockdapus.org/audius-starter.playlist'));
+		}
 	},
 	computed: {
 		filteredPlaylist() {
@@ -171,7 +175,11 @@ Vue.component('play-list', {
 <div class="play-list">
 	<div class="play-list__body">
 		<h2 v-if="!mediaPlayer.playList.length">
-			The playlist is empty <br> ... add some music <br>┐(・。・┐) ♪
+			The playlist is empty <br>
+			┐(・。・┐) ♪ <br>
+			<button
+				class="play-list__btn-add-music button btn--blue"
+				v-on:click="addMusic">add music</button>
 		</h2>
 
 		<div class="paly-list__import" v-show="website.showImport" >
@@ -180,7 +188,7 @@ Vue.component('play-list', {
 				<span
 					class="wmp-icon-close"
 					title="[Esc] Close"
-					v-on:click="clear(true)"></span>
+					v-on:click="toggleImport(false)"></span>
 			</div>
 			<input type="file" id="import-playlist" v-on:change="importPlayList" title="Import playlist from file">
 			<label for="import-playlist" class="button btn--blue">from file</label>
