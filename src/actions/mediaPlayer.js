@@ -56,8 +56,8 @@ export const importURL = (url) => ({
 	url,
 })
 
-export const dedupePlayList = () => ({
-	type: 'DEDUPE_PLAYLIST',
+export const upgradePlayList = () => ({
+	type: 'UPGRADE_PLAYLIST',
 })
 
 export const removeVideo = (video) => ({

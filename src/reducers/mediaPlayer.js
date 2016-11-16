@@ -105,7 +105,7 @@ const mediaPlayer = (state = initialState, action) => {
 			playList: [...state.playList, ...action.videos.map(v => v.id).filter(id => !state.playList.includes(id))],
 			entities,
 		});
-	case 'DEDUPE_PLAYLIST':
+	case 'UPGRADE_PLAYLIST':
 		const seen = {};
 		const filteredPlaylist = [];
 		state.playList.forEach((id) => {
@@ -115,9 +115,14 @@ const mediaPlayer = (state = initialState, action) => {
 			}else {
 				console.log('Filterd dupe or missing: ',id);
 			}
-		})
+		});
+		entities = {};
+		Object.keys(state.entities).forEach((key) => {
+			entities[key] = Object.assign({}, videoBaseObject, state.entities[key]);
+		});
 		return Object.assign({}, state, {
 			playList: [...filteredPlaylist],
+			entities,
 		});
 	case 'IMPORT_PLAYLIST':
 		return Object.assign({}, state, {
@@ -154,7 +159,7 @@ const mediaPlayer = (state = initialState, action) => {
 			entities = Object.assign({}, state.entities, newEntity);
 			currentMedia = action.currentMedia;
 		} else {
-			currentMedia = state.entities[action.mediaId];
+			currentMedia = state.entities[mediaId];
 			entities = state.entities;
 		}
 		return Object.assign({}, state, {
