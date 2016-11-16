@@ -6,6 +6,8 @@ import { videoBaseObject } from '../reducers/video';
 
 export default function importPlaylist(dataString) {
 	let dataJSON;
+
+	// Read string from file or URL.
 	if (dataString[0] === '{') {
 		try {
 			dataJSON = JSON.parse(dataString);
@@ -20,6 +22,7 @@ export default function importPlaylist(dataString) {
 		store.dispatch(Actions.error('Cannot import - unknown data format'));
 	}
 
+	// Parse JSON from Audius export.
 	if (dataJSON.AudiusDump) {
 		store.dispatch(Actions.importPlayList(dataJSON));
 		Object.keys(dataJSON.entities)
@@ -27,6 +30,7 @@ export default function importPlaylist(dataString) {
 			.forEach((key) => {
 				store.dispatch(Actions.addSearchResult(dataJSON.entities[key]));
 			});
+	// Parse JSON from Streamus Export.
 	} else if (dataJSON.StreamusDump) {
 		const entities = {};
 		Object.keys(dataJSON.items).forEach((key) => {
@@ -45,10 +49,13 @@ export default function importPlaylist(dataString) {
 		Object.keys(entities).forEach((key) => {
 			store.dispatch(Actions.addSearchResult(entities[key]));
 		});
+	// Throw error when it's none of the above export formats.
 	} else {
 		store.dispatch(Actions.error('Can not import, this is an unknown format'));
 	}
-	store.dispatch(Actions.dedupePlayList());
+
+	// Remove dublicats
+	store.dispatch(Actions.upgradePlayList());
 }
 
 
