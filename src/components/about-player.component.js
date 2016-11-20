@@ -42,6 +42,17 @@ Vue.component('about-player', {
 			<dd>Find song on YouTube</dd>
 		</dl>
 	</p>
+	<p>
+		When jump to file is active.
+		<dl>
+			<dt>up / down</dt>
+			<dd>Select song</dd>
+			<dt>enter</dt>
+			<dd>Play selected song</dd>
+			<dt>q</dt>
+			<dd>Queue selected song</dd>
+		</dl>
+	</p>
 	<h2>Community</h2>
 	<p>
 		If you have questions or feedback, join the chat on gitter or create an issue on github.<br>
