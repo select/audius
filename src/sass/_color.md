@@ -9,7 +9,9 @@ $color-pictonblue $color-pictonblue-dark - -
 $color-white $color-black - -
 
 $color-aluminium $color-athensgrey $color-aluminium-dark $color-catskillwhite
-$color-mineshaft $color-cherub - -
+
+$color-palesky $color-mineshaft $color-cherub -
+
 $color-tuna $color-tuna-dark - -
 ```
 

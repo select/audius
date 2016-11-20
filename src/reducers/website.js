@@ -4,6 +4,7 @@ const initialState = {
 	mainRightTab: 'about',
 	showChat: false,
 	showImport: false,
+	showPlayLists: true,
 };
 
 const website = (state = initialState, action) => {
@@ -36,6 +37,10 @@ const website = (state = initialState, action) => {
 	case 'TOGGLE_IMPORT':
 		return Object.assign({}, state, {
 			showImport: action.state !== undefined ? action.state : !state.showImport,
+		});
+	case 'TOGGLE_PLAYLISTS':
+		return Object.assign({}, state, {
+			showPlayLists: action.state !== undefined ? action.state : !state.showPlayLists,
 		});
 	default:
 		return state;

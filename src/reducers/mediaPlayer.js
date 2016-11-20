@@ -7,6 +7,7 @@ const initialState = {
 	entities: {},
 	mediaId: '',
 	playList: [],
+	tags: {},
 	queue: [],
 	isPlaying: false,
 	shuffle: false,

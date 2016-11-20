@@ -79,14 +79,19 @@ Vue.component('video-item', {
 			</div>
 			<span class="wmp-icon-search" v-else title="Search alternative"></span>
 			<span class="copy wmp-icon-copy icon--small" v-on:click="copyToClip" v-bind:class="{ active: copyActive }" title="Copy name and URL"></span>
-			<a v-bind:href="'https://youtu.be/'+video.id" title="Watch on YouTube" target="_blank">
-				<span class="wmp-icon-youtube icon--small"></span>
-			</a>
-			<span
-				class="wmp-icon-close"
-				v-if="!isExtension"
-				v-on:click="remove"
-				title="Remove"></span>
+			<div class="media-list__more-controls">
+				<span class="wmp-icon-more_vert"></span>
+				<div>
+					<a v-bind:href="'https://youtu.be/'+video.id" title="Watch on YouTube" target="_blank">
+						<span class="wmp-icon-youtube icon--small"></span>
+					</a>
+					<span
+						class="wmp-icon-close"
+						v-if="!isExtension"
+						v-on:click="remove"
+						title="Remove"></span>
+				</div>
+			</div>
 			<span
 				class="wmp-icon-add"
 				v-if="isExtension"

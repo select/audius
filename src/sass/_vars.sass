@@ -11,6 +11,7 @@ $grid-space: 1vmin
 $touch-size-extratiny: 3*$grid-space
 $touch-size-tiny: 4*$grid-space
 $touch-size-small: 5*$grid-space
+$touch-size-sm: 5*$grid-space
 $touch-size-medium: 7*$grid-space
 $touch-size-large: 8*$grid-space
 $touch-size-huge: 9*$grid-space
@@ -33,11 +34,11 @@ $font-size-normal: 2vmin
 	@at-root #{if(not &, $sel, selector-append(&, $sel))}
 		@content
 =placeholder
-	+optional-at-root("::-webkit-input-placeholder")
+	+optional-at-root("&::-webkit-input-placeholder")
 		@content
-	+optional-at-root(":-moz-placeholder")
+	+optional-at-root("&:-moz-placeholder")
 		@content
-	+optional-at-root("::-moz-placeholder")
+	+optional-at-root("&::-moz-placeholder")
 		@content
-	+optional-at-root(":-ms-input-placeholder")
+	+optional-at-root("&:-ms-input-placeholder")
 		@content

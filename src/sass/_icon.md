@@ -16,6 +16,22 @@ To update the fonts go to https://icomoon.io/app/#/select import the `selection.
 <span class="wmp-icon-unfold_more"></span>
 <span class="wmp-icon-arrow_drop_down"></span>
 <span class="wmp-icon-arrow_drop_up"></span>
+<span class="wmp-icon-search"></span>
+<span class="wmp-icon-local_offer2"></span>
+<span class="wmp-icon-link"></span>
+<span class="wmp-icon-delete"></span>
+<span class="wmp-icon-cloud_upload"></span>
+```
+
+```
+<span class="wmp-icon-add"></span>
+<span class="wmp-icon-queue2"></span>
+<span class="wmp-icon-copy"></span>
+<span class="wmp-icon-youtube"></span>
+<span class="wmp-icon-close"></span>
+```
+
+```
 <span class="wmp-icon-previous"></span>
 <span class="wmp-icon-play"></span>
 <span class="wmp-icon-pause"></span>
@@ -25,16 +41,13 @@ To update the fonts go to https://icomoon.io/app/#/select import the `selection.
 <span class="wmp-icon-repeat_one"></span>
 <span class="wmp-icon-volume_off"></span>
 <span class="wmp-icon-volume_up"></span>
-<span class="wmp-icon-search"></span>
-<span class="wmp-icon-close"></span>
-<span class="wmp-icon-add"></span>
-<span class="wmp-icon-queue2"></span>
-<span class="wmp-icon-local_offer2"></span>
-<span class="wmp-icon-link"></span>
-<span class="wmp-icon-copy"></span>
-<span class="wmp-icon-delete"></span>
-<span class="wmp-icon-cloud_upload"></span>
-<span class="wmp-icon-youtube"></span>
 ```
 
-
+```
+<span class="wmp-icon-sort"></span>
+<span class="wmp-icon-zoom_out_map"></span>
+<span class="wmp-icon-label"></span>
+<span class="wmp-icon-label_outline"></span>
+<span class="wmp-icon-queue_music"></span>
+<span class="wmp-icon-mode_edit"></span>
+```

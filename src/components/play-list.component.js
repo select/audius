@@ -91,7 +91,7 @@ Vue.component('play-list', {
 			this.mediaPlayer.entities
 			const data = {
 				AudiusDump: true,
-				playList: this.mediaPlayer.playList,
+				playList: this.filteredPlaylist,
 				entities,
 			};
 			const element = document.createElement('a');
@@ -161,7 +161,7 @@ Vue.component('play-list', {
 	},
 	computed: {
 		filteredPlaylist() {
-			if (!this.mediaPlayer.filterQuery) return this.mediaPlayer.playList;
+			if (!this.mediaPlayer.filterQuery) return this.mediaPlayer.playList.filter(id => this.mediaPlayer.entities[id]);
 			return this.mediaPlayer.playList.filter(id =>
 				this.mediaPlayer
 					.entities[id]
@@ -174,7 +174,7 @@ Vue.component('play-list', {
 	template: `
 <div class="play-list">
 	<div class="play-list__body">
-		<h2 v-if="!mediaPlayer.playList.length">
+		<h2 v-if="!filteredPlaylist.length">
 			The playlist is empty <br>
 			┐(・。・┐) ♪ <br>
 			<button
@@ -226,7 +226,7 @@ Vue.component('play-list', {
 	<div class="play-list-footer">
 		<ul v-show="!website.showJump">
 			<li class="play-list-footer--info">
-				{{mediaPlayer.playList.length}} Songs
+				{{filteredPlaylist.length}} Songs
 			</li>
 			<li
 				v-bind:class="{ active: website.showImport }"

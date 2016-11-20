@@ -21,3 +21,8 @@ export const toggleImport = (state) => ({
 	type: 'TOGGLE_IMPORT',
 	state,
 });
+
+export const togglePlayLists = (state) => ({
+	type: 'TOGGLE_PLAYLISTS',
+	state,
+});

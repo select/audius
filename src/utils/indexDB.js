@@ -25,7 +25,9 @@ export function getPlayList(db) {
 		.transaction(['playLists'], 'readonly')
 		.objectStore('playLists')
 		.get('default');
-	request.onsuccess = event => store.dispatch(Actions.getDbPlayListSuccess(event.target.result.playList));
+	request.onsuccess = event => store.dispatch(Actions.getDbPlayListSuccess(
+		event.target.result ? event.target.result.playList : []
+	));
 	request.onerror = event => store.dispatch(Actions.error(`DB Error ${event.target.error.name}`));
 }
 

@@ -139,3 +139,15 @@ export const movePlayListMedia = (mediaId, beforeThisMediaId) => ({
 	mediaId,
 	beforeThisMediaId,
 })
+
+export const addTags = (tags, mediaIds) => ({
+	type: 'ADD_TAGS',
+	tags,
+	mediaIds,
+})
+
+export const removeTags = (tags, mediaIds) => ({
+	type: 'REMOVE_TAGS',
+	tags,
+	mediaIds,
+})
