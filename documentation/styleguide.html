@@ -16,7 +16,7 @@ for(var e,l='article aside footer header nav section time picture'.split(' ');e=
 @import url("https://fonts.googleapis.com/css?family=Nobile");
 /* line 3, src/sass/_input.sass */
 .audius .button,
-#audius-website .button {
+.web-app .button {
   font-family: "Nobile", sans-serif;
   font-size: 1em;
   padding: 0 1vmin;
@@ -32,14 +32,14 @@ for(var e,l='article aside footer header nav section time picture'.split(' ');e=
 }
 /* line 16, src/sass/_input.sass */
 .audius .button.btn--blue,
-#audius-website .button.btn--blue {
+.web-app .button.btn--blue {
   border-color: #2DA7EF;
   background: #2DA7EF;
   color: #fff;
 }
 /* line 20, src/sass/_input.sass */
 .audius a.button,
-#audius-website a.button {
+.web-app a.button {
   display: flex;
   align-items: center;
   text-decoration: none;
@@ -86,8 +86,33 @@ for(var e,l='article aside footer header nav section time picture'.split(' ');e=
 }
 
 /* line 42, src/sass/_icon.sass */
-.wmp-icon-local_offer2:before {
-  content: "";
+.wmp-icon-sort:before {
+  content: "";
+}
+
+/* line 42, src/sass/_icon.sass */
+.wmp-icon-zoom_out_map:before {
+  content: "";
+}
+
+/* line 42, src/sass/_icon.sass */
+.wmp-icon-label:before {
+  content: "";
+}
+
+/* line 42, src/sass/_icon.sass */
+.wmp-icon-label_outline:before {
+  content: "";
+}
+
+/* line 42, src/sass/_icon.sass */
+.wmp-icon-queue_music:before {
+  content: "";
+}
+
+/* line 42, src/sass/_icon.sass */
+.wmp-icon-mode_edit:before {
+  content: "";
 }
 
 /* line 42, src/sass/_icon.sass */
@@ -687,6 +712,11 @@ for(var e,l='article aside footer header nav section time picture'.split(' ');e=
 }
 
 /* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
+.\$touch-size-sm:after {
+  content: "5vmin";
+}
+
+/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
 .\$touch-size-medium:after {
   content: "7vmin";
 }
@@ -995,6 +1025,15 @@ for(var e,l='article aside footer header nav section time picture'.split(' ');e=
 }
 
 /* line 12, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
+.\$color-palesky:before {
+  background: #707379;
+}
+/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
+.\$color-palesky:after {
+  content: "#707379";
+}
+
+/* line 12, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
 .\$color-cherub:before {
   background: #fbe5e8;
 }
@@ -1005,12 +1044,12 @@ for(var e,l='article aside footer header nav section time picture'.split(' ');e=
 
 /* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
 .\$icon-uuid:after {
-  content: '"aeae4df8"';
+  content: '"6cbdbf85"';
 }
 
 /* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
 .\$icon-map:after {
-  content: '(local_offer2: "", format_list_bulleted: "", dehaze: "", reorder: "", more_vert: "", unfold_more: "", arrow_drop_down: "", arrow_drop_up: "", previous: "", play: "", pause: "", next: "", shuffle: "", repeat: "", repeat_one: "", volume_off: "", volume_up: "", search: "", close: "", add: "", queue2: "", copy: "", local_offer22: "", link: "", delete: "", cloud_upload: "", youtube: "")';
+  content: '(sort: "", zoom_out_map: "", label: "", label_outline: "", queue_music: "", mode_edit: "", format_list_bulleted: "", dehaze: "", reorder: "", more_vert: "", unfold_more: "", arrow_drop_down: "", arrow_drop_up: "", previous: "", play: "", pause: "", next: "", shuffle: "", repeat: "", repeat_one: "", volume_off: "", volume_up: "", search: "", close: "", add: "", queue2: "", copy: "", local_offer22: "", link: "", delete: "", cloud_upload: "", youtube: "")';
 }
 
 /* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
@@ -1368,11 +1407,11 @@ $touch-size-huge:      9*$grid-space</code></pre><h4 class="livingstyleguide--su
 
 <li class="livingstyleguide--color-swatch $color-catskillwhite">$color-catskillwhite</li>
 
+<li class="livingstyleguide--color-swatch $color-palesky">$color-palesky</li>
+
 <li class="livingstyleguide--color-swatch $color-mineshaft">$color-mineshaft</li>
 
 <li class="livingstyleguide--color-swatch $color-cherub">$color-cherub</li>
-
-<li class="livingstyleguide--color-swatch -lsg-empty">-</li>
 
 <li class="livingstyleguide--color-swatch -lsg-empty">-</li>
 
@@ -1443,25 +1482,11 @@ $touch-size-huge:      9*$grid-space</code></pre><h4 class="livingstyleguide--su
 <span class="wmp-icon-unfold_more"></span>
 <span class="wmp-icon-arrow_drop_down"></span>
 <span class="wmp-icon-arrow_drop_up"></span>
-<span class="wmp-icon-previous"></span>
-<span class="wmp-icon-play"></span>
-<span class="wmp-icon-pause"></span>
-<span class="wmp-icon-next"></span>
-<span class="wmp-icon-shuffle"></span>
-<span class="wmp-icon-repeat"></span>
-<span class="wmp-icon-repeat_one"></span>
-<span class="wmp-icon-volume_off"></span>
-<span class="wmp-icon-volume_up"></span>
 <span class="wmp-icon-search"></span>
-<span class="wmp-icon-close"></span>
-<span class="wmp-icon-add"></span>
-<span class="wmp-icon-queue2"></span>
 <span class="wmp-icon-local_offer2"></span>
 <span class="wmp-icon-link"></span>
-<span class="wmp-icon-copy"></span>
 <span class="wmp-icon-delete"></span>
 <span class="wmp-icon-cloud_upload"></span>
-<span class="wmp-icon-youtube"></span>
 </div>
 <pre class="livingstyleguide--code-block"><code class="livingstyleguide--code"><b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-dehaze"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
 <b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-reorder"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
@@ -1470,7 +1495,33 @@ $touch-size-huge:      9*$grid-space</code></pre><h4 class="livingstyleguide--su
 <b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-unfold_more"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
 <b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-arrow_drop_down"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
 <b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-arrow_drop_up"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-previous"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
+<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-search"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
+<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-local_offer2"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
+<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-link"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
+<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-delete"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
+<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-cloud_upload"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b></code></pre><div class="livingstyleguide--example">
+  <span class="wmp-icon-add"></span>
+<span class="wmp-icon-queue2"></span>
+<span class="wmp-icon-copy"></span>
+<span class="wmp-icon-youtube"></span>
+<span class="wmp-icon-close"></span>
+</div>
+<pre class="livingstyleguide--code-block"><code class="livingstyleguide--code"><b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-add"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
+<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-queue2"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
+<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-copy"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
+<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-youtube"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
+<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-close"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b></code></pre><div class="livingstyleguide--example">
+  <span class="wmp-icon-previous"></span>
+<span class="wmp-icon-play"></span>
+<span class="wmp-icon-pause"></span>
+<span class="wmp-icon-next"></span>
+<span class="wmp-icon-shuffle"></span>
+<span class="wmp-icon-repeat"></span>
+<span class="wmp-icon-repeat_one"></span>
+<span class="wmp-icon-volume_off"></span>
+<span class="wmp-icon-volume_up"></span>
+</div>
+<pre class="livingstyleguide--code-block"><code class="livingstyleguide--code"><b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-previous"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
 <b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-play"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
 <b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-pause"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
 <b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-next"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
@@ -1478,17 +1529,20 @@ $touch-size-huge:      9*$grid-space</code></pre><h4 class="livingstyleguide--su
 <b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-repeat"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
 <b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-repeat_one"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
 <b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-volume_off"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-volume_up"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-search"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-close"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-add"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-queue2"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-local_offer2"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-link"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-copy"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-delete"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-cloud_upload"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-youtube"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b></code></pre>
+<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-volume_up"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b></code></pre><div class="livingstyleguide--example">
+  <span class="wmp-icon-sort"></span>
+<span class="wmp-icon-zoom_out_map"></span>
+<span class="wmp-icon-label"></span>
+<span class="wmp-icon-label_outline"></span>
+<span class="wmp-icon-queue_music"></span>
+<span class="wmp-icon-mode_edit"></span>
+</div>
+<pre class="livingstyleguide--code-block"><code class="livingstyleguide--code"><b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-sort"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
+<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-zoom_out_map"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
+<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-label"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
+<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-label_outline"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
+<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-queue_music"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
+<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-mode_edit"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b></code></pre>
 </div>
 <div class="livingstyleguide--footer"><a class="livingstyleguide--logo" href="http://livingstyleguide.org">Made with the LivingStyleGuide gem.</a></div>
 
