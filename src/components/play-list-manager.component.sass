@@ -1,0 +1,93 @@
+@import '../sass/vars'
+@import '../sass/color'
+
+.play-list-manager
+	width: 25vw
+	margin-left: -24.5vw
+	transition: all $transition-time
+	background: $color-aluminium-dark
+	border-right: 1px solid $color-aluminium
+	position: relative
+	&.active
+		margin-left: 0
+	ul
+		padding: 0
+		list-style: none
+		li
+			display: flex
+			height: $touch-size-medium
+			margin: $grid-space
+			border-radius: $border-radius
+			align-items: center
+			padding-left: #{2*$grid-space}
+			// border: 1px solid $color-mineshaft
+			background: $color-athensgrey
+			color: $color-palesky
+			cursor: pointer
+			// font-weight: bold
+			&.active
+				border-left: 1vw solid $color-pictonblue
+				font-weight: bold
+				margin-right: -3px
+				padding-left: 1vw
+			&.active,
+			&:hover:not(.spacer)
+				border-color: $color-pictonblue
+				color: $color-pictonblue
+				background: $color-white
+				.play-list-manager__menu
+					display: block
+			.play-list-manager__menu
+				display: none
+			*:first-child
+				flex: 1
+				text-overflow: ellipsis
+				white-space: nowrap
+				overflow: hidden
+
+		.spacer
+			background: transparent
+			height: #{2*$grid-space}
+		.play-list-manager__input
+			padding: 0
+			background: $color-white
+			input
+				box-sizing: border-box
+				border: 0
+				border-radius: $border-radius
+				height: 100%
+				width: 100%
+				padding-left: #{2*$grid-space}
+				font-size: 1em
+				+placeholder
+					color: $color-palesky
+
+
+.nav-handle
+	position: absolute
+	top: calc(50% - #{$touch-size-small/2})
+	right: -2em
+	cursor: pointer
+	&:hover
+		span
+			color: $color-aluminium-dark
+		.nav-handle__tab
+			background: $color-catskillwhite
+
+	.nav-handle__tab
+		height: 2em
+		width: 2.5em
+		position: absolute
+		top: 0.1em
+		left: 0
+		transform: rotate(90deg) perspective(2em) rotateX(30deg)
+		background: $color-aluminium-dark
+		border: 1px solid $color-aluminium
+		border-bottom: 0
+	span
+		color: $color-catskillwhite
+		width: $touch-size-small
+		height: $touch-size-small
+
+
+
