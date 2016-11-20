@@ -31,10 +31,12 @@ Vue.component('search-results', {
 		addToPlaylist(video) {
 			store.dispatch(Actions.addSearchResult(video));
 			Vue.nextTick(() => {
-				const el = document.querySelector(`[data-id=${video.id}]`)
-				if (!isElementInViewport(el)) el.scrollIntoView({ block: 'start', behavior: 'smooth' });
-				el.classList.add('au--highlight');
-				setTimeout(() => {el.classList.remove('au--highlight');}, 1000);
+				const el = document.querySelector(`[data-id=${video.id}]`);
+				if (el) {
+					if (!isElementInViewport(el)) el.scrollIntoView({ block: 'start', behavior: 'smooth' });
+					el.classList.add('au--highlight');
+					setTimeout(() => {el.classList.remove('au--highlight');}, 1000);
+				}
 			});
 		},
 		isPlaying(video) {
