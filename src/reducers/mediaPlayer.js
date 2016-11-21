@@ -228,6 +228,14 @@ const mediaPlayer = (state = initialState, action) => {
 		return Object.assign({}, state, {
 			playList,
 		});
+	case 'ADD_TAGS':
+		let mediaIds = action.mediaIds || [];
+		if (state.tags[action.tag]) mediaIds = [...state.tags[action.tag], mediaIds];
+		const tags = Object.assign({}, state.tags);
+		tags[action.tag] = mediaIds;
+		return Object.assign({}, state, {
+			tags,
+		});
 	default:
 		return state;
 	}
