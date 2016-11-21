@@ -86,12 +86,13 @@ const mediaPlayer = (state = initialState, action) => {
 			playList: action.playList,
 		});
 	case 'VIDEO_ERROR':
-		state.entities[action.video.id] = Object.assign({}, action.video, {
+		entities = Object.assign({}, state.entities);
+		entities[action.video.id] = Object.assign({}, action.video, {
 			errorMessage: action.message,
 			hasError: true,
 		});
 		return Object.assign({}, next(state), {
-			entities: state.entities,
+			entities,
 		});
 	case 'ADD_VIDEOS':
 		entities = Object.assign({}, state.entities);
@@ -155,7 +156,7 @@ const mediaPlayer = (state = initialState, action) => {
 		else mediaId = !state.mediaId ? state.playList[0] : state.mediaId;
 		let currentMedia = {};
 		if (action.currentMedia) {
-			var newEntity = {};
+			const newEntity = {};
 			newEntity[mediaId] = action.currentMedia;
 			entities = Object.assign({}, state.entities, newEntity);
 			currentMedia = action.currentMedia;
