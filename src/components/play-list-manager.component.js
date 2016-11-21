@@ -20,6 +20,16 @@ Vue.component('play-list-manager', {
 		this.unsubscribe();
 	},
 	methods: {
+		addTags() {
+			const el = document.querySelector('.play-list-manager__input input');
+			this.store.dispatch(Actions.addTags(el.value))
+			el.value = '';
+		}
+	},
+	computed: {
+		tags() {
+			return Object.keys(this.state.mediaPlayer.tags).map(key => ({ name: key, playList: this.state.mediaPlayer.tags[key] }));
+		},
 	},
 	template: `
 <div
@@ -32,28 +42,24 @@ Vue.component('play-list-manager', {
 	<ul>
 		<li class="active">All</li>
 		<li class="spacer"></li>
-		<li>
-			<div> Rock </div>
+		<li
+			v-for="tag in tags">
+			<div class="play-list-manager__tag-body">
+				<div>{{tag.name}}</div>
+				<div>{{tag.playList.length}} Songs</div>
+			</div>
 			<div class="play-list-manager__menu">
 				<span class="wmp-icon-mode_edit"></span>
 				<span class="wmp-icon-close"></span>
 			</div>
 		</li>
-		<li>
-			<div> My super happy playlist </div>
-			<div class="play-list-manager__menu">
-				<span class="wmp-icon-mode_edit"></span>
-				<span class="wmp-icon-close"></span>
-			</div>
+		<li class="play-list-manager__input">
+			<input
+				v-on:keyup.enter="addTags"
+				type="text"
+				placeholder="New playlist">
+			<span class="wmp-icon-add" v-on:click="addTags"></span>
 		</li>
-		<li>
-			<div> Electronic stuff </div>
-			<div class="play-list-manager__menu">
-				<span class="wmp-icon-mode_edit"></span>
-				<span class="wmp-icon-close"></span>
-			</div>
-		</li>
-		<li class="play-list-manager__input"><input type="text" placeholder="New playlist"><span class="wmp-icon-add"></span></li>
 	</ul>
 </div>`,
 });
