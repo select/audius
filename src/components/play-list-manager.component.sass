@@ -2,17 +2,21 @@
 @import '../sass/color'
 
 .play-list-manager
+	position: relative
 	width: 25vw
 	margin-left: -24.5vw
 	transition: all $transition-time
 	background: $color-aluminium-dark
 	border-right: 1px solid $color-aluminium
-	position: relative
 	&.active
 		margin-left: 0
 	ul
 		padding: 0
 		list-style: none
+		height: 100%
+		overflow-y: auto
+		margin: 0
+
 		li
 			display: flex
 			height: $touch-size-medium
@@ -70,7 +74,10 @@
 				font-size: 1em
 				+placeholder
 					color: $color-palesky
-
+		&::-webkit-scrollbar-thumb
+		  background: $color-athensgrey
+		&::-webkit-scrollbar-track
+  		background: $color-aluminium-dark
 .nav-handle
 	position: absolute
 	top: calc(50% - #{$touch-size-small/2})
