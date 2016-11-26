@@ -4,7 +4,17 @@ import Actions from '../actions';
 import './video-item.component.sass';
 
 Vue.component('video-item', {
-	props: ['video', 'isPlaying', 'isQueue', 'queueIndex', 'isExtension', 'isSelected'],
+	props: [
+		'video',
+		'isPlaying',
+		'isQueue',
+		'queueIndex',
+		'isExtension',
+		'isSelected',
+		'isPlayList',
+		'isInPlayList',
+		'isEditPlayList',
+	],
 	data() {
 		return {
 			copyActive: false
@@ -18,7 +28,9 @@ Vue.component('video-item', {
 		pause() { store.dispatch(Actions.pause()); },
 		menu(){ store.dispatch(Actions.menuVideo(this.video.id)); },
 		remove() {
-			if (this.isQueue) {
+			if (this.isPlayList) {
+				store.dispatch(Actions.removeTags(undefined, [this.video.id]))
+			} else if (this.isQueue) {
 				store.dispatch(Actions.queueRemoveIndex(this.queueIndex));
 			} else {
 				store.dispatch(Actions.removeVideo(this.video));
@@ -52,18 +64,30 @@ Vue.component('video-item', {
 		queue() {
 			store.dispatch(Actions.queueMedia(this.video.id));
 		},
+		addTags() {
+			if (this.isEditPlayList) {
+				if (!this.isInPlayList) {
+					store.dispatch(Actions.addTags(undefined, [this.video.id]))
+				} else {
+					store.dispatch(Actions.removeTags(undefined, [this.video.id]))
+				}
+			}
+		},
 	},
 	template: `
 	<li
 		v-bind:class="{
 			active: isPlaying,
 			error: video.hasError,
-			selected: isSelected
+			selected: isSelected,
+			'in-playlist': isInPlayList,
 			}"
 		v-on:dblclick="play"
 		v-bind:data-id="video.id">
 		<div class="media-list__thumbnail" v-bind:style="{ backgroundImage: 'url(https://i.ytimg.com/vi/' + video.id + '/default.jpg)' }"></div>
-		<div class="media-list__body">
+		<div
+			class="media-list__body"
+			v-on:click="addTags">
 			<div class="media-list__name">{{video.title}}</div>
 			<div class="media-list__duration" v-if="video.duration">{{video.duration.m}}:{{video.duration.s}}</div>
 		</div>

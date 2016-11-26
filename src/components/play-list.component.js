@@ -157,12 +157,16 @@ Vue.component('play-list', {
 		},
 		addMusic() {
 			store.dispatch(Actions.importURL('http://audius.rockdapus.org/audius-starter.playlist'));
-		}
+		},
+		toggleEditPlayList() {
+			store.dispatch(Actions.toggleEditPlayList(undefined, false));
+		},
 	},
 	computed: {
 		filteredPlaylist() {
-			if (!this.mediaPlayer.filterQuery) return this.mediaPlayer.playList.filter(id => this.mediaPlayer.entities[id]);
-			return this.mediaPlayer.playList.filter(id =>
+			const playList = this.mediaPlayer.currentPlayList && !this.mediaPlayer.editPlayList ? this.mediaPlayer.tags[this.mediaPlayer.currentPlayList] : this.mediaPlayer.playList;
+			if (!this.mediaPlayer.filterQuery) return playList.filter(id => this.mediaPlayer.entities[id]);
+			return playList.filter(id =>
 				this.mediaPlayer
 					.entities[id]
 					.title
@@ -174,13 +178,28 @@ Vue.component('play-list', {
 	template: `
 <div class="play-list">
 	<div class="play-list__body">
-		<h2 v-if="!filteredPlaylist.length">
+		<h2 v-if="!mediaPlayer.currentPlayList && !filteredPlaylist.length">
 			The playlist is empty <br>
 			┐(・。・┐) ♪ <br>
 			<button
 				class="play-list__btn-add-music button btn--blue"
 				v-on:click="addMusic">add music</button>
 		</h2>
+		<h2 v-if="mediaPlayer.currentPlayList && !filteredPlaylist.length">
+			₍₍ ᕕ( * ⊙ ヮ ⊙ * )ᕗ⁾⁾ <br>
+			Edit <span class="wmp-icon-mode_edit"></span> this playlist <span class="wmp-icon-queue_music"></span> and add some songs.
+		</h2>
+
+		<div class="paly-list__import" v-show="mediaPlayer.editPlayList" >
+			<div class="paly-list__import-header">
+				<div> Edit playlist: {{mediaPlayer.currentPlayList}} </div>
+				<span
+					class="wmp-icon-close"
+					title="[Esc] Close"
+					v-on:click="toggleEditPlayList(false)"></span>
+				<div class="paly-list__edit-description">Click below to add songs to the playlist.</div>
+			</div>
+		</div>
 
 		<div class="paly-list__import" v-show="website.showImport" >
 			<div class="paly-list__import-header">
@@ -204,6 +223,7 @@ Vue.component('play-list', {
 				<button class="button btn--blue" v-on:click="importURL">load</button>
 			</div>
 		</div>
+
 		<div
 			class="play-list__jump-header"
 			v-show="website.showJump">
@@ -213,15 +233,23 @@ Vue.component('play-list', {
 				title="[Esc] Close"
 				v-on:click="clear(true)"></span>
 		</div>
+
+		<!-- play list here -->
 		<ul
 			class="media-list"
+			v-bind:class="{ 'media-list--editing': mediaPlayer.editPlayList }"
 			v-show="!website.showImport">
 			<video-item
 				v-for="id in filteredPlaylist"
 				:video="mediaPlayer.entities[id]"
+				:isEditPlayList="mediaPlayer.editPlayList"
+				:isPlayList="mediaPlayer.currentPlayList"
+				:isInPlayList="mediaPlayer.editPlayList && mediaPlayer.tags[mediaPlayer.currentPlayList].includes(id)"
 				:isSelected="jumpCursor === id"
 				:isPlaying="mediaPlayer.isPlaying && mediaPlayer.entities[id] && (mediaPlayer.mediaId == mediaPlayer.entities[id].id)"></video-item>
 		</ul>
+		<!-- ends here -->
+
 	</div>
 	<div class="play-list-footer">
 		<ul v-show="!website.showJump">

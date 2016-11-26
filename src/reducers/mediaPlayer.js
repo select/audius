@@ -19,6 +19,8 @@ const initialState = {
 	skipToTime: 0,
 	mute: false,
 	currentMedia: {},
+	currentPlayList: '',
+	editPlayList: false,
 };
 
 function next(state) {
@@ -29,14 +31,14 @@ function next(state) {
 		const queue = [...state.queue];
 		mediaId = queue.shift();
 		return Object.assign({}, state, {
-			mediaId: mediaId,
+			mediaId,
 			currentMedia: state.entities[mediaId],
 			queue: [...queue],
 			isPlaying: true,
 		});
 	} else if (state.shuffle) {
 		// Play a random song.
-		mediaId = state.playList[Math.floor(Math.random() * state.playList.length)]
+		mediaId = state.playList[Math.floor(Math.random() * state.playList.length)];
 		return Object.assign({}, state, {
 			mediaId,
 			currentMedia: state.entities[mediaId],
@@ -64,6 +66,9 @@ const mediaPlayer = (state = initialState, action) => {
 	let mediaId;
 	let entities;
 	let queue;
+	let tags;
+	let mediaIds;
+	let tag;
 	switch (action.type) {
 	case 'ERROR':
 		return Object.assign({}, state, {
@@ -114,7 +119,7 @@ const mediaPlayer = (state = initialState, action) => {
 			if (!seen[id] && state.entities[id]) {
 				seen[id] = true;
 				filteredPlaylist.push(id);
-			}else {
+			} else {
 				console.log('Filterd dupe or missing: ',id);
 			}
 		});
@@ -229,13 +234,43 @@ const mediaPlayer = (state = initialState, action) => {
 			playList,
 		});
 	case 'ADD_TAGS':
-		let mediaIds = action.mediaIds || [];
-		if (state.tags[action.tag]) mediaIds = [...state.tags[action.tag], mediaIds];
-		const tags = Object.assign({}, state.tags);
-		tags[action.tag] = mediaIds;
+		mediaIds = action.mediaIds || [];
+		tag = action.tag || state.currentPlayList;
+		if (!tag) return state;
+		if (state.tags[tag]) mediaIds = [...state.tags[tag], ...mediaIds];
+		tags = Object.assign({}, state.tags);
+		tags[tag] = mediaIds;
 		return Object.assign({}, state, {
 			tags,
 		});
+	case 'REMOVE_TAGS':
+		mediaIds = action.mediaIds || [];
+		tag = action.tag || state.currentPlayList;
+		if (!tag) return state;
+		if (state.tags[tag]) mediaIds = state.tags[tag].filter(id => !mediaIds.includes(id));
+		tags = Object.assign({}, state.tags);
+		tags[tag] = mediaIds;
+		return Object.assign({}, state, {
+			tags,
+		});
+	case 'SELECT_PLAYLIST':
+		return Object.assign({}, state, {
+			currentPlayList: action.playListName,
+			editPlayList: false,
+		});
+	case 'DELETE_PALYLIST':
+		tags = Object.assign({}, state.tags);
+		delete tags[action.playListName];
+		return Object.assign({}, state, {
+			tags,
+		});
+	case 'TOGGLE_EDIT_PALYLIST':
+		return Object.assign({}, state, {
+			editPlayList: action.state !== undefined ? action.state : !state.editPlayList,
+			currentPlayList: action.playListName ? action.playListName : state.currentPlayList,
+		});
+	case 'RECOVER_STATE':
+		return Object.assign({}, state, action.state);
 	default:
 		return state;
 	}

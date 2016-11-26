@@ -4,7 +4,7 @@ const initialState = {
 	mainRightTab: 'about',
 	showChat: false,
 	showImport: false,
-	showPlayLists: true,
+	showPlayLists: false,
 };
 
 const website = (state = initialState, action) => {

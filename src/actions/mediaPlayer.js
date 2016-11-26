@@ -1,4 +1,4 @@
-export const initDbSuccess = (db) => ({
+export const initDbSuccess = db => ({
 	type: 'DB_INIT_SUCCESS',
 	db,
 });
@@ -8,66 +8,68 @@ export const videoError = (video, message) => ({
 	message,
 });
 
-export const error = (message) => ({
+export const error = message => ({
 	type: 'ERROR',
 	message,
 });
-export const setDbSuccess = (data) => ({
+export const setDbSuccess = data => ({
 	type: 'DB_SET_SUCCESS',
 	data,
 });
-export const getDbSuccess = (data) => ({
+export const getDbSuccess = data => ({
 	type: 'DB_GET_SUCCESS',
 	data,
 
 });
-export const getAllDbSuccess = (entities) => ({
+export const getAllDbSuccess = entities => ({
 	type: 'DB_GETALL_SUCCESS',
 	entities,
 });
 
-export const getDbPlayListSuccess = (playList) => ({
+export const getDbPlayListSuccess = playList => ({
 	type: 'DB_GET_PLAYLIST_SUCCESS',
 	playList,
 });
 
-export const setCurrentTime = (time) => ({
+export const setCurrentTime = time => ({
 	type: 'SET_CURRENT_TIME',
 	time,
 });
 
-export const skipToTime = (s) => ({
+export const skipToTime = s => ({
 	type: 'SKIP_TO_TIME',
 	s,
-})
+});
 
 export const addVideos = (videos = []) => ({
 	type: 'ADD_VIDEOS',
 	videos,
 });
 
-export const importPlayList = (data) => ({
+export const importPlayList = data => ({
 	type: 'IMPORT_PLAYLIST',
 	data,
 });
 
-export const importURL = (url) => ({
+export const importURL = url => ({
 	type: 'IMPORT_URL',
 	url,
-})
+});
 
 export const upgradePlayList = () => ({
 	type: 'UPGRADE_PLAYLIST',
-})
+});
 
-export const removeVideo = (video) => ({
+export const removeVideo = video => ({
 	type: 'REMOVE_VIDEO',
 	video,
+	persistState: 'playList',
 });
 
 export const addSearchResult = (video = {}) => ({
 	type: 'ADD_SEARCH_RESULT',
 	video,
+	persistState: 'playList',
 });
 
 export const menuVideo = id => ({
@@ -99,6 +101,7 @@ export const togglePlayList = () => ({
 
 export const toggleShuffle = () => ({
 	type: 'TOGGLE_SHUFFLE',
+	persistState: 'shuffle',
 });
 
 export const toggleRepeat = () => ({
@@ -114,40 +117,68 @@ export const toggleMute = () => ({
 	type: 'TOGGLE_MUTE',
 });
 
-export const queueMedia = (id) => ({
+export const queueMedia = id => ({
 	type: 'QUEUE_MEDIA',
 	id,
 });
 
-export const queuePlayIndex = (idx) => ({
+export const queuePlayIndex = idx => ({
 	type: 'QUEUE_PLAY_INDEX',
 	idx,
 });
 
-export const queueRemoveIndex = (idx) => ({
+export const queueRemoveIndex = idx => ({
 	type: 'QUEUE_REMOVE_INDEX',
 	idx,
 });
 
-export const filterPlayList = (query) => ({
+export const filterPlayList = query => ({
 	type: 'FILTER_PLAYLIST',
 	query,
-})
+});
 
 export const movePlayListMedia = (mediaId, beforeThisMediaId) => ({
 	type: 'MOVE_PLAYLIST_MEDIA',
 	mediaId,
 	beforeThisMediaId,
-})
+	persistState: 'playList',
+});
+
+export const selectPlayList = playListName => ({
+	type: 'SELECT_PLAYLIST',
+	playListName,
+	persistState: 'currentPlayList',
+});
+
+export const deletePlayList = playListName => ({
+	type: 'DELETE_PALYLIST',
+	playListName,
+	persistState: 'tags',
+});
+
+export const toggleEditPlayList = (playListName, state) => ({
+	type: 'TOGGLE_EDIT_PALYLIST',
+	state,
+	playListName,
+	persistState: 'currentPlayList',
+});
 
 export const addTags = (tag, mediaIds) => ({
 	type: 'ADD_TAGS',
 	tag,
 	mediaIds,
-})
+	persistState: 'tags',
+});
 
 export const removeTags = (tag, mediaIds) => ({
 	type: 'REMOVE_TAGS',
 	tag,
 	mediaIds,
-})
+	persistState: 'tags',
+});
+
+
+export const recoverState = state => ({
+	type: 'RECOVER_STATE',
+	state,
+});

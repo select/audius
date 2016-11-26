@@ -22,9 +22,23 @@ Vue.component('play-list-manager', {
 	methods: {
 		addTags() {
 			const el = document.querySelector('.play-list-manager__input input');
-			this.store.dispatch(Actions.addTags(el.value))
+			store.dispatch(Actions.addTags(el.value))
 			el.value = '';
-		}
+		},
+		selectPlayList(name) {
+			store.dispatch(Actions.selectPlayList(name));
+		},
+		deletePlayList(name, event) {
+			event.stopPropagation();
+			store.dispatch(Actions.deletePlayList(name));
+		},
+		togglePlayLists () {
+			store.dispatch(Actions.togglePlayLists())
+		},
+		toggleEditPlayList(name, event) {
+			event.stopPropagation();
+			store.dispatch(Actions.toggleEditPlayList(name, true));
+		},
 	},
 	computed: {
 		tags() {
@@ -35,22 +49,37 @@ Vue.component('play-list-manager', {
 <div
 	class="play-list-manager"
 	v-bind:class="{ active: state.website.showPlayLists }">
-	<div class="nav-handle" title="Playlists" v-on:click="store.dispatch(Actions.togglePlayLists())">
+	<div class="nav-handle" title="Playlists" v-on:click="togglePlayLists">
 		<div class="nav-handle__tab"></div>
 		<span class="wmp-icon-queue_music"></span>
 	</div>
 	<ul>
-		<li class="active">All</li>
+		<li
+			v-bind:class="{ active: !state.mediaPlayer.currentPlayList }"
+			v-on:click="selectPlayList()">
+			<div class="play-list-manager__tag-body">
+				<div>ALL</div>
+				<div>{{state.mediaPlayer.playList.length}} Songs</div>
+			</div>
+		</li>
 		<li class="spacer"></li>
 		<li
-			v-for="tag in tags">
+			v-for="tag in tags"
+			v-bind:class="{ active: state.mediaPlayer.currentPlayList == tag.name }"
+			v-on:click="selectPlayList(tag.name)">
 			<div class="play-list-manager__tag-body">
 				<div>{{tag.name}}</div>
 				<div>{{tag.playList.length}} Songs</div>
 			</div>
+			<span
+				class="wmp-icon-mode_edit"
+				v-show="state.mediaPlayer.editPlayList && state.mediaPlayer.currentPlayList == tag.name"></span>
 			<div class="play-list-manager__menu">
-				<span class="wmp-icon-mode_edit"></span>
-				<span class="wmp-icon-close"></span>
+				<span
+					class="wmp-icon-mode_edit"
+					v-show="!state.mediaPlayer.editPlayList || state.mediaPlayer.currentPlayList != tag.name"
+					v-on:click="toggleEditPlayList(tag.name, $event)"></span>
+				<span class="wmp-icon-close" v-on:click="deletePlayList(tag.name, $event)"></span>
 			</div>
 		</li>
 		<li class="play-list-manager__input">

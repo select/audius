@@ -1,54 +1,47 @@
 import Actions from '../actions';
 import { time2s } from './timeConverter';
 
-function exists(store, storeName, id, callback) {
-	const request = store.getState().mediaPlayer.db
-		.transaction(['playLists'], 'readonly')
-		.objectStore('playLists')
-		.get('default');
-	request.onerror = event => store.dispatch(Actions.error(`DB Error ${event.target.error.name}`));
-	request.onsuccess = callback;
+function dbFromStore(store) {
+	return store.getState().mediaPlayer.db;
 }
 
-export function setPlayList(store) {
-	exists(store, 'playList', 'default', (event) => {
-		const dbStore = store.getState().mediaPlayer.db
-			.transaction(['playLists'], 'readwrite')
-			.objectStore('playLists');
-		const action = event.target.result ? 'put' : 'add';
-		const request = dbStore[action]({
-			id: 'default',
-			playList: store.getState().mediaPlayer.playList,
-		});
-		request.onerror = event2 => store.dispatch(Actions.error(`DB Error ${event2.target.error.name}`));
-	});
+function saveState(store, action) {
+	const dbStore = dbFromStore(store)
+		.transaction(['state'], 'readwrite')
+		.objectStore('state');
+	const request = dbStore.put(store.getState().mediaPlayer[action.persistState], action.persistState);
+	request.onerror = event2 => store.dispatch(Actions.error(`DB Error ${event2.target.error.name}`));
 }
 
-export function setMediaEntity(store, data, actionType) {
-	exists(store, 'mediaEntities', 'default', (event) => {
-		const dbStore = store.getState().mediaPlayer.db
-			.transaction(['mediaEntities'], 'readwrite')
-			.objectStore('mediaEntities');
-		const action = event.target.result ? 'put' : 'add';
-		const request = dbStore[action](data);
-		// request.onsuccess = () => store.dispatch({type: `${actionType}_SUCCESS`});
-		request.onerror = event2 => store.dispatch(Actions.error(`DB Error ${event2.target.error.name}`));
-		setPlayList(store);
-	});
+// function savePlayList(store) {
+// 	const dbStore = dbFromStore(store)
+// 		.transaction(['playLists'], 'readwrite')
+// 		.objectStore('playLists');
+// 	const request = dbStore.put({ id: 'default', playList: store.getState().mediaPlayer.playList });
+// 	request.onerror = event2 => store.dispatch(Actions.error(`DB Error ${event2.target.error.name}`));
+// }
+
+function setMediaEntity(store, data) {
+	const dbStore = dbFromStore(store)
+		.transaction(['mediaEntities'], 'readwrite')
+		.objectStore('mediaEntities');
+	const request = dbStore.put(data);
+	request.onerror = event2 => store.dispatch(Actions.error(`DB Error ${event2.target.error.name}`));
+	// savePlayList(store);
 }
 
-export const dbMiddleware = store => next => action => {
+export const dbMiddleware = store => next => (action) => {
 	const result = next(action);
-	if (action.type === 'MOVE_PLAYLIST_MEDIA') {
-		setPlayList(store);
-	}
 	if (['ADD_SEARCH_RESULT', 'REMOVE_VIDEO', 'VIDEO_ERROR'].includes(action.type)) {
 		setMediaEntity(store, action.video, action.type);
+	}
+	if (action.persistState) {
+		saveState(store, action);
 	}
 	return result;
 };
 
-export const upgradePlayListMiddleware = store => next => action => {
+export const upgradePlayListMiddleware = store => next => (action) => {
 	const result = next(action);
 	if (action.type === 'UPGRADE_PLAYLIST') {
 		const entities = store.getState().mediaPlayer.entities;

@@ -20,32 +20,103 @@ function getAllMediaEntities(db, callback) {
 	};
 }
 
-export function getPlayList(db) {
+function recoverState(db) {
+
 	const request = db
-		.transaction(['playLists'], 'readonly')
-		.objectStore('playLists')
-		.get('default');
-	request.onsuccess = event => store.dispatch(Actions.getDbPlayListSuccess(
-		event.target.result ? event.target.result.playList : []
-	));
+		.transaction(['state'], 'readonly')
+		.objectStore('state')
+		.openCursor();
+
 	request.onerror = event => store.dispatch(Actions.error(`DB Error ${event.target.error.name}`));
+
+	const state = {};
+	request.onsuccess = (event) => {
+		const cursor = event.target.result;
+		if (cursor) {
+			state[cursor.key] = cursor.value;
+			cursor.continue();
+		} else {
+			store.dispatch(Actions.recoverState(state));
+		}
+	};
 }
+
+// export function getPlayList(db) {
+// 	const request = db
+// 		.transaction(['playLists'], 'readonly')
+// 		.objectStore('playLists')
+// 		.get('default');
+// 	request.onsuccess = event => store.dispatch(Actions.getDbPlayListSuccess(
+// 		event.target.result ? event.target.result.playList : []
+// 	));
+// 	request.onerror = event => store.dispatch(Actions.error(`DB Error ${event.target.error.name}`));
+// }
+
+function migrate(db) {
+		// TODO migrate old db
+		indexedDB.open('audius_0.02', 1).onsuccess = (event) => {
+			event.target.result
+				.transaction(['playLists'], 'readonly')
+				.objectStore('playLists')
+				.get('default')
+				.onsuccess = (event2) => {
+					db
+						.transaction(['state'], 'readwrite')
+						.objectStore('state')
+						.put(event2.target.result.playList, 'playList');
+					event.target.result
+						.transaction('mediaEntities', 'readonly')
+						.objectStore('mediaEntities')
+						.openCursor()
+						.onsuccess = (event3) => {
+							const cursor = event3.target.result;
+							if (cursor) {
+								db
+									.transaction(['mediaEntities'], 'readwrite')
+									.objectStore('mediaEntities')
+									.put(cursor.value);
+								cursor.continue();
+							} else {
+								console.log('load upgraded');
+								getAllMediaEntities(db, () => {
+									recoverState(db);
+									indexedDB.deleteDatabase('audius_0.02');
+								});
+							}
+						};
+				};
+		};
+}
+
 
 if (!('indexedDB' in window)) {
 	store.dispatch(Actions.error('Error: indexDB missing.'));
 } else {
-	const openRequest = indexedDB.open('audius_0.02', 1);
+	const openRequest = indexedDB.open('audius_0.03', 1);
 	openRequest.onupgradeneeded = (event) => {
 		const thisDB = event.target.result;
 		if (!thisDB.objectStoreNames.contains('mediaEntities')) {
 			thisDB.createObjectStore('mediaEntities', { keyPath: 'id' });
 		}
-		if (!thisDB.objectStoreNames.contains('playLists')) {
-			thisDB.createObjectStore('playLists', { keyPath: 'id' });
+		// if (!thisDB.objectStoreNames.contains('playLists')) {
+		// 	thisDB.createObjectStore('playLists', { keyPath: 'id' });
+		// }
+		if (!thisDB.objectStoreNames.contains('state')) {
+			thisDB.createObjectStore('state');
 		}
 	};
 	openRequest.onsuccess = (event) => {
-		getAllMediaEntities(event.target.result, () => getPlayList(event.target.result));
+		indexedDB.webkitGetDatabaseNames().onsuccess = (sender, args) => {
+			const dbs = Object.keys(sender.target.result).map(key => sender.target.result[key]);
+			if (dbs.includes('audius_0.02')) {
+				console.log('%c Upgrading Audius from 0.02 to 0.03!', 'background: red; color: white');
+				migrate(event.target.result);
+			}
+		};
+		getAllMediaEntities(event.target.result, () => {
+			recoverState(event.target.result);
+			// getPlayList(event.target.result);
+		});
 		store.dispatch(Actions.initDbSuccess(event.target.result));
 	};
 	openRequest.onerror = () => store.dispatch(Actions.error('Error: could not connect to indexDB.'));
@@ -66,7 +137,7 @@ export function getMediaEntity(id) {
 export function storageStats() {
 	navigator.webkitTemporaryStorage.queryUsageAndQuota(
 		(used, granted) => {
-			console.log('granted: ',granted);
+			console.log('granted: ', granted);
 			const percent = 100 * used / granted;
 			if (percent === 100) gui.warn('IndexDB full!');
 			console.log(`## ${percent.toPrecision(2)}% storage used`);

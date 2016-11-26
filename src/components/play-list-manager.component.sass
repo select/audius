@@ -28,9 +28,10 @@
 			&.active
 				border-left: 1vw solid $color-pictonblue
 				font-weight: bold
-				margin-right: -3px
 				padding-left: 1vw
-			&.active,
+				background: $color-white
+
+			// &.active,
 			&:hover:not(.spacer)
 				border-color: $color-pictonblue
 				color: $color-pictonblue
@@ -39,6 +40,8 @@
 					display: block
 			.play-list-manager__menu
 				display: none
+			.wmp-icon-mode_edit:before
+				font-size: 1.5em
 			.play-list-manager__tag-body
 				display: flex
 				flex-direction: column
@@ -52,11 +55,12 @@
 
 		.spacer
 			background: transparent
-			height: #{2*$grid-space}
+			height: $grid-space
 		.play-list-manager__input
 			padding: 0
-			background: $color-white
+			background: $color-athensgrey
 			input
+				background: transparent
 				box-sizing: border-box
 				border: 0
 				border-radius: $border-radius
@@ -66,7 +70,6 @@
 				font-size: 1em
 				+placeholder
 					color: $color-palesky
-
 
 .nav-handle
 	position: absolute
