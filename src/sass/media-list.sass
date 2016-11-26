@@ -50,6 +50,8 @@ ul.media-list
 
 .media-list__controls
 	display: none
+	> div
+		display: flex
 	span
 		cursor: pointer
 		transition: all $transition-time
@@ -60,6 +62,6 @@ ul.media-list
 		display: none
 	&:hover
 		> div
-			display: block
+			display: flex
 		> span
 			display: none
