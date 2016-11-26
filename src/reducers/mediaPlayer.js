@@ -24,7 +24,8 @@ const initialState = {
 };
 
 function next(state) {
-	const idx = state.playList.indexOf(state.mediaId);
+	const playList = state.currentPlayList ? state.tags[state.currentPlayList] : state.playList;
+	const idx = playList.indexOf(state.mediaId);
 	let mediaId;
 	if (state.queue.length) {
 		// Play next song from queue.
@@ -38,7 +39,7 @@ function next(state) {
 		});
 	} else if (state.shuffle) {
 		// Play a random song.
-		mediaId = state.playList[Math.floor(Math.random() * state.playList.length)];
+		mediaId = playList[Math.floor(Math.random() * playList.length)];
 		return Object.assign({}, state, {
 			mediaId,
 			currentMedia: state.entities[mediaId],
@@ -51,7 +52,7 @@ function next(state) {
 		});
 	} else if (idx < state.playList.length - 1) {
 		// Play the next song.
-		mediaId = state.playList[idx + 1];
+		mediaId = playList[idx + 1];
 		return Object.assign({}, state, {
 			mediaId,
 			currentMedia: state.entities[mediaId],
