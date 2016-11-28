@@ -1,6 +1,7 @@
 import Vue from 'vue/dist/vue';
 import store from '../store';
 import Actions from '../actions';
+import { debounce } from '../utils/debounce';
 import './play-list-manager.component.sass';
 
 Vue.component('play-list-manager', {
@@ -39,6 +40,9 @@ Vue.component('play-list-manager', {
 			event.stopPropagation();
 			store.dispatch(Actions.toggleEditPlayList(name, true));
 		},
+		renamePlayList: debounce((oldName, event) => {
+			store.dispatch(Actions.renamePlayList(oldName, event.target.value));
+		}, 500),
 	},
 	computed: {
 		tags() {
@@ -68,25 +72,29 @@ Vue.component('play-list-manager', {
 			v-bind:class="{ active: state.mediaPlayer.currentPlayList == tag.name }"
 			v-on:click="selectPlayList(tag.name)">
 			<div class="play-list-manager__tag-body">
-				<div>{{tag.name}}</div>
+				<div v-show="state.mediaPlayer.currentPlayList != tag.name">{{tag.name}}</div>
+				<div v-show="state.mediaPlayer.currentPlayList == tag.name">
+					<input
+						class="play-list-manager__tag-name-input"
+						type="text"
+						v-bind:value="tag.name"
+						v-on:keyup="renamePlayList(tag.name, $event)"
+						placeholder="... playlist name">
+				</div>
 				<div>{{tag.playList.length}} Songs</div>
 			</div>
-			<span
-				class="wmp-icon-mode_edit"
-				v-show="state.mediaPlayer.editPlayList && state.mediaPlayer.currentPlayList == tag.name"></span>
 			<div class="play-list-manager__menu">
 				<span
-					class="wmp-icon-mode_edit"
-					v-show="!state.mediaPlayer.editPlayList || state.mediaPlayer.currentPlayList != tag.name"
-					v-on:click="toggleEditPlayList(tag.name, $event)"></span>
-				<span class="wmp-icon-close" v-on:click="deletePlayList(tag.name, $event)"></span>
+					class="wmp-icon-close"
+					title="Delte playlist"
+					v-on:click="deletePlayList(tag.name, $event)"></span>
 			</div>
 		</li>
 		<li class="play-list-manager__input">
 			<input
 				v-on:keyup.enter="addTags"
 				type="text"
-				placeholder="New playlist">
+				placeholder="... new playlist">
 			<span class="wmp-icon-add" v-on:click="addTags"></span>
 		</li>
 	</ul>

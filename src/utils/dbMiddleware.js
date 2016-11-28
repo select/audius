@@ -9,8 +9,19 @@ function saveState(store, action) {
 	const dbStore = dbFromStore(store)
 		.transaction(['state'], 'readwrite')
 		.objectStore('state');
-	const request = dbStore.put(store.getState().mediaPlayer[action.persistState], action.persistState);
-	request.onerror = event2 => store.dispatch(Actions.error(`DB Error ${event2.target.error.name}`));
+
+	console.dir('presis array')
+	if (action.persistState.constructor === Array) {
+		action.persistState.forEach(propName => {
+			dbStore
+				.put(store.getState().mediaPlayer[propName], propName)
+				.onerror = event2 => store.dispatch(Actions.error(`DB Error ${event2.target.error.name}`));
+		})
+	} else {
+		dbStore
+			.put(store.getState().mediaPlayer[action.persistState], action.persistState)
+			.onerror = event2 => store.dispatch(Actions.error(`DB Error ${event2.target.error.name}`));
+	}
 }
 
 // function savePlayList(store) {

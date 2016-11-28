@@ -5,6 +5,7 @@ import './web-header.component.sass';
 import { debounce } from '../utils/debounce';
 import searchYoutube from '../utils/searchYoutube';
 import { s2time, time2s } from '../utils/timeConverter';
+import isElementInViewport from '../utils/isElementInViewport';
 
 Vue.component('web-header', {
 	data() {
@@ -83,6 +84,10 @@ Vue.component('web-header', {
 				);
 			}
 		},
+		scrollToCurrentSong() {
+			const el = document.querySelector(`[data-id="${this.currentMedia.id}"]`);
+			if (!isElementInViewport(el)) el.scrollIntoView({ block: 'start', behavior: 'smooth' });
+		},
 	},
 	computed: {
 		currentTimeObj() {
@@ -92,6 +97,10 @@ Vue.component('web-header', {
 			if (!this.currentMedia) return 0;
 			return (this.mediaPlayer.currentTime / this.currentMedia.durationS) * 100;
 		},
+		playList() {
+			if (this.mediaPlayer.currentPlayList) return this.mediaPlayer.tags[this.mediaPlayer.currentPlayList];
+			return this.mediaPlayer.playList;
+		}
 	},
 	template: `
 <header>
@@ -118,15 +127,18 @@ Vue.component('web-header', {
 				<span class="wmp-icon-volume_up" v-if="!mediaPlayer.mute"></span>
 				<span class="wmp-icon-volume_off" v-else></span>
 			</div>
+			<span class="wmp-icon-queue_music" v-on:click="store.dispatch(Actions.togglePlayLists())"></span>
 			<!-- <span class="wmp-icon-more_vert"></span> -->
 		</div>
 	</div>
 	<div class="au-header__control-bar">
-		<div class="au-header__current-song">
+		<div
+			class="au-header__current-song"
+			v-on:click="scrollToCurrentSong">
 			<div class="au-header__current-song-name" v-if="currentMedia">{{currentMedia.title}}</div>
 			<div class="au-header__current-song-time" v-if="currentMedia && currentMedia.duration"> {{currentTimeObj.m}}:{{currentTimeObj.s}} / {{currentMedia.duration.m}}:{{currentMedia.duration.s}} </div>
 		</div>
-		<div class="au-header__controls" :disabled="!mediaPlayer.playList.length">
+		<div class="au-header__controls" :disabled="!playList.length">
 			<span class="wmp-icon-previous" v-on:click="store.dispatch(Actions.previousVideo())" title="Previous song"></span>
 			<div class="au-header__play-pause" v-on:click="playPauseMedia">
 				<span class="wmp-icon-pause" v-if="mediaPlayer.isPlaying" title="[c] Pause"></span>

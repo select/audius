@@ -63,13 +63,13 @@ export const upgradePlayList = () => ({
 export const removeVideo = video => ({
 	type: 'REMOVE_VIDEO',
 	video,
-	persistState: 'playList',
+	persistState: ['playList', 'tags'],
 });
 
 export const addSearchResult = (video = {}) => ({
 	type: 'ADD_SEARCH_RESULT',
 	video,
-	persistState: 'playList',
+	persistState: ['playList', 'tags'],
 });
 
 export const menuVideo = id => ({
@@ -137,11 +137,10 @@ export const filterPlayList = query => ({
 	query,
 });
 
-export const movePlayListMedia = (mediaId, beforeThisMediaId) => ({
+export const movePlayListMedia = playList => ({
 	type: 'MOVE_PLAYLIST_MEDIA',
-	mediaId,
-	beforeThisMediaId,
-	persistState: 'playList',
+	playList,
+	persistState: ['playList', 'tags'],
 });
 
 export const selectPlayList = playListName => ({
@@ -162,6 +161,13 @@ export const toggleEditPlayList = (playListName, state) => ({
 	playListName,
 	persistState: 'currentPlayList',
 });
+
+export const renamePlayList = (oldName, newName) => ({
+	type: 'RENAME_PLAYLIST',
+	oldName,
+	newName,
+	persistState: 'tags',
+})
 
 export const addTags = (tag, mediaIds) => ({
 	type: 'ADD_TAGS',

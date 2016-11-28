@@ -68,10 +68,9 @@ Vue.component('play-list', {
 			scrollSpeed: 20,
 			handle: '.media-list__thumbnail',
 			// Element dragging ended
-			onUpdate: (event) => {
+			onUpdate: () => {
 				store.dispatch(Actions.movePlayListMedia(
-					event.item.dataset.id,
-					mediaListEl.childNodes[event.newIndex + 1].dataset.id
+					Array.from(mediaListEl.childNodes).map(el => el.dataset.id)
 				));
 			},
 		});
@@ -84,11 +83,11 @@ Vue.component('play-list', {
 			// api_option=paste&api_paste_private=0&api_paste_code=llkjsdfljsdf
 			// https://developer.github.com/v3/gists/#create-a-gist
 			// curl -X POST \--data-binary '{"files": {"file1.txt": {"content": "Hello, SO"}}}' \https://api.github.com/gists
+			const playList = this.mediaPlayer.currentPlayList ? this.mediaPlayer.tags[this.mediaPlayer.currentPlayList] : this.mediaPlayer.playList;
 			const entities = {};
-			Object.keys(this.mediaPlayer.entities).forEach(key => {
-				if(!this.mediaPlayer.entities[key].deleted) entities[key] = this.mediaPlayer.entities[key];
-			})
-			this.mediaPlayer.entities
+			playList.forEach(key => {
+				entities[key] = this.mediaPlayer.entities[key];
+			});
 			const data = {
 				AudiusDump: true,
 				playList: this.filteredPlaylist,
@@ -109,6 +108,7 @@ Vue.component('play-list', {
 				const reader = new FileReader();
 				reader.onload = (event2) => {
 					importPlaylist(event2.target.result);
+					store.dispatch(Actions.toggleImport(false));
 				};
 				reader.readAsText(file);
 			});
@@ -178,16 +178,25 @@ Vue.component('play-list', {
 	template: `
 <div class="play-list">
 	<div class="play-list__body">
-		<h2 v-if="!mediaPlayer.currentPlayList && !filteredPlaylist.length">
+		<h2 v-if="!website.showImport && !mediaPlayer.currentPlayList && !filteredPlaylist.length">
 			The playlist is empty <br>
 			┐(・。・┐) ♪ <br>
+			<br>
+			<span v-on:click="store.dispatch(Actions.toggleSearch())">
+				<span class="wmp-icon-search" title="[f] Search on YouTube"></span> Search
+			</span>
+				and add some songs.
 			<button
 				class="play-list__btn-add-music button btn--blue"
 				v-on:click="addMusic">add music</button>
 		</h2>
-		<h2 v-if="mediaPlayer.currentPlayList && !filteredPlaylist.length">
-			₍₍ ᕕ( * ⊙ ヮ ⊙ * )ᕗ⁾⁾ <br>
-			Edit <span class="wmp-icon-mode_edit"></span> this playlist <span class="wmp-icon-queue_music"></span> and add some songs.
+		<h2 v-if="!website.showImport && mediaPlayer.currentPlayList && !filteredPlaylist.length">
+			(⊃｡•́‿•̀｡)⊃ <br>
+			<br>
+			<span v-on:click="store.dispatch(Actions.toggleSearch())">
+				<span class="wmp-icon-search" title="[f] Search on YouTube"></span> Search
+			</span>
+				and add some songs.
 		</h2>
 
 		<div class="paly-list__import" v-show="mediaPlayer.editPlayList" >

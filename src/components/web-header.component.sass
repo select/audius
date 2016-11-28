@@ -24,6 +24,7 @@ header
 	display: flex
 	flex-direction: column
 	justify-content: center
+	cursor: pointer
 	.au-header__current-song-name
 		font-size: 1.1em
 		// font-weight: bold
@@ -32,6 +33,8 @@ header
 .au-header__search-controls
 	display: flex
 	align-items: center
+	[class^='wmp-icon-']
+		cursor: pointer
 .au-header__search-input-group
 	height: $touch-size-small
 	display: flex

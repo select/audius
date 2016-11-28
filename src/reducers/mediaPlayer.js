@@ -70,6 +70,7 @@ const mediaPlayer = (state = initialState, action) => {
 	let tags;
 	let mediaIds;
 	let tag;
+	let playList = state.currentPlayList ? state.tags[state.currentPlayList] : state.playList;
 	switch (action.type) {
 	case 'ERROR':
 		return Object.assign({}, state, {
@@ -87,10 +88,10 @@ const mediaPlayer = (state = initialState, action) => {
 		return Object.assign({}, state, {
 			entities: Object.assign({}, state.entities, action.entities),
 		});
-	case 'DB_GET_PLAYLIST_SUCCESS':
-		return Object.assign({}, state, {
-			playList: action.playList,
-		});
+	// case 'DB_GET_PLAYLIST_SUCCESS':
+	// 	return Object.assign({}, state, {
+	// 		playList: action.playList,
+	// 	});
 	case 'VIDEO_ERROR':
 		entities = Object.assign({}, state.entities);
 		entities[action.video.id] = Object.assign({}, action.video, {
@@ -133,9 +134,28 @@ const mediaPlayer = (state = initialState, action) => {
 			entities,
 		});
 	case 'IMPORT_PLAYLIST':
+		entities = Object.assign({}, state.entities, action.data.entities);
+		playList = [...playList, ...action.data.playList.filter(id => !playList.includes(id))];
+		if (state.currentPlayList) {
+			tags = Object.assign({}, state.tags);
+			tags[state.currentPlayList] = playList
+			return Object.assign({}, state, {
+				tags,
+				entities,
+			})
+		}
 		return Object.assign({}, state, {
-			playList: [...state.playList, ...action.data.playList.filter(id => !state.playList.includes(id))],
-			entities: Object.assign({}, state.entities, action.data.entities),
+			playList,
+			entities,
+		});
+	case 'RENAME_PLAYLIST':
+		if (state.tags[action.newName]) return state;
+		tags = Object.assign({}, state.tags);
+		tags[action.newName] = tags[action.oldName];
+		delete tags[action.oldName];
+		return Object.assign({}, state, {
+			tags,
+			currentPlayList: action.newName,
 		});
 	case 'REMOVE_VIDEO':
 		entities = Object.assign({}, state.entities);
@@ -147,10 +167,17 @@ const mediaPlayer = (state = initialState, action) => {
 	case 'ADD_SEARCH_RESULT':
 		entities = Object.assign({}, state.entities);
 		entities[action.video.id] = action.video;
-		if (state.playList.includes(action.video.id)) return state;
+		tags = Object.assign({}, state.tags);
+		if (state.currentPlayList) tags[state.currentPlayList] = [...tags[state.currentPlayList], action.video.id];
+		if (state.playList.includes(action.video.id)) {
+			return Object.assign({}, state, {
+				tags,
+			});
+		}
 		return Object.assign({}, state, {
 			playList: [...state.playList, action.video.id],
 			entities,
+			tags,
 		});
 	case 'PAUSE':
 		return Object.assign({}, state, {
@@ -229,15 +256,25 @@ const mediaPlayer = (state = initialState, action) => {
 			skipToTime: action.s,
 		});
 	case 'MOVE_PLAYLIST_MEDIA':
-		const playList = state.playList.filter(id => id !== action.mediaId);
-		playList.splice(playList.indexOf(action.beforeThisMediaId), 0, action.mediaId);
+		if(state.currentPlayList) {
+			tags = Object.assign({}, state.tags);
+			tags[state.currentPlayList] = action.playList;
+			return Object.assign({}, state, {
+				tags,
+			});
+		}
 		return Object.assign({}, state, {
-			playList,
+			playList: action.playList,
 		});
 	case 'ADD_TAGS':
 		mediaIds = action.mediaIds || [];
 		tag = action.tag || state.currentPlayList;
-		if (!tag) return state;
+		if (!tag) {
+			let counter = 1;
+			do {
+				tag = `Playlist ${counter}`;
+			} while(state.tags[`Playlist ${counter++}`]);
+		}
 		if (state.tags[tag]) mediaIds = [...state.tags[tag], ...mediaIds];
 		tags = Object.assign({}, state.tags);
 		tags[tag] = mediaIds;
