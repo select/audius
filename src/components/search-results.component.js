@@ -35,7 +35,6 @@ Vue.component('search-results', {
 				Vue.nextTick(() => {
 					const el = document.querySelector(`[data-id=${this.jumpCursor.id}]`);
 					if ( el && !isElementInViewport(el))  {
-						console.log('eh hem')
 						el.scrollIntoView({ block: 'start', behavior: 'smooth' });
 					}
 				});
@@ -80,7 +79,7 @@ Vue.component('search-results', {
 			active: isPlaying(video),
 			selected: (jumpCursor && (jumpCursor.id === video.id)),
 		}"
-		v-bind:data-id="video.id">>
+		v-bind:data-id="video.id">
 		<div class="media-list__thumbnail" v-bind:style="{ backgroundImage: 'url(https://i.ytimg.com/vi/' + video.id + '/default.jpg)' }" ></div>
 		<div class="media-list__body">
 			<div class="media-list__name">{{video.title}}</div>
