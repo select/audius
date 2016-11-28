@@ -43,6 +43,17 @@ Vue.component('about-player', {
 		</dl>
 	</p>
 	<p>
+		When search is active.
+		<dl>
+			<dt>up / down</dt>
+			<dd>Select song</dd>
+			<dt>Ctrl + space</dt>
+			<dd>Add song to playlist</dd>
+			<dt>enter</dt>
+			<dd>Play selected song</dd>
+		</dl>
+	</p>
+	<p>
 		When jump to file is active.
 		<dl>
 			<dt>up / down</dt>

@@ -72,7 +72,6 @@ Vue.component('web-header', {
 			}, 800);
 		},
 		searchYoutube: debounce((event) => {
-			// store.dispatch(Actions.searchYoutube(event.target.value)); // should use this and middleware
 			searchYoutube(event.target.value);
 		}, 500),
 		skipToTime(event) {
