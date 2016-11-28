@@ -1,5 +1,5 @@
 import { createStore, applyMiddleware, compose } from 'redux';
-import { messageRelayMiddleware } from './utils/messageRelayMiddleware';
+import messageRelayMiddleware from './utils/messageRelayMiddleware';
 import { dbMiddleware, upgradePlayListMiddleware } from './utils/dbMiddleware';
 import { importURLMiddleware } from './utils/importURLMiddleware';
 import reducers from './reducers';

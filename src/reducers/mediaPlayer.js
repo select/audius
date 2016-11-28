@@ -72,27 +72,31 @@ const mediaPlayer = (state = initialState, action) => {
 	let tag;
 	let playList = state.currentPlayList ? state.tags[state.currentPlayList] : state.playList;
 	switch (action.type) {
-	case 'ERROR':
+	case 'ERROR': {
 		return Object.assign({}, state, {
 			errorMessages: [...state.errorMessages, action.message],
 		});
-	case 'DB_INIT_SUCCESS':
+	}
+	case 'DB_INIT_SUCCESS': {
 		return Object.assign({}, state, { db: action.db });
-	case 'DB_SET_SUCCESS':
+	}
+	case 'DB_SET_SUCCESS': {
 		entities = Object.assign({}, state.entities);
 		entities[action.data.id].saved = true;
 		return Object.assign({}, state, {
 			entities,
 		});
-	case 'DB_GETALL_SUCCESS':
+	}
+	case 'DB_GETALL_SUCCESS': {
 		return Object.assign({}, state, {
 			entities: Object.assign({}, state.entities, action.entities),
 		});
-	// case 'DB_GET_PLAYLIST_SUCCESS':
-	// 	return Object.assign({}, state, {
-	// 		playList: action.playList,
-	// 	});
-	case 'VIDEO_ERROR':
+		// case 'DB_GET_PLAYLIST_SUCCESS':
+		// 	return Object.assign({}, state, {
+		// 		playList: action.playList,
+		// 	});
+	}
+	case 'VIDEO_ERROR': {
 		entities = Object.assign({}, state.entities);
 		entities[action.video.id] = Object.assign({}, action.video, {
 			errorMessage: action.message,
@@ -101,7 +105,8 @@ const mediaPlayer = (state = initialState, action) => {
 		return Object.assign({}, next(state), {
 			entities,
 		});
-	case 'ADD_VIDEOS':
+	}
+	case 'ADD_VIDEOS': {
 		entities = Object.assign({}, state.entities);
 		action.videos.forEach((v) => {
 			entities[v.id] = Object.assign({}, videoBaseObject, {
@@ -114,15 +119,14 @@ const mediaPlayer = (state = initialState, action) => {
 			playList: [...state.playList, ...action.videos.map(v => v.id).filter(id => !state.playList.includes(id))],
 			entities,
 		});
-	case 'UPGRADE_PLAYLIST':
+	}
+	case 'UPGRADE_PLAYLIST': {
 		const seen = {};
 		const filteredPlaylist = [];
 		state.playList.forEach((id) => {
 			if (!seen[id] && state.entities[id]) {
 				seen[id] = true;
 				filteredPlaylist.push(id);
-			} else {
-				console.log('Filterd dupe or missing: ',id);
 			}
 		});
 		entities = {};
@@ -133,22 +137,37 @@ const mediaPlayer = (state = initialState, action) => {
 			playList: [...filteredPlaylist],
 			entities,
 		});
-	case 'IMPORT_PLAYLIST':
+	}
+	case 'IMPORT_PLAYLIST': {
 		entities = Object.assign({}, state.entities, action.data.entities);
 		playList = [...playList, ...action.data.playList.filter(id => !playList.includes(id))];
 		if (state.currentPlayList) {
 			tags = Object.assign({}, state.tags);
-			tags[state.currentPlayList] = playList
+			tags[state.currentPlayList] = playList;
 			return Object.assign({}, state, {
 				tags,
 				entities,
-			})
+			});
 		}
 		return Object.assign({}, state, {
 			playList,
 			entities,
 		});
-	case 'RENAME_PLAYLIST':
+	}
+	case 'IMPORT_OTHER_PLAYLIST': {
+		if (!state.currentPlayList) {
+			return Object.assign({}, state, {
+				playList: [...state.playList, ...state.tags[action.playListName].filter(id => !state.playList.includes(id))],
+			});
+		}
+		tags = Object.assign({}, state.tags);
+		const currentPlayList = [...tags[state.currentPlayList]];
+		tags[state.currentPlayList] = [...currentPlayList, ...state.tags[action.playListName].filter(id => !currentPlayList.includes(id))];
+		return Object.assign({}, state, {
+			tags,
+		});
+	}
+	case 'RENAME_PLAYLIST': {
 		if (state.tags[action.newName]) return state;
 		tags = Object.assign({}, state.tags);
 		tags[action.newName] = tags[action.oldName];
@@ -157,14 +176,16 @@ const mediaPlayer = (state = initialState, action) => {
 			tags,
 			currentPlayList: action.newName,
 		});
-	case 'REMOVE_VIDEO':
+	}
+	case 'REMOVE_VIDEO': {
 		entities = Object.assign({}, state.entities);
 		entities[action.video.id].deleted = true;
 		return Object.assign({}, state, {
 			playList: state.playList.filter(id => id !== action.video.id),
 			entities,
 		});
-	case 'ADD_SEARCH_RESULT':
+	}
+	case 'ADD_SEARCH_RESULT': {
 		entities = Object.assign({}, state.entities);
 		entities[action.video.id] = action.video;
 		tags = Object.assign({}, state.tags);
@@ -179,12 +200,14 @@ const mediaPlayer = (state = initialState, action) => {
 			entities,
 			tags,
 		});
-	case 'PAUSE':
+	}
+	case 'PAUSE': {
 		return Object.assign({}, state, {
 			isPlaying: false,
 			entities: state.entities,
 		});
-	case 'PLAY':
+	}
+	case 'PLAY': {
 		if (action.mediaId) mediaId = action.mediaId;
 		else mediaId = !state.mediaId ? state.playList[0] : state.mediaId;
 		let currentMedia = {};
@@ -203,17 +226,21 @@ const mediaPlayer = (state = initialState, action) => {
 			currentMedia,
 			entities,
 		});
-	case 'TOGGLE_SHUFFLE':
+	}
+	case 'TOGGLE_SHUFFLE': {
 		return Object.assign({}, state, {
 			shuffle: !state.shuffle,
 		});
-	case 'TOGGLE_MUTE':
+	}
+	case 'TOGGLE_MUTE': {
 		return Object.assign({}, state, {
 			mute: !state.mute,
 		});
-	case 'NEXT_VIDEO':
+	}
+	case 'NEXT_VIDEO': {
 		return next(state);
-	case 'PREV_VIDEO':
+	}
+	case 'PREV_VIDEO': {
 		idx = state.playList.indexOf(state.mediaId);
 		if (idx > 0) {
 			mediaId = state.playList[idx - 1];
@@ -224,11 +251,13 @@ const mediaPlayer = (state = initialState, action) => {
 			});
 		}
 		return state;
-	case 'QUEUE_MEDIA':
+	}
+	case 'QUEUE_MEDIA': {
 		return Object.assign({}, state, {
 			queue: [...state.queue, action.id],
 		});
-	case 'QUEUE_PLAY_INDEX':
+	}
+	case 'QUEUE_PLAY_INDEX': {
 		queue = [...state.queue];
 		mediaId = queue.splice(action.idx, 1)[0];
 		return Object.assign({}, state, {
@@ -237,26 +266,31 @@ const mediaPlayer = (state = initialState, action) => {
 			currentMedia: state.entities[mediaId],
 			isPlaying: true,
 		});
-	case 'QUEUE_REMOVE_INDEX':
+	}
+	case 'QUEUE_REMOVE_INDEX': {
 		queue = [...state.queue];
 		queue.splice(action.idx, 1);
 		return Object.assign({}, state, {
 			queue: [...queue],
 		});
-	case 'FILTER_PLAYLIST':
+	}
+	case 'FILTER_PLAYLIST': {
 		return Object.assign({}, state, {
 			filterQuery: action.query,
 		});
-	case 'SET_CURRENT_TIME':
+	}
+	case 'SET_CURRENT_TIME': {
 		return Object.assign({}, state, {
 			currentTime: action.time,
 		});
-	case 'SKIP_TO_TIME':
+	}
+	case 'SKIP_TO_TIME': {
 		return Object.assign({}, state, {
 			skipToTime: action.s,
 		});
-	case 'MOVE_PLAYLIST_MEDIA':
-		if(state.currentPlayList) {
+	}
+	case 'MOVE_PLAYLIST_MEDIA': {
+		if (state.currentPlayList) {
 			tags = Object.assign({}, state.tags);
 			tags[state.currentPlayList] = action.playList;
 			return Object.assign({}, state, {
@@ -266,14 +300,15 @@ const mediaPlayer = (state = initialState, action) => {
 		return Object.assign({}, state, {
 			playList: action.playList,
 		});
-	case 'ADD_TAGS':
+	}
+	case 'ADD_TAGS': {
 		mediaIds = action.mediaIds || [];
 		tag = action.tag || state.currentPlayList;
 		if (!tag) {
 			let counter = 1;
 			do {
 				tag = `Playlist ${counter}`;
-			} while(state.tags[`Playlist ${counter++}`]);
+			} while (state.tags[`Playlist ${counter++}`]);
 		}
 		if (state.tags[tag]) mediaIds = [...state.tags[tag], ...mediaIds];
 		tags = Object.assign({}, state.tags);
@@ -281,7 +316,8 @@ const mediaPlayer = (state = initialState, action) => {
 		return Object.assign({}, state, {
 			tags,
 		});
-	case 'REMOVE_TAGS':
+	}
+	case 'REMOVE_TAGS': {
 		mediaIds = action.mediaIds || [];
 		tag = action.tag || state.currentPlayList;
 		if (!tag) return state;
@@ -291,26 +327,32 @@ const mediaPlayer = (state = initialState, action) => {
 		return Object.assign({}, state, {
 			tags,
 		});
-	case 'SELECT_PLAYLIST':
+	}
+	case 'SELECT_PLAYLIST': {
 		return Object.assign({}, state, {
 			currentPlayList: action.playListName,
 			editPlayList: false,
 		});
-	case 'DELETE_PALYLIST':
+	}
+	case 'DELETE_PALYLIST': {
 		tags = Object.assign({}, state.tags);
 		delete tags[action.playListName];
 		return Object.assign({}, state, {
 			tags,
 		});
-	case 'TOGGLE_EDIT_PALYLIST':
+	}
+	case 'TOGGLE_EDIT_PALYLIST': {
 		return Object.assign({}, state, {
 			editPlayList: action.state !== undefined ? action.state : !state.editPlayList,
 			currentPlayList: action.playListName ? action.playListName : state.currentPlayList,
 		});
-	case 'RECOVER_STATE':
+	}
+	case 'RECOVER_STATE': {
 		return Object.assign({}, state, action.state);
-	default:
+	}
+	default: {
 		return state;
+	}
 	}
 };
 

@@ -10,17 +10,21 @@
  */
 export function debounceImmediate(func, wait) {
 	// we need to save these in the closure
-	var timeout, args, context, timestamp, call_count = 0;
-	return function() {
+	let timeout;
+	let args;
+	let context;
+	let timestamp;
+	let callCount = 0;
+	return () => {
 		// save details of latest call
 		context = this;
 		args = [].slice.call(arguments, 0);
 		timestamp = new Date();
 		// immediately fire on the first call
-		if (call_count == 0) {
+		if (callCount == 0) {
 			func.apply(context, args);
 		}
-		++call_count;
+		++callCount;
 		// this is where the magic happens
 		var later = function() {
 			// how long ago was the last call
@@ -33,10 +37,10 @@ export function debounceImmediate(func, wait) {
 			} else {
 				timeout = null;
 				// only fire if this was not the first call (index 0), first call aready fired
-				if (call_count > 1) {
+				if (callCount > 1) {
 					func.apply(context, args);
 				}
-				call_count = 0; // time is over reset the counter
+				callCount = 0; // time is over reset the counter
 			}
 		};
 		// we only need to set the timer now if one isn't already running
@@ -47,37 +51,40 @@ export function debounceImmediate(func, wait) {
 }
 
 export function debounce(func, wait) {
- // we need to save these in the closure
- var timeout, args, context, timestamp;
+	// we need to save these in the closure
+	let timeout;
+	let args;
+	let context;
+	let timestamp;
 
- return function() {
+	return () => {
 
-  // save details of latest call
-  context = this;
-  args = [].slice.call(arguments, 0);
-  timestamp = new Date();
+		// save details of latest call
+		context = this;
+		args = [].slice.call(arguments, 0);
+		timestamp = new date();
 
-  // this is where the magic happens
-  var later = function() {
+		// this is where the magic happens
+		var later = function() {
 
-   // how long ago was the last call
-   var last = (new Date()) - timestamp;
+			// how long ago was the last call
+			var last = (new date()) - timestamp;
 
-   // if the latest call was less that the wait period ago
-   // then we reset the timeout to wait for the difference
-   if (last < wait) {
-    timeout = setTimeout(later, wait - last);
+			// if the latest call was less that the wait period ago
+			// then we reset the timeout to wait for the difference
+			if (last < wait) {
+				timeout = settimeout(later, wait - last);
 
-   // or if not we can null out the timer and run the latest
-   } else {
-    timeout = null;
-    func.apply(context, args);
-   }
-  };
+				// or if not we can null out the timer and run the latest
+			} else {
+				timeout = null;
+				func.apply(context, args);
+			}
+		};
 
-  // we only need to set the timer now if one isn't already running
-  if (!timeout) {
-   timeout = setTimeout(later, wait);
-  }
- }
+		// we only need to set the timer now if one isn't already running
+		if (!timeout) {
+			timeout = settimeout(later, wait);
+		}
+	}
 };

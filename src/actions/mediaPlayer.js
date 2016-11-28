@@ -56,6 +56,12 @@ export const importURL = url => ({
 	url,
 });
 
+export const importOtherPlayList = playListName => ({
+	type: 'IMPORT_OTHER_PLAYLIST',
+	playListName,
+	persistState: ['playList', 'tags'],
+});
+
 export const upgradePlayList = () => ({
 	type: 'UPGRADE_PLAYLIST',
 });
@@ -167,7 +173,7 @@ export const renamePlayList = (oldName, newName) => ({
 	oldName,
 	newName,
 	persistState: 'tags',
-})
+});
 
 export const addTags = (tag, mediaIds) => ({
 	type: 'ADD_TAGS',

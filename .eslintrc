@@ -10,7 +10,8 @@
 		"no-var": ["error"],
 		"max-len": ["error", 200, 4],
 		"no-tabs": ["off"],
-		"no-confusing-arrow": ["off"]
+		"no-confusing-arrow": ["off"],
+		"no-plusplus": ["off"]
 	},
 	"ecmaFeatures": {
 		"modules": true
@@ -19,7 +20,8 @@
 		"document": true,
 		"window": true,
 		"require": true,
-		"module": true
+		"module": true,
+		"chrome": true,
 	},
 	"env": {
 		"es6": true,

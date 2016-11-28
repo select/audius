@@ -6,6 +6,7 @@
 	"main": "index.js",
 	"scripts": {
 		"start": "npm run watch:build",
+		"test": "eslint ./src/**/*.js",
 		"build:prod:app": "./node_modules/.bin/webpack --config='./config/webpack.production.app.js' --progress --profile --colors --display-error-details --display-cached",
 		"build:prod:extension": "./node_modules/.bin/webpack --config='./config/webpack.production.extension.js' --progress --profile --colors --display-error-details --display-cached",
 		"build": "./node_modules/.bin/webpack --config='./config/webpack.dev.js' --progress --profile --colors --display-error-details --display-cached",
