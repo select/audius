@@ -21,7 +21,6 @@ function getAllMediaEntities(db, callback) {
 }
 
 function recoverState(db) {
-
 	const request = db
 		.transaction(['state'], 'readonly')
 		.objectStore('state')
@@ -53,39 +52,39 @@ function recoverState(db) {
 // }
 
 function migrate(db) {
-		// TODO migrate old db
-		indexedDB.open('audius_0.02', 1).onsuccess = (event) => {
-			event.target.result
-				.transaction(['playLists'], 'readonly')
-				.objectStore('playLists')
-				.get('default')
-				.onsuccess = (event2) => {
-					db
-						.transaction(['state'], 'readwrite')
-						.objectStore('state')
-						.put(event2.target.result.playList, 'playList');
-					event.target.result
-						.transaction('mediaEntities', 'readonly')
-						.objectStore('mediaEntities')
-						.openCursor()
-						.onsuccess = (event3) => {
-							const cursor = event3.target.result;
-							if (cursor) {
-								db
-									.transaction(['mediaEntities'], 'readwrite')
-									.objectStore('mediaEntities')
-									.put(cursor.value);
-								cursor.continue();
-							} else {
-								console.log('load upgraded');
-								getAllMediaEntities(db, () => {
-									recoverState(db);
-									indexedDB.deleteDatabase('audius_0.02');
-								});
-							}
-						};
-				};
-		};
+	// TODO migrate old db
+	indexedDB.open('audius_0.02', 1).onsuccess = (event) => {
+		event.target.result
+			.transaction(['playLists'], 'readonly')
+			.objectStore('playLists')
+			.get('default')
+			.onsuccess = (event2) => {
+				db
+					.transaction(['state'], 'readwrite')
+					.objectStore('state')
+					.put(event2.target.result.playList, 'playList');
+				event.target.result
+					.transaction('mediaEntities', 'readonly')
+					.objectStore('mediaEntities')
+					.openCursor()
+					.onsuccess = (event3) => {
+						const cursor = event3.target.result;
+						if (cursor) {
+							db
+								.transaction(['mediaEntities'], 'readwrite')
+								.objectStore('mediaEntities')
+								.put(cursor.value);
+							cursor.continue();
+						} else {
+							console.log('load upgraded');
+							getAllMediaEntities(db, () => {
+								recoverState(db);
+								indexedDB.deleteDatabase('audius_0.02');
+							});
+						}
+					};
+			};
+	};
 }
 
 
@@ -106,7 +105,7 @@ if (!('indexedDB' in window)) {
 		}
 	};
 	openRequest.onsuccess = (event) => {
-		indexedDB.webkitGetDatabaseNames().onsuccess = (sender, args) => {
+		indexedDB.webkitGetDatabaseNames().onsuccess = (sender) => {
 			const dbs = Object.keys(sender.target.result).map(key => sender.target.result[key]);
 			if (dbs.includes('audius_0.02')) {
 				console.log('%c Upgrading Audius from 0.02 to 0.03!', 'background: red; color: white');
@@ -139,7 +138,7 @@ export function storageStats() {
 		(used, granted) => {
 			console.log('granted: ', granted);
 			const percent = 100 * used / granted;
-			if (percent === 100) gui.warn('IndexDB full!');
+			if (percent === 100) console.warn('IndexDB full!');
 			console.log(`## ${percent.toPrecision(2)}% storage used`);
 		},
 		error => {

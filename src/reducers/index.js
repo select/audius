@@ -6,10 +6,10 @@ import website from './website';
 import extension from './extension';
 
 export default combineReducers({
-  mediaPlayer,
-  config,
-  youtube,
-  website,
-  extension,
-})
+	mediaPlayer,
+	config,
+	youtube,
+	website,
+	extension,
+});
 

@@ -23,7 +23,7 @@ Vue.component('play-list-manager', {
 	methods: {
 		addTags() {
 			const el = document.querySelector('.play-list-manager__input input');
-			store.dispatch(Actions.addTags(el.value))
+			store.dispatch(Actions.addTags(el.value));
 			el.value = '';
 		},
 		selectPlayList(name) {
@@ -33,8 +33,8 @@ Vue.component('play-list-manager', {
 			event.stopPropagation();
 			store.dispatch(Actions.deletePlayList(name));
 		},
-		togglePlayLists () {
-			store.dispatch(Actions.togglePlayLists())
+		togglePlayLists() {
+			store.dispatch(Actions.togglePlayLists());
 		},
 		toggleEditPlayList(name, event) {
 			event.stopPropagation();

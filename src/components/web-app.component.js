@@ -1,6 +1,4 @@
-import Vue from 'vue/dist/vue.js';
-import store from '../store';
-import Actions from '../actions';
+import Vue from 'vue/dist/vue';
 import './web-app.component.sass';
 
 Vue.component('web-app', {

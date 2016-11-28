@@ -1,4 +1,4 @@
-import Vue from 'vue/dist/vue.js';
+import Vue from 'vue/dist/vue';
 import store from '../store';
 import Actions from '../actions';
 import './extension-app.component.sass';

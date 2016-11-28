@@ -17,8 +17,8 @@ Vue.component('video-item', {
 	],
 	data() {
 		return {
-			copyActive: false
-		}
+			copyActive: false,
+		};
 	},
 	methods: {
 		play() {
@@ -26,10 +26,10 @@ Vue.component('video-item', {
 			else store.dispatch(Actions.play(this.video.id));
 		},
 		pause() { store.dispatch(Actions.pause()); },
-		menu(){ store.dispatch(Actions.menuVideo(this.video.id)); },
+		menu() { store.dispatch(Actions.menuVideo(this.video.id)); },
 		remove() {
 			if (this.isPlayList) {
-				store.dispatch(Actions.removeTags(undefined, [this.video.id]))
+				store.dispatch(Actions.removeTags(undefined, [this.video.id]));
 			} else if (this.isQueue) {
 				store.dispatch(Actions.queueRemoveIndex(this.queueIndex));
 			} else {
@@ -41,20 +41,20 @@ Vue.component('video-item', {
 		},
 		copyToClip() {
 			window.getSelection().removeAllRanges();
-			const tmpEl = document.createElement('div')
+			const tmpEl = document.createElement('div');
 			tmpEl.innerHTML = `${this.video.title} https://youtu.be/${this.video.id}`;
 			document.body.appendChild(tmpEl);
 
-			let range = document.createRange();
+			const range = document.createRange();
 			range.selectNode(tmpEl);
 			window.getSelection().addRange(range);
 
 			try {
-				const successful = document.execCommand('copy');
+				document.execCommand('copy');
 				this.copyActive = true;
 				setTimeout(() => {
 					this.copyActive = false;
-				}, 800)
+				}, 800);
 			} catch (err) {
 				console.log('execCommand Error', err);
 			}
@@ -67,9 +67,9 @@ Vue.component('video-item', {
 		addTags() {
 			if (this.isEditPlayList) {
 				if (!this.isInPlayList) {
-					store.dispatch(Actions.addTags(undefined, [this.video.id]))
+					store.dispatch(Actions.addTags(undefined, [this.video.id]));
 				} else {
-					store.dispatch(Actions.removeTags(undefined, [this.video.id]))
+					store.dispatch(Actions.removeTags(undefined, [this.video.id]));
 				}
 			}
 		},

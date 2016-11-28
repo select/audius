@@ -1,3 +1,4 @@
+/* eslint no-new: "off" */
 import Vue from 'vue/dist/vue';
 
 import '../components/web-app.component';

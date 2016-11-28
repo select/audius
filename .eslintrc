@@ -17,16 +17,14 @@
 		"modules": true
 	},
 	"globals": {
-		"document": true,
-		"window": true,
-		"require": true,
 		"module": true,
 		"chrome": true,
 	},
 	"env": {
 		"es6": true,
 		"browser": true,
-		"jasmine": true
+		"jasmine": true,
+		"commonjs": true,
 	},
 	"extends": "airbnb",
 	"parser": "babel-eslint" // we need to use this since ESLint does not support ES6 Decorators

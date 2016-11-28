@@ -9,16 +9,13 @@ const youtubeExtract1 = /youtu.be\/([\w-]+)/;
 const youtubeExtract2 = /youtube.com\/watch\?v=([\w-]+)/;
 
 
-
 export default function findVideos() {
 	const youtubeUrls = Array
 		.from(document.querySelectorAll('a'))
 		.map(el => el.href.match(youtubeRegEx) ? el.href : null)
 		.filter(link => link);
-	console.log('youtubeUrls 1', youtubeUrls.length)
 
-	Array.from(document.querySelectorAll('iframe')).forEach(iframe => {
-		console.log('searching iframe')
+	Array.from(document.querySelectorAll('iframe')).forEach((iframe) => {
 		const innerDoc = iframe.contentDocument || iframe.contentWindow.document;
 		youtubeUrls.concat(
 			Array
@@ -26,7 +23,6 @@ export default function findVideos() {
 				.map(el => el.href.match(youtubeRegEx) ? el.href : null)
 				.filter(link => link)
 		);
-		console.log('youtubeUrls 2', youtubeUrls.length)
 	});
 
 	// too many ids! must split up

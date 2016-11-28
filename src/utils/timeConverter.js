@@ -35,9 +35,9 @@ export function s2time(sms) {
  * @return {integer} seconds
  */
 export function time2s(duration) {
-	duration.s = parseInt(duration.s);
-	const t = Object.assign({h: 0, m: 0, s: 0}, duration);
-	return ((t.h * 60 + t.m) * 60 + t.s);
+	duration.s = parseInt(duration.s, 10);
+	const t = Object.assign({ h: 0, m: 0, s: 0 }, duration);
+	return ((((t.h * 60) + t.m) * 60) + t.s);
 }
 
 

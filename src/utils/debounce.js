@@ -21,14 +21,14 @@ export function debounceImmediate(func, wait) {
 		args = [].slice.call(arguments, 0);
 		timestamp = new Date();
 		// immediately fire on the first call
-		if (callCount == 0) {
+		if (callCount === 0) {
 			func.apply(context, args);
 		}
 		++callCount;
 		// this is where the magic happens
-		var later = function() {
+		const later = () => {
 			// how long ago was the last call
-			var last = (new Date()) - timestamp;
+			const last = (new Date()) - timestamp;
 			// if the latest call was less that the wait period ago
 			// then we reset the timeout to wait for the difference
 			if (last < wait) {
@@ -58,22 +58,20 @@ export function debounce(func, wait) {
 	let timestamp;
 
 	return () => {
-
 		// save details of latest call
 		context = this;
 		args = [].slice.call(arguments, 0);
-		timestamp = new date();
+		timestamp = new Date();
 
 		// this is where the magic happens
-		var later = function() {
-
+		const later = () => {
 			// how long ago was the last call
-			var last = (new date()) - timestamp;
+			const last = (new Date()) - timestamp;
 
 			// if the latest call was less that the wait period ago
 			// then we reset the timeout to wait for the difference
 			if (last < wait) {
-				timeout = settimeout(later, wait - last);
+				timeout = setTimeout(later, wait - last);
 
 				// or if not we can null out the timer and run the latest
 			} else {
@@ -84,7 +82,7 @@ export function debounce(func, wait) {
 
 		// we only need to set the timer now if one isn't already running
 		if (!timeout) {
-			timeout = settimeout(later, wait);
+			timeout = setTimeout(later, wait);
 		}
-	}
-};
+	};
+}

@@ -1,4 +1,4 @@
-import Vue from 'vue/dist/vue.js'
+import Vue from 'vue/dist/vue'
 
 import '../components/extension-app.component';
 import '../components/video-item.component';

@@ -16,25 +16,25 @@ Vue.component('search-results', {
 	},
 	created() {
 		document.addEventListener('keydown', (event) => {
-			if(this.website.mainRightTab === 'search') {
+			if (this.website.mainRightTab === 'search') {
 				if (this.jumpCursor.id && event.key === 'Enter') {
 					store.dispatch(Actions.play(this.jumpCursor.id, this.jumpCursor));
-				} else if(this.jumpCursor.id && event.ctrlKey && event.key === ' ') {
-					this.addToPlaylist(this.jumpCursor)
-				} else if(event.key === 'ArrowDown') {
+				} else if (this.jumpCursor.id && event.ctrlKey && event.key === ' ') {
+					this.addToPlaylist(this.jumpCursor);
+				} else if (event.key === 'ArrowDown') {
 					event.preventDefault();
 					if (!this.jumpCursor) this.jumpCursor = this.youtube.results[0];
-					else if (this.youtube.results.indexOf(this.jumpCursor) >= this.youtube.results.length - 1) this.jumpCursor =  this.youtube.results[0];
+					else if (this.youtube.results.indexOf(this.jumpCursor) >= this.youtube.results.length - 1) this.jumpCursor = this.youtube.results[0];
 					else this.jumpCursor = this.youtube.results[this.youtube.results.indexOf(this.jumpCursor) + 1];
-				} else if(event.key === 'ArrowUp') {
+				} else if (event.key === 'ArrowUp') {
 					event.preventDefault();
 					if (!this.jumpCursor) this.jumpCursor = this.youtube.results[this.youtube.results.length - 1];
-					else if (this.youtube.results.indexOf(this.jumpCursor) <= 0) this.jumpCursor =  this.youtube.results[this.youtube.results.length -1];
+					else if (this.youtube.results.indexOf(this.jumpCursor) <= 0) this.jumpCursor = this.youtube.results[this.youtube.results.length - 1];
 					else this.jumpCursor = this.youtube.results[this.youtube.results.indexOf(this.jumpCursor) - 1];
 				}
 				Vue.nextTick(() => {
 					const el = document.querySelector(`[data-id=${this.jumpCursor.id}]`);
-					if ( el && !isElementInViewport(el))  {
+					if (el && !isElementInViewport(el)) {
 						el.scrollIntoView({ block: 'start', behavior: 'smooth' });
 					}
 				});
@@ -63,7 +63,7 @@ Vue.component('search-results', {
 				if (el) {
 					if (!isElementInViewport(el)) el.scrollIntoView({ block: 'start', behavior: 'smooth' });
 					el.classList.add('au--highlight');
-					setTimeout(() => {el.classList.remove('au--highlight');}, 1000);
+					setTimeout(() => { el.classList.remove('au--highlight'); }, 1000);
 				}
 			});
 		},
