@@ -10,7 +10,6 @@ function saveState(store, action) {
 		.transaction(['state'], 'readwrite')
 		.objectStore('state');
 
-	console.dir('presis array')
 	if (action.persistState.constructor === Array) {
 		action.persistState.forEach(propName => {
 			dbStore
