@@ -17,6 +17,10 @@ export const showChat = () => ({
 	type: 'SHOW_CHAT',
 });
 
+export const showSettings = () => ({
+	type: 'SHOW_SETTINGS',
+});
+
 export const toggleImport = state => ({
 	type: 'TOGGLE_IMPORT',
 	state,

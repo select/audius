@@ -5,6 +5,7 @@ import AboutPlayer from './about-player.vue';
 import SearchResults from './search-results.vue';
 import Queue from './queue.vue';
 import YoutubePlayer from './youtube-player.vue';
+import Settings from './settings.vue';
 
 export default {
 	name: 'main-right',
@@ -13,6 +14,7 @@ export default {
 		SearchResults,
 		Queue,
 		YoutubePlayer,
+		Settings,
 	},
 	data() {
 		return {
@@ -49,13 +51,17 @@ export default {
 			v-if="state.website.showChat"
 			v-on:click="store.dispatch(Actions.setMainRightTab('chat'))"
 			v-bind:class="{ active: state.website.mainRightTab == 'chat' }">Chat</li>
+		<li
+			v-if="state.website.showSettings"
+			v-on:click="store.dispatch(Actions.setMainRightTab('settings'))"
+			v-bind:class="{ active: state.website.mainRightTab == 'settings' }">Settings</li>
 	</ul>
 	<div class="main-right__content" v-show="state.website.mainRightTab">
 		<about-player v-show="state.website.mainRightTab == 'about'"></about-player>
 		<search-results v-show="state.website.mainRightTab == 'search'"></search-results>
 		<queue v-show="state.website.mainRightTab == 'queue'"></queue>
-		<div class="audius-chat" v-show="state.website.mainRightTab == 'chat'">
-		</div>
+		<div class="audius-chat" v-show="state.website.mainRightTab == 'chat'"> </div>
+		<settings v-show="state.website.mainRightTab == 'settings'"></settings>
 	</div>
 	<div
 		class="main-right__player"

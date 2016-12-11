@@ -1,5 +1,6 @@
 import { duration } from '../utils/timeConverter';
 import { videoBaseObject } from './video';
+import youtubeApiKey from '../utils/youtubeApiKey';
 
 const initialState = {
 	db: undefined,
@@ -21,6 +22,7 @@ const initialState = {
 	currentMedia: {},
 	currentPlayList: '',
 	editPlayList: false,
+	youtubeApiKey,
 };
 
 function next(state) {
@@ -349,6 +351,10 @@ const mediaPlayer = (state = initialState, action) => {
 	}
 	case 'RECOVER_STATE': {
 		return Object.assign({}, state, action.state);
+	}
+	case 'SET_YOUTUBE_API_KEY': {
+		if (!action.youtubeApiKey) return Object.assign({}, state, { youtubeApiKey });
+		return Object.assign({}, state, { youtubeApiKey: action.youtubeApiKey });
 	}
 	default: {
 		return state;

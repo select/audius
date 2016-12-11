@@ -34,6 +34,11 @@ const website = (state = initialState, action) => {
 			showChat: true,
 			mainRightTab: 'chat',
 		});
+	case 'SHOW_SETTINGS':
+		return Object.assign({}, state, {
+			showSettings: true,
+			mainRightTab: 'settings',
+		});
 	case 'TOGGLE_IMPORT':
 		return Object.assign({}, state, {
 			showImport: action.state !== undefined ? action.state : !state.showImport,

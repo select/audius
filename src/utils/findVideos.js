@@ -2,7 +2,6 @@ import store from '../store';
 import Actions from '../actions';
 import ajax from './ajax';
 
-const YOUTUBE_API_KEY = store.getState().config.youtubeApiKey;
 
 const youtubeRegEx = /(youtube.com)|(youtu.be)/;
 const youtubeExtract1 = /youtu.be\/([\w-]+)/;
@@ -10,6 +9,7 @@ const youtubeExtract2 = /youtube.com\/watch\?v=([\w-]+)/;
 
 
 export default function findVideos() {
+	const YOUTUBE_API_KEY = store.getState().mediaPlayer.youtubeApiKey;
 	const youtubeUrls = Array
 		.from(document.querySelectorAll('a'))
 		.map(el => el.href.match(youtubeRegEx) ? el.href : null)

@@ -3,7 +3,7 @@ import Vue from 'vue/dist/vue';
 import store from '../store';
 import Actions from '../actions';
 import { debounce } from '../utils/debounce';
-import searchYoutube from '../utils/searchYoutube';
+import searchYoutubeUtil from '../utils/searchYoutube';
 import { s2time, time2s } from '../utils/timeConverter';
 import isElementInViewport from '../utils/isElementInViewport';
 
@@ -70,11 +70,12 @@ export default {
 		delayBlur() {
 			this.blurTimer = setTimeout(() => {
 				store.dispatch(Actions.toggleSearch(false));
+				document.querySelector('.au-header__search-input').blur();
 			}, 800);
 		},
-		searchYoutube: debounce((event) => {
-			searchYoutube(event.target.value);
-		}, 500),
+		searchYoutube: debounce(() => {
+			searchYoutubeUtil(document.querySelector('.au-header__search-input').value);
+		}, 300),
 		skipToTime(event) {
 			if (this.currentMedia) {
 				store.dispatch(
@@ -122,16 +123,17 @@ export default {
 						v-on:click="stopPropagation"
 						v-on:keyup="searchYoutube"
 						v-on:keyup.esc="clear"
-						v-on:blur="delayBlur"
-						debounce="500">
+						v-on:blur="delayBlur">
 					<span class="wmp-icon-close" v-show="website.showSearch" v-on:click="clear"></span>
 				</div>
-				<div v-on:click="store.dispatch(Actions.toggleMute())">
-					<span class="wmp-icon-volume_up" v-if="!mediaPlayer.mute"></span>
-					<span class="wmp-icon-volume_off" v-else></span>
-				</div>
-				<span class="wmp-icon-queue_music" v-on:click="store.dispatch(Actions.togglePlayLists())"></span>
-				<!-- <span class="wmp-icon-more_vert"></span> -->
+				<span
+					class="wmp-icon-queue_music"
+					title="Toggle playlists"
+					v-on:click="store.dispatch(Actions.togglePlayLists())"></span>
+				<span
+					class="wmp-icon-more_vert"
+					title="Show settings"
+					v-on:click="store.dispatch(Actions.showSettings())"></span>
 			</div>
 		</div>
 		<div class="au-header__control-bar">
@@ -157,6 +159,10 @@ export default {
 						v-on:click="store.dispatch(Actions.toggleShuffle())"
 						v-bind:class="{ active: mediaPlayer.shuffle }"
 						title="[s] Shuffle"></span>
+					<div v-on:click="store.dispatch(Actions.toggleMute())">
+						<span class="wmp-icon-volume_up" v-if="!mediaPlayer.mute"></span>
+						<span class="wmp-icon-volume_off" v-else></span>
+					</div>
 					<!-- <span
 						class="au-header__repeat wmp-icon-repeat"
 						v-on:click="store.dispatch(Actions.togglePlayList())"
@@ -221,7 +227,7 @@ header
 	transition: all $transition-time
 	border-radius: $border-radius
 	background: rgba(255, 255, 255, 0.3)
-	// width: 10em
+	margin-right: $grid-space
 	&.active
 		background: $color-white
 		color: $color-pictonblue
@@ -259,6 +265,8 @@ header
 	.au-header__controls-small
 		display: flex
 		align-items: center
+		div
+			height: $touch-size-medium
 		span:before
 			font-size: 1.5em
 .au-header__progress

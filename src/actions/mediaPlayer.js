@@ -194,3 +194,9 @@ export const recoverState = state => ({
 	type: 'RECOVER_STATE',
 	state,
 });
+
+export const setYoutubeApiKey = youtubeApiKey => ({
+	type: 'SET_YOUTUBE_API_KEY',
+	youtubeApiKey,
+	persistState: 'youtubeApiKey',
+})
