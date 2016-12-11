@@ -4,6 +4,7 @@ const webpack = require('webpack');
 const autoprefixer = require('autoprefixer');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const CircularDependencyPlugin = require('circular-dependency-plugin');
+const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin');
 
 const configDev = require('./webpack.dev.js')
 
@@ -34,5 +35,17 @@ module.exports = Object.assign(configDev, {
 		new CircularDependencyPlugin({
 			failOnError: true
 		}),
+		new SWPrecacheWebpackPlugin(
+			{
+				cacheId: 'audius',
+				filename: 'service-worker.js',
+				maximumFileSizeToCacheInBytes: 4194304,
+				stripPrefix: 'dist-website/'
+				// runtimeCaching: [{
+				// 	handler: 'cacheFirst',
+				// 	urlPattern: /[.]mp3$/,
+				// }],
+			}
+		),
 	],
 });
