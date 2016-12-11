@@ -56,9 +56,8 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	_vue2.default.config.devtools = true;
-	
 	// chrome-extension://lmhkpmbekcpmknklioeibfkpmmfibljd/js/redux-devtools-extension.js
+	_vue2.default.config.devtools = true;
 
 /***/ },
 /* 1 */
@@ -9454,15 +9453,15 @@
 	
 	__webpack_require__(4);
 	
-	__webpack_require__(49);
+	__webpack_require__(51);
 	
-	__webpack_require__(52);
-	
-	__webpack_require__(55);
-	
-	__webpack_require__(56);
+	__webpack_require__(54);
 	
 	__webpack_require__(57);
+	
+	__webpack_require__(58);
+	
+	__webpack_require__(59);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -9498,9 +9497,9 @@
 	
 	var _actions2 = _interopRequireDefault(_actions);
 	
-	__webpack_require__(43);
+	__webpack_require__(45);
 	
-	var _findVideos = __webpack_require__(47);
+	var _findVideos = __webpack_require__(49);
 	
 	var _findVideos2 = _interopRequireDefault(_findVideos);
 	
@@ -9567,9 +9566,13 @@
 	
 	var _messageRelayMiddleware = __webpack_require__(28);
 	
+	var _messageRelayMiddleware2 = _interopRequireDefault(_messageRelayMiddleware);
+	
 	var _dbMiddleware = __webpack_require__(29);
 	
-	var _reducers = __webpack_require__(35);
+	var _importURLMiddleware = __webpack_require__(36);
+	
+	var _reducers = __webpack_require__(38);
 	
 	var _reducers2 = _interopRequireDefault(_reducers);
 	
@@ -9579,19 +9582,20 @@
 	if (process && (true) === true) {
 		if (process && ({"extension":true}).NODE_ENV === 'production' || document.querySelectorAll('#audius-website').length) {
 			console.log('extension store production');
-			store = (0, _redux.createStore)(_reducers2.default, (0, _redux.applyMiddleware)(_messageRelayMiddleware.messageRelayMiddleware));
+			store = (0, _redux.createStore)(_reducers2.default, (0, _redux.applyMiddleware)(_messageRelayMiddleware2.default));
 		} else {
 			console.log('extension store dev');
 			var composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || _redux.compose;
-			store = (0, _redux.createStore)(_reducers2.default, composeEnhancers(_redux.applyMiddleware.apply(undefined, [_messageRelayMiddleware.messageRelayMiddleware])));
+			store = (0, _redux.createStore)(_reducers2.default, composeEnhancers(_redux.applyMiddleware.apply(undefined, [_messageRelayMiddleware2.default])));
 		}
 	} else {
 		console.log('website store production: ', ({"extension":true}).NODE_ENV);
+		var middleware = [_dbMiddleware.dbMiddleware, _importURLMiddleware.importURLMiddleware, _dbMiddleware.upgradePlayListMiddleware];
 		if (process && ({"extension":true}).NODE_ENV === 'production') {
-			store = (0, _redux.createStore)(_reducers2.default, (0, _redux.applyMiddleware)(_dbMiddleware.dbMiddleware));
+			store = (0, _redux.createStore)(_reducers2.default, _redux.applyMiddleware.apply(undefined, middleware));
 		} else {
 			var _composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || _redux.compose;
-			store = (0, _redux.createStore)(_reducers2.default, _composeEnhancers(_redux.applyMiddleware.apply(undefined, [_dbMiddleware.dbMiddleware])));
+			store = (0, _redux.createStore)(_reducers2.default, _composeEnhancers(_redux.applyMiddleware.apply(undefined, middleware)));
 		}
 	}
 	exports.default = store;
@@ -10823,21 +10827,27 @@
 	Object.defineProperty(exports, "__esModule", {
 		value: true
 	});
+	
 	// relay messages from store to background script
-	var messageRelayMiddleware = exports.messageRelayMiddleware = function messageRelayMiddleware(store) {
+	exports.default = function (store) {
 		return function (next) {
 			return function (action) {
-				var extension = store.getState().extension;
 				var result = next(action);
 				if (['NEXT_VIDEO', 'PREV_VIDEO'].includes(action.type)) {
-					var _extension = store.getState().extension;
-					chrome.runtime.sendMessage({ audius: true, action: {
+					var extension = store.getState().extension;
+					chrome.runtime.sendMessage({
+						audius: true,
+						action: {
 							type: 'PLAY',
-							mediaId: _extension.mediaId,
-							currentMedia: _extension.currentMedia
-						} }); // Send message to background script.
+							mediaId: extension.mediaId,
+							currentMedia: extension.currentMedia
+						}
+					}); // Send message to background script.
 				} else if (['PLAY', 'PAUSE', 'TOGGLE_MUTE', 'QUEUE_MEDIA', 'ADD_SEARCH_RESULT', 'SEARCH_AUDIUS_TAB'].includes(action.type)) {
-					chrome.runtime.sendMessage({ audius: true, action: action }); // Send message to background script.
+					chrome.runtime.sendMessage({
+						audius: true,
+						action: action
+					}); // Send message to background script.
 				}
 				return result;
 			};
@@ -10853,61 +10863,80 @@
 	Object.defineProperty(exports, "__esModule", {
 		value: true
 	});
-	exports.dbMiddleware = undefined;
-	exports.setPlayList = setPlayList;
-	exports.setMediaEntity = setMediaEntity;
+	exports.upgradePlayListMiddleware = exports.dbMiddleware = undefined;
 	
 	var _actions = __webpack_require__(30);
 	
 	var _actions2 = _interopRequireDefault(_actions);
 	
+	var _timeConverter = __webpack_require__(35);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	function exists(store, storeName, id, callback) {
-		var request = store.getState().mediaPlayer.db.transaction(['playLists'], 'readonly').objectStore('playLists').get('default');
-		request.onerror = function (event) {
-			return store.dispatch(_actions2.default.error('DB Error ' + event.target.error.name));
+	function dbFromStore(store) {
+		return store.getState().mediaPlayer.db;
+	}
+	
+	function saveState(store, action) {
+		var dbStore = dbFromStore(store).transaction(['state'], 'readwrite').objectStore('state');
+	
+		if (action.persistState.constructor === Array) {
+			action.persistState.forEach(function (propName) {
+				dbStore.put(store.getState().mediaPlayer[propName], propName).onerror = function (event2) {
+					return store.dispatch(_actions2.default.error('DB Error ' + event2.target.error.name));
+				};
+			});
+		} else {
+			dbStore.put(store.getState().mediaPlayer[action.persistState], action.persistState).onerror = function (event2) {
+				return store.dispatch(_actions2.default.error('DB Error ' + event2.target.error.name));
+			};
+		}
+	}
+	
+	// function savePlayList(store) {
+	// 	const dbStore = dbFromStore(store)
+	// 		.transaction(['playLists'], 'readwrite')
+	// 		.objectStore('playLists');
+	// 	const request = dbStore.put({ id: 'default', playList: store.getState().mediaPlayer.playList });
+	// 	request.onerror = event2 => store.dispatch(Actions.error(`DB Error ${event2.target.error.name}`));
+	// }
+	
+	function setMediaEntity(store, data) {
+		var dbStore = dbFromStore(store).transaction(['mediaEntities'], 'readwrite').objectStore('mediaEntities');
+		var request = dbStore.put(data);
+		request.onerror = function (event2) {
+			return store.dispatch(_actions2.default.error('DB Error ' + event2.target.error.name));
 		};
-		request.onsuccess = callback;
-	}
-	
-	function setPlayList(store) {
-		exists(store, 'playList', 'default', function (event) {
-			var dbStore = store.getState().mediaPlayer.db.transaction(['playLists'], 'readwrite').objectStore('playLists');
-			var action = event.target.result ? 'put' : 'add';
-			var request = dbStore[action]({ id: 'default', playList: store.getState().mediaPlayer.playList });
-			request.onerror = function (event2) {
-				return store.dispatch(_actions2.default.error('DB Error ' + event2.target.error.name));
-			};
-		});
-	}
-	
-	function setMediaEntity(store, data, actionType) {
-		console.log('setMediaEntity middleware!');
-		exists(store, 'mediaEntities', 'default', function (event) {
-			var dbStore = store.getState().mediaPlayer.db.transaction(['mediaEntities'], 'readwrite').objectStore('mediaEntities');
-			var action = event.target.result ? 'put' : 'add';
-			var request = dbStore[action](data);
-			request.onsuccess = function () {
-				return store.dispatch({ type: '${actionType}_SUCCESS' });
-			};
-			request.onerror = function (event2) {
-				return store.dispatch(_actions2.default.error('DB Error ' + event2.target.error.name));
-			};
-			setPlayList(store);
-		});
+		// savePlayList(store);
 	}
 	
 	var dbMiddleware = exports.dbMiddleware = function dbMiddleware(store) {
 		return function (next) {
 			return function (action) {
 				var result = next(action);
-				if (action.type === 'MOVE_PLAYLIST_MEDIA') {
-					setPlayList(store);
-				}
 				if (['ADD_SEARCH_RESULT', 'REMOVE_VIDEO', 'VIDEO_ERROR'].includes(action.type)) {
-					console.log('middleware!!');
 					setMediaEntity(store, action.video, action.type);
+				}
+				if (action.persistState) {
+					saveState(store, action);
+				}
+				return result;
+			};
+		};
+	};
+	
+	var upgradePlayListMiddleware = exports.upgradePlayListMiddleware = function upgradePlayListMiddleware(store) {
+		return function (next) {
+			return function (action) {
+				var result = next(action);
+				if (action.type === 'UPGRADE_PLAYLIST') {
+					(function () {
+						var entities = store.getState().mediaPlayer.entities;
+						Object.keys(entities).forEach(function (key) {
+							if (entities[key].durationS === 0) entities[key].durationS = (0, _timeConverter.time2s)(entities[key].duration);
+							setMediaEntity(store, entities[key], action.type);
+						});
+					})();
 				}
 				return result;
 			};
@@ -11064,16 +11093,32 @@
 		};
 	};
 	
-	var dedupePlayList = exports.dedupePlayList = function dedupePlayList() {
+	var importURL = exports.importURL = function importURL(url) {
 		return {
-			type: 'DEDUPE_PLAYLIST'
+			type: 'IMPORT_URL',
+			url: url
+		};
+	};
+	
+	var importOtherPlayList = exports.importOtherPlayList = function importOtherPlayList(playListName) {
+		return {
+			type: 'IMPORT_OTHER_PLAYLIST',
+			playListName: playListName,
+			persistState: ['playList', 'tags']
+		};
+	};
+	
+	var upgradePlayList = exports.upgradePlayList = function upgradePlayList() {
+		return {
+			type: 'UPGRADE_PLAYLIST'
 		};
 	};
 	
 	var removeVideo = exports.removeVideo = function removeVideo(video) {
 		return {
 			type: 'REMOVE_VIDEO',
-			video: video
+			video: video,
+			persistState: ['playList', 'tags']
 		};
 	};
 	
@@ -11081,7 +11126,8 @@
 		var video = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 		return {
 			type: 'ADD_SEARCH_RESULT',
-			video: video
+			video: video,
+			persistState: ['playList', 'tags']
 		};
 	};
 	
@@ -11092,10 +11138,11 @@
 		};
 	};
 	
-	var play = exports.play = function play(mediaId) {
+	var play = exports.play = function play(mediaId, currentMedia) {
 		return {
 			type: 'PLAY',
-			mediaId: mediaId
+			mediaId: mediaId,
+			currentMedia: currentMedia
 		};
 	};
 	
@@ -11125,7 +11172,8 @@
 	
 	var toggleShuffle = exports.toggleShuffle = function toggleShuffle() {
 		return {
-			type: 'TOGGLE_SHUFFLE'
+			type: 'TOGGLE_SHUFFLE',
+			persistState: 'shuffle'
 		};
 	};
 	
@@ -11176,11 +11224,70 @@
 		};
 	};
 	
-	var movePlayListMedia = exports.movePlayListMedia = function movePlayListMedia(mediaId, beforeThisMediaId) {
+	var movePlayListMedia = exports.movePlayListMedia = function movePlayListMedia(playList) {
 		return {
 			type: 'MOVE_PLAYLIST_MEDIA',
-			mediaId: mediaId,
-			beforeThisMediaId: beforeThisMediaId
+			playList: playList,
+			persistState: ['playList', 'tags']
+		};
+	};
+	
+	var selectPlayList = exports.selectPlayList = function selectPlayList(playListName) {
+		return {
+			type: 'SELECT_PLAYLIST',
+			playListName: playListName,
+			persistState: 'currentPlayList'
+		};
+	};
+	
+	var deletePlayList = exports.deletePlayList = function deletePlayList(playListName) {
+		return {
+			type: 'DELETE_PALYLIST',
+			playListName: playListName,
+			persistState: 'tags'
+		};
+	};
+	
+	var toggleEditPlayList = exports.toggleEditPlayList = function toggleEditPlayList(playListName, state) {
+		return {
+			type: 'TOGGLE_EDIT_PALYLIST',
+			state: state,
+			playListName: playListName,
+			persistState: 'currentPlayList'
+		};
+	};
+	
+	var renamePlayList = exports.renamePlayList = function renamePlayList(oldName, newName) {
+		return {
+			type: 'RENAME_PLAYLIST',
+			oldName: oldName,
+			newName: newName,
+			persistState: 'tags'
+		};
+	};
+	
+	var addTags = exports.addTags = function addTags(tag, mediaIds) {
+		return {
+			type: 'ADD_TAGS',
+			tag: tag,
+			mediaIds: mediaIds,
+			persistState: 'tags'
+		};
+	};
+	
+	var removeTags = exports.removeTags = function removeTags(tag, mediaIds) {
+		return {
+			type: 'REMOVE_TAGS',
+			tag: tag,
+			mediaIds: mediaIds,
+			persistState: 'tags'
+		};
+	};
+	
+	var recoverState = exports.recoverState = function recoverState(state) {
+		return {
+			type: 'RECOVER_STATE',
+			state: state
 		};
 	};
 
@@ -11227,6 +11334,13 @@
 			state: state
 		};
 	};
+	
+	var togglePlayLists = exports.togglePlayLists = function togglePlayLists(state) {
+		return {
+			type: 'TOGGLE_PLAYLISTS',
+			state: state
+		};
+	};
 
 /***/ },
 /* 34 */
@@ -11265,359 +11379,6 @@
 
 /***/ },
 /* 35 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _redux = __webpack_require__(7);
-	
-	var _mediaPlayer = __webpack_require__(36);
-	
-	var _mediaPlayer2 = _interopRequireDefault(_mediaPlayer);
-	
-	var _config = __webpack_require__(39);
-	
-	var _config2 = _interopRequireDefault(_config);
-	
-	var _youtube = __webpack_require__(40);
-	
-	var _youtube2 = _interopRequireDefault(_youtube);
-	
-	var _website = __webpack_require__(41);
-	
-	var _website2 = _interopRequireDefault(_website);
-	
-	var _extension = __webpack_require__(42);
-	
-	var _extension2 = _interopRequireDefault(_extension);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	exports.default = (0, _redux.combineReducers)({
-	  mediaPlayer: _mediaPlayer2.default,
-	  config: _config2.default,
-	  youtube: _youtube2.default,
-	  website: _website2.default,
-	  extension: _extension2.default
-	});
-
-/***/ },
-/* 36 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-	
-	var _timeConverter = __webpack_require__(37);
-	
-	var _video = __webpack_require__(38);
-	
-	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-	
-	var initialState = {
-		db: undefined,
-		errorMessages: '',
-		entities: {},
-		mediaId: '',
-		playList: [],
-		queue: [],
-		isPlaying: false,
-		shuffle: false,
-		repeat1: false,
-		repeatAll: false,
-		showSearch: false,
-		filterQuery: '',
-		currentTime: 0,
-		skipToTime: 0,
-		mute: false
-	};
-	
-	function next(state) {
-		var idx = state.playList.indexOf(state.mediaId);
-		var mediaId = void 0;
-		if (state.queue.length) {
-			// Play next song from queue.
-			var queue = [].concat(_toConsumableArray(state.queue));
-			mediaId = queue.shift();
-			return Object.assign({}, state, {
-				mediaId: mediaId,
-				queue: [].concat(_toConsumableArray(queue)),
-				isPlaying: true
-			});
-		} else if (state.shuffle) {
-			// Play a random song.
-			return Object.assign({}, state, {
-				mediaId: state.playList[Math.floor(Math.random() * state.playList.length)],
-				isPlaying: true
-			});
-		} else if (idx === state.playList.length - 1) {
-			// If last song on play list, stop playing.
-			return Object.assign({}, state, {
-				isPlaying: false
-			});
-		} else if (idx < state.playList.length - 1) {
-			// Play the next song.
-			mediaId = state.playList[idx + 1];
-			return Object.assign({}, state, {
-				mediaId: mediaId,
-				isPlaying: true
-			});
-		}
-		return state;
-	}
-	
-	var mediaPlayer = function mediaPlayer() {
-		var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : initialState;
-		var action = arguments[1];
-	
-		var idx = void 0;
-		var mediaId = void 0;
-		var entities = void 0;
-		var queue = void 0;
-		var newEntity;
-	
-		var _ret = function () {
-			switch (action.type) {
-				case 'ERROR':
-					return {
-						v: Object.assign({}, state, {
-							errorMessages: [].concat(_toConsumableArray(state.errorMessages), [action.message])
-						})
-					};
-				case 'DB_INIT_SUCCESS':
-					return {
-						v: Object.assign({}, state, { db: action.db })
-					};
-				case 'DB_SET_SUCCESS':
-					entities = Object.assign({}, state.entities);
-					entities[action.data.id].saved = true;
-					return {
-						v: Object.assign({}, state, {
-							entities: entities
-						})
-					};
-				case 'DB_GETALL_SUCCESS':
-					return {
-						v: Object.assign({}, state, {
-							entities: Object.assign({}, state.entities, action.entities)
-						})
-					};
-				case 'DB_GET_PLAYLIST_SUCCESS':
-					return {
-						v: Object.assign({}, state, {
-							playList: action.playList
-						})
-					};
-				case 'VIDEO_ERROR':
-					state.entities[action.video.id] = Object.assign({}, action.video, {
-						errorMessage: action.message,
-						hasError: true
-					});
-					return {
-						v: Object.assign({}, next(state), {
-							entities: state.entities
-						})
-					};
-				case 'ADD_VIDEOS':
-					entities = Object.assign({}, state.entities);
-					action.videos.forEach(function (v) {
-						entities[v.id] = Object.assign({}, _video.videoBaseObject, {
-							title: v.snippet.title,
-							duration: (0, _timeConverter.duration)(v.contentDetails.duration),
-							id: v.id
-						});
-					});
-					return {
-						v: Object.assign({}, state, {
-							playList: [].concat(_toConsumableArray(state.playList), _toConsumableArray(action.videos.map(function (v) {
-								return v.id;
-							}).filter(function (id) {
-								return !state.playList.includes(id);
-							}))),
-							entities: entities
-						})
-					};
-				case 'DEDUPE_PLAYLIST':
-					var seen = {};
-					var filteredPlaylist = [];
-					state.playList.forEach(function (id) {
-						if (!seen[id] && state.entities[id]) {
-							seen[id] = true;
-							filteredPlaylist.push(id);
-						} else {
-							console.log('Filterd dupe or missing: ', id);
-						}
-					});
-					return {
-						v: Object.assign({}, state, {
-							playList: [].concat(filteredPlaylist)
-						})
-					};
-				case 'IMPORT_PLAYLIST':
-					return {
-						v: Object.assign({}, state, {
-							playList: [].concat(_toConsumableArray(state.playList), _toConsumableArray(action.data.playList.filter(function (id) {
-								return !state.playList.includes(id);
-							}))),
-							entities: Object.assign({}, state.entities, action.data.entities)
-						})
-					};
-				case 'REMOVE_VIDEO':
-					entities = Object.assign({}, state.entities);
-					entities[action.video.id].deleted = true;
-					return {
-						v: Object.assign({}, state, {
-							playList: state.playList.filter(function (id) {
-								return id !== action.video.id;
-							}),
-							entities: entities
-						})
-					};
-				case 'ADD_SEARCH_RESULT':
-					entities = Object.assign({}, state.entities);
-					entities[action.video.id] = action.video;
-					if (state.playList.includes(action.video.id)) return {
-							v: state
-						};
-					return {
-						v: Object.assign({}, state, {
-							playList: [].concat(_toConsumableArray(state.playList), [action.video.id]),
-							entities: entities
-						})
-					};
-				case 'PAUSE':
-					return {
-						v: Object.assign({}, state, {
-							isPlaying: false,
-							entities: state.entities
-						})
-					};
-				case 'PLAY':
-					if (action.mediaId) mediaId = action.mediaId;else mediaId = !state.mediaId ? state.playList[0] : state.mediaId;
-					var currentMedia = {};
-					if (action.currentMedia) {
-						newEntity = {};
-	
-						newEntity[mediaId] = action.currentMedia;
-						entities = Object.assign({}, state.entities, newEntity);
-						currentMedia = action.currentMedia;
-					} else {
-						currentMedia = {};
-						entities = state.entities;
-					}
-					return {
-						v: Object.assign({}, state, {
-							isPlaying: !!(currentMedia || state.playList.length),
-							mediaId: mediaId,
-							currentMedia: currentMedia,
-							entities: entities
-						})
-					};
-				case 'TOGGLE_SHUFFLE':
-					return {
-						v: Object.assign({}, state, {
-							shuffle: !state.shuffle
-						})
-					};
-				case 'TOGGLE_MUTE':
-					return {
-						v: Object.assign({}, state, {
-							mute: !state.mute
-						})
-					};
-				case 'NEXT_VIDEO':
-					return {
-						v: next(state)
-					};
-				case 'PREV_VIDEO':
-					idx = state.playList.indexOf(state.mediaId);
-					if (idx > 0) {
-						mediaId = state.playList[idx - 1];
-						return {
-							v: Object.assign({}, state, {
-								mediaId: state.playList[idx - 1],
-								isPlaying: true
-							})
-						};
-					}
-					return {
-						v: state
-					};
-				case 'QUEUE_MEDIA':
-					return {
-						v: Object.assign({}, state, {
-							queue: [].concat(_toConsumableArray(state.queue), [action.id])
-						})
-					};
-				case 'QUEUE_PLAY_INDEX':
-					queue = [].concat(_toConsumableArray(state.queue));
-					mediaId = queue.splice(action.idx, 1);
-					return {
-						v: Object.assign({}, state, {
-							queue: [].concat(_toConsumableArray(queue)),
-							mediaId: mediaId[0],
-							isPlaying: true
-						})
-					};
-				case 'QUEUE_REMOVE_INDEX':
-					queue = [].concat(_toConsumableArray(state.queue));
-					queue.splice(action.idx, 1);
-					return {
-						v: Object.assign({}, state, {
-							queue: [].concat(_toConsumableArray(queue))
-						})
-					};
-				case 'FILTER_PLAYLIST':
-					return {
-						v: Object.assign({}, state, {
-							filterQuery: action.query
-						})
-					};
-				case 'SET_CURRENT_TIME':
-					return {
-						v: Object.assign({}, state, {
-							currentTime: action.time
-						})
-					};
-				case 'SKIP_TO_TIME':
-					return {
-						v: Object.assign({}, state, {
-							skipToTime: action.s
-						})
-					};
-				case 'MOVE_PLAYLIST_MEDIA':
-					var playList = state.playList.filter(function (id) {
-						return id !== action.mediaId;
-					});
-					playList.splice(playList.indexOf(action.beforeThisMediaId), 0, action.mediaId);
-					return {
-						v: Object.assign({}, state, {
-							playList: playList
-						})
-					};
-				default:
-					return {
-						v: state
-					};
-			}
-		}();
-	
-		if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
-	};
-	
-	exports.default = mediaPlayer;
-
-/***/ },
-/* 37 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -11665,7 +11426,7 @@
 	 * @return {integer} seconds
 	 */
 	function time2s(duration) {
-		duration.s = parseInt(duration.s);
+		duration.s = parseInt(duration.s, 10);
 		var t = Object.assign({ h: 0, m: 0, s: 0 }, duration);
 		return (t.h * 60 + t.m) * 60 + t.s;
 	}
@@ -11680,7 +11441,545 @@
 	}
 
 /***/ },
+/* 36 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	exports.importURLMiddleware = undefined;
+	
+	var _actions = __webpack_require__(30);
+	
+	var _actions2 = _interopRequireDefault(_actions);
+	
+	var _injectScript = __webpack_require__(37);
+	
+	var _injectScript2 = _interopRequireDefault(_injectScript);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	// relay messages from store to background script
+	var importURLMiddleware = exports.importURLMiddleware = function importURLMiddleware(store) {
+		return function (next) {
+			return function (action) {
+				var result = next(action);
+				if (action.type === 'IMPORT_URL') {
+					(0, _injectScript2.default)(action.url, function () {
+						store.dispatch(_actions2.default.importPlayList(window.getAudiusPlaylist()));
+					});
+				}
+				return result;
+			};
+		};
+	};
+
+/***/ },
+/* 37 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	exports.default = injectScript;
+	function injectScript(url, callback) {
+		var tag = document.createElement('script');
+		var r = false;
+		tag.src = url;
+		tag.onload = tag.onreadystatechange = function () {
+			if (!r && (!this.readyState || this.readyState === 'complete')) {
+				r = true;
+				if (callback) callback();
+			}
+		};
+		document.head.appendChild(tag);
+	}
+
+/***/ },
 /* 38 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	
+	var _redux = __webpack_require__(7);
+	
+	var _mediaPlayer = __webpack_require__(39);
+	
+	var _mediaPlayer2 = _interopRequireDefault(_mediaPlayer);
+	
+	var _config = __webpack_require__(41);
+	
+	var _config2 = _interopRequireDefault(_config);
+	
+	var _youtube = __webpack_require__(42);
+	
+	var _youtube2 = _interopRequireDefault(_youtube);
+	
+	var _website = __webpack_require__(43);
+	
+	var _website2 = _interopRequireDefault(_website);
+	
+	var _extension = __webpack_require__(44);
+	
+	var _extension2 = _interopRequireDefault(_extension);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.default = (0, _redux.combineReducers)({
+		mediaPlayer: _mediaPlayer2.default,
+		config: _config2.default,
+		youtube: _youtube2.default,
+		website: _website2.default,
+		extension: _extension2.default
+	});
+
+/***/ },
+/* 39 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+	
+	var _timeConverter = __webpack_require__(35);
+	
+	var _video = __webpack_require__(40);
+	
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+	
+	var initialState = {
+		db: undefined,
+		errorMessages: '',
+		entities: {},
+		mediaId: '',
+		playList: [],
+		tags: {},
+		queue: [],
+		isPlaying: false,
+		shuffle: false,
+		repeat1: false,
+		repeatAll: false,
+		showSearch: false,
+		filterQuery: '',
+		currentTime: 0,
+		skipToTime: 0,
+		mute: false,
+		currentMedia: {},
+		currentPlayList: '',
+		editPlayList: false
+	};
+	
+	function next(state) {
+		var playList = state.currentPlayList ? state.tags[state.currentPlayList] : state.playList;
+		var idx = playList.indexOf(state.mediaId);
+		var mediaId = void 0;
+		if (state.queue.length) {
+			// Play next song from queue.
+			var queue = [].concat(_toConsumableArray(state.queue));
+			mediaId = queue.shift();
+			return Object.assign({}, state, {
+				mediaId: mediaId,
+				currentMedia: state.entities[mediaId],
+				queue: [].concat(_toConsumableArray(queue)),
+				isPlaying: true
+			});
+		} else if (state.shuffle) {
+			// Play a random song.
+			mediaId = playList[Math.floor(Math.random() * playList.length)];
+			return Object.assign({}, state, {
+				mediaId: mediaId,
+				currentMedia: state.entities[mediaId],
+				isPlaying: true
+			});
+		} else if (idx === state.playList.length - 1) {
+			// If last song on play list, stop playing.
+			return Object.assign({}, state, {
+				isPlaying: false
+			});
+		} else if (idx < state.playList.length - 1) {
+			// Play the next song.
+			mediaId = playList[idx + 1];
+			return Object.assign({}, state, {
+				mediaId: mediaId,
+				currentMedia: state.entities[mediaId],
+				isPlaying: true
+			});
+		}
+		return state;
+	}
+	
+	var mediaPlayer = function mediaPlayer() {
+		var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : initialState;
+		var action = arguments[1];
+	
+		var idx = void 0;
+		var mediaId = void 0;
+		var entities = void 0;
+		var queue = void 0;
+		var tags = void 0;
+		var mediaIds = void 0;
+		var tag = void 0;
+		var playList = state.currentPlayList ? state.tags[state.currentPlayList] : state.playList;
+		switch (action.type) {
+			case 'ERROR':
+				{
+					return Object.assign({}, state, {
+						errorMessages: [].concat(_toConsumableArray(state.errorMessages), [action.message])
+					});
+				}
+			case 'DB_INIT_SUCCESS':
+				{
+					return Object.assign({}, state, { db: action.db });
+				}
+			case 'DB_SET_SUCCESS':
+				{
+					entities = Object.assign({}, state.entities);
+					entities[action.data.id].saved = true;
+					return Object.assign({}, state, {
+						entities: entities
+					});
+				}
+			case 'DB_GETALL_SUCCESS':
+				{
+					return Object.assign({}, state, {
+						entities: Object.assign({}, state.entities, action.entities)
+					});
+					// case 'DB_GET_PLAYLIST_SUCCESS':
+					// 	return Object.assign({}, state, {
+					// 		playList: action.playList,
+					// 	});
+				}
+			case 'VIDEO_ERROR':
+				{
+					entities = Object.assign({}, state.entities);
+					entities[action.video.id] = Object.assign({}, action.video, {
+						errorMessage: action.message,
+						hasError: true
+					});
+					return Object.assign({}, next(state), {
+						entities: entities
+					});
+				}
+			case 'ADD_VIDEOS':
+				{
+					entities = Object.assign({}, state.entities);
+					action.videos.forEach(function (v) {
+						entities[v.id] = Object.assign({}, _video.videoBaseObject, {
+							title: v.snippet.title,
+							duration: (0, _timeConverter.duration)(v.contentDetails.duration),
+							id: v.id
+						});
+					});
+					return Object.assign({}, state, {
+						playList: [].concat(_toConsumableArray(state.playList), _toConsumableArray(action.videos.map(function (v) {
+							return v.id;
+						}).filter(function (id) {
+							return !state.playList.includes(id);
+						}))),
+						entities: entities
+					});
+				}
+			case 'UPGRADE_PLAYLIST':
+				{
+					var _ret = function () {
+						var seen = {};
+						var filteredPlaylist = [];
+						state.playList.forEach(function (id) {
+							if (!seen[id] && state.entities[id]) {
+								seen[id] = true;
+								filteredPlaylist.push(id);
+							}
+						});
+						entities = {};
+						Object.keys(state.entities).forEach(function (key) {
+							entities[key] = Object.assign({}, _video.videoBaseObject, state.entities[key]);
+						});
+						return {
+							v: Object.assign({}, state, {
+								playList: [].concat(filteredPlaylist),
+								entities: entities
+							})
+						};
+					}();
+	
+					if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
+				}
+			case 'IMPORT_PLAYLIST':
+				{
+					entities = Object.assign({}, state.entities, action.data.entities);
+					playList = [].concat(_toConsumableArray(playList), _toConsumableArray(action.data.playList.filter(function (id) {
+						return !playList.includes(id);
+					})));
+					if (state.currentPlayList) {
+						tags = Object.assign({}, state.tags);
+						tags[state.currentPlayList] = playList;
+						return Object.assign({}, state, {
+							tags: tags,
+							entities: entities
+						});
+					}
+					return Object.assign({}, state, {
+						playList: playList,
+						entities: entities
+					});
+				}
+			case 'IMPORT_OTHER_PLAYLIST':
+				{
+					var _ret2 = function () {
+						if (!state.currentPlayList) {
+							return {
+								v: Object.assign({}, state, {
+									playList: [].concat(_toConsumableArray(state.playList), _toConsumableArray(state.tags[action.playListName].filter(function (id) {
+										return !state.playList.includes(id);
+									})))
+								})
+							};
+						}
+						tags = Object.assign({}, state.tags);
+						var currentPlayList = [].concat(_toConsumableArray(tags[state.currentPlayList]));
+						tags[state.currentPlayList] = [].concat(_toConsumableArray(currentPlayList), _toConsumableArray(state.tags[action.playListName].filter(function (id) {
+							return !currentPlayList.includes(id);
+						})));
+						return {
+							v: Object.assign({}, state, {
+								tags: tags
+							})
+						};
+					}();
+	
+					if ((typeof _ret2 === 'undefined' ? 'undefined' : _typeof(_ret2)) === "object") return _ret2.v;
+				}
+			case 'RENAME_PLAYLIST':
+				{
+					if (state.tags[action.newName]) return state;
+					tags = Object.assign({}, state.tags);
+					tags[action.newName] = tags[action.oldName];
+					delete tags[action.oldName];
+					return Object.assign({}, state, {
+						tags: tags,
+						currentPlayList: action.newName
+					});
+				}
+			case 'REMOVE_VIDEO':
+				{
+					entities = Object.assign({}, state.entities);
+					entities[action.video.id].deleted = true;
+					return Object.assign({}, state, {
+						playList: state.playList.filter(function (id) {
+							return id !== action.video.id;
+						}),
+						entities: entities
+					});
+				}
+			case 'ADD_SEARCH_RESULT':
+				{
+					entities = Object.assign({}, state.entities);
+					entities[action.video.id] = action.video;
+					tags = Object.assign({}, state.tags);
+					if (state.currentPlayList) tags[state.currentPlayList] = [].concat(_toConsumableArray(tags[state.currentPlayList]), [action.video.id]);
+					if (state.playList.includes(action.video.id)) {
+						return Object.assign({}, state, {
+							tags: tags
+						});
+					}
+					return Object.assign({}, state, {
+						playList: [].concat(_toConsumableArray(state.playList), [action.video.id]),
+						entities: entities,
+						tags: tags
+					});
+				}
+			case 'PAUSE':
+				{
+					return Object.assign({}, state, {
+						isPlaying: false,
+						entities: state.entities
+					});
+				}
+			case 'PLAY':
+				{
+					if (action.mediaId) mediaId = action.mediaId;else mediaId = !state.mediaId ? state.playList[0] : state.mediaId;
+					var currentMedia = {};
+					if (action.currentMedia) {
+						var newEntity = {};
+						newEntity[mediaId] = action.currentMedia;
+						entities = Object.assign({}, state.entities, newEntity);
+						currentMedia = action.currentMedia;
+					} else {
+						currentMedia = state.entities[mediaId];
+						entities = state.entities;
+					}
+					return Object.assign({}, state, {
+						isPlaying: !!(currentMedia || state.playList.length),
+						mediaId: mediaId,
+						currentMedia: currentMedia,
+						entities: entities
+					});
+				}
+			case 'TOGGLE_SHUFFLE':
+				{
+					return Object.assign({}, state, {
+						shuffle: !state.shuffle
+					});
+				}
+			case 'TOGGLE_MUTE':
+				{
+					return Object.assign({}, state, {
+						mute: !state.mute
+					});
+				}
+			case 'NEXT_VIDEO':
+				{
+					return next(state);
+				}
+			case 'PREV_VIDEO':
+				{
+					idx = state.playList.indexOf(state.mediaId);
+					if (idx > 0) {
+						mediaId = state.playList[idx - 1];
+						return Object.assign({}, state, {
+							mediaId: mediaId,
+							currentMedia: state.entities[mediaId],
+							isPlaying: true
+						});
+					}
+					return state;
+				}
+			case 'QUEUE_MEDIA':
+				{
+					return Object.assign({}, state, {
+						queue: [].concat(_toConsumableArray(state.queue), [action.id])
+					});
+				}
+			case 'QUEUE_PLAY_INDEX':
+				{
+					queue = [].concat(_toConsumableArray(state.queue));
+					mediaId = queue.splice(action.idx, 1)[0];
+					return Object.assign({}, state, {
+						queue: [].concat(_toConsumableArray(queue)),
+						mediaId: mediaId,
+						currentMedia: state.entities[mediaId],
+						isPlaying: true
+					});
+				}
+			case 'QUEUE_REMOVE_INDEX':
+				{
+					queue = [].concat(_toConsumableArray(state.queue));
+					queue.splice(action.idx, 1);
+					return Object.assign({}, state, {
+						queue: [].concat(_toConsumableArray(queue))
+					});
+				}
+			case 'FILTER_PLAYLIST':
+				{
+					return Object.assign({}, state, {
+						filterQuery: action.query
+					});
+				}
+			case 'SET_CURRENT_TIME':
+				{
+					return Object.assign({}, state, {
+						currentTime: action.time
+					});
+				}
+			case 'SKIP_TO_TIME':
+				{
+					return Object.assign({}, state, {
+						skipToTime: action.s
+					});
+				}
+			case 'MOVE_PLAYLIST_MEDIA':
+				{
+					if (state.currentPlayList) {
+						tags = Object.assign({}, state.tags);
+						tags[state.currentPlayList] = action.playList;
+						return Object.assign({}, state, {
+							tags: tags
+						});
+					}
+					return Object.assign({}, state, {
+						playList: action.playList
+					});
+				}
+			case 'ADD_TAGS':
+				{
+					mediaIds = action.mediaIds || [];
+					tag = action.tag || state.currentPlayList;
+					if (!tag) {
+						var counter = 1;
+						do {
+							tag = 'Playlist ' + counter;
+						} while (state.tags['Playlist ' + counter++]);
+					}
+					if (state.tags[tag]) mediaIds = [].concat(_toConsumableArray(state.tags[tag]), _toConsumableArray(mediaIds));
+					tags = Object.assign({}, state.tags);
+					tags[tag] = mediaIds;
+					return Object.assign({}, state, {
+						tags: tags
+					});
+				}
+			case 'REMOVE_TAGS':
+				{
+					mediaIds = action.mediaIds || [];
+					tag = action.tag || state.currentPlayList;
+					if (!tag) return state;
+					if (state.tags[tag]) mediaIds = state.tags[tag].filter(function (id) {
+						return !mediaIds.includes(id);
+					});
+					tags = Object.assign({}, state.tags);
+					tags[tag] = mediaIds;
+					return Object.assign({}, state, {
+						tags: tags
+					});
+				}
+			case 'SELECT_PLAYLIST':
+				{
+					return Object.assign({}, state, {
+						currentPlayList: action.playListName,
+						editPlayList: false
+					});
+				}
+			case 'DELETE_PALYLIST':
+				{
+					tags = Object.assign({}, state.tags);
+					delete tags[action.playListName];
+					return Object.assign({}, state, {
+						tags: tags
+					});
+				}
+			case 'TOGGLE_EDIT_PALYLIST':
+				{
+					return Object.assign({}, state, {
+						editPlayList: action.state !== undefined ? action.state : !state.editPlayList,
+						currentPlayList: action.playListName ? action.playListName : state.currentPlayList
+					});
+				}
+			case 'RECOVER_STATE':
+				{
+					return Object.assign({}, state, action.state);
+				}
+			default:
+				{
+					return state;
+				}
+		}
+	};
+	
+	exports.default = mediaPlayer;
+
+/***/ },
+/* 40 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -11699,7 +11998,7 @@
 	};
 
 /***/ },
-/* 39 */
+/* 41 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -11710,24 +12009,29 @@
 	var initialState = {
 		youtubeApiKey: 'AIzaSyCHVgsa5owudn4G79IX9pcRcrVNOmgKHuM'
 	};
+	
 	var config = function config() {
 		var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : initialState;
 		var action = arguments[1];
 	
 		switch (action.type) {
 			case 'SET_YOUTUBE_API_KEY':
-				return {
-					youtubeApiKey: action.youtubeApiKey
-				};
+				{
+					return {
+						youtubeApiKey: action.youtubeApiKey
+					};
+				}
 			default:
-				return state;
+				{
+					return state;
+				}
 		}
 	};
 	
 	exports.default = config;
 
 /***/ },
-/* 40 */
+/* 42 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -11736,9 +12040,9 @@
 		value: true
 	});
 	
-	var _timeConverter = __webpack_require__(37);
+	var _timeConverter = __webpack_require__(35);
 	
-	var _video = __webpack_require__(38);
+	var _video = __webpack_require__(40);
 	
 	var initialState = {
 		query: '',
@@ -11780,7 +12084,7 @@
 	exports.default = config;
 
 /***/ },
-/* 41 */
+/* 43 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -11793,7 +12097,8 @@
 		showJump: false,
 		mainRightTab: 'about',
 		showChat: false,
-		showImport: false
+		showImport: false,
+		showPlayLists: false
 	};
 	
 	var website = function website() {
@@ -11830,6 +12135,10 @@
 				return Object.assign({}, state, {
 					showImport: action.state !== undefined ? action.state : !state.showImport
 				});
+			case 'TOGGLE_PLAYLISTS':
+				return Object.assign({}, state, {
+					showPlayLists: action.state !== undefined ? action.state : !state.showPlayLists
+				});
 			default:
 				return state;
 		}
@@ -11838,7 +12147,7 @@
 	exports.default = website;
 
 /***/ },
-/* 42 */
+/* 44 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -11848,9 +12157,9 @@
 	});
 	exports.default = extension;
 	
-	var _timeConverter = __webpack_require__(37);
+	var _timeConverter = __webpack_require__(35);
 	
-	var _video = __webpack_require__(38);
+	var _video = __webpack_require__(40);
 	
 	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 	
@@ -11986,16 +12295,16 @@
 	};
 
 /***/ },
-/* 43 */
+/* 45 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(44);
+	var content = __webpack_require__(46);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(46)(content, {});
+	var update = __webpack_require__(48)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -12012,21 +12321,21 @@
 	}
 
 /***/ },
-/* 44 */
+/* 46 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(45)();
+	exports = module.exports = __webpack_require__(47)();
 	// imports
 	
 	
 	// module
-	exports.push([module.id, "ul.media-list {\n  list-style: none;\n  padding: 0;\n  margin: 0;\n  overflow-x: hidden; }\n  ul.media-list li {\n    height: 8vmin;\n    padding: 0 1vmin;\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: flex;\n    -webkit-box-align: center;\n        -ms-flex-align: center;\n            align-items: center;\n    -webkit-transition: all 250ms;\n    transition: all 250ms; }\n    ul.media-list li:hover {\n      background: #EFF1F7; }\n      ul.media-list li:hover .media-list__controls {\n        display: -webkit-box;\n        display: -ms-flexbox;\n        display: flex;\n        -webkit-box-align: center;\n            -ms-flex-align: center;\n                align-items: center; }\n    ul.media-list li.active {\n      background: #2DA7EF;\n      color: #fff; }\n      ul.media-list li.active a,\n      ul.media-list li.active span:hover {\n        color: #fff; }\n\n.media-list__thumbnail {\n  cursor: move;\n  width: 7vmin;\n  height: 7vmin;\n  background-size: cover;\n  background-position: center;\n  border-radius: 50%;\n  margin-right: 1vmin; }\n\n.media-list li.error .media-list__body {\n  text-decoration: line-through; }\n\n.media-list__body {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: column;\n          flex-direction: column;\n  -webkit-box-pack: center;\n      -ms-flex-pack: center;\n          justify-content: center;\n  -webkit-box-flex: 1;\n      -ms-flex: 1;\n          flex: 1;\n  overflow-x: hidden;\n  height: 100%; }\n  .media-list__body .media-list__name {\n    line-height: 1.2em;\n    white-space: nowrap;\n    overflow: hidden;\n    text-overflow: ellipsis; }\n  .media-list__body .media-list__duration {\n    color: #A8ADB7; }\n\n.media-list__controls {\n  display: none; }\n  .media-list__controls span {\n    cursor: pointer;\n    -webkit-transition: all 250ms;\n    transition: all 250ms; }\n    .media-list__controls span:hover {\n      color: #2DA7EF; }\n\n.audius {\n  background: rgba(255, 255, 255, 0.9);\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: column;\n          flex-direction: column;\n  max-height: 394px;\n  overflow: hidden;\n  position: absolute;\n  top: 0;\n  right: 0; }\n  .audius ::-webkit-scrollbar {\n    width: 5px; }\n    .audius ::-webkit-scrollbar:hover {\n      width: 10px; }\n  .audius ::-webkit-scrollbar-track {\n    background: #EFF1F7; }\n  .audius ::-webkit-scrollbar-thumb {\n    background: #A8ADB7; }\n\n.audius__error {\n  color: #d0021b;\n  text-align: center;\n  width: 14em; }\n  .audius__error .button {\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: flex;\n    -webkit-box-pack: center;\n        -ms-flex-pack: center;\n            justify-content: center;\n    -webkit-box-align: center;\n        -ms-flex-align: center;\n            align-items: center; }\n\n.audius__media-list-wrapper {\n  width: 33em;\n  -webkit-box-flex: 1;\n      -ms-flex: 1;\n          flex: 1;\n  overflow-y: auto; }\n\n.audius__shuffle,\n.audius__repeat,\n.audius__show-play-list {\n  color: #E2E4E9; }\n  .audius__shuffle.active,\n  .audius__repeat.active,\n  .audius__show-play-list.active {\n    color: #2DA7EF; }\n\n.audius__controls {\n  width: 100%;\n  display: -webkit-inline-box;\n  display: -ms-inline-flexbox;\n  display: inline-flex;\n  -webkit-box-pack: end;\n      -ms-flex-pack: end;\n          justify-content: flex-end;\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n  min-height: 7vmin; }\n  .audius__controls span {\n    cursor: pointer; }\n  .audius__controls .spacer {\n    width: 2vmin; }\n  .audius__controls .audius__play-pause {\n    height: 7vmin; }\n    .audius__controls .audius__play-pause span:before {\n      font-size: 2.5em; }\n\n.audius__play-list-controls {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: horizontal;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: row;\n          flex-direction: row; }\n  .audius__play-list-controls[disabled] span {\n    color: #E2E4E9;\n    pointer-events: none; }\n\n.audius__youtube-player {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-pack: end;\n      -ms-flex-pack: end;\n          justify-content: flex-end; }\n", ""]);
+	exports.push([module.id, "ul.media-list {\n  list-style: none;\n  padding: 0;\n  margin: 0;\n  overflow-x: hidden; }\n  ul.media-list li {\n    height: 8vmin;\n    padding: 0 1vmin;\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: flex;\n    -webkit-box-align: center;\n        -ms-flex-align: center;\n            align-items: center;\n    -webkit-transition: all 250ms;\n    transition: all 250ms; }\n    ul.media-list li:hover {\n      background: #EFF1F7; }\n      ul.media-list li:hover .media-list__controls {\n        display: -webkit-box;\n        display: -ms-flexbox;\n        display: flex;\n        -webkit-box-align: center;\n            -ms-flex-align: center;\n                align-items: center; }\n    ul.media-list li.active {\n      background: #2DA7EF;\n      color: #fff; }\n      ul.media-list li.active a,\n      ul.media-list li.active span:hover {\n        color: #fff; }\n    ul.media-list li.error .media-list__body {\n      text-decoration: line-through; }\n    ul.media-list li.selected {\n      background: #C8CCD5; }\n\n.media-list__thumbnail {\n  cursor: move;\n  width: 7vmin;\n  height: 7vmin;\n  background-size: cover;\n  background-position: center;\n  border-radius: 50%;\n  margin-right: 1vmin; }\n\n.media-list__body {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: column;\n          flex-direction: column;\n  -webkit-box-pack: center;\n      -ms-flex-pack: center;\n          justify-content: center;\n  -webkit-box-flex: 1;\n      -ms-flex: 1;\n          flex: 1;\n  overflow-x: hidden;\n  height: 100%; }\n  .media-list__body .media-list__name {\n    line-height: 1.2em;\n    white-space: nowrap;\n    overflow: hidden;\n    text-overflow: ellipsis; }\n  .media-list__body .media-list__duration {\n    color: #A8ADB7; }\n\n.media-list__controls {\n  display: none; }\n  .media-list__controls > div {\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: flex; }\n  .media-list__controls span {\n    cursor: pointer;\n    -webkit-transition: all 250ms;\n    transition: all 250ms; }\n    .media-list__controls span:hover {\n      color: #2DA7EF; }\n\n.media-list__more-controls > div {\n  display: none; }\n\n.media-list__more-controls:hover > div {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex; }\n\n.media-list__more-controls:hover > span {\n  display: none; }\n\n.audius {\n  background: rgba(255, 255, 255, 0.9);\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: column;\n          flex-direction: column;\n  max-height: 394px;\n  overflow: hidden;\n  position: absolute;\n  top: 0;\n  right: 0; }\n  .audius ::-webkit-scrollbar {\n    width: 5px; }\n    .audius ::-webkit-scrollbar:hover {\n      width: 10px; }\n  .audius ::-webkit-scrollbar-track {\n    background: #EFF1F7; }\n  .audius ::-webkit-scrollbar-thumb {\n    background: #A8ADB7; }\n\n.audius__error {\n  color: #d0021b;\n  text-align: center;\n  width: 14em; }\n  .audius__error .button {\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: flex;\n    -webkit-box-pack: center;\n        -ms-flex-pack: center;\n            justify-content: center;\n    -webkit-box-align: center;\n        -ms-flex-align: center;\n            align-items: center; }\n\n.audius__media-list-wrapper {\n  width: 33em;\n  -webkit-box-flex: 1;\n      -ms-flex: 1;\n          flex: 1;\n  overflow-y: auto; }\n\n.audius__shuffle,\n.audius__repeat,\n.audius__show-play-list {\n  color: #E2E4E9; }\n  .audius__shuffle.active,\n  .audius__repeat.active,\n  .audius__show-play-list.active {\n    color: #2DA7EF; }\n\n.audius__controls {\n  width: 100%;\n  display: -webkit-inline-box;\n  display: -ms-inline-flexbox;\n  display: inline-flex;\n  -webkit-box-pack: end;\n      -ms-flex-pack: end;\n          justify-content: flex-end;\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n  min-height: 7vmin; }\n  .audius__controls span {\n    cursor: pointer; }\n  .audius__controls .spacer {\n    width: 2vmin; }\n  .audius__controls .audius__play-pause {\n    height: 7vmin; }\n    .audius__controls .audius__play-pause span:before {\n      font-size: 2.5em; }\n\n.audius__play-list-controls {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: horizontal;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: row;\n          flex-direction: row; }\n  .audius__play-list-controls[disabled] span {\n    color: #E2E4E9;\n    pointer-events: none; }\n\n.audius__youtube-player {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-pack: end;\n      -ms-flex-pack: end;\n          justify-content: flex-end; }\n", ""]);
 	
 	// exports
 
 
 /***/ },
-/* 45 */
+/* 47 */
 /***/ function(module, exports) {
 
 	/*
@@ -12082,7 +12391,7 @@
 
 
 /***/ },
-/* 46 */
+/* 48 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -12334,7 +12643,7 @@
 
 
 /***/ },
-/* 47 */
+/* 49 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -12352,7 +12661,7 @@
 	
 	var _actions2 = _interopRequireDefault(_actions);
 	
-	var _ajax = __webpack_require__(48);
+	var _ajax = __webpack_require__(50);
 	
 	var _ajax2 = _interopRequireDefault(_ajax);
 	
@@ -12372,17 +12681,14 @@
 		}).filter(function (link) {
 			return link;
 		});
-		console.log('youtubeUrls 1', youtubeUrls.length);
 	
 		Array.from(document.querySelectorAll('iframe')).forEach(function (iframe) {
-			console.log('searching iframe');
 			var innerDoc = iframe.contentDocument || iframe.contentWindow.document;
 			youtubeUrls.concat(Array.from(innerDoc.querySelectorAll('a')).map(function (el) {
 				return el.href.match(youtubeRegEx) ? el.href : null;
 			}).filter(function (link) {
 				return link;
 			}));
-			console.log('youtubeUrls 2', youtubeUrls.length);
 		});
 	
 		// too many ids! must split up
@@ -12411,7 +12717,7 @@
 	}
 
 /***/ },
-/* 48 */
+/* 50 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -12432,7 +12738,7 @@
 	}
 
 /***/ },
-/* 49 */
+/* 51 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -12449,12 +12755,12 @@
 	
 	var _actions2 = _interopRequireDefault(_actions);
 	
-	__webpack_require__(50);
+	__webpack_require__(52);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	_vue2.default.component('video-item', {
-		props: ['video', 'isPlaying', 'isQueue', 'queueIndex', 'isExtension'],
+		props: ['video', 'isPlaying', 'isQueue', 'queueIndex', 'isExtension', 'isSelected', 'isPlayList', 'isInPlayList', 'isEditPlayList'],
 		data: function data() {
 			return {
 				copyActive: false
@@ -12472,7 +12778,9 @@
 				_store2.default.dispatch(_actions2.default.menuVideo(this.video.id));
 			},
 			remove: function remove() {
-				if (this.isQueue) {
+				if (this.isPlayList) {
+					_store2.default.dispatch(_actions2.default.removeTags(undefined, [this.video.id]));
+				} else if (this.isQueue) {
 					_store2.default.dispatch(_actions2.default.queueRemoveIndex(this.queueIndex));
 				} else {
 					_store2.default.dispatch(_actions2.default.removeVideo(this.video));
@@ -12494,7 +12802,7 @@
 				window.getSelection().addRange(range);
 	
 				try {
-					var successful = document.execCommand('copy');
+					document.execCommand('copy');
 					this.copyActive = true;
 					setTimeout(function () {
 						_this.copyActive = false;
@@ -12507,22 +12815,31 @@
 			},
 			queue: function queue() {
 				_store2.default.dispatch(_actions2.default.queueMedia(this.video.id));
+			},
+			addTags: function addTags() {
+				if (this.isEditPlayList) {
+					if (!this.isInPlayList) {
+						_store2.default.dispatch(_actions2.default.addTags(undefined, [this.video.id]));
+					} else {
+						_store2.default.dispatch(_actions2.default.removeTags(undefined, [this.video.id]));
+					}
+				}
 			}
 		},
-		template: '\n\t<li v-bind:class="{ active: isPlaying, error: video.hasError }" v-on:dblclick="play" v-bind:data-id="video.id">\n\t\t<div class="media-list__thumbnail" v-bind:style="{ backgroundImage: \'url(https://i.ytimg.com/vi/\' + video.id + \'/default.jpg)\' }"></div>\n\t\t<div class="media-list__body">\n\t\t\t<div class="media-list__name">{{video.title}}</div>\n\t\t\t<div class="media-list__duration" v-if="video.duration">{{video.duration.m}}:{{video.duration.s}}</div>\n\t\t</div>\n\t\t<div class="media-list__controls">\n\t\t\t<div v-if="!video.hasError">\n\t\t\t\t<span class="wmp-icon-pause" v-if="isPlaying" v-on:click="pause" title="Pause"></span>\n\t\t\t\t<span class="wmp-icon-play" v-else v-on:click="play" title="Play"></span>\n\t\t\t\t<span\n\t\t\t\t\tclass="wmp-icon-queue2 icon--small"\n\t\t\t\t\tv-on:click="queue"\n\t\t\t\t\tv-if="!isQueue"\n\t\t\t\t\ttitle="Add to queue"></span>\n\t\t\t</div>\n\t\t\t<span class="wmp-icon-search" v-else title="Search alternative"></span>\n\t\t\t<span class="copy wmp-icon-copy icon--small" v-on:click="copyToClip" v-bind:class="{ active: copyActive }" title="Copy name and URL"></span>\n\t\t\t<a v-bind:href="\'https://youtu.be/\'+video.id" title="Watch on YouTube" target="_blank">\n\t\t\t\t<span class="wmp-icon-youtube icon--small"></span>\n\t\t\t</a>\n\t\t\t<span\n\t\t\t\tclass="wmp-icon-close"\n\t\t\t\tv-if="!isExtension"\n\t\t\t\tv-on:click="remove"\n\t\t\t\ttitle="Remove"></span>\n\t\t\t<span\n\t\t\t\tclass="wmp-icon-add"\n\t\t\t\tv-if="isExtension"\n\t\t\t\tv-on:click="addToPlaylist"\n\t\t\t\ttitle="Add to playlist"></span>\n\t\t</div>\n\t</li>\n\t'
+		template: '\n\t<li\n\t\tv-bind:class="{\n\t\t\tactive: isPlaying,\n\t\t\terror: video.hasError,\n\t\t\tselected: isSelected,\n\t\t\t\'in-playlist\': isInPlayList,\n\t\t\t}"\n\t\tv-on:dblclick="play"\n\t\tv-bind:data-id="video.id">\n\t\t<div class="media-list__thumbnail" v-bind:style="{ backgroundImage: \'url(https://i.ytimg.com/vi/\' + video.id + \'/default.jpg)\' }"></div>\n\t\t<div\n\t\t\tclass="media-list__body"\n\t\t\tv-on:click="addTags">\n\t\t\t<div class="media-list__name">{{video.title}}</div>\n\t\t\t<div class="media-list__duration" v-if="video.duration">{{video.duration.m}}:{{video.duration.s}}</div>\n\t\t</div>\n\t\t<div class="media-list__controls">\n\t\t\t<div v-if="!video.hasError">\n\t\t\t\t<span class="wmp-icon-pause" v-if="isPlaying" v-on:click="pause" title="Pause"></span>\n\t\t\t\t<span class="wmp-icon-play" v-else v-on:click="play" title="Play"></span>\n\t\t\t\t<span\n\t\t\t\t\tclass="wmp-icon-queue2 icon--small"\n\t\t\t\t\tv-on:click="queue"\n\t\t\t\t\tv-if="!isQueue"\n\t\t\t\t\ttitle="Add to queue"></span>\n\t\t\t</div>\n\t\t\t<span class="wmp-icon-search" v-else title="Search alternative"></span>\n\t\t\t<span class="copy wmp-icon-copy icon--small" v-on:click="copyToClip" v-bind:class="{ active: copyActive }" title="Copy name and URL"></span>\n\t\t\t<div class="media-list__more-controls">\n\t\t\t\t<span class="wmp-icon-more_vert"></span>\n\t\t\t\t<div>\n\t\t\t\t\t<a v-bind:href="\'https://youtu.be/\'+video.id" title="Watch on YouTube" target="_blank">\n\t\t\t\t\t\t<span class="wmp-icon-youtube icon--small"></span>\n\t\t\t\t\t</a>\n\t\t\t\t\t<span\n\t\t\t\t\t\tclass="wmp-icon-close"\n\t\t\t\t\t\tv-if="!isExtension"\n\t\t\t\t\t\tv-on:click="remove"\n\t\t\t\t\t\ttitle="Remove"></span>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t\t<span\n\t\t\t\tclass="wmp-icon-add"\n\t\t\t\tv-if="isExtension"\n\t\t\t\tv-on:click="addToPlaylist"\n\t\t\t\ttitle="Add to playlist"></span>\n\t\t</div>\n\t</li>\n\t'
 	});
 
 /***/ },
-/* 50 */
+/* 52 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(51);
+	var content = __webpack_require__(53);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(46)(content, {});
+	var update = __webpack_require__(48)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -12539,21 +12856,21 @@
 	}
 
 /***/ },
-/* 51 */
+/* 53 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(45)();
+	exports = module.exports = __webpack_require__(47)();
 	// imports
 	
 	
 	// module
-	exports.push([module.id, ".copy {\n  -webkit-transition: all 250ms;\n  transition: all 250ms; }\n  .copy.active, .copy.active:hover {\n    background: #a1c616;\n    color: #fff; }\n\n.au--highlight {\n  -webkit-transition: background 1000ms;\n  transition: background 1000ms;\n  background: #2176A8;\n  color: #fff; }\n", ""]);
+	exports.push([module.id, ".copy {\n  -webkit-transition: all 250ms;\n  transition: all 250ms; }\n  .copy.active, .copy.active:hover {\n    background: #a1c616;\n    color: #fff; }\n\n.au--highlight {\n  -webkit-transition: background 1000ms;\n  transition: background 1000ms;\n  background: #2176A8;\n  color: #fff; }\n\n.in-playlist {\n  background: #E2E4E9; }\n", ""]);
 	
 	// exports
 
 
 /***/ },
-/* 52 */
+/* 54 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -12570,7 +12887,11 @@
 	
 	var _actions2 = _interopRequireDefault(_actions);
 	
-	__webpack_require__(53);
+	var _injectScript = __webpack_require__(37);
+	
+	var _injectScript2 = _interopRequireDefault(_injectScript);
+	
+	__webpack_require__(55);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -12595,8 +12916,8 @@
 						suggestedQuality: 'large'
 					});
 				}
-				if (_this.player && _this.player.isMuted && _this.player.isMuted() != mediaPlayer.mute) {
-					mediaPlayer.mute ? _this.player.mute() : _this.player.unMute();
+				if (_this.player && _this.player.isMuted && _this.player.isMuted() !== mediaPlayer.mute) {
+					if (mediaPlayer.mute) _this.player.mute();else _this.player.unMute();
 				}
 				if (_this.skipToTime !== mediaPlayer.skipToTime) {
 					// bad hack, this sould be some middleware doing it better
@@ -12605,10 +12926,8 @@
 				}
 				if (mediaPlayer.isPlaying) {
 					if (_this.player.getPlayerState() !== 1) _this.player.playVideo();
-				} else {
-					if (_this.player && _this.player.getPlayerState) {
-						if (![0, 2].includes(_this.player.getPlayerState())) _this.player.pauseVideo();
-					}
+				} else if (_this.player && _this.player.getPlayerState && ![0, 2].includes(_this.player.getPlayerState())) {
+					_this.player.pauseVideo();
 				}
 			});
 		},
@@ -12618,9 +12937,6 @@
 		mounted: function mounted() {
 			var _this2 = this;
 	
-			var tag = document.createElement('script');
-			tag.src = "https://www.youtube.com/iframe_api";
-			document.head.appendChild(tag);
 			var initialVideos = ['Es22YN2stg8', 'strzXKsfRMs', 'qMvLkpQcCKQ', 'KwoVARYA8jw', 'nzwrwfNHn5A'];
 			window.onYouTubeIframeAPIReady = function () {
 				_this2.player = new YT.Player('youtube-iframe', {
@@ -12633,7 +12949,7 @@
 					}
 				});
 			};
-			// youtubeApi();
+			(0, _injectScript2.default)('https://www.youtube.com/iframe_api');
 		},
 	
 		methods: {
@@ -12642,7 +12958,7 @@
 				var video = mediaPlayer.entities[mediaPlayer.mediaId];
 				_store2.default.dispatch(_actions2.default.videoError(video, event.data));
 			},
-			onPlayerStateChange: function onPlayerStateChange(event) {
+			onPlayerStateChange: function onPlayerStateChange() {
 				var _this3 = this;
 	
 				var playerState = this.player.getPlayerState();
@@ -12664,20 +12980,19 @@
 			}
 		},
 		template: '\n\t<div class="youtube-player">\n\t\t<div id="youtube-iframe"></div>\n\t</div>\n\t'
-	});
-	// import youtubeApi from '../utils/youtube-iframe-api';
+	}); /* global YT */
 
 /***/ },
-/* 53 */
+/* 55 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(54);
+	var content = __webpack_require__(56);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(46)(content, {});
+	var update = __webpack_require__(48)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -12694,10 +13009,10 @@
 	}
 
 /***/ },
-/* 54 */
+/* 56 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(45)();
+	exports = module.exports = __webpack_require__(47)();
 	// imports
 	
 	
@@ -12708,12 +13023,12 @@
 
 
 /***/ },
-/* 55 */
+/* 57 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var _findVideos = __webpack_require__(47);
+	var _findVideos = __webpack_require__(49);
 	
 	var _findVideos2 = _interopRequireDefault(_findVideos);
 	
@@ -12735,7 +13050,7 @@
 	}
 
 /***/ },
-/* 56 */
+/* 58 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -12743,10 +13058,6 @@
 	var _store = __webpack_require__(5);
 	
 	var _store2 = _interopRequireDefault(_store);
-	
-	var _actions = __webpack_require__(30);
-	
-	var _actions2 = _interopRequireDefault(_actions);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -12767,16 +13078,16 @@
 	});
 
 /***/ },
-/* 57 */
+/* 59 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(58);
+	var content = __webpack_require__(60);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(46)(content, {});
+	var update = __webpack_require__(48)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -12793,24 +13104,24 @@
 	}
 
 /***/ },
-/* 58 */
+/* 60 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(45)();
+	exports = module.exports = __webpack_require__(47)();
 	// imports
 	exports.push([module.id, "@import url(https://fonts.googleapis.com/css?family=Nobile);", ""]);
 	
 	// module
-	exports.push([module.id, "@charset \"UTF-8\";\n.audius .button,\n#audius-website .button {\n  font-family: 'Nobile', sans-serif;\n  font-size: 1em;\n  padding: 0 1vmin;\n  height: 5vmin;\n  border: 1px solid #C8CCD5;\n  color: #C8CCD5;\n  background: transparent;\n  text-transform: uppercase;\n  border-radius: 2px;\n  -webkit-transition: all 250ms;\n  transition: all 250ms;\n  outline: 0;\n  cursor: pointer; }\n  .audius .button.btn--blue,\n  #audius-website .button.btn--blue {\n    border-color: #2DA7EF;\n    background: #2DA7EF;\n    color: #fff; }\n\n.audius a.button,\n#audius-website a.button {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n  text-decoration: none; }\n\n@font-face {\n  font-family: 'WampIcons';\n  src: url(" + __webpack_require__(59) + ");\n  font-weight: normal;\n  font-style: normal; }\n\n[class^=\"wmp-icon-\"], [class*=\" wmp-icon-\"] {\n  text-align: center;\n  position: relative;\n  width: 7vmin;\n  height: 7vmin;\n  display: inline-block; }\n  [class^=\"wmp-icon-\"]:before, [class*=\" wmp-icon-\"]:before {\n    /* use !important to prevent issues with browser extensions that change fonts */\n    speak: none;\n    font-style: normal;\n    font-weight: normal;\n    font-variant: normal;\n    text-transform: none;\n    line-height: 1;\n    -webkit-font-smoothing: antialiased;\n    -moz-osx-font-smoothing: grayscale;\n    font-family: 'WampIcons' !important;\n    position: absolute;\n    font-size: 1.7em;\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: flex;\n    -webkit-box-align: center;\n        -ms-flex-align: center;\n            align-items: center;\n    -webkit-box-pack: center;\n        -ms-flex-pack: center;\n            justify-content: center;\n    width: 100%;\n    height: 100%; }\n\n.icon--small:before {\n  font-size: 1.2em; }\n\n.wmp-icon-local_offer2:before {\n  content: \"\\E54F\"; }\n\n.wmp-icon-format_list_bulleted:before {\n  content: \"\\E242\"; }\n\n.wmp-icon-dehaze:before {\n  content: \"\\E3C7\"; }\n\n.wmp-icon-reorder:before {\n  content: \"\\E8FE\"; }\n\n.wmp-icon-more_vert:before {\n  content: \"\\E5D4\"; }\n\n.wmp-icon-unfold_more:before {\n  content: \"\\E5D7\"; }\n\n.wmp-icon-arrow_drop_down:before {\n  content: \"\\E5C5\"; }\n\n.wmp-icon-arrow_drop_up:before {\n  content: \"\\E5C7\"; }\n\n.wmp-icon-previous:before {\n  content: \"\\E045\"; }\n\n.wmp-icon-play:before {\n  content: \"\\E037\"; }\n\n.wmp-icon-pause:before {\n  content: \"\\E034\"; }\n\n.wmp-icon-next:before {\n  content: \"\\E044\"; }\n\n.wmp-icon-shuffle:before {\n  content: \"\\E043\"; }\n\n.wmp-icon-repeat:before {\n  content: \"\\E040\"; }\n\n.wmp-icon-repeat_one:before {\n  content: \"\\E041\"; }\n\n.wmp-icon-volume_off:before {\n  content: \"\\E04F\"; }\n\n.wmp-icon-volume_up:before {\n  content: \"\\E050\"; }\n\n.wmp-icon-search:before {\n  content: \"\\E8B6\"; }\n\n.wmp-icon-close:before {\n  content: \"\\E5CD\"; }\n\n.wmp-icon-add:before {\n  content: \"\\E900\"; }\n\n.wmp-icon-queue2:before {\n  content: \"\\E03D\"; }\n\n.wmp-icon-copy:before {\n  content: \"\\E14D\"; }\n\n.wmp-icon-local_offer22:before {\n  content: \"\\E550\"; }\n\n.wmp-icon-link:before {\n  content: \"\\E157\"; }\n\n.wmp-icon-delete:before {\n  content: \"\\E872\"; }\n\n.wmp-icon-cloud_upload:before {\n  content: \"\\E2C3\"; }\n\n.wmp-icon-youtube:before {\n  content: \"\\E906\"; }\n\n#audius {\n  position: absolute;\n  top: 0;\n  right: 0;\n  z-index: 99999;\n  font-family: 'Nobile', sans-serif;\n  font-size: 2.3vmin;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: column;\n          flex-direction: column;\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n  color: #303641;\n  margin: 0; }\n  #audius a {\n    color: #303641; }\n    #audius a:visited {\n      color: #303641; }\n  #audius input:focus {\n    outline: 0; }\n  #audius ::-webkit-scrollbar {\n    width: 5px; }\n    #audius ::-webkit-scrollbar:hover {\n      width: 10px; }\n  #audius ::-webkit-scrollbar-track {\n    background: #EFF1F7; }\n  #audius ::-webkit-scrollbar-thumb {\n    background: #A8ADB7; }\n", ""]);
+	exports.push([module.id, "@charset \"UTF-8\";\n.audius .button,\n.web-app .button {\n  font-family: 'Nobile', sans-serif;\n  font-size: 1em;\n  padding: 0 1vmin;\n  height: 5vmin;\n  border: 1px solid #C8CCD5;\n  color: #C8CCD5;\n  background: transparent;\n  text-transform: uppercase;\n  border-radius: 2px;\n  -webkit-transition: all 250ms;\n  transition: all 250ms;\n  outline: 0;\n  cursor: pointer; }\n  .audius .button.btn--blue,\n  .web-app .button.btn--blue {\n    border-color: #2DA7EF;\n    background: #2DA7EF;\n    color: #fff; }\n\n.audius a.button,\n.web-app a.button {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n  text-decoration: none; }\n\n.audius select,\n.web-app select {\n  background: transparent;\n  border: 1px solid #C8CCD5;\n  height: 5vmin;\n  display: block;\n  width: 100%;\n  font-size: 1em; }\n\n@font-face {\n  font-family: 'WampIcons';\n  src: url(" + __webpack_require__(61) + ");\n  font-weight: normal;\n  font-style: normal; }\n\n[class^=\"wmp-icon-\"], [class*=\" wmp-icon-\"] {\n  text-align: center;\n  position: relative;\n  width: 7vmin;\n  height: 7vmin;\n  display: inline-block; }\n  [class^=\"wmp-icon-\"]:before, [class*=\" wmp-icon-\"]:before {\n    /* use !important to prevent issues with browser extensions that change fonts */\n    speak: none;\n    font-style: normal;\n    font-weight: normal;\n    font-variant: normal;\n    text-transform: none;\n    line-height: 1;\n    -webkit-font-smoothing: antialiased;\n    -moz-osx-font-smoothing: grayscale;\n    font-family: 'WampIcons' !important;\n    position: absolute;\n    font-size: 1.7em;\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: flex;\n    -webkit-box-align: center;\n        -ms-flex-align: center;\n            align-items: center;\n    -webkit-box-pack: center;\n        -ms-flex-pack: center;\n            justify-content: center;\n    width: 100%;\n    height: 100%; }\n\n.icon--small:before {\n  font-size: 1.2em; }\n\n.wmp-icon-sort:before {\n  content: \"\\E164\"; }\n\n.wmp-icon-zoom_out_map:before {\n  content: \"\\E56B\"; }\n\n.wmp-icon-label:before {\n  content: \"\\E892\"; }\n\n.wmp-icon-label_outline:before {\n  content: \"\\E893\"; }\n\n.wmp-icon-queue_music:before {\n  content: \"\\E03E\"; }\n\n.wmp-icon-mode_edit:before {\n  content: \"\\E254\"; }\n\n.wmp-icon-format_list_bulleted:before {\n  content: \"\\E242\"; }\n\n.wmp-icon-dehaze:before {\n  content: \"\\E3C7\"; }\n\n.wmp-icon-reorder:before {\n  content: \"\\E8FE\"; }\n\n.wmp-icon-more_vert:before {\n  content: \"\\E5D4\"; }\n\n.wmp-icon-unfold_more:before {\n  content: \"\\E5D7\"; }\n\n.wmp-icon-arrow_drop_down:before {\n  content: \"\\E5C5\"; }\n\n.wmp-icon-arrow_drop_up:before {\n  content: \"\\E5C7\"; }\n\n.wmp-icon-previous:before {\n  content: \"\\E045\"; }\n\n.wmp-icon-play:before {\n  content: \"\\E037\"; }\n\n.wmp-icon-pause:before {\n  content: \"\\E034\"; }\n\n.wmp-icon-next:before {\n  content: \"\\E044\"; }\n\n.wmp-icon-shuffle:before {\n  content: \"\\E043\"; }\n\n.wmp-icon-repeat:before {\n  content: \"\\E040\"; }\n\n.wmp-icon-repeat_one:before {\n  content: \"\\E041\"; }\n\n.wmp-icon-volume_off:before {\n  content: \"\\E04F\"; }\n\n.wmp-icon-volume_up:before {\n  content: \"\\E050\"; }\n\n.wmp-icon-search:before {\n  content: \"\\E8B6\"; }\n\n.wmp-icon-close:before {\n  content: \"\\E5CD\"; }\n\n.wmp-icon-add:before {\n  content: \"\\E900\"; }\n\n.wmp-icon-queue2:before {\n  content: \"\\E03D\"; }\n\n.wmp-icon-copy:before {\n  content: \"\\E14D\"; }\n\n.wmp-icon-local_offer22:before {\n  content: \"\\E550\"; }\n\n.wmp-icon-link:before {\n  content: \"\\E157\"; }\n\n.wmp-icon-delete:before {\n  content: \"\\E872\"; }\n\n.wmp-icon-cloud_upload:before {\n  content: \"\\E2C3\"; }\n\n.wmp-icon-youtube:before {\n  content: \"\\E906\"; }\n\n#audius {\n  position: absolute;\n  top: 0;\n  right: 0;\n  z-index: 99999;\n  font-family: 'Nobile', sans-serif;\n  font-size: 2.3vmin;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: column;\n          flex-direction: column;\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n  color: #303641;\n  margin: 0; }\n  #audius a {\n    color: #303641; }\n    #audius a:visited {\n      color: #303641; }\n  #audius input:focus {\n    outline: 0; }\n  #audius ::-webkit-scrollbar {\n    width: 5px; }\n    #audius ::-webkit-scrollbar:hover {\n      width: 10px; }\n  #audius ::-webkit-scrollbar-track {\n    background: #EFF1F7; }\n  #audius ::-webkit-scrollbar-thumb {\n    background: #A8ADB7; }\n", ""]);
 	
 	// exports
 
 
 /***/ },
-/* 59 */
+/* 61 */
 /***/ function(module, exports) {
 
-	module.exports = "data:application/x-font-ttf;base64,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"
+	module.exports = "data:application/x-font-ttf;base64,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"
 
 /***/ }
 /******/ ]);
