@@ -8,7 +8,7 @@ const config = require('./config/webpack.dev.js');
 
 config.entry = [
 	'webpack-dev-server/client?http://localhost:8080/',
-	// 'webpack/hot/dev-server',
+	'webpack/hot/dev-server',
 	'./src/website/app.js',
 ];
 
@@ -25,14 +25,19 @@ config.plugins = [
 		},
 	}),
 	new CircularDependencyPlugin(),
+	new webpack.HotModuleReplacementPlugin(),
 ];
 
 new WebpackDevServer(webpack(config), {
 	contentBase: './src/website/static/',
 	publicPath: config.output.publicPath,
-	// hot: true,
 	historyApiFallback: false,
-	stats: { colors: true },
+	stats: {
+		colors: true,
+		chunks: false,
+	},
+	hot: true,
+	inline: true,
 }).listen(8080, 'localhost', function(err, res) {
 	if (err) console.warn(err);
 	console.log('Listening on localhost:8080');
