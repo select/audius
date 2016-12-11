@@ -1,9 +1,19 @@
-import Vue from 'vue/dist/vue';
+<script>
 import store from '../store';
 import Actions from '../actions';
-import './main-right.component.sass';
+import AboutPlayer from './about-player.vue';
+import SearchResults from './search-results.vue';
+import Queue from './queue.vue';
+import YoutubePlayer from './youtube-player.vue';
 
-Vue.component('main-right', {
+export default {
+	name: 'main-right',
+	components: {
+		AboutPlayer,
+		SearchResults,
+		Queue,
+		YoutubePlayer,
+	},
 	data() {
 		return {
 			state: store.getState(),
@@ -19,9 +29,10 @@ Vue.component('main-right', {
 	beforeDestroy() {
 		this.unsubscribe();
 	},
-	methods: {
-	},
-	template: `
+};
+</script>
+
+<template>
 <div class="main-right">
 	<ul class="main-right__tabs">
 		<li
@@ -55,5 +66,64 @@ Vue.component('main-right', {
 			class="main-right__player-full-btn wmp-icon-unfold_more"></span>
 		<youtube-player></youtube-player>
 	</div>
-</div>`,
-});
+</div>
+</template>
+
+<style lang="sass?indentedSyntax">
+@import '../sass/vars'
+@import '../sass/color'
+
+.main-right
+	display: flex
+	flex-direction: column
+	height: 100%
+ul.main-right__tabs
+	padding: 0
+	margin: 0
+	list-style: none
+	display: flex
+	width: 100%
+	height: $touch-size-small
+	li
+		flex: 1
+		display: flex
+		justify-content: center
+		align-items: center
+		background: $color-catskillwhite
+		color: $color-aluminium-dark
+		cursor: pointer
+		text-transform: uppercase
+		white-space: nowrap
+		font-size: 0.7em
+		transition: all $transition-time
+		&.active,
+		&:hover
+			background: $color-aluminium
+			color: $color-white
+
+.main-right__content
+	flex: 2
+	overflow-y: auto
+
+.main-right__player
+	flex: 1
+	border-top: 1px solid $color-aluminium
+	position: relative
+	background: $color-catskillwhite
+	&.full
+		height: 100%
+span.main-right__player-full-btn
+	position: absolute
+	top: 0
+	right: 0
+	cursor: pointer
+	color: $color-white
+.audius-chat
+	position: relative
+	height: 100%
+	overflow: hidden
+	iframe
+		width: 100%
+		height: 100%
+
+</style>

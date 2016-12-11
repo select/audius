@@ -1,8 +1,12 @@
-import Vue from 'vue/dist/vue';
+<script>
 import store from '../store';
-import './queue.component.sass';
+import VideoItem from './video-item.vue';
 
-Vue.component('queue', {
+export default {
+	name: 'queue',
+	components: {
+		VideoItem,
+	},
 	data() {
 		return {
 			mediaPlayer: store.getState().mediaPlayer,
@@ -16,7 +20,10 @@ Vue.component('queue', {
 	beforeDestroy() {
 		this.unsubscribe();
 	},
-	template: `
+};
+</script>
+
+<template>
 <div class="queue">
 	<p v-if="!mediaPlayer.queue.length">
 		... queue with <span class="wmp-icon-queue2"></span>
@@ -28,5 +35,20 @@ Vue.component('queue', {
 			:queueIndex="index"
 			:video="mediaPlayer.entities[id]"></video-item>
 	</ul>
-</div>`,
-});
+</div>
+</template>
+
+<style lang="sass?indentedSyntax">
+@import '../sass/vars'
+@import '../sass/color'
+
+.queue
+	p
+		width: 100%
+		text-align: center
+		display: flex
+		justify-content: center
+		align-items: center
+		span
+			font-size: .7em
+</style>

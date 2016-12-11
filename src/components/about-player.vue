@@ -1,4 +1,34 @@
-<div class="wmp-about">
+<script>
+import Vue from 'vue/dist/vue';
+import store from '../store';
+import Actions from '../actions';
+import injectScript from '../utils/injectScript';
+
+export default {
+	name: 'about-player',
+	methods: {
+		openGitter() {
+			if (!this.gitter) {
+				store.dispatch(Actions.showChat());
+				Vue.nextTick(() => {
+					// config
+					((window.gitter = {}).chat = {}).options = {
+						room: 'audius-player/Lobby',
+						activationElement: '.gitter-chat',
+						targetElement: '.audius-chat',
+						preload: true,
+					};
+					// load script
+					injectScript('https://sidecar.gitter.im/dist/sidecar.v1.js');
+				});
+			}
+		},
+	},
+};
+</script>
+
+<template>
+	<div class="wmp-about">
 	<h2>Keyboard shortcuts</h2>
 	<p>
 		<dl>
@@ -182,3 +212,50 @@
 	<h2>Impressum</h2>
 	<p>Brauch ich nicht weil: keine kommerziellen Inhalte, keine regelmässigen Inhalte. Hier machst du den Inhalt!</p>
 </div>
+
+</template>
+
+<style lang="sass?indentedSyntax">
+@import '../sass/vars'
+@import '../sass/color'
+
+.wmp-about
+	padding: $grid-space
+	ul
+		padding: 0
+		list-style: none
+	ol
+		margin: 0
+		padding: 1em
+		li
+			margin-bottom: $grid-space
+	dl
+		dt
+			float: left
+			width: 4em
+			font-weight: bold
+			padding-left: $grid-space
+			&:nth-child(4n+1)
+				background: $color-catskillwhite
+		dd
+			margin-left: 0
+			&:nth-child(4n+2)
+				background: $color-catskillwhite
+		dt,
+		dd
+			height: $touch-size-small
+			display: flex
+			align-items: center
+	pre
+		font-size: .7em
+		white-space: inherit
+		overflow: auto
+.about-player__community-btns
+	display: flex
+	justify-content: center
+	align-items: center
+	button
+		margin-right: $grid-space
+</style>
+
+

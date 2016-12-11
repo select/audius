@@ -23,8 +23,13 @@ module.exports = {
 	module: {
 		loaders: [
 			// { test: /\.jpe?g$|\.gif$|\.png$|\.svg$|\.woff$|\.ttf$|\.wav$|\.mp3$/, loader: 'file' },
+			{ test: /\.vue$/, loader: 'vue' },
 			{ test: /\.ttf$/, loader: 'url-loader' },
-			{ test: /\.sass$/, loaders: ['style', 'css', 'postcss-loader', 'sass'] },
+			{
+				test: /\.sass$/,
+				// loader: 'style!css?sourceMap!postcss?sourceMap!sass?sourceMap',
+				loaders: ['style', 'css', 'postcss-loader', 'sass'],
+			},
 			{ test: /\.css$/, loader: 'raw-loader' },
 			{ test: /\.html$/, loader: 'raw-loader' },
 			{ test: /\.svg$/, loader: 'raw-loader' },

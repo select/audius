@@ -1,9 +1,11 @@
+<script>
 import Vue from 'vue/dist/vue';
 import store from '../store';
 import Actions from '../actions';
 import isElementInViewport from '../utils/isElementInViewport';
 
-Vue.component('search-results', {
+export default {
+	name: 'search-results',
 	data() {
 		return {
 			youtube: store.getState().youtube,
@@ -71,7 +73,10 @@ Vue.component('search-results', {
 			return this.mediaPlayer.mediaId === video.id;
 		},
 	},
-	template: `
+};
+</script>
+
+<template>
 <ul class="media-list">
 	<li
 		v-for="video in youtube.results"
@@ -95,5 +100,4 @@ Vue.component('search-results', {
 		</div>
 	</li>
 </ul>
-	`,
-});
+</template>

@@ -1,13 +1,18 @@
+<script>
 import Vue from 'vue/dist/vue';
 import Sortable from 'sortablejs';
 import store from '../store';
 import Actions from '../actions';
-import './play-list.component.sass';
 import importPlaylist from '../utils/importPlaylist';
 import { debounce } from '../utils/debounce';
 import isElementInViewport from '../utils/isElementInViewport';
+import VideoItem from './video-item.vue';
 
-Vue.component('play-list', {
+export default {
+	name: 'play-list',
+	components: {
+		VideoItem,
+	},
 	data() {
 		const mediaPlayer = store.getState().mediaPlayer;
 		return {
@@ -18,6 +23,7 @@ Vue.component('play-list', {
 			Actions,
 			tabs: ['queue', 'search', 'info', 'about'],
 			importURLinput: false,
+			showImportOtherPlaylist: false,
 			jumpCursor: '',
 		};
 	},
@@ -25,19 +31,19 @@ Vue.component('play-list', {
 		document.addEventListener('keydown', (event) => {
 			if (event.target.tagName.toLowerCase() !== 'input' && event.key === 'j') {
 				this.toggleJump(true);
-				setTimeout(() => {document.querySelector('.play-list-footer__search-input').value = '';}, 100);
+				setTimeout(() => { document.querySelector('.play-list-footer__search-input').value = ''; }, 100);
 			} else if (event.key === 'Escape') {
 				if (this.website.showImport) this.toggleImport(false);
-				if (this.website.showJump) this.clear()
+				if (this.website.showJump) this.clear();
 			}
-			if(this.website.showJump) {
-				if(this.jumpCursor && event.key === 'q') {
+			if (this.website.showJump) {
+				if (this.jumpCursor && event.key === 'q') {
 					store.dispatch(Actions.queueMedia(this.jumpCursor));
-				} else if(event.key === 'ArrowDown') {
+				} else if (event.key === 'ArrowDown') {
 					event.preventDefault();
 					if (!this.jumpCursor) this.jumpCursor = this.filteredPlaylist[0];
 					else this.jumpCursor = this.filteredPlaylist[this.filteredPlaylist.indexOf(this.jumpCursor) + 1];
-				} else if(event.key === 'ArrowUp') {
+				} else if (event.key === 'ArrowUp') {
 					event.preventDefault();
 					if (!this.jumpCursor) this.jumpCursor = this.filteredPlaylist[this.filteredPlaylist.length - 1];
 					else this.jumpCursor = this.filteredPlaylist[this.filteredPlaylist.indexOf(this.jumpCursor) - 1];
@@ -85,7 +91,7 @@ Vue.component('play-list', {
 			// curl -X POST \--data-binary '{"files": {"file1.txt": {"content": "Hello, SO"}}}' \https://api.github.com/gists
 			const playList = this.mediaPlayer.currentPlayList ? this.mediaPlayer.tags[this.mediaPlayer.currentPlayList] : this.mediaPlayer.playList;
 			const entities = {};
-			playList.forEach(key => {
+			playList.forEach((key) => {
 				entities[key] = this.mediaPlayer.entities[key];
 			});
 			const data = {
@@ -123,7 +129,7 @@ Vue.component('play-list', {
 			document.querySelector('.play-list-footer__search-input').value = '';
 			document.querySelector('.play-list-footer__search-input').focus();
 			store.dispatch(Actions.filterPlayList(''));
-			if(close === true) store.dispatch(Actions.toggleJump(false));
+			if (close === true) store.dispatch(Actions.toggleJump(false));
 		},
 		delayBlur() {
 			if (!this.mediaPlayer.filterQuery) {
@@ -155,6 +161,11 @@ Vue.component('play-list', {
 			store.dispatch(Actions.importURL(el.value));
 			el.value = '';
 		},
+		importOtherPlayList() {
+			const el = document.querySelector('.paly-list__other-playlist-input');
+			store.dispatch(Actions.importOtherPlayList(el.value));
+			el.value = '';
+		},
 		addMusic() {
 			store.dispatch(Actions.importURL('http://audius.rockdapus.org/audius-starter.playlist'));
 		},
@@ -175,7 +186,10 @@ Vue.component('play-list', {
 				);
 		},
 	},
-	template: `
+};
+</script>
+
+<template>
 <div class="play-list">
 	<div class="play-list__body">
 		<h2 v-if="!website.showImport && !mediaPlayer.currentPlayList && !filteredPlaylist.length">
@@ -230,6 +244,16 @@ Vue.component('play-list', {
 					type="text"
 					placeholder="http://pasetbin.com/x23kc">
 				<button class="button btn--blue" v-on:click="importURL">load</button>
+			</div>
+			<button
+				class="button btn--blue"
+				v-if="!showImportOtherPlaylist"
+				v-on:click="showImportOtherPlaylist = true">other playlist</button>
+			<div v-if="showImportOtherPlaylist">
+				<select class="paly-list__other-playlist-input">
+					<option v-for="playListName in Object.keys(mediaPlayer.tags)">{{playListName}}</option>
+				</select>
+				<button class="button btn--blue" v-on:click="importOtherPlayList">load</button>
 			</div>
 		</div>
 
@@ -293,5 +317,151 @@ Vue.component('play-list', {
 				v-on:click="clear"></span>
 		</div>
 	</div>
-</div>`,
-});
+</div>
+</template>
+
+<style lang="sass?indentedSyntax">
+@import '../sass/vars'
+@import '../sass/color'
+
+.play-list
+	display: flex
+	flex-direction: column
+	height: 100%
+	h2
+		font-weight: 100
+		width: 100%
+		text-align: center
+		line-height: 2em
+		[class^='wmp-icon']
+			height: #{3 * $grid-space}
+			&:before
+				font-size: 1em
+		span
+			cursor: pointer
+
+	.button.play-list__btn-add-music
+		margin-top: #{6 * $grid-space}
+		padding: 0 #{5 * $grid-space}
+		height: $touch-size-large
+
+
+.play-list__body
+	flex: 1
+	overflow-y: auto
+	overflow-x: hidden
+.play-list-footer
+	background: $color-catskillwhite
+	color: $color-aluminium-dark
+	display: flex
+	font-size: 0.7em
+	overflow: hidden
+	ul
+		flex: 1
+		padding: 0
+		margin: 0
+		list-style: none
+		display: flex
+		width: 100%
+		height: $touch-size-small
+		li
+			flex: 1
+			display: flex
+			justify-content: center
+			align-items: center
+			white-space: nowrap
+			transition: all $transition-time
+			&:not(.play-list-footer--info)
+				cursor: pointer
+				text-transform: uppercase
+			&.active,
+			&:hover:not(.play-list-footer--info)
+				background: $color-aluminium
+				color: $color-white
+.play-list-footer__search
+	max-width: $touch-size-medium
+	height: $touch-size-small
+	cursor: pointer
+	display: flex
+	align-items: center
+	&:hover:not(.active)
+		background: $color-aluminium
+		color: $color-white
+	&.active
+		max-width: 100%
+		width: 100%
+		span,
+		input
+			background: $color-white
+			border: none
+			border-top: 1px solid $color-aluminium
+			height: $touch-size-small
+			box-sizing: border-box
+	span
+		height: $touch-size-small
+		width: $touch-size-medium
+	input
+		flex: 1
+
+.play-list__jump-header
+	display: flex
+	align-items: center
+	justify-content: space-between
+	margin-left: #{ 2* $grid-space + $touch-size-medium}
+
+.play-list__jump-header,
+.paly-list__import-header
+	font-size: 1.5em
+	span
+		font-size: 0.8em
+		cursor: pointer
+
+.paly-list__import-header
+	position: relative
+	width: 100%
+	text-align: center
+	margin-bottom: $grid-space
+	> div
+		height: $touch-size-medium
+		line-height: $touch-size-medium
+	span
+		position: absolute
+		top: 0
+		right: 0
+
+.paly-list__edit-description
+	font-size: 1rem
+
+.paly-list__import
+	display: flex
+	flex-direction: column
+	justify-content: center
+	align-items: center
+	.button,
+	input,
+	select
+		width: 14rem
+		margin-bottom: #{2 * $grid-space}
+	input
+		height: $touch-size-small
+		box-sizing: border-box
+		font-size: 1em
+		+placeholder
+			color: $color-aluminium
+	.paly-list__import-url
+		display: flex
+		flex-direction: column
+
+#import-playlist
+	display: none
+	+ label
+		box-sizing: border-box
+		display: flex
+		justify-content: center
+		align-items: center
+		cursor: pointer
+
+.media-list--editing .media-list__body
+	cursor: pointer
+
+</style>

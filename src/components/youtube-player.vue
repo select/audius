@@ -1,12 +1,13 @@
+<script>
+
 /* global YT */
-import Vue from 'vue/dist/vue';
 import store from '../store';
 import Actions from '../actions';
 import injectScript from '../utils/injectScript';
-import './youtube-player.component.sass';
 
 
-Vue.component('youtube-player', {
+export default {
+	name: 'youtube-player',
 	data() {
 		return {
 			player: undefined,
@@ -83,9 +84,23 @@ Vue.component('youtube-player', {
 			}
 		},
 	},
-	template: `
+};
+</script>
+
+<template>
 	<div class="youtube-player">
 		<div id="youtube-iframe"></div>
 	</div>
-	`,
-});
+</template>
+
+<style lang="sass?indentedSyntax">
+@import '../sass/vars'
+@import '../sass/color'
+
+.youtube-player
+	width: 100%
+	height: 100%
+	overflow: hidden
+	background: $color-aluminium-dark
+
+</style>

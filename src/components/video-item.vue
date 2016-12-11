@@ -1,9 +1,10 @@
+<script>
 import Vue from 'vue/dist/vue';
 import store from '../store';
 import Actions from '../actions';
-import './video-item.component.sass';
 
-Vue.component('video-item', {
+export default {
+	name: 'video-item',
 	props: [
 		'video',
 		'isPlaying',
@@ -74,7 +75,10 @@ Vue.component('video-item', {
 			}
 		},
 	},
-	template: `
+};
+</script>
+
+<template>
 	<li
 		v-bind:class="{
 			active: isPlaying,
@@ -123,5 +127,23 @@ Vue.component('video-item', {
 				title="Add to playlist"></span>
 		</div>
 	</li>
-	`,
-});
+</template>
+
+<style lang="sass?indentedSyntax">
+@import '../sass/vars'
+@import '../sass/color'
+
+.copy
+	transition: all $transition-time
+	&.active,
+	&.active:hover
+		background: $color-larioja
+		color: $color-white
+.au--highlight
+	transition: background 1000ms
+	background: $color-pictonblue-dark
+	color: $color-white
+.in-playlist
+	background: $color-athensgrey
+
+</style>
