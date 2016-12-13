@@ -102,7 +102,10 @@ export default {
 			const element = document.createElement('a');
 			const output = `window.getAudiusPlaylist = function(){ return ${JSON.stringify(data)}; }`;
 			element.setAttribute('href', `data:text/plain;charset=utf-8,${encodeURIComponent(output)}`);
-			element.setAttribute('download', 'audius.data.json');
+			element.setAttribute(
+				'download',
+				this.mediaPlayer.currentPlayList? `${this.mediaPlayer.currentPlayList}.audius-playlist` : 'history.audius-playlist'
+			);
 			element.style.display = 'none';
 			document.body.appendChild(element);
 			element.click();
