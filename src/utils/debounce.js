@@ -15,7 +15,7 @@ export function debounceImmediate(func, wait) {
 	let context;
 	let timestamp;
 	let callCount = 0;
-	return () => {
+	return function() {
 		// save details of latest call
 		context = this;
 		args = [].slice.call(arguments, 0);
@@ -57,7 +57,7 @@ export function debounce(func, wait) {
 	let context;
 	let timestamp;
 
-	return () => {
+	return function() {
 		// save details of latest call
 		context = this;
 		args = [].slice.call(arguments, 0);
