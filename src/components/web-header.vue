@@ -73,8 +73,8 @@ export default {
 				document.querySelector('.au-header__search-input').blur();
 			}, 800);
 		},
-		searchYoutube: debounce(() => {
-			searchYoutubeUtil(document.querySelector('.au-header__search-input').value);
+		searchYoutube: debounce((event) => {
+			searchYoutubeUtil(event.target.value);
 		}, 300),
 		skipToTime(event) {
 			if (this.currentMedia) {
