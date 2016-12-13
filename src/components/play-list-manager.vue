@@ -82,7 +82,7 @@ export default {
 						class="play-list-manager__tag-name-input"
 						type="text"
 						v-bind:value="tag.name"
-						v-on:keyup="renamePlayList(tag.name, $event)"
+						v-on:input="renamePlayList(tag.name, $event)"
 						placeholder="... playlist name">
 				</div>
 				<div>{{tag.playList.length}} Songs</div>
