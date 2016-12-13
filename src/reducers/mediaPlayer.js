@@ -9,6 +9,7 @@ const initialState = {
 	mediaId: '',
 	playList: [],
 	tags: {},
+	tagsOrdered: [],
 	queue: [],
 	isPlaying: false,
 	shuffle: false,
@@ -72,6 +73,7 @@ const mediaPlayer = (state = initialState, action) => {
 	let tags;
 	let mediaIds;
 	let tag;
+	let tagsOrdered;
 	let playList = state.currentPlayList ? state.tags[state.currentPlayList] : state.playList;
 	switch (action.type) {
 	case 'ERROR': {
@@ -173,9 +175,12 @@ const mediaPlayer = (state = initialState, action) => {
 		if (state.tags[action.newName]) return state;
 		tags = Object.assign({}, state.tags);
 		tags[action.newName] = tags[action.oldName];
+		tagsOrdered = [...state.tagsOrdered];
+		tagsOrdered[tagsOrdered.indexOf(action.oldName)] = action.newName;
 		delete tags[action.oldName];
 		return Object.assign({}, state, {
 			tags,
+			tagsOrdered,
 			currentPlayList: action.newName,
 		});
 	}
@@ -306,17 +311,20 @@ const mediaPlayer = (state = initialState, action) => {
 	case 'ADD_TAGS': {
 		mediaIds = action.mediaIds || [];
 		tag = action.tag || state.currentPlayList;
-		if (!tag) {
+		if (action.tag === '') { // if we want to use the current playlist action.tag === undefined
 			let counter = 1;
 			do {
 				tag = `Playlist ${counter}`;
 			} while (state.tags[`Playlist ${counter++}`]);
 		}
+		tagsOrdered = [...state.tagsOrdered];
+		if (!tagsOrdered.includes(tag)) tagsOrdered.push(tag);
 		if (state.tags[tag]) mediaIds = [...state.tags[tag], ...mediaIds];
 		tags = Object.assign({}, state.tags);
 		tags[tag] = mediaIds;
 		return Object.assign({}, state, {
 			tags,
+			tagsOrdered,
 		});
 	}
 	case 'REMOVE_TAGS': {
