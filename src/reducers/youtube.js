@@ -24,7 +24,7 @@ const config = (state = initialState, action) => {
 					title: v.snippet.title,
 					duration: duration(v.contentDetails.duration),
 					isPlaying: false,
-					id: v.id.videoId,
+					id: v.id,
 					deleted: false,
 				})),
 			})
