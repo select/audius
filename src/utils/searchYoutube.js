@@ -8,7 +8,7 @@ function getYtContentDetailURL(ids, YOUTUBE_API_KEY, withSnippet) {
 	return `https://www.googleapis.com/youtube/v3/videos?part=contentDetails${withSnippet ? ',snippet' : ''}&id=${ids}&key=${YOUTUBE_API_KEY}`;
 }
 
-export default function(query) {
+export default function (query) {
 	const YOUTUBE_API_KEY = store.getState().mediaPlayer.youtubeApiKey;
 	if (!query || (store.getState().youtube.query === query)) return;
 
@@ -18,7 +18,7 @@ export default function(query) {
 		});
 	} else {
 		store.dispatch(Actions.searchYoutube(query));
-		// const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&videoCategoryId=10&maxResults=20&q=${query}&key=${YOUTUBE_API_KEY}`;
+		// &videoCategoryId=10 // for music only
 		const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=20&q=${query}&key=${YOUTUBE_API_KEY}`;
 
 		ajax(url, (searchData) => {
@@ -35,5 +35,4 @@ export default function(query) {
 		});
 	}
 }
-// https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&videoCategoryId=10&q=metallica&key=AIzaSyCHVgsa5owudn4G79IX9pcRcrVNOmgKHuM
-// https://www.googleapis.com/youtube/v3/videoCategories?part==snippet&key=AIzaSyCHVgsa5owudn4G79IX9pcRcrVNOmgKHuM
+
