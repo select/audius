@@ -170,7 +170,7 @@ export default {
 			el.value = '';
 		},
 		addMusic() {
-			store.dispatch(Actions.importURL('http://audius.rockdapus.org/audius-starter.playlist'));
+			store.dispatch(Actions.importURL('https://audius.rockdapus.org/audius-starter.playlist'));
 		},
 		toggleEditPlayList() {
 			store.dispatch(Actions.toggleEditPlayList(undefined, false));
