@@ -35,17 +35,17 @@ module.exports = Object.assign(configDev, {
 		new CircularDependencyPlugin({
 			failOnError: true
 		}),
-		new SWPrecacheWebpackPlugin(
-			{
-				cacheId: 'audius',
-				filename: 'service-worker.js',
-				maximumFileSizeToCacheInBytes: 4194304,
-				stripPrefix: 'dist-website/'
-				// runtimeCaching: [{
-				// 	handler: 'cacheFirst',
-				// 	urlPattern: /[.]mp3$/,
-				// }],
-			}
-		),
+		// new SWPrecacheWebpackPlugin(
+		// 	{
+		// 		cacheId: 'audius',
+		// 		filename: 'service-worker.js',
+		// 		maximumFileSizeToCacheInBytes: 4194304,
+		// 		stripPrefix: 'dist-website/'
+		// 		runtimeCaching: [{
+		// 			handler: 'cacheFirst',
+		// 			urlPattern: /i.ytimg.com\/vi\/.*\/default.jpg$/,
+		// 		}],
+		// 	}
+		// ),
 	],
 });
