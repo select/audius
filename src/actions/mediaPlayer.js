@@ -199,4 +199,11 @@ export const setYoutubeApiKey = youtubeApiKey => ({
 	type: 'SET_YOUTUBE_API_KEY',
 	youtubeApiKey,
 	persistState: 'youtubeApiKey',
-})
+});
+
+export const setPastebinApiKey = pastebinApiKey => ({
+	type: 'SET_PASTEBIN_API_KEY',
+	pastebinApiKey,
+	persistState: 'pastebinApiKey',
+});
+
