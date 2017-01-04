@@ -43,6 +43,10 @@ const website = (state = initialState, action) => {
 		return Object.assign({}, state, {
 			showImport: action.state !== undefined ? action.state : !state.showImport,
 		});
+	case 'TOGGLE_EXPORT':
+		return Object.assign({}, state, {
+			showExport: action.state !== undefined ? action.state : !state.showExport,
+		});
 	case 'TOGGLE_PLAYLISTS':
 		return Object.assign({}, state, {
 			showPlayLists: action.state !== undefined ? action.state : !state.showPlayLists,

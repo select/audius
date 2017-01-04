@@ -3,15 +3,18 @@ import Vue from 'vue/dist/vue';
 import Sortable from 'sortablejs';
 import store from '../store';
 import Actions from '../actions';
-import importPlaylist from '../utils/importPlaylist';
 import { debounce } from '../utils/debounce';
 import isElementInViewport from '../utils/isElementInViewport';
 import VideoItem from './video-item.vue';
+import PlayListExport from './play-list-export.vue';
+import PlayListImport from './play-list-import.vue';
 
 export default {
 	name: 'play-list',
 	components: {
 		VideoItem,
+		PlayListExport,
+		PlayListImport,
 	},
 	data() {
 		const mediaPlayer = store.getState().mediaPlayer;
@@ -21,9 +24,6 @@ export default {
 			website: store.getState().website,
 			store,
 			Actions,
-			tabs: ['queue', 'search', 'info', 'about'],
-			importURLinput: false,
-			showImportOtherPlaylist: false,
 			jumpCursor: '',
 		};
 	},
@@ -34,6 +34,7 @@ export default {
 				setTimeout(() => { document.querySelector('.play-list-footer__search-input').value = ''; }, 100);
 			} else if (event.key === 'Escape') {
 				if (this.website.showImport) this.toggleImport(false);
+				if (this.website.showExport) this.toggleExport(false);
 				if (this.website.showJump) this.clear();
 			}
 			if (this.website.showJump) {
@@ -41,12 +42,12 @@ export default {
 					store.dispatch(Actions.queueMedia(this.jumpCursor));
 				} else if (event.key === 'ArrowDown') {
 					event.preventDefault();
-					if (!this.jumpCursor) this.jumpCursor = this.filteredPlaylist[0];
-					else this.jumpCursor = this.filteredPlaylist[this.filteredPlaylist.indexOf(this.jumpCursor) + 1];
+					if (!this.jumpCursor) this.jumpCursor = this.filteredPlayList[0];
+					else this.jumpCursor = this.filteredPlayList[this.filteredPlayList.indexOf(this.jumpCursor) + 1];
 				} else if (event.key === 'ArrowUp') {
 					event.preventDefault();
-					if (!this.jumpCursor) this.jumpCursor = this.filteredPlaylist[this.filteredPlaylist.length - 1];
-					else this.jumpCursor = this.filteredPlaylist[this.filteredPlaylist.indexOf(this.jumpCursor) - 1];
+					if (!this.jumpCursor) this.jumpCursor = this.filteredPlayList[this.filteredPlayList.length - 1];
+					else this.jumpCursor = this.filteredPlayList[this.filteredPlayList.indexOf(this.jumpCursor) - 1];
 				}
 				if (event.key === 'Enter' && this.jumpCursor) {
 					store.dispatch(Actions.play(this.jumpCursor));
@@ -85,43 +86,7 @@ export default {
 		this.unsubscribe();
 	},
 	methods: {
-		exportPlayList() {
-			// api_option=paste&api_paste_private=0&api_paste_code=llkjsdfljsdf
-			// https://developer.github.com/v3/gists/#create-a-gist
-			// curl -X POST \--data-binary '{"files": {"file1.txt": {"content": "Hello, SO"}}}' \https://api.github.com/gists
-			const playList = this.mediaPlayer.currentPlayList ? this.mediaPlayer.tags[this.mediaPlayer.currentPlayList] : this.mediaPlayer.playList;
-			const entities = {};
-			playList.forEach((key) => {
-				entities[key] = this.mediaPlayer.entities[key];
-			});
-			const data = {
-				AudiusDump: true,
-				playList: this.filteredPlaylist,
-				entities,
-			};
-			const element = document.createElement('a');
-			const output = `window.getAudiusPlaylist = function(){ return ${JSON.stringify(data)}; }`;
-			element.setAttribute('href', `data:text/plain;charset=utf-8,${encodeURIComponent(output)}`);
-			element.setAttribute(
-				'download',
-				this.mediaPlayer.currentPlayList? `${this.mediaPlayer.currentPlayList}.audius-playlist` : 'history.audius-playlist'
-			);
-			element.style.display = 'none';
-			document.body.appendChild(element);
-			element.click();
-			document.body.removeChild(element);
-		},
-		importPlayList(event) {
-			const files = event.target.files || event.dataTransfer.files;
-			Array.from(files).forEach((file) => {
-				const reader = new FileReader();
-				reader.onload = (event2) => {
-					importPlaylist(event2.target.result);
-					store.dispatch(Actions.toggleImport(false));
-				};
-				reader.readAsText(file);
-			});
-		},
+
 		searchJump: debounce((event) => {
 			store.dispatch(Actions.filterPlayList(event.target.value));
 		}, 500),
@@ -153,22 +118,10 @@ export default {
 		toggleImport(state) {
 			store.dispatch(Actions.toggleImport(state));
 		},
-		showImportURL() {
-			this.importURLinput = true;
-			Vue.nextTick(() => {
-				document.querySelector('.play-list__import-url-input').focus();
-			});
+		toggleExport(state) {
+			store.dispatch(Actions.toggleExport(state));
 		},
-		importURL() {
-			const el = document.querySelector('.play-list__import-url-input');
-			store.dispatch(Actions.importURL(el.value));
-			el.value = '';
-		},
-		importOtherPlayList() {
-			const el = document.querySelector('.paly-list__other-playlist-input');
-			store.dispatch(Actions.importOtherPlayList(el.value));
-			el.value = '';
-		},
+
 		addMusic() {
 			store.dispatch(Actions.importURL('https://audius.rockdapus.org/audius-starter.playlist'));
 		},
@@ -177,7 +130,7 @@ export default {
 		},
 	},
 	computed: {
-		filteredPlaylist() {
+		filteredPlayList() {
 			const playList = this.mediaPlayer.currentPlayList && !this.mediaPlayer.editPlayList ? this.mediaPlayer.tags[this.mediaPlayer.currentPlayList] : this.mediaPlayer.playList;
 			if (!this.mediaPlayer.filterQuery) return playList.filter(id => this.mediaPlayer.entities[id]);
 			return playList.filter(id =>
@@ -188,6 +141,13 @@ export default {
 					.indexOf(this.mediaPlayer.filterQuery) !== -1
 				);
 		},
+		entities() {
+			const playList = this.mediaPlayer.currentPlayList ? this.mediaPlayer.tags[this.mediaPlayer.currentPlayList] : this.mediaPlayer.playList;
+			return playList.reduce((entities, key) => {
+				entities[key] = this.mediaPlayer.entities[key];
+				return entities
+			}, {});
+		}
 	},
 };
 </script>
@@ -195,7 +155,7 @@ export default {
 <template>
 <div class="play-list">
 	<div class="play-list__body">
-		<h2 v-if="!website.showImport && !mediaPlayer.currentPlayList && !filteredPlaylist.length">
+		<h2 v-if="!website.showImport && !mediaPlayer.currentPlayList && !filteredPlayList.length">
 			The playlist is empty <br>
 			┐(・。・┐) ♪ <br>
 			<br>
@@ -207,7 +167,7 @@ export default {
 				class="play-list__btn-add-music button btn--blue"
 				v-on:click="addMusic">add music</button>
 		</h2>
-		<h2 v-if="!website.showImport && mediaPlayer.currentPlayList && !filteredPlaylist.length">
+		<h2 v-if="!website.showImport && mediaPlayer.currentPlayList && !filteredPlayList.length">
 			(⊃｡•́‿•̀｡)⊃ <br>
 			<br>
 			<span v-on:click="store.dispatch(Actions.toggleSearch())">
@@ -227,38 +187,20 @@ export default {
 			</div>
 		</div>
 
-		<div class="paly-list__import" v-show="website.showImport" >
-			<div class="paly-list__import-header">
-				<div> Import playlist </div>
-				<span
-					class="wmp-icon-close"
-					title="[Esc] Close"
-					v-on:click="toggleImport(false)"></span>
-			</div>
-			<input type="file" id="import-playlist" v-on:change="importPlayList" title="Import playlist from file">
-			<label for="import-playlist" class="button btn--blue">from file</label>
-			<button
-				class="button btn--blue"
-				v-show="!importURLinput"
-				v-on:click="showImportURL">from URL</button>
-			<div class="paly-list__import-url" v-show="importURLinput">
-				<input
-					class="play-list__import-url-input"
-					type="text"
-					placeholder="http://pasetbin.com/x23kc">
-				<button class="button btn--blue" v-on:click="importURL">load</button>
-			</div>
-			<button
-				class="button btn--blue"
-				v-if="!showImportOtherPlaylist"
-				v-on:click="showImportOtherPlaylist = true">other playlist</button>
-			<div v-if="showImportOtherPlaylist">
-				<select class="paly-list__other-playlist-input">
-					<option v-for="playListName in Object.keys(mediaPlayer.tags)">{{playListName}}</option>
-				</select>
-				<button class="button btn--blue" v-on:click="importOtherPlayList">load</button>
-			</div>
-		</div>
+		<play-list-import
+			:tags="Object.keys(mediaPlayer.tags)"
+			v-on:toggleImport="toggleImport"
+			v-on:importURL="store.dispatch(Actions.importURL($event))"
+			v-on:importOtherPlayList="store.dispatch(Actions.importOtherPlayList($event))"
+			v-show="website.showImport"></play-list-import>
+
+		<play-list-export
+			:currentPlayList="mediaPlayer.currentPlayList"
+			:filteredPlayList="filteredPlayList"
+			:entities="entities"
+			:pastebinApiKey="mediaPlayer.pastebinApiKey"
+			v-on:toggleExport="toggleExport"
+			v-if="website.showExport"></play-list-export>
 
 		<div
 			class="play-list__jump-header"
@@ -274,9 +216,9 @@ export default {
 		<ul
 			class="media-list"
 			v-bind:class="{ 'media-list--editing': mediaPlayer.editPlayList }"
-			v-show="!website.showImport">
+			v-show="!(website.showImport || website.showExport)">
 			<video-item
-				v-for="id in filteredPlaylist"
+				v-for="id in filteredPlayList"
 				:video="mediaPlayer.entities[id]"
 				:isEditPlayList="mediaPlayer.editPlayList"
 				:isPlayList="mediaPlayer.currentPlayList"
@@ -290,14 +232,17 @@ export default {
 	<div class="play-list-footer">
 		<ul v-show="!website.showJump">
 			<li class="play-list-footer--info">
-				{{filteredPlaylist.length}} Songs
+				{{filteredPlayList.length}} Songs
 			</li>
 			<li
 				v-bind:class="{ active: website.showImport }"
 				v-on:click="toggleImport()">
 				Import
 			</li>
-			<li v-on:click="exportPlayList" title="Export playlist to file">Export</li>
+			<li
+				v-bind:class="{ active: website.showExport }"
+				v-on:click="toggleExport()""
+				title="Export playlist">Export</li>
 		</ul>
 
 		<div
@@ -442,7 +387,8 @@ export default {
 	align-items: center
 	.button,
 	input,
-	select
+	select,
+	form
 		width: 14rem
 		margin-bottom: #{2 * $grid-space}
 	input
@@ -454,6 +400,8 @@ export default {
 	.paly-list__import-url
 		display: flex
 		flex-direction: column
+	form span
+		font-size: 0.8em
 
 #import-playlist
 	display: none
