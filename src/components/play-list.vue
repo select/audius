@@ -257,8 +257,7 @@ export default {
 					v-on:click="stopPropagation"
 					v-on:keyup="searchJump"
 					v-on:blur="delayBlur"
-					v-show="website.showJump"
-					debounce="500">
+					v-show="website.showJump">
 			<span
 				class="wmp-icon-close"
 				v-show="website.showJump"

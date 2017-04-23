@@ -66,7 +66,7 @@ export default {
 				type="submit"
 				class="button btn--blue">to URL</button>
 			<br>
-			<span><b>Copy and paste the URL</b> on the page that opens to share your playlist.</span>
+			<span><b>Copy and paste the URL</b> on the new page to share your playlist.</span>
 		</form>
 	</div>
 </template>

@@ -5,6 +5,18 @@ import {youtubeApiKey, pastebinApiKey} from '../utils/config';
 
 console.log('pastebin: ', pastebinApiKey);
 
+const scrollbarCss = `
+::-webkit-scrollbar
+	width: 5px
+	&:hover
+		width: 10px
+
+::-webkit-scrollbar-track
+  background: $color-catskillwhite
+
+::-webkit-scrollbar-thumb
+  background: $color-aluminium-dark`;
+
 export default {
 	name: 'settings',
 	data() {

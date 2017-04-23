@@ -1,4 +1,4 @@
-export default function ajax(url, callback) {
+export default function ajax(url, callback, params) {
 	const xmlhttp = new XMLHttpRequest();
 	xmlhttp.onreadystatechange = () => {
 		if (xmlhttp.readyState === 4) {
@@ -6,6 +6,6 @@ export default function ajax(url, callback) {
 			else console.warn('error loading ' + url);
 		}
 	};
-	xmlhttp.open('GET', url, true);
-	xmlhttp.send();
+	xmlhttp.open(params ? 'POST': 'GET', url, true);
+	xmlhttp.send(params);
 }

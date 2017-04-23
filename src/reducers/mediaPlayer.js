@@ -10,6 +10,8 @@ const initialState = {
 	playList: [],
 	tags: {},
 	tagsOrdered: [],
+	stepsHistoryBack: 0,
+	sessionHistory: [],
 	queue: [],
 	isPlaying: false,
 	shuffle: false,
@@ -37,6 +39,8 @@ function next(state) {
 		mediaId = queue.shift();
 		return Object.assign({}, state, {
 			mediaId,
+			stepsHistoryBack: 0,
+			sessionHistory: [...state.sessionHistory, state.currentMedia.id],
 			currentMedia: state.entities[mediaId],
 			queue: [...queue],
 			isPlaying: true,
@@ -46,6 +50,8 @@ function next(state) {
 		mediaId = playList[Math.floor(Math.random() * playList.length)];
 		return Object.assign({}, state, {
 			mediaId,
+			stepsHistoryBack: 0,
+			sessionHistory: [...state.sessionHistory, state.currentMedia.id],
 			currentMedia: state.entities[mediaId],
 			isPlaying: true,
 		});
@@ -59,6 +65,8 @@ function next(state) {
 		mediaId = playList[idx + 1];
 		return Object.assign({}, state, {
 			mediaId,
+			stepsHistoryBack: 0,
+			sessionHistory: [...state.sessionHistory, state.currentMedia.id],
 			currentMedia: state.entities[mediaId],
 			isPlaying: true,
 		});
@@ -231,6 +239,8 @@ const mediaPlayer = (state = initialState, action) => {
 		return Object.assign({}, state, {
 			isPlaying: !!(currentMedia || state.playList.length),
 			mediaId,
+			stepsHistoryBack: 0,
+			sessionHistory: [...state.sessionHistory, state.currentMedia.id],
 			currentMedia,
 			entities,
 		});
@@ -249,11 +259,12 @@ const mediaPlayer = (state = initialState, action) => {
 		return next(state);
 	}
 	case 'PREV_VIDEO': {
-		idx = state.playList.indexOf(state.mediaId);
-		if (idx > 0) {
-			mediaId = state.playList[idx - 1];
+		if (state.sessionHistory.length >= (-1 * state.stepsHistoryBack)) {
+			mediaId = state.sessionHistory[state.sessionHistory.length - state.stepsHistoryBack - 1 ];
 			return Object.assign({}, state, {
 				mediaId,
+				stepsHistoryBack: state.stepsHistoryBack - 1,
+				sessionHistory: [...state.sessionHistory, state.currentMedia.id],
 				currentMedia: state.entities[mediaId],
 				isPlaying: true,
 			});
@@ -271,6 +282,8 @@ const mediaPlayer = (state = initialState, action) => {
 		return Object.assign({}, state, {
 			queue: [...queue],
 			mediaId,
+			stepsHistoryBack: 0,
+			sessionHistory: [...state.sessionHistory, state.currentMedia.id],
 			currentMedia: state.entities[mediaId],
 			isPlaying: true,
 		});
