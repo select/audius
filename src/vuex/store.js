@@ -7,11 +7,11 @@ import { youtubeApiKey, pastebinApiKey } from '../utils/config';
 
 const searchYoutubeDebounced = debounce((...args) => searchYoutube(...args), 500);
 
-
 const presistMutation = {
 	addSearchResult: ['entities', 'playList', 'tags'],
 	togglePlayLists: ['website'],
 	addTags: ['tagsOrdered', 'tags'],
+	removeTags: ['tags'],
 	selectPlayList: ['currentPlayList'],
 	renamePlayList: ['tagsOrdered', 'tags', 'currentPlayList'],
 	deletePlayList: ['tagsOrdered', 'tags'],
@@ -21,12 +21,17 @@ Vue.use(Vuex);
 
 /* eslint-disable no-param-reassign */
 function play(state, mediaId, currentMedia) {
-	if (!mediaId) mediaId = !state.mediaId ? state.playList[0] : state.mediaId;
+	if (!mediaId) {
+		if (currentMedia) mediaId = currentMedia.id;
+		else if (state.mediaId) mediaId = state.mediaId;
+		else if (state.currentPlayList) mediaId = state.tags[state.currentPlayList][0];
+		else mediaId = state.playList[0];
+	}
+	if (currentMedia) state.entities[mediaId] = currentMedia;
 	state.mediaId = mediaId;
 	state.currentMedia = currentMedia || state.entities[mediaId];
 	state.sessionHistory.push(mediaId);
 	state.sessionHistoryPos = 0;
-	if (currentMedia) state.entities[mediaId] = currentMedia;
 	state.isPlaying = !!(state.currentMedia || state.playList.length);
 }
 
@@ -146,13 +151,13 @@ export const store = new Vuex.Store({
 			return s2time(state.currentTime);
 		},
 		progressWidth(state) {
-			return (state.currentTime / state.currentMedia.durationS) * 100;
+			return state.currentTime / state.currentMedia.durationS * 100;
 		},
 		youtubeApiKeyUI(state) {
-			return (state.youtubeApiKey === youtubeApiKey) ? '' : state.youtubeApiKey;
+			return state.youtubeApiKey === youtubeApiKey ? '' : state.youtubeApiKey;
 		},
 		pastebinApiKeyUI(state) {
-			return (state.pastebinApiKey === pastebinApiKey) ? '' : state.pastebinApiKey;
+			return state.pastebinApiKey === pastebinApiKey ? '' : state.pastebinApiKey;
 		},
 	},
 	/* eslint-disable no-param-reassign */
@@ -356,7 +361,7 @@ export const store = new Vuex.Store({
 			}
 			return state;
 		},
-		queueMedia(state, id) {
+		queue(state, id) {
 			state.queue.push(id);
 			state.website.mainRightTab = 'queue';
 		},
@@ -430,14 +435,12 @@ export const store = new Vuex.Store({
 		},
 	},
 	plugins: [
-		(vstore) => {
+		vstore => {
 			vstore.subscribe((mutation, state) => {
 				const presistStates = presistMutation[mutation.type];
 				if (presistStates !== undefined) {
 					presistStates.forEach(stateName => {
-						indexDB
-							.writeStore()
-							.put(state[stateName], stateName).onerror = event =>
+						indexDB.writeStore().put(state[stateName], stateName).onerror = event =>
 							console.warn(`DB Error ${event.target.error.name}`);
 					});
 				}
@@ -461,10 +464,9 @@ export const store = new Vuex.Store({
 			});
 		},
 		search({ commit, state }, query) {
-			searchYoutubeDebounced(state.youtubeApiKey, query, (result) => {
+			searchYoutubeDebounced(state.youtubeApiKey, query, result => {
 				commit('searchYoutubeSuccess', result);
 			});
 		},
 	},
 });
-

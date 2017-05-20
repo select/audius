@@ -86,7 +86,10 @@ export default {
 <template lang="html">
 	<header>
 		<div class="au-header__search">
-			<img class="au-header__logo" src="img/audius.logo.white.svg" alt="Audius - music player - logo">
+			<div>
+				<img class="au-header__logo" src="img/audius.logo.white.svg" alt="Audius - music player - logo">
+				<i>2.0.1</i>
+			</div>
 			<div class="au-header__search-controls">
 				<div
 					class="au-header__search-input-group"

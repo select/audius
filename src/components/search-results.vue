@@ -77,9 +77,9 @@ export default {
 			<div class="media-list__duration" v-if="video.duration">{{video.duration.m}}:{{video.duration.s}}</div>
 		</div>
 		<div class="media-list__controls">
-			<span class="wmp-icon-add" v-on:click="addToPlaylist(video)" title="Add to playlist"></span>
-			<span class="wmp-icon-pause" v-if="isPlaying(video)" v-on:click="pause" title="Pause"></span>
-			<span class="wmp-icon-play" v-else v-on:click="play({ currentMedia: video })" title="Play"></span>
+			<span class="wmp-icon-add" @click="addToPlaylist(video)" title="Add to playlist"></span>
+			<span class="wmp-icon-pause" v-if="isPlaying(video)" @click="pause" title="Pause"></span>
+			<span class="wmp-icon-play" v-else @click="play({ currentMedia: video })" title="Play"></span>
 			<a v-bind:href="'https://youtu.be/'+video.id" title="watch on YouTube" target="_blank">
 				<span class="wmp-icon-youtube icon--small"></span>
 			</a>

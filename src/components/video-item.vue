@@ -1,6 +1,6 @@
 <script>
 import Vue from 'vue/dist/vue';
-import { mapGetters, mapMutations, mapState } from 'vuex';
+import { mapGetters, mapMutations } from 'vuex';
 
 export default {
 	name: 'video-item',
@@ -24,7 +24,7 @@ export default {
 		...mapMutations(['pause', 'queue']),
 		play() {
 			if (this.isQueue) this.$store.commit('queuePlayIndex', this.queueIndex);
-			else this.$store.commit('play', this.video.id);
+			else this.$store.commit('play', { mediaId: this.video.id });
 		},
 		remove() {
 			if (this.isPlayList) {
@@ -96,7 +96,7 @@ export default {
 				<span class="wmp-icon-play" v-else v-on:click="play" title="Play"></span>
 				<span
 					class="wmp-icon-queue2 icon--small"
-					v-on:click="queue"
+					v-on:click="queue(video.id)"
 					v-if="!isQueue"
 					title="Add to queue"></span>
 			</div>

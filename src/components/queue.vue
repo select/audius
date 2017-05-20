@@ -5,7 +5,6 @@ import store from '../store';
 import VideoItem from './video-item.vue';
 
 export default {
-	name: 'queue',
 	components: {
 		VideoItem,
 	},
