@@ -26,22 +26,22 @@ export default {
 			mediaPlayer: store.getState().mediaPlayer,
 		};
 	},
-	created() {
-		this.unsubscribe = store.subscribe(() => {
-			this.mediaPlayer = store.getState().mediaPlayer;
-			if (this.mediaPlayer.youtubeApiKey !== youtubeApiKey) this.youtubeApiKey = this.mediaPlayer.youtubeApiKey;
-			if (this.mediaPlayer.pastebinApiKey !== pastebinApiKey) this.pastebinApiKey = this.mediaPlayer.pastebinApiKey;
-		});
-	},
-	beforeDestroy() {
-		this.unsubscribe();
-	},
+	// created() {
+	// 	this.unsubscribe = store.subscribe(() => {
+	// 		this.mediaPlayer = store.getState().mediaPlayer;
+	// 		if (this.mediaPlayer.youtubeApiKey !== youtubeApiKey) this.youtubeApiKey = this.mediaPlayer.youtubeApiKey;
+	// 		if (this.mediaPlayer.pastebinApiKey !== pastebinApiKey) this.pastebinApiKey = this.mediaPlayer.pastebinApiKey;
+	// 	});
+	// },
+	// beforeDestroy() {
+	// 	this.unsubscribe();
+	// },
 	watch: {
 		youtubeApiKey: function(val, oldVal) {
-			store.dispatch(Actions.setYoutubeApiKey(val));
+			this.$store.commit('setYoutubeApiKey', val);
 		},
 		pastebinApiKey: function(val, oldVal) {
-			store.dispatch(Actions.setPastebinApiKey(val));
+			this.$store('setPastebinApiKey',  val);
 		},
 	},
 };

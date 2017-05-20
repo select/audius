@@ -1,21 +1,18 @@
 <script>
 import Vue from 'vue/dist/vue';
+import { mapMutations, mapState } from 'vuex';
+
 import store from '../store';
 import Actions from '../actions';
-import isElementInViewport from '../utils/isElementInViewport';
+import { isElementInViewport } from '../utils';
 
 export default {
-	name: 'search-results',
 	data() {
 		return {
-			youtube: store.getState().youtube,
-			mediaPlayer: store.getState().mediaPlayer,
-			website: store.getState().website,
-			store,
-			Actions,
 			jumpCursor: {},
 		};
 	},
+
 	created() {
 		document.addEventListener('keydown', (event) => {
 			if (this.website.mainRightTab === 'search') {
@@ -35,33 +32,22 @@ export default {
 					else this.jumpCursor = this.youtube.results[this.youtube.results.indexOf(this.jumpCursor) - 1];
 				}
 				Vue.nextTick(() => {
-					const el = document.querySelector(`[data-id=${this.jumpCursor.id}]`);
+					const el = document.querySelector(`[data-id="${this.jumpCursor.id}"]`);
 					if (el && !isElementInViewport(el)) {
 						el.scrollIntoView({ block: 'start', behavior: 'smooth' });
 					}
 				});
 			}
 		}, false);
-		this.unsubscribe = store.subscribe(() => {
-			this.youtube = store.getState().youtube;
-			this.mediaPlayer = store.getState().mediaPlayer;
-			this.website = store.getState().website;
-		});
+
 	},
-	beforeDestroy() {
-		this.unsubscribe();
-	},
+	computed: mapState(['youtube', 'mediaId', 'website']),
 	methods: {
-		play(video) {
-			store.dispatch(Actions.play(video.id, video));
-		},
-		pause() {
-			store.dispatch(Actions.pause());
-		},
+		...mapMutations(['play', 'pause']),
 		addToPlaylist(video) {
-			store.dispatch(Actions.addSearchResult(video));
+			this.$store.commit('addSearchResult', video);
 			Vue.nextTick(() => {
-				const el = document.querySelector(`[data-id=${video.id}]`);
+				const el = document.querySelector(`[data-id="${video.id}"]`);
 				if (el) {
 					if (!isElementInViewport(el)) el.scrollIntoView({ block: 'start', behavior: 'smooth' });
 					el.classList.add('au--highlight');
@@ -70,7 +56,7 @@ export default {
 			});
 		},
 		isPlaying(video) {
-			return this.mediaPlayer.mediaId === video.id;
+			return this.mediaId === video.id;
 		},
 	},
 };
@@ -93,7 +79,7 @@ export default {
 		<div class="media-list__controls">
 			<span class="wmp-icon-add" v-on:click="addToPlaylist(video)" title="Add to playlist"></span>
 			<span class="wmp-icon-pause" v-if="isPlaying(video)" v-on:click="pause" title="Pause"></span>
-			<span class="wmp-icon-play" v-else v-on:click="play(video)" title="Play"></span>
+			<span class="wmp-icon-play" v-else v-on:click="play({ currentMedia: video })" title="Play"></span>
 			<a v-bind:href="'https://youtu.be/'+video.id" title="watch on YouTube" target="_blank">
 				<span class="wmp-icon-youtube icon--small"></span>
 			</a>

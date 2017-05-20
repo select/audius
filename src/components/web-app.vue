@@ -6,7 +6,6 @@ import PlayList from './play-list.vue';
 
 
 export default {
-	name: 'web-app',
 	components: {
 		WebHeader,
 		MainRight,
@@ -28,8 +27,48 @@ export default {
 </template>
 
 <style lang="sass?indentedSyntax">
+@import '../sass/font'
 @import '../sass/vars'
+@import '../sass/card'
 @import '../sass/color'
+@import '../sass/input'
+@import '../sass/icon'
+
+@import '../sass/media-list'
+
+body,
+html,
+	margin: 0
+	padding: 0
+	height: 100%
+body
+	font-family: 'Nobile', sans-serif
+	font-size: 2.3vmin
+	display: flex
+	flex-direction: column
+	align-items: center
+	color: $color-tuna
+	margin: 0
+	a
+		color: $color-tuna
+		&:visited
+			color: $color-tuna
+	input:focus
+		outline: 0
+
+.box-1-1
+	display: flex
+	>div
+		flex: 1
+		overflow-x: auto
+
+
+#app
+	position: absolute
+	top: 0
+	left: 0
+	width: 100%
+	height: 100%
 
 .web-app
 	width: 100%

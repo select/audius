@@ -11,7 +11,7 @@ module.exports = {
 	},
 	output: {
 		path: './',
-		filename: '[name].js'
+		filename: '[name].js',
 	},
 	stats: {
 		// Configure the console output
@@ -19,32 +19,24 @@ module.exports = {
 		modules: true,
 		reasons: true,
 	},
-	devtool: 'source-map',
 	module: {
 		loaders: [
-			// { test: /\.jpe?g$|\.gif$|\.png$|\.svg$|\.woff$|\.ttf$|\.wav$|\.mp3$/, loader: 'file' },
-			{ test: /\.vue$/, loader: 'vue' },
+			{ test: /\.vue$/, loader: 'vue-loader' },
 			{ test: /\.ttf$/, loader: 'url-loader' },
-			{
-				test: /\.sass$/,
-				// loader: 'style!css?sourceMap!postcss?sourceMap!sass?sourceMap',
-				loaders: ['style', 'css', 'postcss-loader', 'sass'],
-			},
-			{ test: /\.css$/, loader: 'raw-loader' },
 			{ test: /\.html$/, loader: 'raw-loader' },
 			{ test: /\.svg$/, loader: 'raw-loader' },
 			{
 				test: /\.js$/,
 				exclude: /node_modules/,
 				loader: 'babel-loader',
-				query: {
-					cacheDirectory: true,
-					presets: ['es2015'],
-				},
 			},
 		],
 	},
-	postcss: () => [autoprefixer],
+	// resolve: {
+	// 	alias: {
+	// 		vue: 'vue/dist/vue.js',
+	// 	},
+	// },
 	plugins: [
 		new CopyWebpackPlugin([
 			{ context: './src/extension/static/', from: '**/*', to: './dist-extension/' },
@@ -56,7 +48,20 @@ module.exports = {
 			},
 		}),
 		new CircularDependencyPlugin({
-			failOnError: true
+			failOnError: true,
+		}),
+		new webpack.LoaderOptionsPlugin({
+			options: {
+				context: __dirname,
+				postcss: [
+					autoprefixer,
+				],
+				babel: {
+					presets: ['es2015', 'stage-2'],
+					comments: false,
+					plugins: ['transform-es2015-destructuring', 'transform-object-rest-spread'],
+				},
+			},
 		}),
 	],
 };

@@ -1,11 +1,9 @@
 <script>
-import Vue from 'vue/dist/vue';
-
 export default {
 	name: 'play-list-export',
 	data() {
 		return {
-			playlistExportString: ''
+			playlistExportString: '',
 		};
 	},
 	props: [
@@ -31,14 +29,14 @@ export default {
 			element.setAttribute('href', `data:text/plain;charset=utf-8,${encodeURIComponent(this.getPlaylistExportString())}`);
 			element.setAttribute(
 				'download',
-				this.currentPlayList? `${this.currentPlayList}.audius-playlist` : 'history.audius-playlist'
+				this.currentPlayList ? `${this.currentPlayList}.audius-playlist` : 'history.audius-playlist'
 			);
 			element.style.display = 'none';
 			document.body.appendChild(element);
 			element.click();
 			document.body.removeChild(element);
 		},
-	}
+	},
 };
 </script>
 

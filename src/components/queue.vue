@@ -1,4 +1,6 @@
 <script>
+import { mapState } from 'vuex';
+
 import store from '../store';
 import VideoItem from './video-item.vue';
 
@@ -7,33 +9,22 @@ export default {
 	components: {
 		VideoItem,
 	},
-	data() {
-		return {
-			mediaPlayer: store.getState().mediaPlayer,
-		};
-	},
-	created() {
-		this.unsubscribe = store.subscribe(() => {
-			this.mediaPlayer = store.getState().mediaPlayer;
-		});
-	},
-	beforeDestroy() {
-		this.unsubscribe();
-	},
+	computed: mapState(['queue', 'entities']),
 };
 </script>
 
 <template>
 <div class="queue">
-	<p v-if="!mediaPlayer.queue.length">
+	<p v-if="!queue.length">
 		... queue with <span class="wmp-icon-queue2"></span>
 	</p>
 	<ul class="media-list">
 		<video-item
-			v-for="(id, index) in mediaPlayer.queue"
+			v-for="(id, index) in queue"
 			:isQueue="true"
 			:queueIndex="index"
-			:video="mediaPlayer.entities[id]"></video-item>
+			:key="id"
+			:video="entities[id]"></video-item>
 	</ul>
 </div>
 </template>

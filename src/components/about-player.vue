@@ -1,7 +1,5 @@
 <script>
 import Vue from 'vue/dist/vue';
-import store from '../store';
-import Actions from '../actions';
 import injectScript from '../utils/injectScript';
 
 export default {
@@ -9,6 +7,7 @@ export default {
 	methods: {
 		openGitter() {
 			if (!this.gitter) {
+				this.$store.commit('showChat');
 				store.dispatch(Actions.showChat());
 				Vue.nextTick(() => {
 					// config

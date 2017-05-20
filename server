@@ -20,6 +20,7 @@ config.output = {
 };
 
 config.plugins = [
+	...config.plugins,
 	new webpack.DefinePlugin({
 		'process.env': {
 			website: true,
@@ -39,6 +40,16 @@ config.plugins = [
 			// }],
 		}
 	),
+	new webpack.LoaderOptionsPlugin({
+		options: {
+			context: __dirname,
+			babel: {
+				presets: ['es2015', 'stage-2'],
+				comments: false,
+				plugins: ['transform-es2015-destructuring', 'transform-object-rest-spread'],
+			},
+		},
+	}),
 ];
 
 new WebpackDevServer(webpack(config), {

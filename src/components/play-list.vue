@@ -1,8 +1,8 @@
 <script>
 import Vue from 'vue/dist/vue';
+import { mapGetters, mapMutations, mapState } from 'vuex';
+
 import Sortable from 'sortablejs';
-import store from '../store';
-import Actions from '../actions';
 import { debounce } from '../utils/debounce';
 import isElementInViewport from '../utils/isElementInViewport';
 import VideoItem from './video-item.vue';
@@ -10,63 +10,55 @@ import PlayListExport from './play-list-export.vue';
 import PlayListImport from './play-list-import.vue';
 
 export default {
-	name: 'play-list',
 	components: {
 		VideoItem,
 		PlayListExport,
 		PlayListImport,
 	},
 	data() {
-		const mediaPlayer = store.getState().mediaPlayer;
 		return {
-			mediaPlayer,
-			currentSong: mediaPlayer.mediaId,
-			website: store.getState().website,
-			store,
-			Actions,
 			jumpCursor: '',
 		};
 	},
 	created() {
-		document.addEventListener('keydown', (event) => {
-			if (event.target.tagName.toLowerCase() !== 'input' && event.key === 'j') {
-				this.toggleJump(true);
-				setTimeout(() => { document.querySelector('.play-list-footer__search-input').value = ''; }, 100);
-			} else if (event.key === 'Escape') {
-				if (this.website.showImport) this.toggleImport(false);
-				if (this.website.showExport) this.toggleExport(false);
-				if (this.website.showJump) this.clear();
-			}
-			if (this.website.showJump) {
-				if (this.jumpCursor && event.key === 'q') {
-					store.dispatch(Actions.queueMedia(this.jumpCursor));
-				} else if (event.key === 'ArrowDown') {
-					event.preventDefault();
-					if (!this.jumpCursor) this.jumpCursor = this.filteredPlayList[0];
-					else this.jumpCursor = this.filteredPlayList[this.filteredPlayList.indexOf(this.jumpCursor) + 1];
-				} else if (event.key === 'ArrowUp') {
-					event.preventDefault();
-					if (!this.jumpCursor) this.jumpCursor = this.filteredPlayList[this.filteredPlayList.length - 1];
-					else this.jumpCursor = this.filteredPlayList[this.filteredPlayList.indexOf(this.jumpCursor) - 1];
-				}
-				if (event.key === 'Enter' && this.jumpCursor) {
-					store.dispatch(Actions.play(this.jumpCursor));
-				}
-			}
-		}, false);
+		// document.addEventListener('keydown', (event) => {
+		// 	if (event.target.tagName.toLowerCase() !== 'input' && event.key === 'j') {
+		// 		this.toggleJump(true);
+		// 		setTimeout(() => { document.querySelector('.play-list-footer__search-input').value = ''; }, 100);
+		// 	} else if (event.key === 'Escape') {
+		// 		if (this.website.showImport) this.toggleImport(false);
+		// 		if (this.website.showExport) this.toggleExport(false);
+		// 		if (this.website.showJump) this.clear();
+		// 	}
+		// 	if (this.website.showJump) {
+		// 		if (this.jumpCursor && event.key === 'q') {
+		// 			this.$store.commit('queueMedia', this.jumpCursor);
+		// 		} else if (event.key === 'ArrowDown') {
+		// 			event.preventDefault();
+		// 			if (!this.jumpCursor) this.jumpCursor = this.filteredPlayList[0];
+		// 			else this.jumpCursor = this.filteredPlayList[this.filteredPlayList.indexOf(this.jumpCursor) + 1];
+		// 		} else if (event.key === 'ArrowUp') {
+		// 			event.preventDefault();
+		// 			if (!this.jumpCursor) this.jumpCursor = this.filteredPlayList[this.filteredPlayList.length - 1];
+		// 			else this.jumpCursor = this.filteredPlayList[this.filteredPlayList.indexOf(this.jumpCursor) - 1];
+		// 		}
+		// 		if (event.key === 'Enter' && this.jumpCursor) {
+		// 			this.$store.commit('play', this.jumpCursor);
+		// 		}
+		// 	}
+		// }, false);
 
-		this.unsubscribe = store.subscribe(() => {
-			this.mediaPlayer = store.getState().mediaPlayer;
-			this.website = store.getState().website;
-			if (!this.website.showJump && this.jumpCursor) this.jumpCursor = '';
-			if (this.currentSong !== this.mediaPlayer.mediaId) {
-				Vue.nextTick(() => {
-					const el = document.querySelector('.play-list li.active');
-					if (!isElementInViewport(el)) el.scrollIntoView({ block: 'start', behavior: 'smooth' });
-				});
-				this.currentSong = this.mediaPlayer.mediaId;
-			}
-		});
+		// this.unsubscribe = store.subscribe(() => {
+		// 	this.website = store.getState().website;
+		// 	if (!this.website.showJump && this.jumpCursor) this.jumpCursor = '';
+		// 	if (this.currentSong !== this.mediaPlayer.mediaId) {
+		// 		Vue.nextTick(() => {
+		// 			const el = document.querySelector('.play-list li.active');
+		// 			if (!isElementInViewport(el)) el.scrollIntoView({ block: 'start', behavior: 'smooth' });
+		// 		});
+		// 		this.currentSong = this.mediaPlayer.mediaId;
+		// 	}
+		// });
 	},
 	mounted() {
 		const mediaListEl = document.querySelector('.play-list .media-list');
@@ -76,33 +68,34 @@ export default {
 			handle: '.media-list__thumbnail',
 			// Element dragging ended
 			onUpdate: () => {
-				store.dispatch(Actions.movePlayListMedia(
+				this.$store.commit(
+					'movePlayListMedia',
 					Array.from(mediaListEl.childNodes).map(el => el.dataset.id)
-				));
+				);
 			},
 		});
 	},
-	beforeDestroy() {
-		this.unsubscribe();
-	},
 	methods: {
-
+		...mapMutations(['toggleImport', 'toggleExport', 'toggleEditPlayList', 'toggleSearch']),
+		addMusic() {
+			this.$store.dispatch('importURL', 'https://audius.rockdapus.org/audius-starter.playlist');
+		},
 		searchJump: debounce((event) => {
-			store.dispatch(Actions.filterPlayList(event.target.value));
+			this.$store.commit('filterPlayList', event.target.value);
 		}, 500),
 		clear(close) {
-			if (!this.mediaPlayer.filterQuery) this.toggleJump(false);
+			if (!this.filterQuery) this.toggleJump(false);
 			clearTimeout(this.blurTimer);
 			event.stopPropagation();
 			document.querySelector('.play-list-footer__search-input').value = '';
 			document.querySelector('.play-list-footer__search-input').focus();
-			store.dispatch(Actions.filterPlayList(''));
-			if (close === true) store.dispatch(Actions.toggleJump(false));
+			this.$store.commit('filterPlayList', '');
+			if (close === true) this.toggleJump(false);
 		},
 		delayBlur() {
-			if (!this.mediaPlayer.filterQuery) {
+			if (!this.filterQuery) {
 				this.blurTimer = setTimeout(() => {
-					store.dispatch(Actions.toggleJump(false));
+					this.toggleJump(false);
 				}, 800);
 			}
 		},
@@ -110,44 +103,26 @@ export default {
 			if (this.website.showJump) event.stopPropagation();
 		},
 		toggleJump(state) {
-			store.dispatch(Actions.toggleJump(state));
+			this.$store.commit('toggleJump', state);
 			Vue.nextTick(() => {
 				document.querySelector('.play-list-footer__search-input').focus();
 			});
 		},
-		toggleImport(state) {
-			store.dispatch(Actions.toggleImport(state));
-		},
-		toggleExport(state) {
-			store.dispatch(Actions.toggleExport(state));
-		},
-
-		addMusic() {
-			store.dispatch(Actions.importURL('https://audius.rockdapus.org/audius-starter.playlist'));
-		},
-		toggleEditPlayList() {
-			store.dispatch(Actions.toggleEditPlayList(undefined, false));
-		},
 	},
 	computed: {
-		filteredPlayList() {
-			const playList = this.mediaPlayer.currentPlayList && !this.mediaPlayer.editPlayList ? this.mediaPlayer.tags[this.mediaPlayer.currentPlayList] : this.mediaPlayer.playList;
-			if (!this.mediaPlayer.filterQuery) return playList.filter(id => this.mediaPlayer.entities[id]);
-			return playList.filter(id =>
-				this.mediaPlayer
-					.entities[id]
-					.title
-					.toLowerCase()
-					.indexOf(this.mediaPlayer.filterQuery) !== -1
-				);
-		},
-		entities() {
-			const playList = this.mediaPlayer.currentPlayList ? this.mediaPlayer.tags[this.mediaPlayer.currentPlayList] : this.mediaPlayer.playList;
-			return playList.reduce((entities, key) => {
-				entities[key] = this.mediaPlayer.entities[key];
-				return entities
-			}, {});
-		}
+		...mapGetters(['filteredPlayList', 'filteredPlayListLength', 'currentEntities']),
+		...mapState([
+			'website',
+			'currentPlayList',
+			'entities',
+			'editPlayList',
+			'isPlaying',
+			'mediaId',
+			'tags',
+			'pastebinApiKey',
+			'filterQuery',
+		]),
+
 	},
 };
 </script>
@@ -155,50 +130,50 @@ export default {
 <template>
 <div class="play-list">
 	<div class="play-list__body">
-		<h2 v-if="!website.showImport && !mediaPlayer.currentPlayList && !filteredPlayList.length">
+		<h2 v-if="!website.showImport && !currentPlayList && !filteredPlayListLength">
 			The playlist is empty <br>
 			┐(・。・┐) ♪ <br>
 			<br>
-			<span v-on:click="store.dispatch(Actions.toggleSearch())">
+			<span @click="toggleSearch()">
 				<span class="wmp-icon-search" title="[f] Search on YouTube"></span> Search
 			</span>
 				and add some songs.
 			<button
 				class="play-list__btn-add-music button btn--blue"
-				v-on:click="addMusic">add music</button>
+				@click="addMusic">add music</button>
 		</h2>
-		<h2 v-if="!website.showImport && mediaPlayer.currentPlayList && !filteredPlayList.length">
+		<h2 v-if="!website.showImport && currentPlayList && !filteredPlayListLength">
 			(⊃｡•́‿•̀｡)⊃ <br>
 			<br>
-			<span v-on:click="store.dispatch(Actions.toggleSearch())">
+			<span @click="toggleSearch()">
 				<span class="wmp-icon-search" title="[f] Search on YouTube"></span> Search
 			</span>
 				and add some songs.
 		</h2>
 
-		<div class="paly-list__import" v-show="mediaPlayer.editPlayList" >
+		<div class="paly-list__import" v-show="editPlayList" >
 			<div class="paly-list__import-header">
-				<div> Edit playlist: {{mediaPlayer.currentPlayList}} </div>
+				<div> Edit playlist: {{currentPlayList}} </div>
 				<span
 					class="wmp-icon-close"
 					title="[Esc] Close"
-					v-on:click="toggleEditPlayList(false)"></span>
+					@click="toggleEditPlayList(undefined, false)"></span>
 				<div class="paly-list__edit-description">Click below to add songs to the playlist.</div>
 			</div>
 		</div>
 
 		<play-list-import
-			:tags="Object.keys(mediaPlayer.tags)"
+			:tags="Object.keys(tags)"
 			v-on:toggleImport="toggleImport"
 			v-on:importURL="store.dispatch(Actions.importURL($event))"
 			v-on:importOtherPlayList="store.dispatch(Actions.importOtherPlayList($event))"
 			v-show="website.showImport"></play-list-import>
 
 		<play-list-export
-			:currentPlayList="mediaPlayer.currentPlayList"
+			:currentPlayList="currentPlayList"
 			:filteredPlayList="filteredPlayList"
-			:entities="entities"
-			:pastebinApiKey="mediaPlayer.pastebinApiKey"
+			:entities="currentEntities"
+			:pastebinApiKey="pastebinApiKey"
 			v-on:toggleExport="toggleExport"
 			v-if="website.showExport"></play-list-export>
 
@@ -209,22 +184,23 @@ export default {
 			<span
 				class="wmp-icon-close"
 				title="[Esc] Close"
-				v-on:click="clear(true)"></span>
+				@click="clear(true)"></span>
 		</div>
 
 		<!-- play list here -->
 		<ul
 			class="media-list"
-			v-bind:class="{ 'media-list--editing': mediaPlayer.editPlayList }"
+			v-bind:class="{ 'media-list--editing': editPlayList }"
 			v-show="!(website.showImport || website.showExport)">
 			<video-item
 				v-for="id in filteredPlayList"
-				:video="mediaPlayer.entities[id]"
-				:isEditPlayList="mediaPlayer.editPlayList"
-				:isPlayList="mediaPlayer.currentPlayList"
-				:isInPlayList="mediaPlayer.editPlayList && mediaPlayer.tags[mediaPlayer.currentPlayList].includes(id)"
+				:video="entities[id]"
+				:isEditPlayList="editPlayList"
+				:isPlayList="currentPlayList"
+				:isInPlayList="editPlayList && mediaPlayer.tags[currentPlayList].includes(id)"
 				:isSelected="jumpCursor === id"
-				:isPlaying="mediaPlayer.isPlaying && mediaPlayer.entities[id] && (mediaPlayer.mediaId == mediaPlayer.entities[id].id)"></video-item>
+				:key="id"
+				:isPlaying="isPlaying && entities[id] && (mediaId == entities[id].id)"></video-item>
 		</ul>
 		<!-- ends here -->
 
@@ -232,36 +208,36 @@ export default {
 	<div class="play-list-footer">
 		<ul v-show="!website.showJump">
 			<li class="play-list-footer--info">
-				{{filteredPlayList.length}} Songs
+				{{filteredPlayListLength}} Songs
 			</li>
 			<li
 				v-bind:class="{ active: website.showImport }"
-				v-on:click="toggleImport()">
+				@click="toggleImport()">
 				Import
 			</li>
 			<li
 				v-bind:class="{ active: website.showExport }"
-				v-on:click="toggleExport()""
+				@click="toggleExport()"
 				title="Export playlist">Export</li>
 		</ul>
 
 		<div
 			class="play-list-footer__search"
 			v-bind:class="{ active: website.showJump }"
-			v-on:click="toggleJump()">
+			@click="toggleJump()">
 			<span class="wmp-icon-search" title="[j] Jump to file"></span>
 			<input
 					type="text"
 					class="play-list-footer__search-input"
 					placeholder="Jump to"
-					v-on:click="stopPropagation"
+					@click="stopPropagation"
 					v-on:keyup="searchJump"
 					v-on:blur="delayBlur"
 					v-show="website.showJump">
 			<span
 				class="wmp-icon-close"
 				v-show="website.showJump"
-				v-on:click="clear"></span>
+				@click="clear"></span>
 		</div>
 	</div>
 </div>
@@ -394,8 +370,8 @@ export default {
 		height: $touch-size-small
 		box-sizing: border-box
 		font-size: 1em
-		+placeholder
-			color: $color-aluminium
+		// +placeholder
+		// 	color: $color-aluminium
 	.paly-list__import-url
 		display: flex
 		flex-direction: column

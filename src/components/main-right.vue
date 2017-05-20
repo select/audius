@@ -1,6 +1,5 @@
-<script>
-import store from '../store';
-import Actions from '../actions';
+<script >
+import { mapMutations, mapState } from 'vuex';
 import AboutPlayer from './about-player.vue';
 import SearchResults from './search-results.vue';
 import Queue from './queue.vue';
@@ -16,21 +15,8 @@ export default {
 		YoutubePlayer,
 		Settings,
 	},
-	data() {
-		return {
-			state: store.getState(),
-			store,
-			Actions,
-		};
-	},
-	created() {
-		this.unsubscribe = store.subscribe(() => {
-			this.state = store.getState();
-		});
-	},
-	beforeDestroy() {
-		this.unsubscribe();
-	},
+	computed: mapState(['website', 'youtube']),
+	methods: mapMutations(['setMainRightTab']),
 };
 </script>
 
@@ -38,37 +24,37 @@ export default {
 <div class="main-right">
 	<ul class="main-right__tabs">
 		<li
-			v-on:click="store.dispatch(Actions.setMainRightTab('queue'))"
-			v-bind:class="{ active: state.website.mainRightTab == 'queue' }">Queue</li>
+			v-on:click="setMainRightTab('queue')"
+			v-bind:class="{ active: website.mainRightTab == 'queue' }">Queue</li>
 		<li
-			v-if="state.youtube.results.length"
-			v-on:click="store.dispatch(Actions.setMainRightTab('search'))"
-			v-bind:class="{ active: state.website.mainRightTab == 'search' }">Search</li>
+			v-if="youtube.results.length"
+			v-on:click="setMainRightTab('search')"
+			v-bind:class="{ active: website.mainRightTab == 'search' }">Search</li>
 		<li
-			v-on:click="store.dispatch(Actions.setMainRightTab('about'))"
-			v-bind:class="{ active: state.website.mainRightTab == 'about' }">About</li>
+			v-on:click="setMainRightTab('about')"
+			v-bind:class="{ active: website.mainRightTab == 'about' }">About</li>
 		<li
-			v-if="state.website.showChat"
-			v-on:click="store.dispatch(Actions.setMainRightTab('chat'))"
-			v-bind:class="{ active: state.website.mainRightTab == 'chat' }">Chat</li>
+			v-if="website.showChat"
+			v-on:click="setMainRightTab('chat')"
+			v-bind:class="{ active: website.mainRightTab == 'chat' }">Chat</li>
 		<li
-			v-if="state.website.showSettings"
-			v-on:click="store.dispatch(Actions.setMainRightTab('settings'))"
-			v-bind:class="{ active: state.website.mainRightTab == 'settings' }">Settings</li>
+			v-if="website.showSettings"
+			v-on:click="setMainRightTab('settings')"
+			v-bind:class="{ active: website.mainRightTab == 'settings' }">Settings</li>
 	</ul>
-	<div class="main-right__content" v-show="state.website.mainRightTab">
-		<about-player v-show="state.website.mainRightTab == 'about'"></about-player>
-		<search-results v-show="state.website.mainRightTab == 'search'"></search-results>
-		<queue v-show="state.website.mainRightTab == 'queue'"></queue>
-		<div class="audius-chat" v-show="state.website.mainRightTab == 'chat'"> </div>
-		<settings v-show="state.website.mainRightTab == 'settings'"></settings>
+	<div class="main-right__content" v-show="website.mainRightTab">
+		<about-player v-show="website.mainRightTab == 'about'"></about-player>
+		<search-results v-show="website.mainRightTab == 'search'"></search-results>
+		<queue v-show="website.mainRightTab == 'queue'"></queue>
+		<div class="audius-chat" v-show="website.mainRightTab == 'chat'"> </div>
+		<settings v-show="website.mainRightTab == 'settings'"></settings>
 	</div>
 	<div
 		class="main-right__player"
-		v-bind:class="{ full: !state.website.mainRightTab }">
+		v-bind:class="{ full: !website.mainRightTab }">
 		<span
-			v-on:click="store.dispatch(Actions.setMainRightTab(''))"
-			v-if="state.website.mainRightTab"
+			v-on:click="setMainRightTab('')"
+			v-if="website.mainRightTab"
 			class="main-right__player-full-btn wmp-icon-unfold_more"></span>
 		<youtube-player></youtube-player>
 	</div>

@@ -1,9 +1,6 @@
 <script>
-
 /* global YT */
-import store from '../store';
-import Actions from '../actions';
-import injectScript from '../utils/injectScript';
+import { injectScript } from '../utils';
 
 
 export default {
@@ -17,29 +14,29 @@ export default {
 		};
 	},
 	created() {
-		this.unsubscribe = store.subscribe(() => {
-			const mediaPlayer = store.getState().mediaPlayer;
-			if (mediaPlayer.mediaId && this.player.getVideoData() && (this.player.getVideoData().video_id !== mediaPlayer.mediaId)) {
-				this.duration = this.player.getDuration();
-				this.player.loadVideoById({
-					videoId: mediaPlayer.mediaId,
-					suggestedQuality: 'large',
-				});
-			}
-			if (this.player && this.player.isMuted && (this.player.isMuted() !== mediaPlayer.mute)) {
-				if (mediaPlayer.mute) this.player.mute();
-				else this.player.unMute();
-			}
-			if (this.skipToTime !== mediaPlayer.skipToTime) { // bad hack, this sould be some middleware doing it better
-				this.skipToTime = mediaPlayer.skipToTime;
-				this.player.seekTo(mediaPlayer.skipToTime, true);
-			}
-			if (mediaPlayer.isPlaying) {
-				if (this.player.getPlayerState() !== 1) this.player.playVideo();
-			} else if (this.player && this.player.getPlayerState && ![0, 2].includes(this.player.getPlayerState())) {
-				this.player.pauseVideo();
-			}
-		});
+		// this.unsubscribe = store.subscribe(() => {
+		// 	const mediaPlayer = store.getState().mediaPlayer;
+		// 	if (mediaPlayer.mediaId && this.player.getVideoData() && (this.player.getVideoData().video_id !== mediaPlayer.mediaId)) {
+		// 		this.duration = this.player.getDuration();
+		// 		this.player.loadVideoById({
+		// 			videoId: mediaPlayer.mediaId,
+		// 			suggestedQuality: 'large',
+		// 		});
+		// 	}
+		// 	if (this.player && this.player.isMuted && (this.player.isMuted() !== mediaPlayer.mute)) {
+		// 		if (mediaPlayer.mute) this.player.mute();
+		// 		else this.player.unMute();
+		// 	}
+		// 	if (this.skipToTime !== mediaPlayer.skipToTime) { // bad hack, this sould be some middleware doing it better
+		// 		this.skipToTime = mediaPlayer.skipToTime;
+		// 		this.player.seekTo(mediaPlayer.skipToTime, true);
+		// 	}
+		// 	if (mediaPlayer.isPlaying) {
+		// 		if (this.player.getPlayerState() !== 1) this.player.playVideo();
+		// 	} else if (this.player && this.player.getPlayerState && ![0, 2].includes(this.player.getPlayerState())) {
+		// 		this.player.pauseVideo();
+		// 	}
+		// });
 	},
 	beforeDestroy() {
 		this.unsubscribe();

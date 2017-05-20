@@ -1,62 +1,61 @@
 <script>
-import Vue from 'vue/dist/vue';
-import store from '../store';
-import Actions from '../actions';
+import Vue from 'vue';
+import { mapGetters, mapMutations, mapState, mapActions } from 'vuex';
+
 import { debounce } from '../utils/debounce';
-import searchYoutubeUtil from '../utils/searchYoutube';
-import { s2time, time2s } from '../utils/timeConverter';
+import { time2s } from '../utils/timeConverter';
 import isElementInViewport from '../utils/isElementInViewport';
 
 export default {
-	name: 'web-header',
-	data() {
-		return {
-			mediaPlayer: store.getState().mediaPlayer,
-			website: store.getState().website,
-			currentMedia: store.getState().mediaPlayer.currentMedia,
-			store,
-			Actions,
-		};
-	},
+	// name: 'web-header',
 	created() {
 		document.addEventListener('keydown', (event) => {
 			if (event.target.tagName.toLowerCase() !== 'input') {
 				if (event.key === 'c' && !event.ctrlKey) {
-					this.playPauseMedia();
+					this.playPause();
 				} else if (event.key === 'f' && !event.ctrlKey) {
-					store.dispatch(Actions.toggleSearch(true));
+					this.$store.commit('toggleSearch',(true));
 					setTimeout(() => { document.querySelector('.au-header__search-input').value = ''; }, 100);
 				} else if (event.key === 'b') {
-					store.dispatch(Actions.nextVideo());
+					this.$store.commit('nextVideo');
 				} else if (event.key === 's') {
-					store.dispatch(Actions.toggleShuffle());
+					this.$store.commit('toggleShuffle');
 				} else if (event.key === 'm') {
-					store.dispatch(Actions.toggleMute());
+					this.$store.commit('toggleMute');
 				}
 			}
 		}, false);
 
-		this.unsubscribe = store.subscribe(() => {
-			this.mediaPlayer = store.getState().mediaPlayer;
-			this.website = store.getState().website;
-			if (this.website.showSearch) {
-				Vue.nextTick(() => {
-					document.querySelector('.au-header__search-input').focus();
-				});
-			}
-			if (this.mediaPlayer.mediaId) {
-				this.currentMedia = this.mediaPlayer.currentMedia;
-				this.currentMedia.durationS = time2s(this.currentMedia.duration);
-			}
-		});
-	},
-	beforeDestroy() {
-		this.unsubscribe();
+		// this.unsubscribe = store.subscribe(() => {
+		// 	this.mediaPlayer = store.getState().mediaPlayer;
+		// 	this.website = store.getState().website;
+		// 	if (this.website.showSearch) {
+		// 		Vue.nextTick(() => {
+		// 			document.querySelector('.au-header__search-input').focus();
+		// 		});
+		// 	}
+		// 	if (this.mediaPlayer.mediaId) {
+		// 		this.currentMedia = this.mediaPlayer.currentMedia;
+		// 		this.currentMedia.durationS = time2s(this.currentMedia.duration);
+		// 	}
+		// });
 	},
 	methods: {
-		playPauseMedia() {
-			if (this.mediaPlayer.isPlaying) store.dispatch(Actions.pause());
-			else if (this.mediaPlayer.playList.length) store.dispatch(Actions.play());
+		...mapMutations([
+			'toggleSearch',
+			'togglePlayLists',
+			'showSettings',
+			'previousVideo',
+			'nextVideo',
+			'toggleShuffle',
+			'toggleMute',
+			'playPause'
+		]),
+		// search: debounce((event) => {
+		// 	this.$store.dispatch('search', event.target.value);
+		// }, 300),
+		search() {
+			this.$store.dispatch('search', event.target.value);
 		},
 		stopPropagation(event) {
 			if (this.website.showSearch) event.stopPropagation();
@@ -69,19 +68,15 @@ export default {
 		},
 		delayBlur() {
 			this.blurTimer = setTimeout(() => {
-				store.dispatch(Actions.toggleSearch(false));
+				this.$store.commit('toggleSearch', false);
 				document.querySelector('.au-header__search-input').blur();
 			}, 800);
 		},
-		searchYoutube: debounce((event) => {
-			searchYoutubeUtil(event.target.value);
-		}, 300),
 		skipToTime(event) {
 			if (this.currentMedia) {
-				store.dispatch(
-					Actions.skipToTime(
-						this.currentMedia.durationS * (event.offsetX / event.currentTarget.offsetWidth)
-					)
+				this.$store.commit(
+					'skipToTime',
+					this.currentMedia.durationS * (event.offsetX / event.currentTarget.offsetWidth)
 				);
 			}
 		},
@@ -91,17 +86,8 @@ export default {
 		},
 	},
 	computed: {
-		currentTimeObj() {
-			return s2time(this.mediaPlayer.currentTime);
-		},
-		progressWidth() {
-			if (!this.currentMedia) return 0;
-			return (this.mediaPlayer.currentTime / this.currentMedia.durationS) * 100;
-		},
-		playList() {
-			if (this.mediaPlayer.currentPlayList) return this.mediaPlayer.tags[this.mediaPlayer.currentPlayList];
-			return this.mediaPlayer.playList;
-		},
+		...mapGetters(['currentTimeObj', 'playList', 'progressWidth']),
+		...mapState(['currentTime', 'currentMedia', 'website', 'isPlaying', 'shuffle', 'mute']),
 	},
 };
 </script>
@@ -113,65 +99,65 @@ export default {
 			<div class="au-header__search-controls">
 				<div
 					class="au-header__search-input-group"
-					v-on:click="store.dispatch(Actions.toggleSearch())"
+					@click="toggleSearch()"
 					v-bind:class="{ active: website.showSearch }">
 					<span class="wmp-icon-search" title="[f] Search on YouTube"></span>
 					<input
 						type="text"
 						class="au-header__search-input"
 						placeholder="Search"
-						v-on:click="stopPropagation"
-						v-on:keyup="searchYoutube"
+						@click="stopPropagation"
+						v-on:keyup="search"
 						v-on:keyup.esc="clear"
 						v-on:blur="delayBlur">
-					<span class="wmp-icon-close" v-show="website.showSearch" v-on:click="clear"></span>
+					<span class="wmp-icon-close" v-show="website.showSearch" @click="clear"></span>
 				</div>
 				<span
 					class="wmp-icon-queue_music"
 					title="Toggle playlists"
-					v-on:click="store.dispatch(Actions.togglePlayLists())"></span>
+					@click="togglePlayLists"></span>
 				<span
 					class="wmp-icon-more_vert"
 					title="Show settings"
-					v-on:click="store.dispatch(Actions.showSettings())"></span>
+					@click="showSettings"></span>
 			</div>
 		</div>
 		<div class="au-header__control-bar">
 			<div
 				class="au-header__current-song"
-				v-on:click="scrollToCurrentSong">
+				@click="scrollToCurrentSong">
 				<div class="au-header__current-song-name" v-if="currentMedia">{{currentMedia.title}}</div>
 				<div class="au-header__current-song-time" v-if="currentMedia && currentMedia.duration">
 					{{currentTimeObj.m}}:{{currentTimeObj.s}} / {{currentMedia.duration.m}}:{{currentMedia.duration.s}}
 				</div>
 			</div>
 			<div class="au-header__controls" :disabled="!playList.length">
-				<span class="wmp-icon-previous" v-on:click="store.dispatch(Actions.previousVideo())" title="Previous song"></span>
-				<div class="au-header__play-pause" v-on:click="playPauseMedia">
-					<span class="wmp-icon-pause" v-if="mediaPlayer.isPlaying" title="[c] Pause"></span>
+				<span class="wmp-icon-previous" @click="previousVideo" title="Previous song"></span>
+				<div class="au-header__play-pause" @click="playPause">
+					<span class="wmp-icon-pause" v-if="isPlaying" title="[c] Pause"></span>
 					<span class="wmp-icon-play" v-else  title="[c] Play"></span>
 				</div>
-				<span class="wmp-icon-next" v-on:click="store.dispatch(Actions.nextVideo())"  title="[b] Next song"></span>
+				<span class="wmp-icon-next" @click="nextVideo"  title="[b] Next song"></span>
 				<div class="spacer"></div>
 				<div class="au-header__controls-small">
 					<span
 						class="au-header__shuffle wmp-icon-shuffle"
-						v-on:click="store.dispatch(Actions.toggleShuffle())"
-						v-bind:class="{ active: mediaPlayer.shuffle }"
+						@click="toggleShuffle"
+						v-bind:class="{ active: shuffle }"
 						title="[s] Shuffle"></span>
-					<div v-on:click="store.dispatch(Actions.toggleMute())">
-						<span class="wmp-icon-volume_up" v-if="!mediaPlayer.mute"></span>
+					<div @click="toggleMute">
+						<span class="wmp-icon-volume_up" v-if="!mute"></span>
 						<span class="wmp-icon-volume_off" v-else></span>
 					</div>
 					<!-- <span
 						class="au-header__repeat wmp-icon-repeat"
-						v-on:click="store.dispatch(Actions.togglePlayList())"
+						@click="store.dispatch(Actions.togglePlayList())"
 						v-bind:class="{ active: mediaPlayer.repeatAll }"
 						title="Repeat"></span> -->
 				</div>
 			</div>
 		</div>
-		<div class="au-header__progress" v-on:click="skipToTime">
+		<div class="au-header__progress" @click="skipToTime">
 			<div
 				v-if="currentMedia"
 				v-bind:style="{ width: progressWidth + '%' }"
@@ -179,8 +165,6 @@ export default {
 		</div>
 	</header>
 </template>
-
-
 
 <style lang="sass?indentedSyntax">
 @import '../sass/vars'
@@ -234,16 +218,16 @@ header
 		// width: inherit
 		input
 			width: 18em
-			+placeholder
-				color: $color-pictonblue
+			// +placeholder
+			// 	color: $color-pictonblue
 	input
 		color: $color-pictonblue
 		background: transparent
 		font-size: 1em
 		border: 0
 		width: 8em
-		+placeholder
-			color: $color-white
+		// +placeholder
+		// 	color: $color-white
 
 .au-header__controls
 	height: $touch-size-large

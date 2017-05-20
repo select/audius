@@ -1,38 +1,28 @@
-import Actions from '../actions';
-import store from '../store';
 import ajax from './ajax';
 
 const isYouTubeVideoRegEx = /http(?:s?):\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-_]*)(&(amp;)?‌​[\w?‌​=]*)?/;
 
-function getYtContentDetailURL(ids, YOUTUBE_API_KEY, withSnippet) {
+function getYtContentDetailURL(YOUTUBE_API_KEY, ids, withSnippet) {
 	return `https://www.googleapis.com/youtube/v3/videos?part=contentDetails${withSnippet ? ',snippet' : ''}&id=${ids}&key=${YOUTUBE_API_KEY}`;
 }
 
-export default function (query) {
-	const YOUTUBE_API_KEY = store.getState().mediaPlayer.youtubeApiKey;
-	if (!query || (store.getState().youtube.query === query)) return;
-
+export function searchYoutube(YOUTUBE_API_KEY, query, callback) {
 	if (isYouTubeVideoRegEx.test(query)) {
-		ajax(getYtContentDetailURL(isYouTubeVideoRegEx.exec(query)[1], YOUTUBE_API_KEY, true), (data) => {
-			store.dispatch(Actions.searchYoutubeSuccess(data.items));
+		ajax(getYtContentDetailURL(YOUTUBE_API_KEY, isYouTubeVideoRegEx.exec(query)[1], true), data => {
+			callback(data.items);
 		});
 	} else {
-		store.dispatch(Actions.searchYoutube(query));
-		// &videoCategoryId=10 // for music only
 		const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=20&q=${query}&key=${YOUTUBE_API_KEY}`;
-
-		ajax(url, (searchData) => {
+		ajax(url, searchData => {
 			ajax(
-				getYtContentDetailURL(searchData.items.map(item => item.id.videoId).join(','), YOUTUBE_API_KEY),
-				(data) => {
-					store.dispatch(
-						Actions.searchYoutubeSuccess(
-							searchData.items.map((item, idx) => Object.assign({}, item, data.items[idx]))
-						)
-					);
+				getYtContentDetailURL(
+					YOUTUBE_API_KEY,
+					searchData.items.map(item => item.id.videoId).join(',')
+				),
+				data => {
+					callback(searchData.items.map((item, idx) => Object.assign({}, item, data.items[idx])));
 				}
 			);
 		});
 	}
 }
-

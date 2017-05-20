@@ -1,19 +1,29 @@
 /* eslint no-new: "off" */
-import Vue from 'vue/dist/vue';
+import Vue from 'vue';
 
 import WebApp from '../components/web-app.vue';
 
 import '../utils/indexDB';
 import '../utils/websiteMessageManager';
 
-import './app.sass';
+import { store } from '../vuex/store';
+
+// indexDB
+// 	.init()
+// 	.then(() => indexDB.recoverState())
+// 	.then((state) => {
+// 		store.commit('recoverState', state);
+// 	});
+
 
 document.addEventListener('DOMContentLoaded', () => {
 	new Vue({
 		el: '#app',
-		components: { WebApp },
+		render: h => h(WebApp),
+		store,
 	});
 });
+
 
 // if ('serviceWorker' in navigator && process.env.NODE_ENV === 'production') {
 // 	navigator.serviceWorker

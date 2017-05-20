@@ -1,7 +1,6 @@
 <script>
 import Vue from 'vue/dist/vue';
-import store from '../store';
-import Actions from '../actions';
+import { mapGetters, mapMutations, mapState } from 'vuex';
 
 export default {
 	name: 'video-item',
@@ -22,23 +21,22 @@ export default {
 		};
 	},
 	methods: {
+		...mapMutations(['pause', 'queue']),
 		play() {
-			if (this.isQueue) store.dispatch(Actions.queuePlayIndex(this.queueIndex));
-			else store.dispatch(Actions.play(this.video.id));
+			if (this.isQueue) this.$store.commit('queuePlayIndex', this.queueIndex);
+			else this.$store.commit('play', this.video.id);
 		},
-		pause() { store.dispatch(Actions.pause()); },
-		menu() { store.dispatch(Actions.menuVideo(this.video.id)); },
 		remove() {
 			if (this.isPlayList) {
-				store.dispatch(Actions.removeTags(undefined, [this.video.id]));
+				this.$store.commit('removeTags', {mediaIds: [this.video.id]});
 			} else if (this.isQueue) {
-				store.dispatch(Actions.queueRemoveIndex(this.queueIndex));
+				this.$store.commit('queueRemoveIndex', this.queueIndex);
 			} else {
-				store.dispatch(Actions.removeVideo(this.video));
+				this.$store.commit('removeVideo', this.video);
 			}
 		},
 		addToPlaylist() {
-			store.dispatch(Actions.addSearchResult(this.video));
+			this.$store.commit('addSearchResult', this.video);
 		},
 		copyToClip() {
 			window.getSelection().removeAllRanges();
@@ -62,15 +60,12 @@ export default {
 			window.getSelection().removeAllRanges();
 			tmpEl.parentNode.removeChild(tmpEl);
 		},
-		queue() {
-			store.dispatch(Actions.queueMedia(this.video.id));
-		},
 		addTags() {
 			if (this.isEditPlayList) {
 				if (!this.isInPlayList) {
-					store.dispatch(Actions.addTags(undefined, [this.video.id]));
+					this.$store.commit('addTags', { mediaIds: [this.video.id] });
 				} else {
-					store.dispatch(Actions.removeTags(undefined, [this.video.id]));
+					this.$store.commit('removeTags', { mediaIds: [this.video.id]});
 				}
 			}
 		},
