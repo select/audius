@@ -1,9 +1,5 @@
 <script>
-import store from '../store';
-import Actions from '../actions';
-import {youtubeApiKey, pastebinApiKey} from '../utils/config';
-
-console.log('pastebin: ', pastebinApiKey);
+import { mapGetters, mapMutations } from 'vuex';
 
 const scrollbarCss = `
 ::-webkit-scrollbar
@@ -18,32 +14,8 @@ const scrollbarCss = `
   background: $color-aluminium-dark`;
 
 export default {
-	name: 'settings',
-	data() {
-		return {
-			youtubeApiKey: '',
-			pastebinApiKey: '',
-			mediaPlayer: store.getState().mediaPlayer,
-		};
-	},
-	// created() {
-	// 	this.unsubscribe = store.subscribe(() => {
-	// 		this.mediaPlayer = store.getState().mediaPlayer;
-	// 		if (this.mediaPlayer.youtubeApiKey !== youtubeApiKey) this.youtubeApiKey = this.mediaPlayer.youtubeApiKey;
-	// 		if (this.mediaPlayer.pastebinApiKey !== pastebinApiKey) this.pastebinApiKey = this.mediaPlayer.pastebinApiKey;
-	// 	});
-	// },
-	// beforeDestroy() {
-	// 	this.unsubscribe();
-	// },
-	watch: {
-		youtubeApiKey: function(val, oldVal) {
-			this.$store.commit('setYoutubeApiKey', val);
-		},
-		pastebinApiKey: function(val, oldVal) {
-			this.$store('setPastebinApiKey',  val);
-		},
-	},
+	computed: mapGetters(['youtubeApiKeyUI', 'pastebinApiKeyUI']),
+	methods: mapMutations(['setYoutubeApiKey', 'setPastebinApiKey']),
 };
 </script>
 
@@ -51,10 +23,12 @@ export default {
 <div class="settings">
 	<h1>Settings</h1>
 	<p>
-		YouTube API key <input type="text" placeholder="39 digit API key" v-model="youtubeApiKey">
+		YouTube API key
+		<input type="text" placeholder="39 digit API key" v-bind:value="youtubeApiKeyUI" @input="setYoutubeApiKey($event.target.value)">
 	</p>
 	<p>
-		Pastebin API key <input type="text" placeholder="32 digit API key" v-model="pastebinApiKey">
+		Pastebin API key
+		<input type="text" placeholder="32 digit API key" v-bind:value="pastebinApiKeyUI" @input="setPastebinApiKey($event.target.value)">
 	</p>
 </div>
 </template>

@@ -3,17 +3,17 @@ import Vue from 'vue';
 
 import WebApp from '../components/web-app.vue';
 
-import '../utils/indexDB';
-import '../utils/websiteMessageManager';
+import { indexDB } from '../utils';
+// import '../utils/websiteMessageManager';
 
 import { store } from '../vuex/store';
 
-// indexDB
-// 	.init()
-// 	.then(() => indexDB.recoverState())
-// 	.then((state) => {
-// 		store.commit('recoverState', state);
-// 	});
+indexDB
+	.init()
+	.then(() => indexDB.recoverState())
+	.then((state) => {
+		store.commit('recoverState', state);
+	});
 
 
 document.addEventListener('DOMContentLoaded', () => {

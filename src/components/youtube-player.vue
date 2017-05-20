@@ -1,45 +1,59 @@
 <script>
 /* global YT */
+import { mapState, mapMutations } from 'vuex';
 import { injectScript } from '../utils';
 
 
 export default {
-	name: 'youtube-player',
 	data() {
 		return {
 			player: undefined,
 			timeInterval: undefined,
 			duration: 0,
-			skipToTime: 0,
+			skipToTimeLocal: 0,
 		};
 	},
 	created() {
-		// this.unsubscribe = store.subscribe(() => {
-		// 	const mediaPlayer = store.getState().mediaPlayer;
-		// 	if (mediaPlayer.mediaId && this.player.getVideoData() && (this.player.getVideoData().video_id !== mediaPlayer.mediaId)) {
-		// 		this.duration = this.player.getDuration();
-		// 		this.player.loadVideoById({
-		// 			videoId: mediaPlayer.mediaId,
-		// 			suggestedQuality: 'large',
-		// 		});
-		// 	}
-		// 	if (this.player && this.player.isMuted && (this.player.isMuted() !== mediaPlayer.mute)) {
-		// 		if (mediaPlayer.mute) this.player.mute();
-		// 		else this.player.unMute();
-		// 	}
-		// 	if (this.skipToTime !== mediaPlayer.skipToTime) { // bad hack, this sould be some middleware doing it better
-		// 		this.skipToTime = mediaPlayer.skipToTime;
-		// 		this.player.seekTo(mediaPlayer.skipToTime, true);
-		// 	}
-		// 	if (mediaPlayer.isPlaying) {
-		// 		if (this.player.getPlayerState() !== 1) this.player.playVideo();
-		// 	} else if (this.player && this.player.getPlayerState && ![0, 2].includes(this.player.getPlayerState())) {
-		// 		this.player.pauseVideo();
-		// 	}
-		// });
+		this.subscriptions = [
+			this.$store.watch(state => state.mediaId,() => {
+				// if video changed, set new video in player
+				if (this.mediaId && this.player.getVideoData() && (this.player.getVideoData().video_id !== this.mediaId)) {
+					this.duration = this.player.getDuration();
+					this.player.loadVideoById({
+						videoId: this.mediaId,
+						suggestedQuality: 'large',
+					});
+				}
+			}),
+
+			this.$store.watch(state => state.mute,() => {
+				// if mute changed
+				if (this.player && this.player.isMuted && (this.player.isMuted() !== this.mute)) {
+					if (this.mute) this.player.mute();
+					else this.player.unMute();
+				}
+			}),
+
+			this.$store.watch(state => state.skipToTime,() => {
+				// if skip to time changed
+				if (this.skipToTimeLocal !== this.skipToTime) {
+					this.skipToTimeLocal = this.skipToTime;
+					this.player.seekTo(this.skipToTime, true);
+				}
+			}),
+
+			this.$store.watch(state => state.isPlaying,() => {
+				// if isPlaying changed start stop video
+				if (this.isPlaying) {
+					if (this.player.getPlayerState() !== 1) this.player.playVideo();
+				} else if (this.player && this.player.getPlayerState && ![0, 2].includes(this.player.getPlayerState())) {
+					this.player.pauseVideo();
+				}
+			})
+		]
 	},
 	beforeDestroy() {
-		this.unsubscribe();
+		this.subscriptions.forEach((unsubscribe) => { unsubscribe(); });
 	},
 	mounted() {
 		const initialVideos = ['Es22YN2stg8', 'strzXKsfRMs', 'qMvLkpQcCKQ', 'KwoVARYA8jw', 'nzwrwfNHn5A'];
@@ -56,28 +70,27 @@ export default {
 		};
 		injectScript('https://www.youtube.com/iframe_api');
 	},
+	computed: mapState(['mediaId', 'mute', 'skipToTime', 'isPlaying']),
 	methods: {
+		...mapMutations(['play','pause', 'setCurrentTime', 'nextVideo', 'videoError']),
 		onPlayerError(event) {
-			const mediaPlayer = store.getState().mediaPlayer;
-			const video = mediaPlayer.entities[mediaPlayer.mediaId];
-			store.dispatch(Actions.videoError(video, event.data));
+			this.videoError(event.data);
 		},
 		onPlayerStateChange() {
 			const playerState = this.player.getPlayerState();
-			const isPlaying = store.getState().mediaPlayer.isPlaying;
 			if (playerState === 2) {
 				clearInterval(this.timeInterval);
 				this.timeInterval = undefined;
-				if (isPlaying) store.dispatch(Actions.pause());
+				if (this.isPlaying) this.pause();
 			} else if (playerState === 1) {
 				if (!this.timeInterval) {
 					this.timeInterval = setInterval(() => {
-						store.dispatch(Actions.setCurrentTime(this.player.getCurrentTime()));
+						this.setCurrentTime(this.player.getCurrentTime());
 					}, 1000);
 				}
-				if (!isPlaying) store.dispatch(Actions.play());
+				if (!this.isPlaying) this.play();
 			} else if (playerState === 0) {
-				store.dispatch(Actions.nextVideo());
+				this.nextVideo();
 			}
 		},
 	},

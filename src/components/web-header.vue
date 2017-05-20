@@ -34,10 +34,6 @@ export default {
 		// 			document.querySelector('.au-header__search-input').focus();
 		// 		});
 		// 	}
-		// 	if (this.mediaPlayer.mediaId) {
-		// 		this.currentMedia = this.mediaPlayer.currentMedia;
-		// 		this.currentMedia.durationS = time2s(this.currentMedia.duration);
-		// 	}
 		// });
 	},
 	methods: {
@@ -51,12 +47,7 @@ export default {
 			'toggleMute',
 			'playPause'
 		]),
-		// search: debounce((event) => {
-		// 	this.$store.dispatch('search', event.target.value);
-		// }, 300),
-		search() {
-			this.$store.dispatch('search', event.target.value);
-		},
+		...mapActions(['search']),
 		stopPropagation(event) {
 			if (this.website.showSearch) event.stopPropagation();
 		},
@@ -107,7 +98,7 @@ export default {
 						class="au-header__search-input"
 						placeholder="Search"
 						@click="stopPropagation"
-						v-on:keyup="search"
+						v-on:keyup="search($event.target.value)"
 						v-on:keyup.esc="clear"
 						v-on:blur="delayBlur">
 					<span class="wmp-icon-close" v-show="website.showSearch" @click="clear"></span>

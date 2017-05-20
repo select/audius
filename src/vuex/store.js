@@ -1,17 +1,26 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 
-import { indexDB, injectScript, duration, s2time, searchYoutube, debounce } from '../utils';
+import { indexDB, injectScript, duration, time2s, s2time, searchYoutube, debounce } from '../utils';
 import { videoBaseObject } from './video';
 import { youtubeApiKey, pastebinApiKey } from '../utils/config';
 
 const searchYoutubeDebounced = debounce((...args) => searchYoutube(...args), 500);
 
 
+const presistMutation = {
+	addSearchResult: ['entities', 'playList', 'tags'],
+	togglePlayLists: ['website'],
+	addTags: ['tagsOrdered', 'tags'],
+	selectPlayList: ['currentPlayList'],
+	renamePlayList: ['tagsOrdered', 'tags', 'currentPlayList'],
+	deletePlayList: ['tagsOrdered', 'tags'],
+};
+
 Vue.use(Vuex);
 
-
-function _play(state, mediaId, currentMedia) {
+/* eslint-disable no-param-reassign */
+function play(state, mediaId, currentMedia) {
 	if (!mediaId) mediaId = !state.mediaId ? state.playList[0] : state.mediaId;
 	state.mediaId = mediaId;
 	state.currentMedia = currentMedia || state.entities[mediaId];
@@ -108,7 +117,7 @@ export const store = new Vuex.Store({
 	},
 	getters: {
 		tags(state) {
-			return Object.keys(state.tags).map(key => ({ name: key, playList: state.tags[key] }));
+			return state.tagsOrdered.map(tagName => ({ name: tagName, playList: state.tags[tagName] }));
 		},
 		playList(state) {
 			if (state.currentPlayList) return state.tags[state.currentPlayList];
@@ -129,7 +138,7 @@ export const store = new Vuex.Store({
 		filteredPlayListLength(state, getters) {
 			return getters.filteredPlayList.length;
 		},
-		currentEntities(state, getters) {
+		currentEntities(state) {
 			const playList = state.currentPlayList ? state.tags[state.currentPlayList] : state.playList;
 			return playList.reduce((entities, id) => ({ ...entities, [id]: state.entities[id] }), {});
 		},
@@ -137,18 +146,19 @@ export const store = new Vuex.Store({
 			return s2time(state.currentTime);
 		},
 		progressWidth(state) {
-			if (!state.currentMedia) return 0;
-			return state.currentTime / state.currentMedia.durationS * 100;
+			return (state.currentTime / state.currentMedia.durationS) * 100;
+		},
+		youtubeApiKeyUI(state) {
+			return (state.youtubeApiKey === youtubeApiKey) ? '' : state.youtubeApiKey;
+		},
+		pastebinApiKeyUI(state) {
+			return (state.pastebinApiKey === pastebinApiKey) ? '' : state.pastebinApiKey;
 		},
 	},
 	/* eslint-disable no-param-reassign */
 	mutations: {
-		YOUTUBE_SEARCH_REQUEST(state, query) {
-			state.youtube.query = query;
-			state.youtube.isSearching = true;
-		},
-		YOUTUBE_SEARCH_ERROR(state) {
-			state.youtube.isSearching = false;
+		recoverState(state, recoveredState) {
+			state = Object.assign(state, recoveredState);
 		},
 		searchYoutubeSuccess(state, results) {
 			state.website.mainRightTab = 'search';
@@ -157,13 +167,13 @@ export const store = new Vuex.Store({
 				Object.assign({}, videoBaseObject, {
 					title: v.snippet.title,
 					duration: duration(v.contentDetails.duration),
+					durationS: time2s(duration(v.contentDetails.duration)),
 					isPlaying: false,
 					id: v.id,
 					deleted: false,
 				})
 			);
 		},
-		// -----------------------------------------------
 		toggleSearch(state, toggleState) {
 			state.website.showSearch = toggleState !== undefined
 				? toggleState
@@ -213,7 +223,9 @@ export const store = new Vuex.Store({
 			// 		playList: action.playList,
 			// 	});
 		},
-		VIDEO_ERROR(state, { video, message }) {
+		videoError(state, message) {
+			const video = state.currentMedia;
+
 			const entities = Object.assign({}, state.entities);
 			entities[video.id] = Object.assign({}, video, {
 				errorMessage: message,
@@ -304,21 +316,22 @@ export const store = new Vuex.Store({
 			const id = video.id;
 			if (state.currentPlayList) {
 				if (!state.tags[state.currentPlayList].includes(id)) {
-					state.tags[state.currentPlayList].push(video.id);
+					state.tags[state.currentPlayList].unshift(video.id);
 				}
 			} else if (!state.playList.includes(id)) {
-				state.playList.push(id);
+				state.playList.unshift(id);
 			}
 		},
 		pause(state) {
 			state.isPlaying = false;
 		},
-		play(state, { mediaId, currentMedia }) {
-			_play(state, mediaId, currentMedia);
+		play(state, options = {}) {
+			const { mediaId, currentMedia } = options;
+			play(state, mediaId, currentMedia);
 		},
 		playPause(state) {
 			if (state.isPlaying) state.isPlaying = false;
-			else if (state.playList.length) _play(state);
+			else if (state.playList.length) play(state);
 		},
 		toggleShuffle(state) {
 			state.shuffle = !state.shuffle;
@@ -361,7 +374,7 @@ export const store = new Vuex.Store({
 		filterPlayList(state, query) {
 			state.filterQuery = query;
 		},
-		SET_CURRENT_TIME(state, time) {
+		setCurrentTime(state, time) {
 			state.currentTime = time;
 		},
 		skipToTime(state, s) {
@@ -371,9 +384,9 @@ export const store = new Vuex.Store({
 			if (state.currentPlayList) state.tags[state.currentPlayList] = playList;
 			else state.playList = playList;
 		},
-		addTags(state, { mediaIds = [], tagIn }) {
-			let tag = tagIn || state.currentPlayList;
-			if (tag === '') {
+		addTags(state, { mediaIds = [], tag }) {
+			if (mediaIds.length) tag = tag || state.currentPlayList;
+			if (!tag) {
 				// if we want to use the current playlist action.tag === undefined
 				let counter = 1;
 				do {
@@ -398,6 +411,7 @@ export const store = new Vuex.Store({
 		},
 		deletePlayList(state, playListName) {
 			delete state.tags[playListName];
+			state.tagsOrdered = state.tagsOrdered.filter(name => name !== playListName);
 		},
 		toggleEditPlayList(state, { toggleState, playListName }) {
 			state.editPlayList = toggleState !== undefined ? toggleState : !state.editPlayList;
@@ -416,13 +430,16 @@ export const store = new Vuex.Store({
 		},
 	},
 	plugins: [
-		vstore => {
+		(vstore) => {
 			vstore.subscribe((mutation, state) => {
-				if (mutation.payload && mutation.payload.presist) {
-					indexDB
-						.writeStore()
-						.put(state[mutation.payload.presist], mutation.payload.presist).onerror = event =>
-						console.warn(`DB Error ${event.target.error.name}`);
+				const presistStates = presistMutation[mutation.type];
+				if (presistStates !== undefined) {
+					presistStates.forEach(stateName => {
+						indexDB
+							.writeStore()
+							.put(state[stateName], stateName).onerror = event =>
+							console.warn(`DB Error ${event.target.error.name}`);
+					});
 				}
 			});
 		},

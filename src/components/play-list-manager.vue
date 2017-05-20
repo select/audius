@@ -5,15 +5,12 @@ import { debounce } from '../utils/debounce';
 
 export default {
 	methods: {
-		...mapMutations(['selectPlayList', 'deletePlayList', 'togglePlayLists']),
+		...mapMutations(['selectPlayList', 'deletePlayList', 'togglePlayLists', 'renamePlayList']),
 		addTags() {
 			const el = document.querySelector('.play-list-manager__input input');
-			this.store$.commit('addTags', el.value);
+			this.$store.commit('addTags', { tagName: el.value });
 			el.value = '';
 		},
-		renamePlayList: debounce((oldName, event) => {
-			this.store$.commit('renamePlayList', oldName, event.target.value);
-		}, 500),
 	},
 	computed: {
 		...mapGetters(['tags', 'playListLength', 'currentPlayList']),
@@ -35,7 +32,7 @@ export default {
 			v-bind:class="{ active: !currentPlayList }"
 			@click="selectPlayList()">
 			<div class="play-list-manager__tag-body">
-				<div>History</div>
+				<div>Default</div>
 				<div>{{playListLength}} Songs</div>
 			</div>
 		</li>
@@ -51,7 +48,7 @@ export default {
 						class="play-list-manager__tag-name-input"
 						type="text"
 						v-bind:value="tag.name"
-						v-on:input="renamePlayList(tag.name, $event)"
+						v-on:input="renamePlayList({oldName: tag.name, newName: $event.target.value})"
 						placeholder="... playlist name">
 				</div>
 				<div>{{tag.playList.length}} Songs</div>
@@ -60,7 +57,7 @@ export default {
 				<span
 					class="wmp-icon-close"
 					title="Delte playlist"
-					@click.stop="deletePlayList(tag.name, $event)"></span>
+					@click.stop="deletePlayList(tag.name)"></span>
 			</div>
 		</li>
 		<li class="play-list-manager__input">
