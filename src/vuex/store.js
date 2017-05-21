@@ -15,6 +15,7 @@ const presistMutation = {
 	selectPlayList: ['currentPlayList'],
 	renamePlayList: ['tagsOrdered', 'tags', 'currentPlayList'],
 	deletePlayList: ['tagsOrdered', 'tags'],
+	toggleShuffle: ['shuffle'],
 };
 
 Vue.use(Vuex);
@@ -106,12 +107,13 @@ export const store = new Vuex.Store({
 		editPlayList: false,
 		youtubeApiKey,
 		pastebinApiKey,
+		showImport: false,
+		showExport: false,
+		showJump: false,
 		website: {
 			showSearch: false,
-			showJump: false,
 			mainRightTab: 'about',
 			showChat: false,
-			showImport: false,
 			showPlayLists: false,
 		},
 		youtube: {
@@ -184,9 +186,6 @@ export const store = new Vuex.Store({
 				? toggleState
 				: !state.website.showSearch;
 		},
-		toggleJump(state, toggleState) {
-			state.website.showJump = toggleState !== undefined ? toggleState : !state.website.showJump;
-		},
 		setMainRightTab(state, id) {
 			state.website.mainRightTab = id === state.mainRightTab ? '' : id;
 		},
@@ -198,15 +197,22 @@ export const store = new Vuex.Store({
 			state.website.showSettings = true;
 			state.website.mainRightTab = 'settings';
 		},
+		toggleJump(state, toggleState) {
+			state.showJump = toggleState !== undefined ? toggleState : !state.showJump;
+			state.showImport = false;
+			state.showExport = false;
+		},
 		toggleImport(state, toggleState) {
-			state.website.showImport = toggleState !== undefined
+			state.showImport = toggleState !== undefined
 				? toggleState
-				: !state.website.showImport;
+				: !state.showImport;
+			if (state.showImport) state.showExport = false;
 		},
 		toggleExport(state, toggleState) {
-			state.website.showExport = toggleState !== undefined
+			state.showExport = toggleState !== undefined
 				? toggleState
-				: !state.website.showExport;
+				: !state.showExport;
+			if (state.showExport) state.showImport = false;
 		},
 		togglePlayLists(state) {
 			state.website.showPlayLists = !state.website.showPlayLists;
@@ -285,7 +291,7 @@ export const store = new Vuex.Store({
 				state.entities = entities;
 			}
 		},
-		IMPORT_OTHER_PLAYLIST(state, playListName) {
+		importOtherPlayList(state, playListName) {
 			if (!state.currentPlayList) {
 				state.playList = [
 					...state.playList,

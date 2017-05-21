@@ -1,6 +1,6 @@
 <script>
 import Vue from 'vue/dist/vue';
-import { mapGetters, mapMutations, mapState } from 'vuex';
+import { mapGetters, mapMutations, mapState, mapActions } from 'vuex';
 
 import Sortable from 'sortablejs';
 import { debounce } from '../utils/debounce';
@@ -20,37 +20,10 @@ export default {
 			jumpCursor: '',
 		};
 	},
-	created() {
-		// document.addEventListener('keydown', (event) => {
-		// 	if (event.target.tagName.toLowerCase() !== 'input' && event.key === 'j') {
-		// 		this.toggleJump(true);
-		// 		setTimeout(() => { document.querySelector('.play-list-footer__search-input').value = ''; }, 100);
-		// 	} else if (event.key === 'Escape') {
-		// 		if (this.website.showImport) this.toggleImport(false);
-		// 		if (this.website.showExport) this.toggleExport(false);
-		// 		if (this.website.showJump) this.clear();
-		// 	}
-		// 	if (this.website.showJump) {
-		// 		if (this.jumpCursor && event.key === 'q') {
-		// 			this.$store.commit('queueMedia', this.jumpCursor);
-		// 		} else if (event.key === 'ArrowDown') {
-		// 			event.preventDefault();
-		// 			if (!this.jumpCursor) this.jumpCursor = this.filteredPlayList[0];
-		// 			else this.jumpCursor = this.filteredPlayList[this.filteredPlayList.indexOf(this.jumpCursor) + 1];
-		// 		} else if (event.key === 'ArrowUp') {
-		// 			event.preventDefault();
-		// 			if (!this.jumpCursor) this.jumpCursor = this.filteredPlayList[this.filteredPlayList.length - 1];
-		// 			else this.jumpCursor = this.filteredPlayList[this.filteredPlayList.indexOf(this.jumpCursor) - 1];
-		// 		}
-		// 		if (event.key === 'Enter' && this.jumpCursor) {
-		// 			this.$store.commit('play', this.jumpCursor);
-		// 		}
-		// 	}
-		// }, false);
-
+	create() {
 		// this.unsubscribe = store.subscribe(() => {
 		// 	this.website = store.getState().website;
-		// 	if (!this.website.showJump && this.jumpCursor) this.jumpCursor = '';
+		// 	if (!this.showJump && this.jumpCursor) this.jumpCursor = '';
 		// 	if (this.currentSong !== this.mediaPlayer.mediaId) {
 		// 		Vue.nextTick(() => {
 		// 			const el = document.querySelector('.play-list li.active');
@@ -76,9 +49,10 @@ export default {
 		});
 	},
 	methods: {
-		...mapMutations(['toggleImport', 'toggleExport', 'toggleEditPlayList', 'toggleSearch']),
+		...mapMutations(['toggleImport', 'toggleExport', 'toggleEditPlayList', 'toggleSearch', 'importOtherPlayList']),
+		...mapActions(['importURL']),
 		addMusic() {
-			this.$store.dispatch('importURL', 'https://audius.rockdapus.org/audius-starter.playlist');
+			this.importURL('https://audius.rockdapus.org/audius-starter.playlist');
 		},
 		searchJump: debounce((event) => {
 			this.$store.commit('filterPlayList', event.target.value);
@@ -100,7 +74,7 @@ export default {
 			}
 		},
 		stopPropagation() {
-			if (this.website.showJump) event.stopPropagation();
+			if (this.showJump) event.stopPropagation();
 		},
 		toggleJump(state) {
 			this.$store.commit('toggleJump', state);
@@ -112,7 +86,9 @@ export default {
 	computed: {
 		...mapGetters(['filteredPlayList', 'filteredPlayListLength', 'currentEntities']),
 		...mapState([
-			'website',
+			'showJump',
+			'showImport',
+			'showExport',
 			'currentPlayList',
 			'entities',
 			'editPlayList',
@@ -122,6 +98,9 @@ export default {
 			'pastebinApiKey',
 			'filterQuery',
 		]),
+		showWelcome() {
+			return !(this.showImport || this.showExport || this.filteredPlayListLength)
+		}
 
 	},
 };
@@ -130,7 +109,7 @@ export default {
 <template>
 <div class="play-list">
 	<div class="play-list__body">
-		<h2 v-if="!website.showImport && !currentPlayList && !filteredPlayListLength">
+		<h2 v-if="showWelcome && !currentPlayList">
 			The playlist is empty <br>
 			┐(・。・┐) ♪ <br>
 			<br>
@@ -142,7 +121,7 @@ export default {
 				class="play-list__btn-add-music button btn--blue"
 				@click="addMusic">add music</button>
 		</h2>
-		<h2 v-if="!website.showImport && currentPlayList && !filteredPlayListLength">
+		<h2 v-if="showWelcome && currentPlayList">
 			(⊃｡•́‿•̀｡)⊃ <br>
 			<br>
 			<span @click="toggleSearch()">
@@ -165,21 +144,21 @@ export default {
 		<play-list-import
 			:tags="Object.keys(tags)"
 			v-on:toggleImport="toggleImport"
-			v-on:importURL="store.dispatch(Actions.importURL($event))"
-			v-on:importOtherPlayList="store.dispatch(Actions.importOtherPlayList($event))"
-			v-show="website.showImport"></play-list-import>
+			v-on:importURL="importURL"
+			v-on:importOtherPlayList="importOtherPlayList"
+			v-show="showImport"></play-list-import>
 
 		<play-list-export
 			:currentPlayList="currentPlayList"
 			:filteredPlayList="filteredPlayList"
 			:entities="currentEntities"
 			:pastebinApiKey="pastebinApiKey"
-			v-on:toggleExport="toggleExport"
-			v-if="website.showExport"></play-list-export>
+			v-on:toggleExport="toggleExport()"
+			v-show="showExport"></play-list-export>
 
 		<div
 			class="play-list__jump-header"
-			v-show="website.showJump">
+			v-show="showJump">
 			<div> Jump to file </div>
 			<span
 				class="wmp-icon-close"
@@ -191,7 +170,7 @@ export default {
 		<ul
 			class="media-list"
 			v-bind:class="{ 'media-list--editing': editPlayList }"
-			v-show="!(website.showImport || website.showExport)">
+			v-show="!(showImport || showExport)">
 			<video-item
 				v-for="id in filteredPlayList"
 				:video="entities[id]"
@@ -206,24 +185,24 @@ export default {
 
 	</div>
 	<div class="play-list-footer">
-		<ul v-show="!website.showJump">
+		<ul v-show="!showJump">
 			<li class="play-list-footer--info">
 				{{filteredPlayListLength}} Songs
 			</li>
 			<li
-				v-bind:class="{ active: website.showImport }"
+				v-bind:class="{ active: showImport }"
 				@click="toggleImport()">
 				Import
 			</li>
 			<li
-				v-bind:class="{ active: website.showExport }"
+				v-bind:class="{ active: showExport }"
 				@click="toggleExport()"
 				title="Export playlist">Export</li>
 		</ul>
 
 		<div
 			class="play-list-footer__search"
-			v-bind:class="{ active: website.showJump }"
+			v-bind:class="{ active: showJump }"
 			@click="toggleJump()">
 			<span class="wmp-icon-search" title="[j] Jump to file"></span>
 			<input
@@ -233,10 +212,10 @@ export default {
 					@click="stopPropagation"
 					v-on:keyup="searchJump"
 					v-on:blur="delayBlur"
-					v-show="website.showJump">
+					v-show="showJump">
 			<span
 				class="wmp-icon-close"
-				v-show="website.showJump"
+				v-show="showJump"
 				@click="clear"></span>
 		</div>
 	</div>

@@ -1,6 +1,5 @@
 <script>
 export default {
-	name: 'play-list-export',
 	data() {
 		return {
 			playlistExportString: '',

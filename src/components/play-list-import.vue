@@ -3,7 +3,6 @@ import Vue from 'vue/dist/vue';
 import importPlaylist from '../utils/importPlaylist';
 
 export default {
-	name: 'play-list-import',
 	data() {
 		return {
 			importURLinput: false,
