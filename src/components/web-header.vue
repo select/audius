@@ -5,34 +5,17 @@ import { mapGetters, mapMutations, mapState, mapActions } from 'vuex';
 import { debounce, time2s, isElementInViewport } from '../utils';
 
 export default {
-	// name: 'web-header',
 	created() {
-		document.addEventListener('keydown', (event) => {
-			if (event.target.tagName.toLowerCase() !== 'input') {
-				if (event.key === 'c' && !event.ctrlKey) {
-					this.playPause();
-				} else if (event.key === 'f' && !event.ctrlKey) {
-					this.$store.commit('toggleSearch',(true));
-					setTimeout(() => { document.querySelector('.au-header__search-input').value = ''; }, 100);
-				} else if (event.key === 'b') {
-					this.$store.commit('nextVideo');
-				} else if (event.key === 's') {
-					this.$store.commit('toggleShuffle');
-				} else if (event.key === 'm') {
-					this.$store.commit('toggleMute');
-				}
+		this.unsubscribe = this.$store.watch(state => state.website.showSearch,() => {
+			if (this.website.showSearch) {
+				Vue.nextTick(() => {
+					document.querySelector('.au-header__search-input').focus();
+				});
 			}
-		}, false);
-
-		// this.unsubscribe = store.subscribe(() => {
-		// 	this.mediaPlayer = store.getState().mediaPlayer;
-		// 	this.website = store.getState().website;
-		// 	if (this.website.showSearch) {
-		// 		Vue.nextTick(() => {
-		// 			document.querySelector('.au-header__search-input').focus();
-		// 		});
-		// 	}
-		// });
+		});
+	},
+	beforeDestroy() {
+		this.unsubscribe();
 	},
 	methods: {
 		...mapMutations([
@@ -46,6 +29,11 @@ export default {
 			'playPause',
 		]),
 		...mapActions(['search']),
+		searchInput(event) {
+			if (event.key.length === 1 || event.key === 'Backspace') {
+				this.search(event.target.value)
+			}
+		},
 		stopPropagation(event) {
 			if (this.website.showSearch) event.stopPropagation();
 		},
@@ -103,7 +91,7 @@ export default {
 						class="au-header__search-input"
 						placeholder="Search"
 						@click="stopPropagation"
-						v-on:keyup="search($event.target.value)"
+						v-on:keyup="searchInput"
 						v-on:keyup.esc="clear"
 						v-on:blur="delayBlur">
 					<span class="wmp-icon-close" v-show="website.showSearch" @click="clear"></span>

@@ -14,17 +14,28 @@ export default {
 		PlayListExport,
 		PlayListImport,
 	},
-	create() {
-		// this.unsubscribe = store.subscribe(() => {
-		// 	if (!this.showJump && this.jumpCursor) this.jumpCursor = '';
-		// 	if (this.currentSong !== this.mediaId) {
-		// 		Vue.nextTick(() => {
-		// 			const el = document.querySelector('.play-list li.active');
-		// 			if (!isElementInViewport(el)) el.scrollIntoView({ block: 'start', behavior: 'smooth' });
-		// 		});
-		// 		this.currentSong = this.mediaId;
-		// 	}
-		// });
+	created() {
+		this.subscriptions = [
+			this.$store.watch(state => state.mediaId,() => {
+				if (this.currentMediaId !== this.mediaId) {
+					Vue.nextTick(() => {
+						const el = document.querySelector('.play-list li.active');
+						if (!isElementInViewport(el)) el.scrollIntoView({ block: 'start', behavior: 'smooth' });
+					});
+					this.currentMediaId = this.mediaId;
+				}
+			}),
+			this.$store.watch(state => state.showJump,() => {
+				if (this.showJump) {
+					Vue.nextTick(() => {
+						document.querySelector('.play-list-footer__search-input').focus();
+					});
+				}
+			}),
+		];
+	},
+	beforeDestroy() {
+		this.subscriptions.forEach((unsub) => { unsub(); });
 	},
 	mounted() {
 		const mediaListEl = document.querySelector('.play-list .media-list');
@@ -50,7 +61,8 @@ export default {
 			'toggleSearch',
 			'importOtherPlayList',
 			'filterPlayList',
-			'movePlayListMedia'
+			'movePlayListMedia',
+			'toggleJump',
 		]),
 		...mapActions(['importURL']),
 		addMusic() {
@@ -75,11 +87,10 @@ export default {
 		stopPropagation() {
 			if (this.showJump) event.stopPropagation();
 		},
-		toggleJump(state) {
-			this.$store.commit('toggleJump', state);
-			Vue.nextTick(() => {
-				document.querySelector('.play-list-footer__search-input').focus();
-			});
+		filterInput(event) {
+			if (event.key.length === 1 || event.key === 'Backspace') {
+				this.filterPlayList(event.target.value)
+			}
 		},
 	},
 	computed: {
@@ -101,9 +112,10 @@ export default {
 			'filterQuery',
 			'tags',
 			'jumpCursor',
+			'mediaId',
 		]),
 		showWelcome() {
-			return !(this.showImport || this.showExport || this.filteredPlayListLength)
+			return !(this.showImport || this.showExport || this.showJump || this.filteredPlayListLength)
 		}
 
 	},
@@ -213,7 +225,7 @@ export default {
 					class="play-list-footer__search-input"
 					placeholder="Jump to"
 					@click="stopPropagation"
-					v-on:keyup="filterPlayList($event.target.value)"
+					v-on:keyup="filterInput"
 					v-on:blur="delayBlur"
 					v-show="showJump">
 			<span

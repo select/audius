@@ -231,6 +231,7 @@ export const store = new Vuex.Store({
 			state.showJump = toggleState !== undefined ? toggleState : !state.showJump;
 			state.showImport = false;
 			state.showExport = false;
+			if (!state.showJump && state.jumpCursor) state.jumpCursor = '';
 		},
 		toggleImport(state, toggleState) {
 			state.showImport = toggleState !== undefined ? toggleState : !state.showImport;
@@ -302,7 +303,6 @@ export const store = new Vuex.Store({
 			state.entities = entities;
 		},
 		importPlayList(state, data) {
-			console.log('importPlayList!');
 			let playList = getCurrenPlayList(state);
 			playList = [...playList, ...data.playList.filter(id => !playList.includes(id))];
 			if (state.currentPlayList) {
@@ -479,12 +479,13 @@ export const store = new Vuex.Store({
 			}, 1000);
 		},
 		search({ commit, state }, query) {
-			searchYoutubeDebounced(state.youtubeApiKey, query, result => {
-				commit('searchYoutubeSuccess', result);
-			});
+			if (query) {
+				searchYoutubeDebounced(state.youtubeApiKey, query, (result) => {
+					commit('searchYoutubeSuccess', result);
+				});
+			}
 		},
 		importPlayListFromString({ commit }, importString) {
-			console.log('importPlayListFromString')
 			importPlayListFromString(importString).then((data, error) => {
 				if (error) {
 					commit('error', error);
@@ -494,9 +495,7 @@ export const store = new Vuex.Store({
 			});
 		},
 		importURL({ commit }, url) {
-			ajax(url, data => {
-				commit('importPlayList', data);
-			});
+			ajax(url, (data) => { commit('importPlayList', data); });
 		},
 		exportToURL({ commit, getters }) {
 			const data = {
@@ -504,7 +503,7 @@ export const store = new Vuex.Store({
 				playList: getters.filteredPlayList,
 				entities: getters.currentEntities,
 			};
-			ajaxPostJSON('https://api.myjson.com/bins', JSON.stringify(data), res => {
+			ajaxPostJSON('https://api.myjson.com/bins', JSON.stringify(data), (res) => {
 				commit('setExportURL', JSON.parse(res).uri);
 			});
 		},

@@ -1,53 +1,76 @@
 import { store } from '../vuex/store';
 
+const state = store.state;
+
 document.addEventListener('keydown', (event) => {
-	if (event.target.tagName.toLowerCase() !== 'input' && event.key === 'j') {
-		this.toggleJump(true);
-		setTimeout(() => { document.querySelector('.play-list-footer__search-input').value = ''; }, 100);
-	} else if (event.key === 'Escape') {
-		if (this.website.showImport) this.toggleImport(false);
-		if (this.website.showExport) this.toggleExport(false);
-		if (this.website.showJump) this.clear();
-	}
-	if (this.website.showJump) {
-		if (this.jumpCursor && event.key === 'q') {
-			store.commit('queueMedia', this.jumpCursor);
-		} else if (event.key === 'ArrowDown') {
-			event.preventDefault();
-			if (!this.jumpCursor) this.jumpCursor = this.filteredPlayList[0];
-			else this.jumpCursor = this.filteredPlayList[this.filteredPlayList.indexOf(this.jumpCursor) + 1];
-		} else if (event.key === 'ArrowUp') {
-			event.preventDefault();
-			if (!this.jumpCursor) this.jumpCursor = this.filteredPlayList[this.filteredPlayList.length - 1];
-			else this.jumpCursor = this.filteredPlayList[this.filteredPlayList.indexOf(this.jumpCursor) - 1];
-		}
-		if (event.key === 'Enter' && this.jumpCursor) {
-			store.commit('play', this.jumpCursor);
+
+	if (event.target.tagName.toLowerCase() !== 'input') {
+		if (event.key === 'c' && !event.ctrlKey) {
+			store.commit('playPause');
+		} else if (event.key === 'b') {
+			store.commit('nextVideo');
+		} else if (event.key === 's') {
+			store.commit('toggleShuffle');
+		} else if (event.key === 'm') {
+			store.commit('toggleMute');
+		} else if (event.key === 'f' && !event.ctrlKey) {
+			setTimeout(() => { store.commit('toggleSearch', true); }, 50);
+		} else if (event.key === 'j' && !event.ctrlKey) {
+			setTimeout(() => { store.commit('toggleJump', true); }, 50);
 		}
 	}
 
-	if (this.website.mainRightTab === 'search') {
-		if (this.jumpCursor.id && event.key === 'Enter') {
-			store.dispatch(Actions.play(this.jumpCursor.id, this.jumpCursor));
-		} else if (this.jumpCursor.id && event.ctrlKey && event.key === ' ') {
-			this.addToPlaylist(this.jumpCursor);
+	if (event.key === 'Escape') {
+		if (state.showImport) store.commit('toggleImport', false);
+		if (state.showExport) store.commit('toggleExport', false);
+		if (state.showJump) {
+			document.querySelector('.play-list-footer__search input').value = '';
+			store.commit('toggleJump', false);
+			store.commit('filterPlayList', '');
+		}
+	}
+
+	if (state.showJump) {
+		// console.log('state show jumppp');
+		if (state.jumpCursor && event.key === 'q') {
+			store.commit('queueMedia', state.jumpCursor);
 		} else if (event.key === 'ArrowDown') {
 			event.preventDefault();
-			if (!this.jumpCursor) this.jumpCursor = this.youtube.results[0];
-			else if (this.youtube.results.indexOf(this.jumpCursor) >= this.youtube.results.length - 1) this.jumpCursor = this.youtube.results[0];
-			else this.jumpCursor = this.youtube.results[this.youtube.results.indexOf(this.jumpCursor) + 1];
+			if (!state.jumpCursor) state.jumpCursor = this.filteredPlayList[0];
+			else state.jumpCursor = this.filteredPlayList[this.filteredPlayList.indexOf(state.jumpCursor) + 1];
 		} else if (event.key === 'ArrowUp') {
 			event.preventDefault();
-			if (!this.jumpCursor) this.jumpCursor = this.youtube.results[this.youtube.results.length - 1];
-			else if (this.youtube.results.indexOf(this.jumpCursor) <= 0) this.jumpCursor = this.youtube.results[this.youtube.results.length - 1];
-			else this.jumpCursor = this.youtube.results[this.youtube.results.indexOf(this.jumpCursor) - 1];
+			if (!state.jumpCursor) state.jumpCursor = this.filteredPlayList[this.filteredPlayList.length - 1];
+			else state.jumpCursor = this.filteredPlayList[this.filteredPlayList.indexOf(state.jumpCursor) - 1];
 		}
-		Vue.nextTick(() => {
-			const el = document.querySelector(`[data-id="${this.jumpCursor.id}"]`);
-			if (el && !isElementInViewport(el)) {
-				el.scrollIntoView({ block: 'start', behavior: 'smooth' });
-			}
-		});
+		if (event.key === 'Enter' && state.jumpCursor) {
+			store.commit('play', state.jumpCursor);
+		}
+	}
+
+	if (state.mainRightTab === 'search') {
+		const yt = state.youtube;
+		if (state.jumpCursor.id && event.key === 'Enter') {
+			store.commit('play', state.jumpCursor.id, state.jumpCursor);
+		} else if (state.jumpCursor.id && event.ctrlKey && event.key === ' ') {
+			this.addToPlaylist(state.jumpCursor);
+		} else if (event.key === 'ArrowDown') {
+			event.preventDefault();
+			if (!state.jumpCursor) state.jumpCursor = state.youtube.results[0];
+			else if (yt.results.indexOf(state.jumpCursor) >= yt.results.length - 1) state.jumpCursor = yt.results[0];
+			else state.jumpCursor = yt.results[yt.results.indexOf(state.jumpCursor) + 1];
+		} else if (event.key === 'ArrowUp') {
+			event.preventDefault();
+			if (!state.jumpCursor) state.jumpCursor = yt.results[yt.results.length - 1];
+			else if (yt.results.indexOf(state.jumpCursor) <= 0) state.jumpCursor = yt.results[yt.results.length - 1];
+			else state.jumpCursor = yt.results[yt.results.indexOf(state.jumpCursor) - 1];
+		}
+		// Vue.nextTick(() => {
+		// 	const el = document.querySelector(`[data-id="${store.state.jumpCursor.id}"]`);
+		// 	if (el && !isElementInViewport(el)) {
+		// 		el.scrollIntoView({ block: 'start', behavior: 'smooth' });
+		// 	}
+		// });
 	}
 
 }, false);
