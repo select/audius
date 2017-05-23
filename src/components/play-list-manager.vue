@@ -152,6 +152,12 @@ export default {
 				width: 100%
 				padding-left: #{2*$grid-space}
 				font-size: 1em
+				&::-webkit-input-placeholder
+					color: $color-palesky
+				&:-moz-placeholder
+					color: $color-palesky
+				&::-moz-placeholder
+					color: $color-palesky
 				// +placeholder
 				// 	color: $color-palesky
 		&::-webkit-scrollbar-thumb
@@ -183,6 +189,8 @@ export default {
 		color: $color-catskillwhite
 		width: $touch-size-small
 		height: $touch-size-small
+.play-list-manager__tag-name-input
+	height: $touch-size-extratiny
 </style>
 
 

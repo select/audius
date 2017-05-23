@@ -1,4 +1,4 @@
-import { store } from './vuex/store';
+import { store } from '../vuex/store';
 
 document.addEventListener('keydown', (event) => {
 	if (event.target.tagName.toLowerCase() !== 'input' && event.key === 'j') {

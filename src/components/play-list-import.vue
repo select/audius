@@ -1,6 +1,6 @@
 <script>
 import Vue from 'vue/dist/vue';
-import importPlaylist from '../utils/importPlaylist';
+import { mapActions } from 'vuex';
 
 export default {
 	data() {
@@ -13,13 +13,15 @@ export default {
 		'tags',
 	],
 	methods: {
-		importPlayList(event) {
+		...mapActions(['importPlayListFromString']),
+		importPlayListHandler(event) {
 			const files = event.target.files || event.dataTransfer.files;
 			Array.from(files).forEach((file) => {
 				const reader = new FileReader();
 				reader.onload = (event2) => {
-					importPlaylist(event2.target.result);
+					this.importPlayListFromString(event2.target.result);
 					this.$emit('toggleImport', false);
+
 				};
 				reader.readAsText(file);
 			});
@@ -42,6 +44,10 @@ export default {
 			el.value = '';
 			this.$emit('toggleImport', false);
 		},
+		exit() {
+			this.importURLinput = false;
+			this.$emit('toggleImport', false)
+		}
 	},
 };
 </script>
@@ -53,19 +59,19 @@ export default {
 			<span
 				class="wmp-icon-close"
 				title="[Esc] Close"
-				v-on:click="$emit('toggleImport', false)"></span>
+				v-on:click="exit"></span>
 		</div>
-		<input type="file" id="import-playlist" v-on:change="importPlayList" title="Import playlist from file">
+		<input type="file" id="import-playlist" v-on:change="importPlayListHandler" title="Import playlist from file">
 		<label for="import-playlist" class="button btn--blue">from file</label>
 		<button
 			class="button btn--blue"
 			v-show="!importURLinput"
-			v-on:click="showImportURL">from URL</button>
+			v-on:click="showImportURL">from web</button>
 		<div class="paly-list__import-url" v-show="importURLinput">
 			<input
 				class="play-list__import-url-input"
 				type="text"
-				placeholder="http://pasetbin.com/x23kc">
+				placeholder="https://api.myjson.com/bins/122zfl">
 			<button class="button btn--blue" v-on:click="importURL">load</button>
 		</div>
 		<button

@@ -1,6 +1,6 @@
 import store from '../store';
 import Actions from '../actions';
-import ajax from './ajax';
+import { ajax } from './ajax';
 
 
 const youtubeRegEx = /(youtube.com)|(youtu.be)/;

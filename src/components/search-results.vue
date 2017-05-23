@@ -7,17 +7,7 @@ import Actions from '../actions';
 import { isElementInViewport } from '../utils';
 
 export default {
-	data() {
-		return {
-			jumpCursor: {},
-		};
-	},
-
-	created() {
-
-
-	},
-	computed: mapState(['youtube', 'mediaId', 'website']),
+	computed: mapState(['youtube', 'mediaId', 'website', 'jumpCursor']),
 	methods: {
 		...mapMutations(['play', 'pause']),
 		addToPlaylist(video) {

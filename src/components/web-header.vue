@@ -2,9 +2,7 @@
 import Vue from 'vue';
 import { mapGetters, mapMutations, mapState, mapActions } from 'vuex';
 
-import { debounce } from '../utils/debounce';
-import { time2s } from '../utils/timeConverter';
-import isElementInViewport from '../utils/isElementInViewport';
+import { debounce, time2s, isElementInViewport } from '../utils';
 
 export default {
 	// name: 'web-header',
@@ -45,7 +43,7 @@ export default {
 			'nextVideo',
 			'toggleShuffle',
 			'toggleMute',
-			'playPause'
+			'playPause',
 		]),
 		...mapActions(['search']),
 		stopPropagation(event) {
@@ -73,11 +71,15 @@ export default {
 		},
 		scrollToCurrentSong() {
 			const el = document.querySelector(`[data-id="${this.currentMedia.id}"]`);
-			if (!isElementInViewport(el)) el.scrollIntoView({ block: 'start', behavior: 'smooth' });
+			if (el) {
+				if (!isElementInViewport(el)) el.scrollIntoView({ block: 'start', behavior: 'smooth' });
+				el.classList.add('au--highlight');
+				setTimeout(() => { el.classList.remove('au--highlight'); }, 1000);
+			}
 		},
 	},
 	computed: {
-		...mapGetters(['currentTimeObj', 'playList', 'progressWidth']),
+		...mapGetters(['currentTimeObj', 'playList', 'progressWidth', 'sessionHistoryHasPrev']),
 		...mapState(['currentTime', 'currentMedia', 'website', 'isPlaying', 'shuffle', 'mute']),
 	},
 };
@@ -125,8 +127,12 @@ export default {
 					{{currentTimeObj.m}}:{{currentTimeObj.s}} / {{currentMedia.duration.m}}:{{currentMedia.duration.s}}
 				</div>
 			</div>
-			<div class="au-header__controls" :disabled="!playList.length">
-				<span class="wmp-icon-previous" @click="previousVideo" title="Previous song"></span>
+			<div class="au-header__controls" :disabled="!playList.length ">
+				<span
+					class="wmp-icon-previous"
+					@click="previousVideo"
+					title="Previous song"
+					:disabled="!sessionHistoryHasPrev"></span>
 				<div class="au-header__play-pause" @click="playPause">
 					<span class="wmp-icon-pause" v-if="isPlaying" title="[c] Pause"></span>
 					<span class="wmp-icon-play" v-else  title="[c] Play"></span>
@@ -212,6 +218,12 @@ header
 		// width: inherit
 		input
 			width: 18em
+			&::-webkit-input-placeholder
+				color: $color-pictonblue
+			&:-moz-placeholder
+				color: $color-pictonblue
+			&::-moz-placeholder
+				color: $color-pictonblue
 			// +placeholder
 			// 	color: $color-pictonblue
 	input
@@ -220,6 +232,12 @@ header
 		font-size: 1em
 		border: 0
 		width: 8em
+		&::-webkit-input-placeholder
+			color: $color-white
+		&:-moz-placeholder
+			color: $color-white
+		&::-moz-placeholder
+			color: $color-white
 		// +placeholder
 		// 	color: $color-white
 
@@ -234,6 +252,10 @@ header
 			pointer-events: none
 	span
 		cursor: pointer
+		&[disabled]
+			color: $color-athensgrey
+			pointer-events: none
+
 	.spacer
 		width: #{2*$grid-space}
 	.au-header__play-pause

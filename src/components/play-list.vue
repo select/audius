@@ -3,8 +3,7 @@ import Vue from 'vue/dist/vue';
 import { mapGetters, mapMutations, mapState, mapActions } from 'vuex';
 
 import Sortable from 'sortablejs';
-import { debounce } from '../utils/debounce';
-import isElementInViewport from '../utils/isElementInViewport';
+import { debounce, isElementInViewport } from '../utils';
 import VideoItem from './video-item.vue';
 import PlayListExport from './play-list-export.vue';
 import PlayListImport from './play-list-import.vue';
@@ -15,21 +14,15 @@ export default {
 		PlayListExport,
 		PlayListImport,
 	},
-	data() {
-		return {
-			jumpCursor: '',
-		};
-	},
 	create() {
 		// this.unsubscribe = store.subscribe(() => {
-		// 	this.website = store.getState().website;
 		// 	if (!this.showJump && this.jumpCursor) this.jumpCursor = '';
-		// 	if (this.currentSong !== this.mediaPlayer.mediaId) {
+		// 	if (this.currentSong !== this.mediaId) {
 		// 		Vue.nextTick(() => {
 		// 			const el = document.querySelector('.play-list li.active');
 		// 			if (!isElementInViewport(el)) el.scrollIntoView({ block: 'start', behavior: 'smooth' });
 		// 		});
-		// 		this.currentSong = this.mediaPlayer.mediaId;
+		// 		this.currentSong = this.mediaId;
 		// 	}
 		// });
 	},
@@ -41,29 +34,35 @@ export default {
 			handle: '.media-list__thumbnail',
 			// Element dragging ended
 			onUpdate: () => {
-				this.$store.commit(
-					'movePlayListMedia',
-					Array.from(mediaListEl.childNodes).map(el => el.dataset.id)
-				);
+				if (!this.showJump){
+					this.movePlayListMedia(
+						Array.from(mediaListEl.childNodes).map(el => el.dataset.id)
+					);
+				}
 			},
 		});
 	},
 	methods: {
-		...mapMutations(['toggleImport', 'toggleExport', 'toggleEditPlayList', 'toggleSearch', 'importOtherPlayList']),
+		...mapMutations([
+			'toggleImport',
+			'toggleExport',
+			'toggleEditPlayList',
+			'toggleSearch',
+			'importOtherPlayList',
+			'filterPlayList',
+			'movePlayListMedia'
+		]),
 		...mapActions(['importURL']),
 		addMusic() {
 			this.importURL('https://audius.rockdapus.org/audius-starter.playlist');
 		},
-		searchJump: debounce((event) => {
-			this.$store.commit('filterPlayList', event.target.value);
-		}, 500),
 		clear(close) {
 			if (!this.filterQuery) this.toggleJump(false);
 			clearTimeout(this.blurTimer);
 			event.stopPropagation();
 			document.querySelector('.play-list-footer__search-input').value = '';
 			document.querySelector('.play-list-footer__search-input').focus();
-			this.$store.commit('filterPlayList', '');
+			this.filterPlayList('');
 			if (close === true) this.toggleJump(false);
 		},
 		delayBlur() {
@@ -84,7 +83,11 @@ export default {
 		},
 	},
 	computed: {
-		...mapGetters(['filteredPlayList', 'filteredPlayListLength', 'currentEntities']),
+		...mapGetters([
+			'filteredPlayList',
+			'filteredPlayListLength',
+			'currentEntities'
+		]),
 		...mapState([
 			'showJump',
 			'showImport',
@@ -95,8 +98,9 @@ export default {
 			'isPlaying',
 			'mediaId',
 			'tags',
-			'pastebinApiKey',
 			'filterQuery',
+			'tags',
+			'jumpCursor',
 		]),
 		showWelcome() {
 			return !(this.showImport || this.showExport || this.filteredPlayListLength)
@@ -152,9 +156,8 @@ export default {
 			:currentPlayList="currentPlayList"
 			:filteredPlayList="filteredPlayList"
 			:entities="currentEntities"
-			:pastebinApiKey="pastebinApiKey"
 			v-on:toggleExport="toggleExport()"
-			v-show="showExport"></play-list-export>
+			v-if="showExport"></play-list-export>
 
 		<div
 			class="play-list__jump-header"
@@ -176,7 +179,7 @@ export default {
 				:video="entities[id]"
 				:isEditPlayList="editPlayList"
 				:isPlayList="currentPlayList"
-				:isInPlayList="editPlayList && mediaPlayer.tags[currentPlayList].includes(id)"
+				:isInPlayList="editPlayList && tags[currentPlayList].includes(id)"
 				:isSelected="jumpCursor === id"
 				:key="id"
 				:isPlaying="isPlaying && entities[id] && (mediaId == entities[id].id)"></video-item>
@@ -210,7 +213,7 @@ export default {
 					class="play-list-footer__search-input"
 					placeholder="Jump to"
 					@click="stopPropagation"
-					v-on:keyup="searchJump"
+					v-on:keyup="filterPlayList($event.target.value)"
 					v-on:blur="delayBlur"
 					v-show="showJump">
 			<span
@@ -349,6 +352,12 @@ export default {
 		height: $touch-size-small
 		box-sizing: border-box
 		font-size: 1em
+		&::-webkit-input-placeholder
+				color: $color-aluminium
+		&:-moz-placeholder
+			color: $color-aluminium
+		&::-moz-placeholder
+			color: $color-aluminium
 		// +placeholder
 		// 	color: $color-aluminium
 	.paly-list__import-url

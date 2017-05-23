@@ -1,14 +1,28 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 
-import { indexDB, injectScript, duration, time2s, s2time, searchYoutube, debounce } from '../utils';
+import {
+	indexDB,
+	duration,
+	time2s,
+	s2time,
+	searchYoutube,
+	debounce,
+	importPlayListFromString,
+	ajaxPostJSON,
+	ajax
+} from '../utils';
 import { videoBaseObject } from './video';
-import { youtubeApiKey, pastebinApiKey } from '../utils/config';
+import { youtubeApiKey } from '../utils/config';
 
 const searchYoutubeDebounced = debounce((...args) => searchYoutube(...args), 500);
 
+
+Vue.use(Vuex);
+
 const presistMutation = {
 	addSearchResult: ['entities', 'playList', 'tags'],
+	importPlayList: ['entities', 'playList', 'tags'],
 	togglePlayLists: ['website'],
 	addTags: ['tagsOrdered', 'tags'],
 	removeTags: ['tags'],
@@ -16,9 +30,9 @@ const presistMutation = {
 	renamePlayList: ['tagsOrdered', 'tags', 'currentPlayList'],
 	deletePlayList: ['tagsOrdered', 'tags'],
 	toggleShuffle: ['shuffle'],
+	setExportURL: ['exportURL'],
+	movePlayListMedia: ['playList', 'tags'],
 };
-
-Vue.use(Vuex);
 
 /* eslint-disable no-param-reassign */
 function play(state, mediaId, currentMedia) {
@@ -32,53 +46,67 @@ function play(state, mediaId, currentMedia) {
 	state.mediaId = mediaId;
 	state.currentMedia = currentMedia || state.entities[mediaId];
 	state.sessionHistory.push(mediaId);
-	state.sessionHistoryPos = 0;
+	state.sessionHistoryPos = -1;
 	state.isPlaying = !!(state.currentMedia || state.playList.length);
 }
 
+const getCurrenPlayList = state => state.currentPlayList ? state.tags[state.currentPlayList] : state.playList;
+
 function next(state) {
-	const playList = state.currentPlayList ? state.tags[state.currentPlayList] : state.playList;
+	const playList = getCurrenPlayList(state);
 	const idx = playList.indexOf(state.mediaId);
 	let mediaId;
 	if (state.queue.length) {
 		// Play next song from queue.
 		const queue = [...state.queue];
 		mediaId = queue.shift();
-		return Object.assign({}, state, {
+		Object.assign(state, {
 			mediaId,
-			sessionHistoryPos: 0,
-			sessionHistory: [...state.sessionHistory, state.currentMedia.id],
+			sessionHistoryPos: -1,
+			sessionHistory: [...state.sessionHistory, mediaId],
 			currentMedia: state.entities[mediaId],
 			queue: [...queue],
 			isPlaying: true,
 		});
 	} else if (state.shuffle) {
 		// Play a random song.
-		mediaId = playList[Math.floor(Math.random() * playList.length)];
-		return Object.assign({}, state, {
+		let count = 0;
+		do {
+			mediaId = playList[Math.floor(Math.random() * playList.length)];
+			count++;
+			// only try to find a new song 50 times or we can end up in an endless loop
+		} while (state.sessionHistory.includes(mediaId) && count < 50);
+		Object.assign(state, {
 			mediaId,
-			sessionHistoryPos: 0,
-			sessionHistory: [...state.sessionHistory, state.currentMedia.id],
+			sessionHistoryPos: -1,
+			sessionHistory: [...state.sessionHistory, mediaId],
 			currentMedia: state.entities[mediaId],
 			isPlaying: true,
 		});
-	} else if (idx === state.playList.length - 1) {
-		// If last song on play list, stop playing.
-		return Object.assign({}, state, {
-			isPlaying: false,
+	} else if (state.sessionHistoryPos > 0) {
+		// we are in the history, replay history don't change the history while replaying
+		const sessionHistoryPos = --state.sessionHistoryPos;
+		mediaId = state.sessionHistory[sessionHistoryPos];
+		Object.assign(state, {
+			mediaId,
+			sessionHistoryPos,
+			currentMedia: state.entities[mediaId],
+			isPlaying: true,
 		});
-	} else if (idx < state.playList.length - 1) {
+	} else if (idx === playList.length - 1) {
+		// If last song on play list, stop playing.
+		state.isPlaying = false;
+	} else if (idx < playList.length - 1) {
 		// Play the next song.
 		mediaId = playList[idx + 1];
-		return Object.assign({}, state, {
+		Object.assign(state, {
 			mediaId,
-			sessionHistoryPos: 0,
-			sessionHistory: [...state.sessionHistory, state.currentMedia.id],
+			sessionHistoryPos: -1,
+			sessionHistory: [...state.sessionHistory, mediaId],
 			currentMedia: state.entities[mediaId],
 			isPlaying: true,
 		});
 	}
-	return state;
 }
 
 export const store = new Vuex.Store({
@@ -90,7 +118,7 @@ export const store = new Vuex.Store({
 		playList: [],
 		tags: {},
 		tagsOrdered: [],
-		sessionHistoryPos: 0,
+		sessionHistoryPos: -1,
 		sessionHistory: [],
 		queue: [],
 		isPlaying: false,
@@ -106,10 +134,11 @@ export const store = new Vuex.Store({
 		currentPlayList: '',
 		editPlayList: false,
 		youtubeApiKey,
-		pastebinApiKey,
 		showImport: false,
 		showExport: false,
 		showJump: false,
+		jumpCursor: '',
+		exportURL: '',
 		website: {
 			showSearch: false,
 			mainRightTab: 'about',
@@ -146,7 +175,7 @@ export const store = new Vuex.Store({
 			return getters.filteredPlayList.length;
 		},
 		currentEntities(state) {
-			const playList = state.currentPlayList ? state.tags[state.currentPlayList] : state.playList;
+			const playList = getCurrenPlayList(state);
 			return playList.reduce((entities, id) => ({ ...entities, [id]: state.entities[id] }), {});
 		},
 		currentTimeObj(state) {
@@ -158,8 +187,9 @@ export const store = new Vuex.Store({
 		youtubeApiKeyUI(state) {
 			return state.youtubeApiKey === youtubeApiKey ? '' : state.youtubeApiKey;
 		},
-		pastebinApiKeyUI(state) {
-			return state.pastebinApiKey === pastebinApiKey ? '' : state.pastebinApiKey;
+		sessionHistoryHasPrev(state) {
+			const hlength = state.sessionHistory.length;
+			return (hlength > 0) && state.sessionHistoryPos < (hlength - 1);
 		},
 	},
 	/* eslint-disable no-param-reassign */
@@ -203,22 +233,18 @@ export const store = new Vuex.Store({
 			state.showExport = false;
 		},
 		toggleImport(state, toggleState) {
-			state.showImport = toggleState !== undefined
-				? toggleState
-				: !state.showImport;
+			state.showImport = toggleState !== undefined ? toggleState : !state.showImport;
 			if (state.showImport) state.showExport = false;
 		},
 		toggleExport(state, toggleState) {
-			state.showExport = toggleState !== undefined
-				? toggleState
-				: !state.showExport;
+			state.showExport = toggleState !== undefined ? toggleState : !state.showExport;
 			if (state.showExport) state.showImport = false;
 		},
 		togglePlayLists(state) {
 			state.website.showPlayLists = !state.website.showPlayLists;
 		},
 		// ----------------------------------------------------------
-		ERROR(state, message) {
+		error(state, message) {
 			state.errorMessages = [...state.errorMessages, message];
 		},
 		DB_INIT_SUCCESS(state, db) {
@@ -242,9 +268,7 @@ export const store = new Vuex.Store({
 				errorMessage: message,
 				hasError: true,
 			});
-			state = Object.assign({}, next(state), {
-				entities,
-			});
+			next(state);
 		},
 		ADD_VIDEOS(state, videos) {
 			const entities = Object.assign({}, state.entities);
@@ -277,19 +301,16 @@ export const store = new Vuex.Store({
 			state.playList = [...filteredPlaylist];
 			state.entities = entities;
 		},
-		IMPORT_PLAYLIST(state, data) {
-			let playList = state.currentPlayList ? state.tags[state.currentPlayList] : state.playList;
-			const entities = Object.assign({}, state.entities, data.entities);
+		importPlayList(state, data) {
+			console.log('importPlayList!');
+			let playList = getCurrenPlayList(state);
 			playList = [...playList, ...data.playList.filter(id => !playList.includes(id))];
 			if (state.currentPlayList) {
-				const tags = Object.assign({}, state.tags);
-				tags[state.currentPlayList] = playList;
-				state.tags = tags;
-				state.entities = entities;
+				state.tags[state.currentPlayList] = playList;
 			} else {
 				state.playList = playList;
-				state.entities = entities;
 			}
+			state.entities = Object.assign({}, state.entities, data.entities);
 		},
 		importOtherPlayList(state, playListName) {
 			if (!state.currentPlayList) {
@@ -351,21 +372,20 @@ export const store = new Vuex.Store({
 			state.mute = !state.mute;
 		},
 		nextVideo(state) {
-			Object.assign(state, next(state));
+			next(state);
 		},
 		previousVideo(state) {
 			if (state.sessionHistory.length >= -1 * state.sessionHistoryPos) {
+				const sessionHistoryPos = state.sessionHistoryPos + 1;
 				const mediaId =
-					state.sessionHistory[state.sessionHistory.length - state.sessionHistoryPos - 1];
-				return Object.assign({}, state, {
+					state.sessionHistory[state.sessionHistory.length - 1 - sessionHistoryPos];
+				Object.assign(state, {
 					mediaId,
-					sessionHistoryPos: state.sessionHistoryPos - 1,
-					sessionHistory: [...state.sessionHistory, state.currentMedia.id],
+					sessionHistoryPos,
 					currentMedia: state.entities[mediaId],
 					isPlaying: true,
 				});
 			}
-			return state;
 		},
 		queue(state, id) {
 			state.queue.push(id);
@@ -435,9 +455,8 @@ export const store = new Vuex.Store({
 			if (!youtubeApiKeyIn) state.youtubeApiKey = youtubeApiKey;
 			else state.youtubeApiKey = youtubeApiKeyIn;
 		},
-		pastebinApiKey(state, pastebinApiKeyIn) {
-			if (!pastebinApiKeyIn) state.pastebinApiKey = pastebinApiKey;
-			else state.pastebinApiKey = pastebinApiKeyIn;
+		setExportURL(state, url) {
+			state.exportURL = url;
 		},
 	},
 	plugins: [
@@ -459,19 +478,34 @@ export const store = new Vuex.Store({
 				commit('register', userId);
 			}, 1000);
 		},
-		importURL({ commit }, url) {
-			const pastebinRegEx = /http:\/\/pastebin.com\/(\w{8})/;
-			if (pastebinRegEx.test(url)) {
-				const match = pastebinRegEx.exec(url);
-				url = `http://pastebin.com/raw/${match[1]}`;
-			}
-			injectScript(url, () => {
-				commit('importPlayList', window.getAudiusPlaylist());
-			});
-		},
 		search({ commit, state }, query) {
 			searchYoutubeDebounced(state.youtubeApiKey, query, result => {
 				commit('searchYoutubeSuccess', result);
+			});
+		},
+		importPlayListFromString({ commit }, importString) {
+			console.log('importPlayListFromString')
+			importPlayListFromString(importString).then((data, error) => {
+				if (error) {
+					commit('error', error);
+				} else {
+					commit('importPlayList', data);
+				}
+			});
+		},
+		importURL({ commit }, url) {
+			ajax(url, data => {
+				commit('importPlayList', data);
+			});
+		},
+		exportToURL({ commit, getters }) {
+			const data = {
+				AudiusDump: true,
+				playList: getters.filteredPlayList,
+				entities: getters.currentEntities,
+			};
+			ajaxPostJSON('https://api.myjson.com/bins', JSON.stringify(data), res => {
+				commit('setExportURL', JSON.parse(res).uri);
 			});
 		},
 	},

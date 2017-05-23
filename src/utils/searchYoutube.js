@@ -1,4 +1,4 @@
-import ajax from './ajax';
+import { ajax } from './ajax';
 
 const isYouTubeVideoRegEx = /http(?:s?):\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-_]*)(&(amp;)?‌​[\w?‌​=]*)?/;
 

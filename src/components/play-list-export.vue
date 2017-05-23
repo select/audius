@@ -1,34 +1,27 @@
 <script>
+import { ajaxPost } from '../utils';
+import { mapState, mapActions } from 'vuex';
+
 export default {
-	data() {
-		return {
-			playlistExportString: '',
-		};
-	},
 	props: [
-		'pastebinApiKey',
 		'currentPlayList',
 		'filteredPlayList',
 		'entities',
 	],
-	created() {
-		this.playlistExportString = this.getPlaylistExportString();
-	},
+	computed: mapState(['exportURL']),
 	methods: {
-		getPlaylistExportString() {
+		...mapActions(['exportToURL']),
+		exportPlayListFile() {
 			const data = {
 				AudiusDump: true,
 				playList: this.filteredPlayList,
 				entities: this.entities,
 			};
-			return `window.getAudiusPlaylist = function(){ return ${JSON.stringify(data)}; }`;
-		},
-		exportPlayListFile() {
 			const element = document.createElement('a');
-			element.setAttribute('href', `data:text/plain;charset=utf-8,${encodeURIComponent(this.getPlaylistExportString())}`);
+			element.setAttribute('href', `data:text/plain;charset=utf-8,${encodeURIComponent(JSON.stringify(data))}`);
 			element.setAttribute(
 				'download',
-				this.currentPlayList ? `${this.currentPlayList}.audius-playlist` : 'history.audius-playlist'
+				this.currentPlayList ? `${this.currentPlayList}.audius-playlist` : 'default.audius-playlist'
 			);
 			element.style.display = 'none';
 			document.body.appendChild(element);
@@ -51,20 +44,27 @@ export default {
 		<button
 			class="button btn--blue"
 			v-on:click="exportPlayListFile">to file</button>
-		<form
-			target="_blank"
-			method="post"
-			action="http://pastebin.com/api/api_post.php">
-
-			<input type="hidden" name="api_option" value="paste">
-			<input type="hidden" name="api_dev_key" v-model="pastebinApiKey">
-			<input type="hidden" name="api_paste_code" v-model="playlistExportString">
-			<button
-				type="submit"
-				class="button btn--blue">to URL</button>
-			<br>
-			<span><b>Copy and paste the URL</b> on the new page to share your playlist.</span>
-		</form>
+		<button
+			class="button btn--blue"
+			v-on:click="exportToURL">to Web</button>
+		<div v-if="exportURL">
+			<p class="smaller">
+				Copy and paste the URL to share your playlist.
+			</p>
+			<p>
+				<b>{{exportURL}}</b>
+			</p>
+		</div>
 	</div>
 </template>
 
+
+<style lang="sass?indentedSyntax" scoped>
+@import '../sass/vars'
+@import '../sass/color'
+
+p
+	ml
+.smaller
+	font-size: 0.9em
+</style>

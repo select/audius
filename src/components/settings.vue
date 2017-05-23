@@ -14,8 +14,8 @@ const scrollbarCss = `
   background: $color-aluminium-dark`;
 
 export default {
-	computed: mapGetters(['youtubeApiKeyUI', 'pastebinApiKeyUI']),
-	methods: mapMutations(['setYoutubeApiKey', 'setPastebinApiKey']),
+	computed: mapGetters(['youtubeApiKeyUI']),
+	methods: mapMutations(['setYoutubeApiKey']),
 };
 </script>
 
@@ -25,10 +25,6 @@ export default {
 	<p>
 		YouTube API key
 		<input type="text" placeholder="39 digit API key" v-bind:value="youtubeApiKeyUI" @input="setYoutubeApiKey($event.target.value)">
-	</p>
-	<p>
-		Pastebin API key
-		<input type="text" placeholder="32 digit API key" v-bind:value="pastebinApiKeyUI" @input="setPastebinApiKey($event.target.value)">
 	</p>
 </div>
 </template>

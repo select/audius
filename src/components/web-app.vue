@@ -80,6 +80,8 @@ body
 main.box
 	flex: 1
 	display: flex
+	height: 100%
+	overflow: hidden
 	> div:not(:first-child)
 		flex: 2
 		overflow: hidden
