@@ -55,6 +55,16 @@ body
 			color: $color-tuna
 	input:focus
 		outline: 0
+	::-webkit-scrollbar
+		width: 9px
+		&:hover
+			width: 10px
+
+	::-webkit-scrollbar-track
+		background: $color-catskillwhite
+
+	::-webkit-scrollbar-thumb
+		background: $color-aluminium-dark
 
 .box-1-1
 	display: flex
