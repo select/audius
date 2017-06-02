@@ -32,6 +32,7 @@ const presistMutation = {
 	toggleShuffle: ['shuffle'],
 	setExportURL: ['exportURL'],
 	movePlayListMedia: ['playList', 'tags'],
+	migrationSuccess: ['migration'],
 };
 
 /* eslint-disable no-param-reassign */
@@ -139,6 +140,9 @@ export const store = new Vuex.Store({
 		showJump: false,
 		jumpCursor: '',
 		exportURL: '',
+		migration: {
+			'audius_0.03': false,
+		},
 		website: {
 			showSearch: false,
 			mainRightTab: 'about',
@@ -248,19 +252,6 @@ export const store = new Vuex.Store({
 		error(state, message) {
 			state.errorMessages = [...state.errorMessages, message];
 		},
-		DB_INIT_SUCCESS(state, db) {
-			state.db = db;
-		},
-		DB_SET_SUCCESS(state, data) {
-			state.entities[data.id].saved = true;
-		},
-		DB_GETALL_SUCCESS(state, entities) {
-			state.entities = Object.assign({}, state.entities, entities);
-			// DB_GET_PLAYLIST_SUCCE(state)':
-			// 	return Object.assign({}, state, {
-			// 		playList: action.playList,
-			// 	});
-		},
 		videoError(state, message) {
 			const video = state.currentMedia;
 
@@ -270,21 +261,6 @@ export const store = new Vuex.Store({
 				hasError: true,
 			});
 			next(state);
-		},
-		ADD_VIDEOS(state, videos) {
-			const entities = Object.assign({}, state.entities);
-			videos.forEach(v => {
-				entities[v.id] = Object.assign({}, videoBaseObject, {
-					title: v.snippet.title,
-					duration: duration(v.contentDetails.duration),
-					id: v.id,
-				});
-			});
-			state.playList = [
-				...state.playList,
-				...videos.map(v => v.id).filter(id => !state.playList.includes(id)),
-			];
-			state.entities = entities;
 		},
 		UPGRADE_PLAYLIST(state) {
 			const seen = {};
@@ -427,7 +403,7 @@ export const store = new Vuex.Store({
 
 			if (!state.tagsOrdered.includes(tag)) state.tagsOrdered.push(tag);
 
-			if (state.tags[tag]) state.tags[tag].concat(mediaIds);
+			if (state.tags[tag]) state.tags[tag] = [...state.tags[tag], ...mediaIds.filter(id => !state.tags[tag].includes(id))];
 			else state.tags[tag] = mediaIds;
 		},
 		removeTags(state, { mediaIds = [], tag }) {
@@ -448,15 +424,15 @@ export const store = new Vuex.Store({
 			state.editPlayList = toggleState !== undefined ? toggleState : !state.editPlayList;
 			state.currentPlayList = playListName || state.currentPlayList;
 		},
-		RECOVER_STATE(state, toggleState) {
-			state.toggleState = toggleState;
-		},
 		setYoutubeApiKey(state, youtubeApiKeyIn) {
 			if (!youtubeApiKeyIn) state.youtubeApiKey = youtubeApiKey;
 			else state.youtubeApiKey = youtubeApiKeyIn;
 		},
 		setExportURL(state, url) {
 			state.exportURL = url;
+		},
+		migrationSuccess(state, { version, toggleState }) {
+			state.migration[version] = toggleState;
 		},
 	},
 	plugins: [

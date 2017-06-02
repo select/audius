@@ -63,8 +63,6 @@ export default {
 @import '../sass/vars'
 @import '../sass/color'
 
-p
-	ml
 .smaller
 	font-size: 0.9em
 </style>

@@ -1,5 +1,5 @@
 import { s2time } from './timeConverter';
-import { videoBaseObject } from '../reducers/video';
+import { videoBaseObject } from '../vuex/video';
 
 export function importPlayListFromString(dataString) {
 	return new Promise((resolve, reject) => {

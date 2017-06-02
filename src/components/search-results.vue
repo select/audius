@@ -1,9 +1,6 @@
 <script>
 import Vue from 'vue/dist/vue';
 import { mapMutations, mapState } from 'vuex';
-
-import store from '../store';
-import Actions from '../actions';
 import { isElementInViewport } from '../utils';
 
 export default {

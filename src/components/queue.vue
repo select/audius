@@ -1,7 +1,5 @@
 <script>
 import { mapState } from 'vuex';
-
-import store from '../store';
 import VideoItem from './video-item.vue';
 
 export default {

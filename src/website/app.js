@@ -6,6 +6,7 @@ import WebApp from '../components/web-app.vue';
 import { indexDB } from '../utils';
 // import '../utils/websiteMessageManager';
 import { store } from '../vuex/store';
+import { migrate } from '../utils/indexDB.migrate';
 import './keyshorts';
 
 indexDB
@@ -13,6 +14,7 @@ indexDB
 	.then(() => indexDB.recoverState())
 	.then((state) => {
 		store.commit('recoverState', state);
+		migrate();
 	});
 
 

@@ -6,20 +6,20 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const CircularDependencyPlugin = require('circular-dependency-plugin');
 const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin');
 
-const configDev = require('./webpack.dev.js')
+const configDev = require('./webpack.dev.js');
+
+console.log('path: ', `${__dirname}/../dist-website/`)
 
 module.exports = Object.assign(configDev, {
 	entry: './src/website/app.js',
 	output: {
-		path: './dist-website/',
-		filename: 'app.js'
+		path: `${__dirname}/../dist-website/`,
+		filename: 'app.js',
 	},
 	devtool: undefined,
 	plugins: [
 		new webpack.optimize.OccurrenceOrderPlugin(),
-		new CopyWebpackPlugin([
-			{ context: './src/website/static/', from: '**/*', to: './' },
-		]),
+		new CopyWebpackPlugin([{ context: './src/website/static/', from: '**/*', to: './' }]),
 		new webpack.optimize.UglifyJsPlugin({
 			compress: {
 				warnings: false,
@@ -33,7 +33,7 @@ module.exports = Object.assign(configDev, {
 		}),
 		new webpack.optimize.DedupePlugin(),
 		new CircularDependencyPlugin({
-			failOnError: true
+			failOnError: true,
 		}),
 		// new SWPrecacheWebpackPlugin(
 		// 	{
