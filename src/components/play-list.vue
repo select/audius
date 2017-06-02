@@ -78,7 +78,7 @@ export default {
 		]),
 		...mapActions(['importURL']),
 		addMusic() {
-			this.importURL('https://audius.rockdapus.org/audius-starter.playlist');
+			this.importURL('https://api.myjson.com/bins/1c1goh');
 		},
 		clear(close) {
 			if (!this.filterQuery) this.toggleJump(false);
@@ -143,7 +143,7 @@ export default {
 			<span @click="toggleSearch()">
 				<span class="wmp-icon-search" title="[f] Search on YouTube"></span> Search
 			</span>
-				and add some songs.
+				and add some songs. Or just
 			<button
 				class="play-list__btn-add-music button btn--blue"
 				@click="addMusic">add music</button>
