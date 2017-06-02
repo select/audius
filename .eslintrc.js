@@ -1,37 +1,45 @@
 module.exports = {
-	rules: {
-		indent: ['error', 'tab'], // indent with tabs
-		quotes: ['error', 'single'], // always use single quotes
-		'linebreak-style': ['error', 'unix'], // fuck windows
-		semi: ['error', 'always'], // always use semicolons at end of command
-		'no-multiple-empty-lines': ['error', { max: 2 }], // only allow one free line
-		eqeqeq: ['error', 'smart'], // always use === only if null or something not ... I forgot
-		strict: ['error', 'function'],
-		'no-var': ['error'],
-		'max-len': ['error', 200, 4],
-		'no-tabs': ['off'],
-		'no-confusing-arrow': ['off'],
-		'no-plusplus': ['off'],
-		'import/prefer-default-export': 'off',
-		"comma-dangle": ["error", {
-			functions: "never",
-			arrays: "always-multiline",
-			objects: "always-multiline"
-		}],
-	},
-	ecmaFeatures: {
-		modules: true,
-	},
-	globals: {
-		module: true,
-		chrome: true,
+	root: true,
+	parser: 'babel-eslint',
+	parserOptions: {
+		sourceType: 'module',
 	},
 	env: {
-		es6: true,
 		browser: true,
-		jasmine: true,
-		commonjs: true,
 	},
-	extends: 'airbnb',
-	parser: 'babel-eslint', // we need to use this since ESLint does not support ES6 Decorators
+	extends: 'airbnb-base',
+	// required to lint *.vue files
+	plugins: ['html'],
+	// check if imports actually resolve
+	settings: {
+		'import/resolver': {
+			webpack: {
+				config: 'build/webpack.base.conf.js',
+			},
+		},
+	},
+	// add your custom rules here
+	rules: {
+		indent: [2, 'tab'], // indent with tabs
+		'no-tabs': ['off'],
+		'import/prefer-default-export': 'off',
+		// don't require .vue extension when importing
+		'import/extensions': [
+			'error',
+			'always',
+			{
+				js: 'never',
+				vue: 'never',
+			},
+		],
+		// allow optionalDependencies
+		'import/no-extraneous-dependencies': [
+			'error',
+			{
+				optionalDependencies: ['test/unit/index.js'],
+			},
+		],
+		// allow debugger during development
+		'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0,
+	},
 };

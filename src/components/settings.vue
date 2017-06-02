@@ -1,18 +1,6 @@
 <script>
 import { mapGetters, mapMutations } from 'vuex';
 
-const scrollbarCss = `
-::-webkit-scrollbar
-	width: 5px
-	&:hover
-		width: 10px
-
-::-webkit-scrollbar-track
-  background: $color-catskillwhite
-
-::-webkit-scrollbar-thumb
-  background: $color-aluminium-dark`;
-
 export default {
 	computed: mapGetters(['youtubeApiKeyUI']),
 	methods: mapMutations(['setYoutubeApiKey']),
@@ -26,6 +14,7 @@ export default {
 		YouTube API key
 		<input type="text" placeholder="39 digit API key" v-bind:value="youtubeApiKeyUI" @input="setYoutubeApiKey($event.target.value)">
 	</p>
+
 </div>
 </template>
 

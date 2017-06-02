@@ -2,7 +2,7 @@
 import Vue from 'vue';
 import { mapGetters, mapMutations, mapState, mapActions } from 'vuex';
 
-import { debounce, time2s, isElementInViewport } from '../utils';
+import { isElementInViewport } from '../utils';
 
 export default {
 	created() {
@@ -78,7 +78,7 @@ export default {
 		<div class="au-header__search">
 			<div>
 				<img class="au-header__logo" src="img/audius.logo.white.svg" alt="Audius - music player - logo">
-				<i>2.0.1</i>
+				<i>2.0.2</i>
 			</div>
 			<div class="au-header__search-controls">
 				<div

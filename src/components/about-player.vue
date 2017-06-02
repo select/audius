@@ -1,14 +1,15 @@
 <script>
 import Vue from 'vue/dist/vue';
-import injectScript from '../utils/injectScript';
+import { mapMutations } from 'vuex';
+import { injectScript } from '../utils';
 
 export default {
 	name: 'about-player',
 	methods: {
+		...mapMutations(['showChat']),
 		openGitter() {
 			if (!this.gitter) {
-				this.$store.commit('showChat');
-				store.dispatch(Actions.showChat());
+				this.showChat();
 				Vue.nextTick(() => {
 					// config
 					((window.gitter = {}).chat = {}).options = {
@@ -45,7 +46,7 @@ export default {
 			<dd>Find song on YouTube</dd>
 		</dl>
 	</p>
-	<p>
+	<!-- <p>
 		When search is active.
 		<dl>
 			<dt>up / down</dt>
@@ -55,8 +56,8 @@ export default {
 			<dt>enter</dt>
 			<dd>Play selected song</dd>
 		</dl>
-	</p>
-	<p>
+	</p> -->
+	<!-- <p>
 		When jump to file is active.
 		<dl>
 			<dt>up / down</dt>
@@ -66,7 +67,7 @@ export default {
 			<dt>q</dt>
 			<dd>Queue selected song</dd>
 		</dl>
-	</p>
+	</p> -->
 	<h2>Community</h2>
 	<p>
 		If you have questions or feedback, join the chat on gitter or create an issue on github.<br>
@@ -80,7 +81,7 @@ export default {
 	<p>
 		* You must allow 3rd party cookies for the chat to work (default for almost everybody) or chat in a new window.
 	</p>
-	<h2>Extension</h2>
+	<!-- <h2>Extension</h2>
 	<p class="about-player__community-btns">
 		<a class="button btn--blue" href="https://chrome.google.com/webstore/detail/audius/ekpajajepcojhnjmlibfbjmdjcafajoh" target="_blank">Audius Extension</a>
 	</p>
@@ -94,6 +95,20 @@ export default {
 	</p>
 	<p>
 		The extension is mostly working but not quite ready for prime time. Don't give up and report a bug.
+	</p> -->
+	<h2>Change log</h2>
+	<p>
+		<b>2.0.2</b><br>
+		<ul>
+			<li> Drag and drop search results into the current playlist. </li>
+		</ul>
+		<b>2.0.1</b><br>
+		<ul>
+			<li> Replaced Redux with Vuex. </li>
+			<li> Fixed playlist sorting. </li>
+			<li> Fixed Firefox layout problems. </li>
+			<li> New (import)/export using <a href="http://myjson.com/">myjson.com</a>. </li>
+		</ul>
 	</p>
 	<h2>Install Audius as app</h2>
 	<p>
@@ -168,7 +183,7 @@ export default {
 		</pre>
 		Be sure to validate the JSON output, the script is just a quick hack and you might have to tweak it.
 	</p>
-	<h2>Other Projects</h2>
+	<!-- <h2>Other Projects</h2>
 	Here are some other fun projects I created this year.
 	<p>
 		<ul>
@@ -177,7 +192,7 @@ export default {
 			<li><a href="https://www.fantasyplanet.de/" target="_blank">FantasyPlanet</a></li>
 			<li>...</li>
 		</ul>
-	</p>
+	</p> -->
 	<h2 id="motivation">Motivation</h2>
 	<p>
 		You are writing another music player, seriously? That's what I thought a lot when creating this, but you know ...
@@ -201,11 +216,12 @@ export default {
 		Here are the tools I used to create Audius.
 		<ul>
 			<li>VueJs</li>
-			<li>Redux</li>
+			<li><span style="text-decoration:line-through;">Redux</span> Vuex</li>
 			<li>Icomoon</li>
 			<li>Google material icons</li>
 			<li>Webpack</li>
 			<li>LivingStyleGuide</li>
+			<li><a href="https://rubaxa.github.io/Sortable/">sortablejs</a></li>
 		</ul>
 	</p>
 	<h2>Impressum</h2>

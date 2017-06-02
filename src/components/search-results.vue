@@ -2,6 +2,7 @@
 import Vue from 'vue/dist/vue';
 import { mapMutations, mapState } from 'vuex';
 import { isElementInViewport } from '../utils';
+import Sortable from 'sortablejs';
 
 export default {
 	computed: mapState(['youtube', 'mediaId', 'website', 'jumpCursor']),
@@ -21,6 +22,15 @@ export default {
 		isPlaying(video) {
 			return this.mediaId === video.id;
 		},
+	},
+	mounted() {
+		const mediaListEl = document.querySelector('.main-right__content .media-list');
+		Sortable.create(mediaListEl, {
+			name: 'searchResults',
+			group: 'lists',
+			pull: 'clone',
+			sort: false,
+		});
 	},
 };
 </script>

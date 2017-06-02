@@ -1,15 +1,6 @@
 # Audius
 
-Web app
-
-and extension 
-
-are in the making
-
-<a href="https://chrome.google.com/webstore/detail/???">
-#Audius
-
-Audius is the ultimate streaming music player.
+Audius is the ultimate streaming music player. Create your own playlist
 
 ## Keyboard shortcuts
 

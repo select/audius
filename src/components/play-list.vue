@@ -3,7 +3,7 @@ import Vue from 'vue/dist/vue';
 import { mapGetters, mapMutations, mapState, mapActions } from 'vuex';
 
 import Sortable from 'sortablejs';
-import { debounce, isElementInViewport } from '../utils';
+import { isElementInViewport } from '../utils';
 import VideoItem from './video-item.vue';
 import PlayListExport from './play-list-export.vue';
 import PlayListImport from './play-list-import.vue';
@@ -16,7 +16,7 @@ export default {
 	},
 	created() {
 		this.subscriptions = [
-			this.$store.watch(state => state.mediaId,() => {
+			this.$store.watch(state => state.mediaId, () => {
 				if (this.currentMediaId !== this.mediaId) {
 					Vue.nextTick(() => {
 						const el = document.querySelector('.play-list li.active');
@@ -25,7 +25,7 @@ export default {
 					this.currentMediaId = this.mediaId;
 				}
 			}),
-			this.$store.watch(state => state.showJump,() => {
+			this.$store.watch(state => state.showJump, () => {
 				if (this.showJump) {
 					Vue.nextTick(() => {
 						document.querySelector('.play-list-footer__search-input').focus();
@@ -40,21 +40,33 @@ export default {
 	mounted() {
 		const mediaListEl = document.querySelector('.play-list .media-list');
 		Sortable.create(mediaListEl, {
+			group: 'lists',
+			put: ['searchResults'],
 			animation: 250,
 			scrollSpeed: 20,
 			handle: '.media-list__thumbnail',
 			// Element dragging ended
 			onUpdate: () => {
-				if (!this.showJump){
+				if (!this.showJump) {
 					this.movePlayListMedia(
-						Array.from(mediaListEl.childNodes).map(el => el.dataset.id)
+						Array.from(mediaListEl.childNodes).map(el => el.dataset.id),
 					);
+				}
+			},
+			onAdd: (event) => { // Element is dropped into the list from another list
+				if (!this.showJump) {
+					const itemEl = event.item;  // dragged HTMLElement
+					const itemId = itemEl.dataset.id;
+					const playList = Array.from(mediaListEl.childNodes).map(el => el.dataset.id);
+					this.dropSearchResult({ itemId, playList });
+					itemEl.parentNode.removeChild(itemEl);
 				}
 			},
 		});
 	},
 	methods: {
 		...mapMutations([
+			'dropSearchResult',
 			'toggleImport',
 			'toggleExport',
 			'toggleEditPlayList',
@@ -89,7 +101,7 @@ export default {
 		},
 		filterInput(event) {
 			if (event.key.length === 1 || event.key === 'Backspace') {
-				this.filterPlayList(event.target.value)
+				this.filterPlayList(event.target.value);
 			}
 		},
 	},
@@ -97,7 +109,7 @@ export default {
 		...mapGetters([
 			'filteredPlayList',
 			'filteredPlayListLength',
-			'currentEntities'
+			'currentEntities',
 		]),
 		...mapState([
 			'showJump',
@@ -115,9 +127,8 @@ export default {
 			'mediaId',
 		]),
 		showWelcome() {
-			return !(this.showImport || this.showExport || this.showJump || this.filteredPlayListLength)
-		}
-
+			return !(this.showImport || this.showExport || this.showJump || this.filteredPlayListLength);
+		},
 	},
 };
 </script>

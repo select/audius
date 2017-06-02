@@ -10,7 +10,7 @@ import {
 	debounce,
 	importPlayListFromString,
 	ajaxPostJSON,
-	ajax
+	ajax,
 } from '../utils';
 import { videoBaseObject } from './video';
 import { youtubeApiKey } from '../utils/config';
@@ -22,6 +22,7 @@ Vue.use(Vuex);
 
 const presistMutation = {
 	addSearchResult: ['entities', 'playList', 'tags'],
+	dropSearchResult: ['entities', 'playList', 'tags'],
 	importPlayList: ['entities', 'playList', 'tags'],
 	togglePlayLists: ['website'],
 	addTags: ['tagsOrdered', 'tags'],
@@ -33,6 +34,7 @@ const presistMutation = {
 	setExportURL: ['exportURL'],
 	movePlayListMedia: ['playList', 'tags'],
 	migrationSuccess: ['migration'],
+	removeVideo: ['playList', 'entities'],
 };
 
 /* eslint-disable no-param-reassign */
@@ -212,7 +214,7 @@ export const store = new Vuex.Store({
 					isPlaying: false,
 					id: v.id,
 					deleted: false,
-				})
+				}),
 			);
 		},
 		toggleSearch(state, toggleState) {
@@ -328,6 +330,18 @@ export const store = new Vuex.Store({
 				}
 			} else if (!state.playList.includes(id)) {
 				state.playList.unshift(id);
+			}
+		},
+		dropSearchResult(state, { itemId, playList }) {
+			const video = state.youtube.results.find(item => item.id === itemId);
+			state.entities[video.id] = video;
+			const id = video.id;
+			if (state.currentPlayList) {
+				if (!state.tags[state.currentPlayList].includes(id)) {
+					state.tags[state.currentPlayList] = playList;
+				}
+			} else if (!state.playList.includes(id)) {
+				state.playList = playList;
 			}
 		},
 		pause(state) {
