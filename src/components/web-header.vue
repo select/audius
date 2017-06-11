@@ -6,7 +6,7 @@ import { isElementInViewport } from '../utils';
 
 export default {
 	created() {
-		this.unsubscribe = this.$store.watch(state => state.website.showSearch,() => {
+		this.unsubscribe = this.$store.watch(state => state.website.showSearch, () => {
 			if (this.website.showSearch) {
 				Vue.nextTick(() => {
 					document.querySelector('.au-header__search-input').focus();
@@ -20,8 +20,8 @@ export default {
 	methods: {
 		...mapMutations([
 			'toggleSearch',
-			'togglePlayLists',
-			'showSettings',
+			'toggleLeftMenu',
+			'setShowSettings',
 			'previousVideo',
 			'nextVideo',
 			'toggleShuffle',
@@ -31,7 +31,7 @@ export default {
 		...mapActions(['search']),
 		searchInput(event) {
 			if (event.key.length === 1 || event.key === 'Backspace') {
-				this.search(event.target.value)
+				this.search(event.target.value);
 			}
 		},
 		stopPropagation(event) {
@@ -53,7 +53,7 @@ export default {
 			if (this.currentMedia) {
 				this.$store.commit(
 					'skipToTime',
-					this.currentMedia.durationS * (event.offsetX / event.currentTarget.offsetWidth)
+					this.currentMedia.durationS * (event.offsetX / event.currentTarget.offsetWidth),
 				);
 			}
 		},
@@ -99,11 +99,11 @@ export default {
 				<span
 					class="wmp-icon-queue_music"
 					title="Toggle playlists"
-					@click="togglePlayLists"></span>
+					@click="toggleLeftMenu"></span>
 				<span
 					class="wmp-icon-more_vert"
 					title="Show settings"
-					@click="showSettings"></span>
+					@click="setShowSettings"></span>
 			</div>
 		</div>
 		<div class="au-header__control-bar">

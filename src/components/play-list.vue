@@ -1,9 +1,9 @@
 <script>
 import Vue from 'vue/dist/vue';
 import { mapGetters, mapMutations, mapState, mapActions } from 'vuex';
-
 import Sortable from 'sortablejs';
-import { isElementInViewport } from '../utils';
+
+import { isElementInViewport, starterPlaylist } from '../utils';
 import VideoItem from './video-item.vue';
 import PlayListExport from './play-list-export.vue';
 import PlayListImport from './play-list-import.vue';
@@ -16,13 +16,13 @@ export default {
 	},
 	created() {
 		this.subscriptions = [
-			this.$store.watch(state => state.mediaId, () => {
-				if (this.currentMediaId !== this.mediaId) {
+			this.$store.watch(state => state.currentMedia, () => {
+				if (this.currentMediaId !== this.currentMedia.id) {
 					Vue.nextTick(() => {
 						const el = document.querySelector('.play-list li.active');
-						if (!isElementInViewport(el)) el.scrollIntoView({ block: 'start', behavior: 'smooth' });
+						if (el && !isElementInViewport(el)) el.scrollIntoView({ block: 'start', behavior: 'smooth' });
 					});
-					this.currentMediaId = this.mediaId;
+					this.currentMediaId = this.currentMedia.id;
 				}
 			}),
 			this.$store.watch(state => state.showJump, () => {
@@ -76,9 +76,9 @@ export default {
 			'movePlayListMedia',
 			'toggleJump',
 		]),
-		...mapActions(['importURL']),
+		...mapActions(['importURL', 'matrixPaginate']),
 		addMusic() {
-			this.importURL('https://api.myjson.com/bins/1c1goh');
+			this.importURL(starterPlaylist);
 		},
 		clear(close) {
 			if (!this.filterQuery) this.toggleJump(false);
@@ -112,19 +112,20 @@ export default {
 			'currentEntities',
 		]),
 		...mapState([
+			'currentMedia',
 			'showJump',
 			'showImport',
 			'showExport',
 			'currentPlayList',
-			'entities',
 			'editPlayList',
+			'entities',
 			'isPlaying',
-			'mediaId',
 			'tags',
 			'filterQuery',
 			'tags',
 			'jumpCursor',
-			'mediaId',
+			'leftMenuTab',
+			'currentRadioStation',
 		]),
 		showWelcome() {
 			return !(this.showImport || this.showExport || this.showJump || this.filteredPlayListLength);
@@ -136,7 +137,12 @@ export default {
 <template>
 <div class="play-list">
 	<div class="play-list__body">
-		<h2 v-if="showWelcome && !currentPlayList">
+		<h2 v-if="leftMenuTab == 'radio' && !currentRadioStation">
+			α-feature <br> <br>
+			Listen to a radio station from the <a href="https://matrix.org">matrix.org</a> chat network. <br><br>
+			♫♪.ılılıll|̲̅̅●̲̅̅|̲̅̅=̲̅̅|̲̅̅●̲̅̅|llılılı.♫♪
+		</h2>
+		<h2 v-if="showWelcome && !currentPlayList && leftMenuTab == 'playList'">
 			The playlist is empty <br>
 			┐(・。・┐) ♪ <br>
 			<br>
@@ -148,7 +154,7 @@ export default {
 				class="play-list__btn-add-music button btn--blue"
 				@click="addMusic">add music</button>
 		</h2>
-		<h2 v-if="showWelcome && currentPlayList">
+		<h2 v-if="showWelcome && currentPlayList && leftMenuTab == 'playList'">
 			(⊃｡•́‿•̀｡)⊃ <br>
 			<br>
 			<span @click="toggleSearch()">
@@ -196,7 +202,7 @@ export default {
 		<ul
 			class="media-list"
 			v-bind:class="{ 'media-list--editing': editPlayList }"
-			v-show="!(showImport || showExport)">
+			v-show="!(showImport || showExport || (leftMenuTab == 'radio' && !currentRadioStation))">
 			<video-item
 				v-for="id in filteredPlayList"
 				:video="entities[id]"
@@ -205,7 +211,7 @@ export default {
 				:isInPlayList="editPlayList && tags[currentPlayList].includes(id)"
 				:isSelected="jumpCursor === id"
 				:key="id"
-				:isPlaying="isPlaying && entities[id] && (mediaId == entities[id].id)"></video-item>
+				:isPlaying="isPlaying && entities[id] && (currentMedia.id == entities[id].id)"></video-item>
 		</ul>
 		<!-- ends here -->
 
@@ -216,9 +222,15 @@ export default {
 				{{filteredPlayListLength}} Songs
 			</li>
 			<li
+				v-if="leftMenuTab == 'playList'"
 				v-bind:class="{ active: showImport }"
 				@click="toggleImport()">
 				Import
+			</li>
+			<li
+				v-if="leftMenuTab == 'radio'"
+				@click="matrixPaginate">
+				matrixPaginate
 			</li>
 			<li
 				v-bind:class="{ active: showExport }"

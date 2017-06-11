@@ -15,18 +15,18 @@ export default {
 	},
 	created() {
 		this.subscriptions = [
-			this.$store.watch(state => state.mediaId,() => {
+			this.$store.watch(state => state.currentMedia, () => {
 				// if video changed, set new video in player
-				if (this.mediaId && this.player.getVideoData() && (this.player.getVideoData().video_id !== this.mediaId)) {
+				if (this.currentMedia.type !== 'audio' && this.currentMedia.id && this.player.getVideoData() && (this.player.getVideoData().video_id !== this.currentMedia.id)) {
 					this.duration = this.player.getDuration();
 					this.player.loadVideoById({
-						videoId: this.mediaId,
+						videoId: this.currentMedia.id,
 						suggestedQuality: 'large',
 					});
 				}
 			}),
 
-			this.$store.watch(state => state.mute,() => {
+			this.$store.watch(state => state.mute, () => {
 				// if mute changed
 				if (this.player && this.player.isMuted && (this.player.isMuted() !== this.mute)) {
 					if (this.mute) this.player.mute();
@@ -34,23 +34,23 @@ export default {
 				}
 			}),
 
-			this.$store.watch(state => state.skipToTime,() => {
+			this.$store.watch(state => state.skipToTime, () => {
 				// if skip to time changed
-				if (this.skipToTimeLocal !== this.skipToTime) {
+				if (this.currentMedia.type !== 'audio' && this.skipToTimeLocal !== this.skipToTime) {
 					this.skipToTimeLocal = this.skipToTime;
 					this.player.seekTo(this.skipToTime, true);
 				}
 			}),
 
-			this.$store.watch(state => state.isPlaying,() => {
+			this.$store.watch(state => state.isPlaying, () => {
 				// if isPlaying changed start stop video
-				if (this.isPlaying) {
+				if (this.currentMedia.type !== 'audio' && this.isPlaying && this.currentMedia.id) {
 					if (this.player.getPlayerState() !== 1) this.player.playVideo();
 				} else if (this.player && this.player.getPlayerState && ![0, 2].includes(this.player.getPlayerState())) {
 					this.player.pauseVideo();
 				}
-			})
-		]
+			}),
+		];
 	},
 	beforeDestroy() {
 		this.subscriptions.forEach((unsubscribe) => { unsubscribe(); });
@@ -70,9 +70,9 @@ export default {
 		};
 		injectScript('https://www.youtube.com/iframe_api');
 	},
-	computed: mapState(['mediaId', 'mute', 'skipToTime', 'isPlaying']),
+	computed: mapState(['currentMedia', 'mute', 'skipToTime', 'isPlaying']),
 	methods: {
-		...mapMutations(['play','pause', 'setCurrentTime', 'nextVideo', 'videoError']),
+		...mapMutations(['play', 'pause', 'setCurrentTime', 'nextVideo', 'videoError']),
 		onPlayerError(event) {
 			this.videoError(event.data);
 		},

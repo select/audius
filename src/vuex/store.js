@@ -11,12 +11,15 @@ import {
 	importPlayListFromString,
 	ajaxPostJSON,
 	ajax,
+	matrixClient,
+	findYouTubeIdsText,
+	getYouTubeInfo,
+	hashCode
 } from '../utils';
 import { videoBaseObject } from './video';
 import { youtubeApiKey } from '../utils/config';
 
 const searchYoutubeDebounced = debounce((...args) => searchYoutube(...args), 500);
-
 
 Vue.use(Vuex);
 
@@ -24,7 +27,7 @@ const presistMutation = {
 	addSearchResult: ['entities', 'playList', 'tags'],
 	dropSearchResult: ['entities', 'playList', 'tags'],
 	importPlayList: ['entities', 'playList', 'tags'],
-	togglePlayLists: ['website'],
+	toggleLeftMenu: ['showLeftMenu'],
 	addTags: ['tagsOrdered', 'tags'],
 	removeTags: ['tags'],
 	selectPlayList: ['currentPlayList'],
@@ -33,38 +36,46 @@ const presistMutation = {
 	toggleShuffle: ['shuffle'],
 	setExportURL: ['exportURL'],
 	movePlayListMedia: ['playList', 'tags'],
+	moveTagsOrderd: ['tagsOrdered'],
 	migrationSuccess: ['migration'],
 	removeVideo: ['playList', 'entities'],
+	setMatrixCredentials: ['matrix'],
 };
 
 /* eslint-disable no-param-reassign */
 function play(state, mediaId, currentMedia) {
 	if (!mediaId) {
 		if (currentMedia) mediaId = currentMedia.id;
-		else if (state.mediaId) mediaId = state.mediaId;
+		else if (state.currentMedia) mediaId = state.currentMedia.id;
 		else if (state.currentPlayList) mediaId = state.tags[state.currentPlayList][0];
 		else mediaId = state.playList[0];
 	}
 	if (currentMedia) state.entities[mediaId] = currentMedia;
-	state.mediaId = mediaId;
+	state.mediaUrl = null;
 	state.currentMedia = currentMedia || state.entities[mediaId];
 	state.sessionHistory.push(mediaId);
 	state.sessionHistoryPos = -1;
 	state.isPlaying = !!(state.currentMedia || state.playList.length);
 }
 
-const getCurrenPlayList = state => state.currentPlayList ? state.tags[state.currentPlayList] : state.playList;
+const getCurrenPlayList = state => {
+	if (state.leftMenuTab === 'radio' && state.currentRadioStation) {
+		return state.radioStations[state.currentRadioStation].playList;
+	}
+	return state.currentPlayList && !state.editPlayList
+		? state.tags[state.currentPlayList]
+		: state.playList;
+};
 
 function next(state) {
 	const playList = getCurrenPlayList(state);
-	const idx = playList.indexOf(state.mediaId);
+	const idx = playList.indexOf(state.currentMedia.id);
 	let mediaId;
 	if (state.queue.length) {
 		// Play next song from queue.
 		const queue = [...state.queue];
 		mediaId = queue.shift();
 		Object.assign(state, {
-			mediaId,
 			sessionHistoryPos: -1,
 			sessionHistory: [...state.sessionHistory, mediaId],
 			currentMedia: state.entities[mediaId],
@@ -80,7 +91,6 @@ function next(state) {
 			// only try to find a new song 50 times or we can end up in an endless loop
 		} while (state.sessionHistory.includes(mediaId) && count < 50);
 		Object.assign(state, {
-			mediaId,
 			sessionHistoryPos: -1,
 			sessionHistory: [...state.sessionHistory, mediaId],
 			currentMedia: state.entities[mediaId],
@@ -91,7 +101,6 @@ function next(state) {
 		const sessionHistoryPos = --state.sessionHistoryPos;
 		mediaId = state.sessionHistory[sessionHistoryPos];
 		Object.assign(state, {
-			mediaId,
 			sessionHistoryPos,
 			currentMedia: state.entities[mediaId],
 			isPlaying: true,
@@ -103,7 +112,6 @@ function next(state) {
 		// Play the next song.
 		mediaId = playList[idx + 1];
 		Object.assign(state, {
-			mediaId,
 			sessionHistoryPos: -1,
 			sessionHistory: [...state.sessionHistory, mediaId],
 			currentMedia: state.entities[mediaId],
@@ -117,10 +125,14 @@ export const store = new Vuex.Store({
 		db: undefined,
 		errorMessages: '',
 		entities: {},
-		mediaId: '',
+		currentMedia: {},
+		mediaUrl: '',
 		playList: [],
 		tags: {},
 		tagsOrdered: [],
+		radioStations: {},
+		radioStationsOrderd: [],
+		currentRadioStation: '',
 		sessionHistoryPos: -1,
 		sessionHistory: [],
 		queue: [],
@@ -133,7 +145,6 @@ export const store = new Vuex.Store({
 		currentTime: 0,
 		skipToTime: 0,
 		mute: false,
-		currentMedia: {},
 		currentPlayList: '',
 		editPlayList: false,
 		youtubeApiKey,
@@ -144,23 +155,33 @@ export const store = new Vuex.Store({
 		exportURL: '',
 		migration: {
 			'audius_0.03': false,
+			'audius_0.03.1': false,
 		},
+		showLeftMenu: false,
+		leftMenuTab: 'playList',
+		showSettings: false,
 		website: {
 			showSearch: false,
 			mainRightTab: 'about',
 			showChat: false,
-			showPlayLists: false,
 		},
-		youtube: {
+		search: {
 			query: '',
 			isSearching: false,
 			results: [],
 		},
+		matrixLoggedIn: false,
+		matrixRooms: [],
+		matrix: {
+			hasCredentials: false,
+			credentials: {
+				accessToken: '',
+				userId: '',
+				deviceId: '',
+			},
+		},
 	},
 	getters: {
-		tags(state) {
-			return state.tagsOrdered.map(tagName => ({ name: tagName, playList: state.tags[tagName] }));
-		},
 		playList(state) {
 			if (state.currentPlayList) return state.tags[state.currentPlayList];
 			return state.playList;
@@ -169,15 +190,14 @@ export const store = new Vuex.Store({
 			return state.playList.length;
 		},
 		filteredPlayList(state) {
-			const playList = state.currentPlayList && !state.editPlayList
-				? state.tags[state.currentPlayList]
-				: state.playList;
+			const playList = getCurrenPlayList(state);
 			if (!state.filterQuery) return playList.filter(id => state.entities[id]);
 			return playList.filter(id =>
 				state.entities[id].title.toLowerCase().includes(state.filterQuery)
 			);
 		},
 		filteredPlayListLength(state, getters) {
+			if (!getters.filteredPlayList) return 0;
 			return getters.filteredPlayList.length;
 		},
 		currentEntities(state) {
@@ -195,7 +215,7 @@ export const store = new Vuex.Store({
 		},
 		sessionHistoryHasPrev(state) {
 			const hlength = state.sessionHistory.length;
-			return (hlength > 0) && state.sessionHistoryPos < (hlength - 1);
+			return hlength > 0 && state.sessionHistoryPos < hlength - 1;
 		},
 	},
 	/* eslint-disable no-param-reassign */
@@ -205,8 +225,8 @@ export const store = new Vuex.Store({
 		},
 		searchYoutubeSuccess(state, results) {
 			state.website.mainRightTab = 'search';
-			state.youtube.isSearching = false;
-			state.youtube.results = results.map(v =>
+			state.search.isSearching = false;
+			state.search.results = results.map(v =>
 				Object.assign({}, videoBaseObject, {
 					title: v.snippet.title,
 					duration: duration(v.contentDetails.duration),
@@ -214,8 +234,25 @@ export const store = new Vuex.Store({
 					isPlaying: false,
 					id: v.id,
 					deleted: false,
-				}),
+					type: 'youtube',
+				})
 			);
+		},
+		audioSearchSuccess(state, url) {
+			state.website.mainRightTab = 'search';
+			state.search.isSearching = false;
+			state.search.results = [
+				Object.assign({}, videoBaseObject, {
+					url,
+					title: url,
+					duration: 0,
+					durationS: { h: 0, m: 0, s: 0 },
+					isPlaying: false,
+					id: hashCode(url),
+					deleted: false,
+					type: 'audio',
+				}),
+			];
 		},
 		toggleSearch(state, toggleState) {
 			state.website.showSearch = toggleState !== undefined
@@ -225,12 +262,15 @@ export const store = new Vuex.Store({
 		setMainRightTab(state, id) {
 			state.website.mainRightTab = id === state.mainRightTab ? '' : id;
 		},
+		setLeftMenuTab(state, id) {
+			state.leftMenuTab = id;
+		},
 		showChat(state) {
 			state.website.mainRightTab = 'search';
 			state.website.showChat = true;
 		},
-		showSettings(state) {
-			state.website.showSettings = true;
+		setShowSettings(state) {
+			state.showSettings = true;
 			state.website.mainRightTab = 'settings';
 		},
 		toggleJump(state, toggleState) {
@@ -247,8 +287,8 @@ export const store = new Vuex.Store({
 			state.showExport = toggleState !== undefined ? toggleState : !state.showExport;
 			if (state.showExport) state.showImport = false;
 		},
-		togglePlayLists(state) {
-			state.website.showPlayLists = !state.website.showPlayLists;
+		toggleLeftMenu(state) {
+			state.showLeftMenu = !state.showLeftMenu;
 		},
 		// ----------------------------------------------------------
 		error(state, message) {
@@ -322,18 +362,20 @@ export const store = new Vuex.Store({
 			state.entities[video.id].deleted = true;
 		},
 		addSearchResult(state, video) {
-			state.entities[video.id] = video;
-			const id = video.id;
-			if (state.currentPlayList) {
-				if (!state.tags[state.currentPlayList].includes(id)) {
-					state.tags[state.currentPlayList].unshift(video.id);
+			if (state.leftMenuTab === 'playList') {
+				state.entities[video.id] = video;
+				const id = video.id;
+				if (state.currentPlayList) {
+					if (!state.tags[state.currentPlayList].includes(id)) {
+						state.tags[state.currentPlayList].unshift(video.id);
+					}
+				} else if (!state.playList.includes(id)) {
+					state.playList.unshift(id);
 				}
-			} else if (!state.playList.includes(id)) {
-				state.playList.unshift(id);
 			}
 		},
 		dropSearchResult(state, { itemId, playList }) {
-			const video = state.youtube.results.find(item => item.id === itemId);
+			const video = state.search.results.find(item => item.id === itemId);
 			state.entities[video.id] = video;
 			const id = video.id;
 			if (state.currentPlayList) {
@@ -350,9 +392,11 @@ export const store = new Vuex.Store({
 		play(state, options = {}) {
 			const { mediaId, currentMedia } = options;
 			play(state, mediaId, currentMedia);
+			state.mediaUrl = null;
 		},
 		playPause(state) {
-			if (state.isPlaying) state.isPlaying = false;
+			if (state.mediaUrl) state.isPlaying = !state.isPlaying;
+			else if (state.isPlaying) state.isPlaying = false;
 			else if (state.playList.length) play(state);
 		},
 		toggleShuffle(state) {
@@ -367,10 +411,9 @@ export const store = new Vuex.Store({
 		previousVideo(state) {
 			if (state.sessionHistory.length >= -1 * state.sessionHistoryPos) {
 				const sessionHistoryPos = state.sessionHistoryPos + 1;
-				const mediaId =
-					state.sessionHistory[state.sessionHistory.length - 1 - sessionHistoryPos];
+				const mediaId = state.sessionHistory[state.sessionHistory.length - 1 - sessionHistoryPos];
+				state.mediaUrl = null;
 				Object.assign(state, {
-					mediaId,
 					sessionHistoryPos,
 					currentMedia: state.entities[mediaId],
 					isPlaying: true,
@@ -383,7 +426,7 @@ export const store = new Vuex.Store({
 		},
 		queuePlayIndex(state, index) {
 			const mediaId = state.queue.splice(index, 1)[0];
-			state.mediaId = mediaId;
+			state.mediaUrl = null;
 			state.isPlaying = true;
 			state.currentMedia = state.entities[mediaId];
 			state.sessionHistoryPos = 0;
@@ -405,6 +448,10 @@ export const store = new Vuex.Store({
 			if (state.currentPlayList) state.tags[state.currentPlayList] = playList;
 			else state.playList = playList;
 		},
+		moveTagsOrderd(state, tagsOrdered) {
+			console.log('tagsOrdered', tagsOrdered);
+			state.tagsOrdered = tagsOrdered;
+		},
 		addTags(state, { mediaIds = [], tag }) {
 			if (mediaIds.length) tag = tag || state.currentPlayList;
 			if (!tag) {
@@ -417,8 +464,12 @@ export const store = new Vuex.Store({
 
 			if (!state.tagsOrdered.includes(tag)) state.tagsOrdered.push(tag);
 
-			if (state.tags[tag]) state.tags[tag] = [...state.tags[tag], ...mediaIds.filter(id => !state.tags[tag].includes(id))];
-			else state.tags[tag] = mediaIds;
+			if (state.tags[tag]) {
+				state.tags[tag] = [
+					...state.tags[tag],
+					...mediaIds.filter(id => !state.tags[tag].includes(id)),
+				];
+			} else state.tags[tag] = mediaIds;
 		},
 		removeTags(state, { mediaIds = [], tag }) {
 			tag = tag || state.currentPlayList;
@@ -448,6 +499,54 @@ export const store = new Vuex.Store({
 		migrationSuccess(state, { version, toggleState }) {
 			state.migration[version] = toggleState;
 		},
+
+		// Matrix Radio
+
+		setMatrixCredentials(state, credentials) {
+			state.matrix.hasCredentials = true;
+			state.matrix.credentials = credentials;
+		},
+		setMatrixLoggedIn(state, rooms) {
+			state.matrixLoggedIn = true;
+			state.matrixRooms = rooms;
+			rooms.forEach(room => {
+				if (!(room.roomId in state.radioStations)) {
+					state.radioStations[room.roomId] = { name: room.name, playList: [] };
+					state.radioStationsOrderd.unshift(room.roomId);
+				} else if (state.radioStations[room.roomId].name !== room.name) {
+					state.radioStations[room.roomId].name = room.name;
+				}
+			});
+		},
+		matrixRemoveAccount(state) {
+			state.matrix = {
+				hasCredentials: false,
+				credentials: {
+					accessToken: '',
+					userId: '',
+					deviceId: '',
+				},
+			};
+		},
+		matrixLogout(state) {
+			console.log('matrix log out');
+			state.matrixLoggedIn = false;
+			state.radioStations = {};
+			state.radioStationsOrderd = [];
+			state.currentRadioStation = '';
+			// FIXIME this is async and could return a promis
+			// after witch the state should be saved
+			matrixClient.logout();
+		},
+		selectRadioStation(state, roomId) {
+			state.currentRadioStation = roomId;
+		},
+		updateRadioStation(state, { roomId, entities, playList = [] }) {
+			console.log('updateRadioStation ', roomId, playList, entities);
+			const rs = state.radioStations[roomId];
+			state.radioStations[roomId].playList = [...playList, ...rs.playList];
+			state.entities = { ...state.entities, ...entities };
+		},
 	},
 	plugins: [
 		vstore => {
@@ -469,8 +568,11 @@ export const store = new Vuex.Store({
 			}, 1000);
 		},
 		search({ commit, state }, query) {
-			if (query) {
-				searchYoutubeDebounced(state.youtubeApiKey, query, (result) => {
+			const mp3RegEx = /.mp3$/;
+			if (mp3RegEx.test(query) ) {
+				commit('audioSearchSuccess', query);
+			} else if (query) {
+				searchYoutubeDebounced(state.youtubeApiKey, query, result => {
 					commit('searchYoutubeSuccess', result);
 				});
 			}
@@ -485,7 +587,9 @@ export const store = new Vuex.Store({
 			});
 		},
 		importURL({ commit }, url) {
-			ajax(url, (data) => { commit('importPlayList', data); });
+			ajax(url, data => {
+				commit('importPlayList', data);
+			});
 		},
 		exportToURL({ commit, getters }) {
 			const data = {
@@ -493,9 +597,73 @@ export const store = new Vuex.Store({
 				playList: getters.filteredPlayList,
 				entities: getters.currentEntities,
 			};
-			ajaxPostJSON('https://api.myjson.com/bins', JSON.stringify(data), (res) => {
+			ajaxPostJSON('https://api.myjson.com/bins', JSON.stringify(data), res => {
 				commit('setExportURL', JSON.parse(res).uri);
 			});
+		},
+		initMatrix({ commit, state, dispatch }) {
+			if (!state.matrix.hasCredentials) {
+				console.log('create new matrix user');
+				matrixClient
+					.getCredentials()
+					.then(credentials => commit('setMatrixCredentials', credentials))
+					.then(() => matrixClient.login(state.matrix.credentials, dispatch))
+					.then(rooms => commit('setMatrixLoggedIn', rooms));
+			} else if (!state.matrixLoggedIn) {
+				console.log('log into matrix');
+				matrixClient
+					.login(state.matrix.credentials, dispatch)
+					.then(rooms => commit('setMatrixLoggedIn', rooms));
+			}
+		},
+		loginMatrixWithPassword({ commit, state, dispatch }, { username, password }) {
+			matrixClient
+				.getCredentialsWithPassword(username, password)
+				.then(credentials => commit('setMatrixCredentials', credentials))
+				.then(() => matrixClient.login(state.matrix.credentials, dispatch))
+				.then(rooms => commit('setMatrixLoggedIn', rooms));
+		},
+		parseMatrixMessage({ state, commit }, { roomId, message }) {
+			const ids = findYouTubeIdsText(message)
+				.filter(id => id) // filter empty
+				.filter((item, pos, self) => self.indexOf(item) === pos); // filter dublicates
+
+			if (ids.length) {
+				// get info for all new unknown ids
+				getYouTubeInfo(
+					ids.filter(id => !(id in state.entities)),
+					state.youtubeApiKey
+				).then(results => {
+					const entities = results.reduce(
+						(acc, v) => ({
+							// covert the raw result
+							...acc,
+							[v.id]: Object.assign({}, videoBaseObject, {
+								title: v.snippet.title,
+								duration: duration(v.contentDetails.duration),
+								durationS: time2s(duration(v.contentDetails.duration)),
+								isPlaying: false,
+								id: v.id,
+								deleted: false,
+							}),
+						}),
+						{}
+					);
+
+					commit('updateRadioStation', {
+						roomId,
+						entities,
+						playList: ids,
+					});
+				});
+			}
+		},
+		matrixPaginate({ state }) {
+			console.log('store paginate');
+			matrixClient.paginate(state.currentRadioStation);
+		},
+		joinRadioStation({ commit }, roomIdOrAlias) {
+			matrixClient.joinRoom(roomIdOrAlias).then(rooms => commit('setMatrixLoggedIn', rooms));
 		},
 	},
 });

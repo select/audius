@@ -107,6 +107,7 @@ export default {
 			<li> Replaced Redux with Vuex. </li>
 			<li> Fixed playlist sorting. </li>
 			<li> Fixed Firefox layout problems. </li>
+			<li> Fixed, shuffle does not play same songs again. </li>
 			<li> New (import)/export using <a href="http://myjson.com/">myjson.com</a>. </li>
 		</ul>
 	</p>

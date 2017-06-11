@@ -1,11 +1,11 @@
 <script>
 import Vue from 'vue/dist/vue';
 import { mapMutations, mapState } from 'vuex';
-import { isElementInViewport } from '../utils';
 import Sortable from 'sortablejs';
+import { isElementInViewport } from '../utils';
 
 export default {
-	computed: mapState(['youtube', 'mediaId', 'website', 'jumpCursor']),
+	computed: mapState(['search', 'currentMedia', 'website', 'jumpCursor']),
 	methods: {
 		...mapMutations(['play', 'pause']),
 		addToPlaylist(video) {
@@ -20,7 +20,7 @@ export default {
 			});
 		},
 		isPlaying(video) {
-			return this.mediaId === video.id;
+			return this.currentMedia.id === video.id;
 		},
 	},
 	mounted() {
@@ -38,7 +38,7 @@ export default {
 <template>
 <ul class="media-list">
 	<li
-		v-for="video in youtube.results"
+		v-for="video in search.results"
 		v-bind:class="{
 			active: isPlaying(video),
 			selected: (jumpCursor && (jumpCursor.id === video.id)),

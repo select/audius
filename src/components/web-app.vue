@@ -1,15 +1,14 @@
 <script>
 import WebHeader from './web-header.vue';
 import MainRight from './main-right.vue';
-import PlayListManager from './play-list-manager.vue';
 import PlayList from './play-list.vue';
-
+import LeftMenu from './left-menu.vue';
 
 export default {
 	components: {
 		WebHeader,
 		MainRight,
-		PlayListManager,
+		LeftMenu,
 		PlayList,
 	},
 };
@@ -19,7 +18,7 @@ export default {
 <div class="web-app">
 	<web-header></web-header>
 	<main class="box">
-		<play-list-manager></play-list-manager>
+		<left-menu></left-menu>
 		<play-list></play-list>
 		<main-right></main-right>
 	</main>

@@ -6,4 +6,5 @@ export const videoBaseObject = {
 	id: '',
 	deleted: false,
 	hasError: false,
+	type: '', // audio, youtube
 };

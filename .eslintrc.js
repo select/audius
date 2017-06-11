@@ -20,8 +20,17 @@ module.exports = {
 	},
 	// add your custom rules here
 	rules: {
-		indent: [2, 'tab'], // indent with tabs
+		indent: [2, 'tab', { SwitchCase: 1 }], // indent with tabs
 		'no-tabs': ['off'],
+		'no-underscore-dangle': 'off',
+		'comma-dangle': [
+			'error',
+			{
+				functions: 'never',
+				arrays: 'always-multiline',
+				objects: 'always-multiline',
+			},
+		],
 		'import/prefer-default-export': 'off',
 		// don't require .vue extension when importing
 		'import/extensions': [

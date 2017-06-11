@@ -3,8 +3,9 @@ import { mapMutations, mapState } from 'vuex';
 import AboutPlayer from './about-player.vue';
 import SearchResults from './search-results.vue';
 import Queue from './queue.vue';
-import YoutubePlayer from './youtube-player.vue';
 import Settings from './settings.vue';
+import YoutubePlayer from './youtube-player.vue';
+import AudioPlayer from './audio-player.vue';
 
 export default {
 	name: 'main-right',
@@ -13,9 +14,10 @@ export default {
 		SearchResults,
 		Queue,
 		YoutubePlayer,
+		AudioPlayer,
 		Settings,
 	},
-	computed: mapState(['website', 'youtube']),
+	computed: mapState(['website', 'search', 'showSettings']),
 	methods: mapMutations(['setMainRightTab']),
 };
 </script>
@@ -27,7 +29,7 @@ export default {
 			v-on:click="setMainRightTab('queue')"
 			v-bind:class="{ active: website.mainRightTab == 'queue' }">Queue</li>
 		<li
-			v-if="youtube.results.length"
+			v-if="search.results.length"
 			v-on:click="setMainRightTab('search')"
 			v-bind:class="{ active: website.mainRightTab == 'search' }">Search</li>
 		<li
@@ -38,7 +40,7 @@ export default {
 			v-on:click="setMainRightTab('chat')"
 			v-bind:class="{ active: website.mainRightTab == 'chat' }">Chat</li>
 		<li
-			v-if="website.showSettings"
+			v-if="showSettings"
 			v-on:click="setMainRightTab('settings')"
 			v-bind:class="{ active: website.mainRightTab == 'settings' }">Settings</li>
 	</ul>
@@ -57,6 +59,7 @@ export default {
 			v-if="website.mainRightTab"
 			class="main-right__player-full-btn wmp-icon-unfold_more"></span>
 		<youtube-player></youtube-player>
+		<audio-player></audio-player>
 	</div>
 </div>
 </template>
