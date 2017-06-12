@@ -81,19 +81,23 @@ export default {
 		onPlayerStateChange() {
 			const playerState = this.player.getPlayerState();
 			if (playerState === 2) {
-				clearInterval(this.timeInterval);
+				this.clearInterval();
 				this.timeInterval = undefined;
 				if (this.isPlaying && this.currentMedia.type !== 'audio') this.pause();
 			} else if (playerState === 1) {
-				if (!this.timeInterval) {
-					this.timeInterval = setInterval(() => {
-						this.setCurrentTime(this.player.getCurrentTime());
-					}, 1000);
-				}
+				this.clearInterval();
+				this.timeInterval = setInterval(() => {
+					this.setCurrentTime(this.player.getCurrentTime(), 'yt');
+				}, 1000);
 				if (!this.isPlaying) this.play();
 			} else if (playerState === 0) {
+				this.clearInterval();
 				this.nextVideo();
 			}
+		},
+		clearInterval() {
+			clearInterval(this.timeInterval);
+			this.timeInterval = null;
 		},
 	},
 };

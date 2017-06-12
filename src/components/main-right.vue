@@ -17,7 +17,7 @@ export default {
 		AudioPlayer,
 		Settings,
 	},
-	computed: mapState(['website', 'search', 'showSettings']),
+	computed: mapState(['website', 'search', 'showSettings', 'currentMedia']),
 	methods: mapMutations(['setMainRightTab']),
 };
 </script>
@@ -53,14 +53,17 @@ export default {
 	</div>
 	<div
 		class="main-right__player"
-		v-bind:class="{ full: !website.mainRightTab }">
+		v-bind:class="{
+			full: !website.mainRightTab,
+			minimize: currentMedia.type == 'audio'
+		}">
 		<span
 			v-on:click="setMainRightTab('')"
 			v-if="website.mainRightTab"
 			class="main-right__player-full-btn wmp-icon-unfold_more"></span>
 		<youtube-player></youtube-player>
-		<audio-player></audio-player>
 	</div>
+	<audio-player></audio-player>
 </div>
 </template>
 
@@ -107,6 +110,8 @@ ul.main-right__tabs
 	background: $color-catskillwhite
 	&.full
 		height: 100%
+	&.minimize
+		height: 10%
 span.main-right__player-full-btn
 	position: absolute
 	top: 0

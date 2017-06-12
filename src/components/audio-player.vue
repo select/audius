@@ -9,23 +9,28 @@ export default {
 			player: null,
 			_mediaUrl: '',
 			timeInterval: undefined,
-			duration: 0,
 			skipToTimeLocal: 0,
 		};
 	},
 	created() {
 		this.player = new Audio();
+
+		this.player.onended = () => {
+			this._stopInterval();
+			this.nextVideo();
+		};
+
 		this.subscriptions = [
 			// if media changed, set new media in player
 			this.$store.watch(state => state.currentMedia, () => {
-				// this.duration = this.player.getDuration();
 				if (this.currentMedia.type === 'audio' && (this.currentMedia.url !== this._mediaUrl)) {
 					this.player.src = this.currentMedia.url;
 					this.player.play();
+					this._startInterval();
 					this._mediaUrl = this.currentMedia.url;
 				}
 				if (this.currentMedia.type !== 'audio') {
-					console.log('paaaaause', this.player)
+					clearInterval(this.timeInterval);
 					this.player.pause();
 					this._mediaUrl = null;
 				}
@@ -33,9 +38,13 @@ export default {
 
 			this.$store.watch(state => state.isPlaying, () => {
 				// if isPlaying changed start stop video
-				console.log('is plaayaya', this.currentMedia.type === 'audio', this.isPlaying)
-				if (this.currentMedia.type === 'audio' && this.isPlaying) this.player.play();
-				else this.player.pause();
+				if (this.currentMedia.type === 'audio' && this.isPlaying) {
+					this.player.play();
+					this._startInterval();
+				} else {
+					clearInterval(this.timeInterval);
+					this.player.pause();
+				}
 			}),
 
 			// this.$store.watch(state => state.mute,() => {
@@ -46,13 +55,13 @@ export default {
 			// 	}
 			// }),
 
-			// this.$store.watch(state => state.skipToTime,() => {
-			// 	// if skip to time changed
-			// 	if (this.skipToTimeLocal !== this.skipToTime) {
-			// 		this.skipToTimeLocal = this.skipToTime;
-			// 		this.player.seekTo(this.skipToTime, true);
-			// 	}
-			// }),
+			this.$store.watch(state => state.skipToTime, () => {
+				// if skip to time changed
+				if (this.skipToTimeLocal !== this.skipToTime) {
+					this.skipToTimeLocal = this.skipToTime;
+					this.player.currentTime = this.skipToTime;
+				}
+			}),
 
 		];
 	},
@@ -62,15 +71,11 @@ export default {
 	computed: mapState(['currentMedia', 'mute', 'skipToTime', 'isPlaying']),
 	methods: {
 		...mapMutations(['play', 'pause', 'setCurrentTime', 'nextVideo', 'videoError']),
-		_play() {
-			var source = this.context.createBufferSource();
-			source.buffer = this.audioBuffer;
-			source.connect(this.context.destination);
-			source.start(0);
-		},
-		_startInterval(){
+		_startInterval() {
+			clearInterval(this.timeInterval);
 			this.timeInterval = setInterval(() => {
-				this.setCurrentTime(this.player.currentTime);
+				console.log('tiememe ',this.timeInterval);
+				this.setCurrentTime(this.player.currentTime, 'audio');
 			}, 1000);
 		},
 	},

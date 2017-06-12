@@ -242,15 +242,17 @@ export const store = new Vuex.Store({
 				})
 			);
 		},
-		audioSearchSuccess(state, url) {
+		audioSearchSuccess(state, { url, duration }) {
 			state.website.mainRightTab = 'search';
 			state.search.isSearching = false;
+			const urlParts = url.split('/');
+			const title = urlParts.length ? urlParts[urlParts.length - 1] : url;
 			state.search.results = [
 				Object.assign({}, videoBaseObject, {
 					url,
-					title: url,
-					duration: 0,
-					durationS: { h: 0, m: 0, s: 0 },
+					title,
+					duration: s2time(duration),
+					durationS: duration,
 					isPlaying: false,
 					id: `${hashCode(url)}`,
 					deleted: false,
@@ -577,7 +579,14 @@ export const store = new Vuex.Store({
 		search({ commit, state }, query) {
 			const mp3RegEx = /.mp3$/;
 			if (mp3RegEx.test(query)) {
-				commit('audioSearchSuccess', query);
+				const player = new Audio();
+				player.addEventListener('loadeddata', () => {
+					commit('audioSearchSuccess', {
+						url: query,
+						duration: Math.round(player.duration),
+					});
+				}, true);
+				player.src = query;
 			} else if (query) {
 				searchYoutubeDebounced(state.youtubeApiKey, query, result => {
 					commit('searchYoutubeSuccess', result);

@@ -133,7 +133,9 @@ export default {
 						@click="toggleShuffle"
 						v-bind:class="{ active: shuffle }"
 						title="[s] Shuffle"></span>
-					<div @click="toggleMute">
+					<div class="au-header__mute"
+						v-bind:disabled="currentMedia.type == 'audio'"
+						@click="toggleMute">
 						<span class="wmp-icon-volume_up" v-if="!mute"></span>
 						<span class="wmp-icon-volume_off" v-else></span>
 					</div>
@@ -250,6 +252,10 @@ header
 		height: $touch-size-medium
 		span:before
 			font-size: 2.5em
+
+	.au-header__mute[disabled]
+		color: $color-athensgrey
+		pointer-events: none
 	.au-header__controls-small
 		display: flex
 		align-items: center

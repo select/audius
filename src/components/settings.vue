@@ -78,8 +78,8 @@ export default {
 
 .settings__buttons
 	.button
-		width: 50%
-		display: flex
+		white-space: nowrap
+		display: inline-flex
 		align-items: center
 		justify-content: center
 </style>
