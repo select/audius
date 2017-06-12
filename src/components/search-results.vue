@@ -22,6 +22,10 @@ export default {
 		isPlaying(video) {
 			return this.currentMedia.id === video.id;
 		},
+		_backgroundImage(video) {
+			if (video.type !== 'audio') return `url(https://i.ytimg.com/vi/${video.id}/default.jpg)`;
+			return '';
+		},
 	},
 	mounted() {
 		const mediaListEl = document.querySelector('.main-right__content .media-list');
@@ -44,7 +48,7 @@ export default {
 			selected: (jumpCursor && (jumpCursor.id === video.id)),
 		}"
 		v-bind:data-id="video.id">
-		<div class="media-list__thumbnail" v-bind:style="{ backgroundImage: 'url(https://i.ytimg.com/vi/' + video.id + '/default.jpg)' }" ></div>
+		<div class="media-list__thumbnail" v-bind:style="{ backgroundImage: _backgroundImage(video) }" ></div>
 		<div class="media-list__body">
 			<div class="media-list__name">{{video.title}}</div>
 			<div class="media-list__duration" v-if="video.duration">{{video.duration.m}}:{{video.duration.s}}</div>
