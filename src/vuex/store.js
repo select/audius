@@ -21,6 +21,8 @@ import { youtubeApiKey } from '../utils/config';
 // the matrix client will be lazy loaded since it's not need on startup
 let matrixClient = null;
 
+const audioRegEx = /\.(mp3|oga|mp4|flac|wav|aiff|aif|wma|asf)$/i;
+
 const searchYoutubeDebounced = debounce((...args) => searchYoutube(...args), 500);
 
 Vue.use(Vuex);
@@ -54,7 +56,6 @@ function play(state, mediaId, currentMedia) {
 		else mediaId = state.playList[0];
 	}
 	if (currentMedia) state.entities[mediaId] = currentMedia;
-	state.mediaUrl = null;
 	state.currentMedia = currentMedia || state.entities[mediaId];
 	state.sessionHistory.push(mediaId);
 	state.sessionHistoryPos = -1;
@@ -129,7 +130,6 @@ export const store = new Vuex.Store({
 		errorMessages: '',
 		entities: {},
 		currentMedia: {},
-		mediaUrl: '',
 		playList: [],
 		tags: {},
 		tagsOrdered: [],
@@ -398,11 +398,9 @@ export const store = new Vuex.Store({
 		play(state, options = {}) {
 			const { mediaId, currentMedia } = options;
 			play(state, mediaId, currentMedia);
-			state.mediaUrl = null;
 		},
 		playPause(state) {
-			if (state.mediaUrl) state.isPlaying = !state.isPlaying;
-			else if (state.isPlaying) state.isPlaying = false;
+			if (state.isPlaying) state.isPlaying = false;
 			else if (state.playList.length) play(state);
 		},
 		toggleShuffle(state) {
@@ -418,7 +416,6 @@ export const store = new Vuex.Store({
 			if (state.sessionHistory.length >= -1 * state.sessionHistoryPos) {
 				const sessionHistoryPos = state.sessionHistoryPos + 1;
 				const mediaId = state.sessionHistory[state.sessionHistory.length - 1 - sessionHistoryPos];
-				state.mediaUrl = null;
 				Object.assign(state, {
 					sessionHistoryPos,
 					currentMedia: state.entities[mediaId],
@@ -432,7 +429,6 @@ export const store = new Vuex.Store({
 		},
 		queuePlayIndex(state, index) {
 			const mediaId = state.queue.splice(index, 1)[0];
-			state.mediaUrl = null;
 			state.isPlaying = true;
 			state.currentMedia = state.entities[mediaId];
 			state.sessionHistoryPos = 0;
@@ -577,10 +573,12 @@ export const store = new Vuex.Store({
 			}, 1000);
 		},
 		search({ commit, state }, query) {
-			const mp3RegEx = /.mp3$/;
-			if (mp3RegEx.test(query)) {
+
+			if (audioRegEx.test(query)) {
+				console.log('ttelelldld')
 				const player = new Audio();
 				player.addEventListener('loadeddata', () => {
+					console.log('data loooaaadded')
 					commit('audioSearchSuccess', {
 						url: query,
 						duration: Math.round(player.duration),
@@ -652,6 +650,7 @@ export const store = new Vuex.Store({
 			matrixClient.joinRoom(roomIdOrAlias).then(rooms => commit('setMatrixLoggedIn', rooms));
 		},
 		parseMatrixMessage({ state, commit }, { roomId, message }) {
+			console.log('parse ', message);
 			const ids = findYouTubeIdsText(message)
 				.filter(id => id) // filter empty
 				.filter((item, pos, self) => self.indexOf(item) === pos); // filter dublicates
