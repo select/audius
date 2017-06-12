@@ -5,7 +5,7 @@ const webpack = require('webpack');
 const CircularDependencyPlugin = require('circular-dependency-plugin');
 const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin');
 
-const config = require('./config/webpack.dev.js');
+const config = require('./config/webpack.base.js');
 
 config.entry = [
 	'webpack-dev-server/client?http://localhost:8080/',

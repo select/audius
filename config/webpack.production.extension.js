@@ -5,20 +5,18 @@ const autoprefixer = require('autoprefixer');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const CircularDependencyPlugin = require('circular-dependency-plugin');
 
-const configDev = require('./webpack.dev.js')
+const configDev = require('./webpack.base.js');
 
 module.exports = Object.assign(configDev, {
 	entry: './src/extension/app.js',
 	output: {
 		path: './dist-extension/',
-		filename: 'content-script.js'
+		filename: 'content-script.js',
 	},
 	devtool: undefined,
 	plugins: [
 		new webpack.optimize.OccurrenceOrderPlugin(),
-		new CopyWebpackPlugin([
-			{ context: './src/extension/static/', from: '**/*', to: './' },
-		]),
+		new CopyWebpackPlugin([{ context: './src/extension/static/', from: '**/*', to: './' }]),
 		new webpack.optimize.UglifyJsPlugin({
 			compress: {
 				warnings: false,
@@ -32,7 +30,7 @@ module.exports = Object.assign(configDev, {
 		}),
 		new webpack.optimize.DedupePlugin(),
 		new CircularDependencyPlugin({
-			failOnError: true
+			failOnError: true,
 		}),
 	],
 });

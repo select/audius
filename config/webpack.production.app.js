@@ -4,7 +4,7 @@ const webpack = require('webpack');
 const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
 
-const configDev = require('./webpack.dev.js');
+const configDev = require('./webpack.base.js');
 
 console.log('path: ', `${__dirname}/../dist-website/`);
 
