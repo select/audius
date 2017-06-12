@@ -23,6 +23,8 @@ export default {
 						videoId: this.currentMedia.id,
 						suggestedQuality: 'large',
 					});
+				} else {
+					this.player.pauseVideo();
 				}
 			}),
 
@@ -81,7 +83,7 @@ export default {
 			if (playerState === 2) {
 				clearInterval(this.timeInterval);
 				this.timeInterval = undefined;
-				if (this.isPlaying) this.pause();
+				if (this.isPlaying && this.currentMedia.type !== 'audio') this.pause();
 			} else if (playerState === 1) {
 				if (!this.timeInterval) {
 					this.timeInterval = setInterval(() => {

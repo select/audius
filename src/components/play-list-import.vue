@@ -1,5 +1,5 @@
 <script>
-import Vue from 'vue/dist/vue';
+import Vue from 'vue';
 import { mapActions } from 'vuex';
 
 export default {

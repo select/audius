@@ -14,7 +14,7 @@ config.entry = [
 ];
 
 config.output = {
-	path: __dirname + "/dist",
+	path: `${__dirname}/dist`,
 	publicPath: '/',
 	filename: 'app.js',
 };

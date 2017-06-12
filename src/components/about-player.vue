@@ -1,5 +1,4 @@
 <script>
-import Vue from 'vue/dist/vue';
 import { mapMutations } from 'vuex';
 import { injectScript } from '../utils';
 

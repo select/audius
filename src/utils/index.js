@@ -6,7 +6,6 @@ export { searchYoutube } from './searchYoutube';
 export { isElementInViewport } from './isElementInViewport';
 export { indexDB } from './indexDB2';
 export { importPlayListFromString } from './importPlayListFromString';
-export { matrixClient } from './matrixClient';
 export { findYouTubeIdsText, getYouTubeInfo } from './findVideos';
 export { starterPlaylist } from './config';
 export { hashCode } from './hashCode';

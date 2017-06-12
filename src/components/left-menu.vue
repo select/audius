@@ -14,7 +14,7 @@ export default {
 		...mapActions(['initMatrix']),
 	},
 	computed: {
-		...mapState(['showLeftMenu', 'leftMenuTab']),
+		...mapState(['showLeftMenu', 'leftMenuTab', 'matrixEnabled']),
 	},
 };
 </script>
@@ -27,7 +27,7 @@ export default {
 		<div class="nav-handle__tab"></div>
 		<span class="wmp-icon-queue_music"></span>
 	</div>
-	<ul class="main-right__tabs">
+	<ul class="main-right__tabs" v-if="matrixEnabled">
 		<li
 			v-on:click="setLeftMenuTab('playList')"
 			v-bind:class="{ active: leftMenuTab == 'playList' }">Playlist</li>

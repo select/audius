@@ -1,5 +1,5 @@
 <script>
-import Vue from 'vue/dist/vue';
+import Vue from 'vue';
 import { mapGetters, mapMutations, mapState, mapActions } from 'vuex';
 import Sortable from 'sortablejs';
 

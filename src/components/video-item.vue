@@ -1,6 +1,5 @@
 <script>
-import Vue from 'vue/dist/vue';
-import { mapGetters, mapMutations } from 'vuex';
+import { mapMutations } from 'vuex';
 
 export default {
 	name: 'video-item',
@@ -28,7 +27,7 @@ export default {
 		},
 		remove() {
 			if (this.isPlayList) {
-				this.$store.commit('removeTags', {mediaIds: [this.video.id]});
+				this.$store.commit('removeTags', { mediaIds: [this.video.id] });
 			} else if (this.isQueue) {
 				this.$store.commit('queueRemoveIndex', this.queueIndex);
 			} else {
@@ -65,9 +64,13 @@ export default {
 				if (!this.isInPlayList) {
 					this.$store.commit('addTags', { mediaIds: [this.video.id] });
 				} else {
-					this.$store.commit('removeTags', { mediaIds: [this.video.id]});
+					this.$store.commit('removeTags', { mediaIds: [this.video.id] });
 				}
 			}
+		},
+		_backgroundImage() {
+			if (this.video.type !== 'audio') return `url(https://i.ytimg.com/vi/${this.video.id}/default.jpg)`;
+			return '';
 		},
 	},
 };
@@ -83,7 +86,7 @@ export default {
 			}"
 		v-on:dblclick="play"
 		v-bind:data-id="video.id">
-		<div class="media-list__thumbnail" v-bind:style="{ backgroundImage: 'url(https://i.ytimg.com/vi/' + video.id + '/default.jpg)' }"></div>
+		<div class="media-list__thumbnail" v-bind:style="{ backgroundImage: _backgroundImage() }"></div>
 		<div
 			class="media-list__body"
 			v-on:click="addTags">
@@ -105,7 +108,11 @@ export default {
 			<div class="media-list__more-controls">
 				<span class="wmp-icon-more_vert"></span>
 				<div>
-					<a v-bind:href="'https://youtu.be/'+video.id" title="Watch on YouTube" target="_blank">
+					<a
+						v-if="video.type !='audio'"
+						v-bind:href="'https://youtu.be/'+video.id"
+						title="Watch on YouTube"
+						target="_blank">
 						<span class="wmp-icon-youtube icon--small"></span>
 					</a>
 					<span

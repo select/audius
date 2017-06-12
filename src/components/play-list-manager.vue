@@ -154,6 +154,7 @@ export default {
 		font-size: 1em
 		border: 0
 		color: $color-palesky
+		padding: 0
 
 .play-list-manager__input
 	padding: 0

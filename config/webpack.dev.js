@@ -6,18 +6,23 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const CircularDependencyPlugin = require('circular-dependency-plugin');
 
 module.exports = {
-	entry: {
-		'dist-extension/content-script': './src/extension/dev.js',
-	},
+	entry: './src/website/app.js',
 	output: {
-		path: './',
-		filename: '[name].js',
+		path: `${__dirname}/../dist-website/`,
+		filename: 'app.js',
 	},
+	resolve: {
+		alias: {
+			vue: 'vue/dist/vue.js',
+		},
+	},
+	devtool: 'source-map',
 	stats: {
 		// Configure the console output
-		colors: false,
-		modules: true,
+		colors: true,
+		modules: false,
 		reasons: true,
+		assets: true,
 	},
 	module: {
 		loaders: [
@@ -32,30 +37,20 @@ module.exports = {
 			},
 		],
 	},
-	// resolve: {
-	// 	alias: {
-	// 		vue: 'vue/dist/vue.js',
-	// 	},
-	// },
+	node: {
+		fs: 'empty',
+	},
 	plugins: [
 		new CopyWebpackPlugin([
-			{ context: './src/extension/static/', from: '**/*', to: './dist-extension/' },
-			{ context: './src/website/static/', from: '**/*', to: './dist-website/' },
+			{ context: './src/website/static/', from: '**/*', to: './' },
 		]),
-		new webpack.DefinePlugin({
-			'process.env': {
-				extension: true,
-			},
-		}),
 		new CircularDependencyPlugin({
 			failOnError: true,
 		}),
 		new webpack.LoaderOptionsPlugin({
 			options: {
 				context: __dirname,
-				postcss: [
-					autoprefixer,
-				],
+				postcss: [autoprefixer],
 				babel: {
 					presets: ['es2015', 'stage-2'],
 					comments: false,

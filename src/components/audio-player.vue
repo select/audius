@@ -14,16 +14,18 @@ export default {
 		};
 	},
 	created() {
+		this.player = new Audio();
 		this.subscriptions = [
 			// if media changed, set new media in player
 			this.$store.watch(state => state.currentMedia, () => {
 				// this.duration = this.player.getDuration();
 				if (this.currentMedia.type === 'audio' && (this.currentMedia.url !== this._mediaUrl)) {
-					this.player = new Audio(this.currentMedia.url);
+					this.player.src = this.currentMedia.url;
 					this.player.play();
 					this._mediaUrl = this.currentMedia.url;
 				}
-				if ((this.currentMedia.type !== 'audio') && this.player) {
+				if (this.currentMedia.type !== 'audio') {
+					console.log('paaaaause', this.player)
 					this.player.pause();
 					this._mediaUrl = null;
 				}
@@ -31,8 +33,9 @@ export default {
 
 			this.$store.watch(state => state.isPlaying, () => {
 				// if isPlaying changed start stop video
+				console.log('is plaayaya', this.currentMedia.type === 'audio', this.isPlaying)
 				if (this.currentMedia.type === 'audio' && this.isPlaying) this.player.play();
-				else if (this.player) this.player.pause();
+				else this.player.pause();
 			}),
 
 			// this.$store.watch(state => state.mute,() => {
@@ -65,13 +68,17 @@ export default {
 			source.connect(this.context.destination);
 			source.start(0);
 		},
+		_startInterval(){
+			this.timeInterval = setInterval(() => {
+				this.setCurrentTime(this.player.currentTime);
+			}, 1000);
+		},
 	},
 };
 </script>
 
 <template>
 	<div>
-		AUDIO
 	</div>
 </template>
 

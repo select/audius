@@ -11,13 +11,15 @@ import {
 	importPlayListFromString,
 	ajaxPostJSON,
 	ajax,
-	matrixClient,
 	findYouTubeIdsText,
 	getYouTubeInfo,
 	hashCode
 } from '../utils';
 import { videoBaseObject } from './video';
 import { youtubeApiKey } from '../utils/config';
+
+// the matrix client will be lazy loaded since it's not need on startup
+let matrixClient = null;
 
 const searchYoutubeDebounced = debounce((...args) => searchYoutube(...args), 500);
 
@@ -40,6 +42,7 @@ const presistMutation = {
 	migrationSuccess: ['migration'],
 	removeVideo: ['playList', 'entities'],
 	setMatrixCredentials: ['matrix'],
+	setMatrixEnabled: ['matrixEnabled'],
 };
 
 /* eslint-disable no-param-reassign */
@@ -170,6 +173,7 @@ export const store = new Vuex.Store({
 			isSearching: false,
 			results: [],
 		},
+		matrixEnabled: false,
 		matrixLoggedIn: false,
 		matrixRooms: [],
 		matrix: {
@@ -248,7 +252,7 @@ export const store = new Vuex.Store({
 					duration: 0,
 					durationS: { h: 0, m: 0, s: 0 },
 					isPlaying: false,
-					id: hashCode(url),
+					id: `${hashCode(url)}`,
 					deleted: false,
 					type: 'audio',
 				}),
@@ -502,6 +506,9 @@ export const store = new Vuex.Store({
 
 		// Matrix Radio
 
+		setMatrixEnabled(state) {
+			state.matrixEnabled = !state.matrixEnabled;
+		},
 		setMatrixCredentials(state, credentials) {
 			state.matrix.hasCredentials = true;
 			state.matrix.credentials = credentials;
@@ -569,7 +576,7 @@ export const store = new Vuex.Store({
 		},
 		search({ commit, state }, query) {
 			const mp3RegEx = /.mp3$/;
-			if (mp3RegEx.test(query) ) {
+			if (mp3RegEx.test(query)) {
 				commit('audioSearchSuccess', query);
 			} else if (query) {
 				searchYoutubeDebounced(state.youtubeApiKey, query, result => {
@@ -602,26 +609,38 @@ export const store = new Vuex.Store({
 			});
 		},
 		initMatrix({ commit, state, dispatch }) {
-			if (!state.matrix.hasCredentials) {
-				console.log('create new matrix user');
+			import('../utils/matrixClient').then(module => {
+				matrixClient = module.matrixClient;
+				if (!state.matrix.hasCredentials) {
+					matrixClient
+						.getCredentials()
+						.then(credentials => commit('setMatrixCredentials', credentials))
+						.then(() => matrixClient.login(state.matrix.credentials, dispatch))
+						.then(rooms => commit('setMatrixLoggedIn', rooms));
+				} else if (!state.matrixLoggedIn) {
+					console.log('log into matrix');
+					matrixClient
+						.login(state.matrix.credentials, dispatch)
+						.then(rooms => commit('setMatrixLoggedIn', rooms));
+				}
+			});
+		},
+		loginMatrixWithPassword({ commit, state, dispatch }, { username, password }) {
+			import('../utils/matrixClient').then(module => {
+				matrixClient = module.matrixClient;
 				matrixClient
-					.getCredentials()
+					.getCredentialsWithPassword(username, password)
 					.then(credentials => commit('setMatrixCredentials', credentials))
 					.then(() => matrixClient.login(state.matrix.credentials, dispatch))
 					.then(rooms => commit('setMatrixLoggedIn', rooms));
-			} else if (!state.matrixLoggedIn) {
-				console.log('log into matrix');
-				matrixClient
-					.login(state.matrix.credentials, dispatch)
-					.then(rooms => commit('setMatrixLoggedIn', rooms));
-			}
+			});
 		},
-		loginMatrixWithPassword({ commit, state, dispatch }, { username, password }) {
-			matrixClient
-				.getCredentialsWithPassword(username, password)
-				.then(credentials => commit('setMatrixCredentials', credentials))
-				.then(() => matrixClient.login(state.matrix.credentials, dispatch))
-				.then(rooms => commit('setMatrixLoggedIn', rooms));
+		matrixPaginate({ state }) {
+			console.log('store paginate');
+			matrixClient.paginate(state.currentRadioStation);
+		},
+		joinRadioStation({ commit }, roomIdOrAlias) {
+			matrixClient.joinRoom(roomIdOrAlias).then(rooms => commit('setMatrixLoggedIn', rooms));
 		},
 		parseMatrixMessage({ state, commit }, { roomId, message }) {
 			const ids = findYouTubeIdsText(message)
@@ -657,13 +676,6 @@ export const store = new Vuex.Store({
 					});
 				});
 			}
-		},
-		matrixPaginate({ state }) {
-			console.log('store paginate');
-			matrixClient.paginate(state.currentRadioStation);
-		},
-		joinRadioStation({ commit }, roomIdOrAlias) {
-			matrixClient.joinRoom(roomIdOrAlias).then(rooms => commit('setMatrixLoggedIn', rooms));
 		},
 	},
 });
