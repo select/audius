@@ -40,7 +40,11 @@ export default {
 		copyToClip() {
 			window.getSelection().removeAllRanges();
 			const tmpEl = document.createElement('div');
-			tmpEl.innerHTML = `${this.video.title} https://youtu.be/${this.video.id}`;
+			if (this.video.type === 'audio'){
+				tmpEl.innerHTML = `${this.video.url}`;
+			} else {
+				tmpEl.innerHTML = `${this.video.title} https://youtu.be/${this.video.id}`;
+			}
 			document.body.appendChild(tmpEl);
 
 			const range = document.createRange();
