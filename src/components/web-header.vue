@@ -112,7 +112,9 @@ export default {
 				@click="scrollToCurrentSong">
 				<div class="au-header__current-song-name" v-if="currentMedia">{{currentMedia.title}}</div>
 				<div class="au-header__current-song-time" v-if="currentMedia && currentMedia.duration">
-					{{currentTimeObj.m}}:{{currentTimeObj.s}} / {{currentMedia.duration.m}}:{{currentMedia.duration.s}}
+					<span v-if="currentTimeObj.h">{{currentTimeObj.h}}:</span>{{currentTimeObj.m}}:{{currentTimeObj.s}}
+					/
+					<span v-if="currentMedia.duration.h">{{currentMedia.duration.h}}:</span>{{currentMedia.duration.m}}:{{currentMedia.duration.s}}
 				</div>
 			</div>
 			<div class="au-header__controls" :disabled="!playList.length ">

@@ -95,7 +95,9 @@ export default {
 			class="media-list__body"
 			v-on:click="addTags">
 			<div class="media-list__name">{{video.title}}</div>
-			<div class="media-list__duration" v-if="video.duration">{{video.duration.m}}:{{video.duration.s}}</div>
+			<div class="media-list__duration" v-if="video.duration">
+				<span v-if="video.duration.h">{{video.duration.h}}:</span>{{video.duration.m}}:{{video.duration.s}}
+			</div>
 		</div>
 		<div class="media-list__controls">
 			<div v-if="!video.hasError">
