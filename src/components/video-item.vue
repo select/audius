@@ -40,7 +40,7 @@ export default {
 		copyToClip() {
 			window.getSelection().removeAllRanges();
 			const tmpEl = document.createElement('div');
-			if (this.video.type === 'audio'){
+			if (this.video.type !== 'youtube') {
 				tmpEl.innerHTML = `${this.video.url}`;
 			} else {
 				tmpEl.innerHTML = `${this.video.title} https://youtu.be/${this.video.id}`;
@@ -73,7 +73,7 @@ export default {
 			}
 		},
 		_backgroundImage() {
-			if (this.video.type !== 'audio') return `url(https://i.ytimg.com/vi/${this.video.id}/default.jpg)`;
+			if (this.video.type === 'youtube') return `url(https://i.ytimg.com/vi/${this.video.id}/default.jpg)`;
 			return '';
 		},
 	},

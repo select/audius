@@ -21,7 +21,8 @@ import { youtubeApiKey } from '../utils/config';
 // the matrix client will be lazy loaded since it's not need on startup
 let matrixClient = null;
 
-const audioRegEx = /\.(mp3|oga|mp4|flac|wav|aiff|aif|wma|asf)$/i;
+const audioRegEx = /\.(mp3|oga|m4a|flac|wav|aiff|aif|wma|asf)$/i;
+const videoRegEx = /\.(avi|mkv|mp4|webm|ogg)$/i;
 
 const searchYoutubeDebounced = debounce((...args) => searchYoutube(...args), 500);
 
@@ -243,7 +244,7 @@ export const store = new Vuex.Store({
 				})
 			);
 		},
-		audioSearchSuccess(state, { url, duration }) {
+		webMediaSearchSuccess(state, { url, time, type }) {
 			state.mainRightTab = 'search';
 			state.search.isSearching = false;
 			const urlParts = url.split('/');
@@ -252,12 +253,10 @@ export const store = new Vuex.Store({
 				Object.assign({}, videoBaseObject, {
 					url,
 					title,
-					duration: s2time(duration),
-					durationS: duration,
-					isPlaying: false,
+					type,
+					duration: s2time(time),
+					durationS: time,
 					id: `${hashCode(url)}`,
-					deleted: false,
-					type: 'audio',
 				}),
 			];
 		},
@@ -577,10 +576,23 @@ export const store = new Vuex.Store({
 			if (audioRegEx.test(query)) {
 				const player = new Audio();
 				player.addEventListener('loadeddata', () => {
-					commit('audioSearchSuccess', {
+					commit('webMediaSearchSuccess', {
 						url: query,
-						duration: Math.round(player.duration),
+						time: Math.round(player.duration),
+						type: 'audio',
 					});
+				}, true);
+				player.src = query;
+			} else if (videoRegEx.test(query)) {
+				const player = document.createElement('video');
+				document.body.appendChild(player);
+				player.addEventListener('loadeddata', () => {
+					commit('webMediaSearchSuccess', {
+						url: query,
+						time: Math.round(player.duration),
+						type: 'video',
+					});
+					player.parentNode.removeChild(player);
 				}, true);
 				player.src = query;
 			} else if (query) {

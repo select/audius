@@ -5,7 +5,7 @@ import SearchResults from './search-results.vue';
 import Queue from './queue.vue';
 import Settings from './settings.vue';
 import YoutubePlayer from './youtube-player.vue';
-import AudioPlayer from './audio-player.vue';
+import WebMediaPlayer from './web-media-player.vue';
 
 export default {
 	name: 'main-right',
@@ -14,7 +14,7 @@ export default {
 		SearchResults,
 		Queue,
 		YoutubePlayer,
-		AudioPlayer,
+		WebMediaPlayer,
 		Settings,
 	},
 	computed: mapState(['website', 'mainRightTab', 'search', 'showSettings', 'currentMedia']),
@@ -55,15 +55,16 @@ export default {
 		class="main-right__player"
 		v-bind:class="{
 			full: !mainRightTab,
-			minimize: currentMedia.type == 'audio'
 		}">
 		<span
 			v-on:click="setMainRightTab('')"
 			v-if="mainRightTab"
 			class="main-right__player-full-btn wmp-icon-unfold_more"></span>
-		<youtube-player></youtube-player>
+		<div class="main-right__yt-player" v-bind:class="{'main-right--hide-yt-player': currentMedia.type !== 'youtube'}">
+			<youtube-player></youtube-player>
+		</div>
+		<web-media-player v-show="currentMedia.type !== 'youtube'"></web-media-player>
 	</div>
-	<audio-player></audio-player>
 </div>
 </template>
 
@@ -108,14 +109,19 @@ ul.main-right__tabs
 	border-top: 1px solid $color-aluminium
 	position: relative
 	background: $color-catskillwhite
-	&.minimize
-		height: 10%
+	&.full .video-player
+		height: 100%
+.main-right__yt-player
+	height: 100%
+	&.main-right--hide-yt-player
+		height: 1%
 span.main-right__player-full-btn
 	position: absolute
 	top: 0
 	right: 0
 	cursor: pointer
 	color: $color-white
+	z-index: 1
 .audius-chat
 	position: relative
 	height: 100%

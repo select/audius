@@ -86,7 +86,7 @@ export default {
 			if (playerState === 2) {
 				this.clearInterval();
 				this.timeInterval = undefined;
-				if (this.isPlaying && this.currentMedia.type !== 'audio') this.pause();
+				if (this.isPlaying && this.currentMedia.type === 'youtube') this.pause();
 			} else if (playerState === 1) {
 				this.clearInterval();
 				this.timeInterval = setInterval(() => {

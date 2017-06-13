@@ -23,7 +23,7 @@ export default {
 			return this.currentMedia.id === video.id;
 		},
 		_backgroundImage(video) {
-			if (video.type !== 'audio') return `url(https://i.ytimg.com/vi/${video.id}/default.jpg)`;
+			if (video.type === 'youtube') return `url(https://i.ytimg.com/vi/${video.id}/default.jpg)`;
 			return '';
 		},
 	},

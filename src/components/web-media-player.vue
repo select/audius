@@ -10,40 +10,57 @@ export default {
 			_mediaUrl: '',
 			timeInterval: undefined,
 			skipToTimeLocal: 0,
+			audioPlayer: new Audio(),
+			videoPlayer: undefined,
+		};
+	},
+	mounted() {
+		this.videoPlayer = document.querySelector('.video-player');
+		this.videoPlayer.onended = () => {
+			clearInterval(this.timeInterval);
+			this.nextVideo();
 		};
 	},
 	created() {
-		this.player = new Audio();
-
-		this.player.onended = () => {
-			this._stopInterval();
+		this.audioPlayer.onended = () => {
+			clearInterval(this.timeInterval);
 			this.nextVideo();
 		};
-
 		this.subscriptions = [
 			// if media changed, set new media in player
 			this.$store.watch(state => state.currentMedia, () => {
-				if (this.currentMedia.type === 'audio' && (this.currentMedia.url !== this._mediaUrl)) {
+				if (this.currentMedia.type === 'audio') {
+					this.player = this.audioPlayer;
+					this.videoPlayer.pause();
+				} else if (this.currentMedia.type === 'video') {
+					this.player = this.videoPlayer;
+					this.audioPlayer.pause();
+				} else {
+					clearInterval(this.timeInterval);
+					this.audioPlayer.pause();
+					this.videoPlayer.pause();
+					this._mediaUrl = null;
+				}
+				if (['audio', 'video'].includes(this.currentMedia.type) && (this.currentMedia.url !== this._mediaUrl)) {
 					this.player.src = this.currentMedia.url;
 					this.player.play();
 					this._startInterval();
 					this._mediaUrl = this.currentMedia.url;
-				}
-				if (this.currentMedia.type !== 'audio') {
-					clearInterval(this.timeInterval);
-					this.player.pause();
-					this._mediaUrl = null;
 				}
 			}),
 
 			this.$store.watch(state => state.isPlaying, () => {
 				// if isPlaying changed start stop video
 				if (this.currentMedia.type === 'audio' && this.isPlaying) {
-					this.player.play();
+					this.audioPlayer.play();
+					this._startInterval();
+				} else if (this.currentMedia.type === 'video' && this.isPlaying) {
+					this.videoPlayer.play();
 					this._startInterval();
 				} else {
 					clearInterval(this.timeInterval);
-					this.player.pause();
+					this.videoPlayer.pause();
+					this.audioPlayer.pause();
 				}
 			}),
 
@@ -79,21 +96,23 @@ export default {
 		},
 	},
 };
+// https://github.com/kim-company/videojs-chromecast
+// to add a chromcast button to videos
 </script>
 
 <template>
-	<div>
-	</div>
+	<video class="video-player" src="" controls>
+		Sorry, your browser doesn't support embedded videos.
+	</video>
 </template>
 
 <style lang="sass?indentedSyntax">
 @import '../sass/vars'
 @import '../sass/color'
 
-/* .youtube-player
+.video-player
 	width: 100%
-	height: 100%
-	overflow: hidden
-	background: $color-aluminium-dark */
+	flex: 1
+	background: $color-black
 
 </style>
