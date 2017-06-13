@@ -647,7 +647,10 @@ export const store = new Vuex.Store({
 			matrixClient.paginate(state.currentRadioStation);
 		},
 		joinRadioStation({ commit }, roomIdOrAlias) {
-			matrixClient.joinRoom(roomIdOrAlias).then(room => commit('setMatrixLoggedIn', [room]));
+			matrixClient.joinRoom(roomIdOrAlias).then(room => {
+				room.name = roomIdOrAlias;
+				commit('setMatrixLoggedIn', [room]);
+			});
 		},
 		leaveRadioStation({ commit }, roomIdOrAlias) {
 			matrixClient.leaveRoom(roomIdOrAlias).then(() => commit('deleteRadioStation', roomIdOrAlias));
