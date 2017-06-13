@@ -164,9 +164,9 @@ export const store = new Vuex.Store({
 		showLeftMenu: false,
 		leftMenuTab: 'playList',
 		showSettings: false,
+		mainRightTab: 'about',
 		website: {
 			showSearch: false,
-			mainRightTab: 'about',
 			showChat: false,
 		},
 		search: {
@@ -229,7 +229,7 @@ export const store = new Vuex.Store({
 			state = Object.assign(state, recoveredState);
 		},
 		searchYoutubeSuccess(state, results) {
-			state.website.mainRightTab = 'search';
+			state.mainRightTab = 'search';
 			state.search.isSearching = false;
 			state.search.results = results.map(v =>
 				Object.assign({}, videoBaseObject, {
@@ -244,7 +244,7 @@ export const store = new Vuex.Store({
 			);
 		},
 		audioSearchSuccess(state, { url, duration }) {
-			state.website.mainRightTab = 'search';
+			state.mainRightTab = 'search';
 			state.search.isSearching = false;
 			const urlParts = url.split('/');
 			const title = urlParts.length ? urlParts[urlParts.length - 1] : url;
@@ -267,18 +267,18 @@ export const store = new Vuex.Store({
 				: !state.website.showSearch;
 		},
 		setMainRightTab(state, id) {
-			state.website.mainRightTab = id === state.mainRightTab ? '' : id;
+			state.mainRightTab = id === state.mainRightTab ? '' : id;
 		},
 		setLeftMenuTab(state, id) {
 			state.leftMenuTab = id;
 		},
 		showChat(state) {
-			state.website.mainRightTab = 'search';
+			state.mainRightTab = 'search';
 			state.website.showChat = true;
 		},
 		setShowSettings(state) {
 			state.showSettings = true;
-			state.website.mainRightTab = 'settings';
+			state.mainRightTab = 'settings';
 		},
 		toggleJump(state, toggleState) {
 			state.showJump = toggleState !== undefined ? toggleState : !state.showJump;
@@ -413,7 +413,7 @@ export const store = new Vuex.Store({
 		},
 		queue(state, id) {
 			state.queue.push(id);
-			state.website.mainRightTab = 'queue';
+			state.mainRightTab = 'queue';
 		},
 		queuePlayIndex(state, index) {
 			const mediaId = state.queue.splice(index, 1)[0];
@@ -488,7 +488,7 @@ export const store = new Vuex.Store({
 			if (state.leftMenuTab === 'radio') {
 				// TODO
 			} else {
-				const name = state.currentPlayList || 'default';
+				const name = state.currentPlayList || 'Default';
 				state.exportURLs.unshift({ url, name, date: now.toString() });
 			}
 			while(state.exportURLs.length > 5) state.exportURLs.pop();

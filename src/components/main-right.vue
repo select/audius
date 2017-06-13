@@ -17,7 +17,7 @@ export default {
 		AudioPlayer,
 		Settings,
 	},
-	computed: mapState(['website', 'search', 'showSettings', 'currentMedia']),
+	computed: mapState(['website', 'mainRightTab', 'search', 'showSettings', 'currentMedia']),
 	methods: mapMutations(['setMainRightTab']),
 };
 </script>
@@ -27,39 +27,39 @@ export default {
 	<ul class="main-right__tabs">
 		<li
 			v-on:click="setMainRightTab('queue')"
-			v-bind:class="{ active: website.mainRightTab == 'queue' }">Queue</li>
+			v-bind:class="{ active: mainRightTab == 'queue' }">Queue</li>
 		<li
 			v-if="search.results.length"
 			v-on:click="setMainRightTab('search')"
-			v-bind:class="{ active: website.mainRightTab == 'search' }">Search</li>
+			v-bind:class="{ active: mainRightTab == 'search' }">Search</li>
 		<li
 			v-on:click="setMainRightTab('about')"
-			v-bind:class="{ active: website.mainRightTab == 'about' }">About</li>
+			v-bind:class="{ active: mainRightTab == 'about' }">About</li>
 		<li
 			v-if="website.showChat"
 			v-on:click="setMainRightTab('chat')"
-			v-bind:class="{ active: website.mainRightTab == 'chat' }">Chat</li>
+			v-bind:class="{ active: mainRightTab == 'chat' }">Chat</li>
 		<li
 			v-if="showSettings"
 			v-on:click="setMainRightTab('settings')"
-			v-bind:class="{ active: website.mainRightTab == 'settings' }">Settings</li>
+			v-bind:class="{ active: mainRightTab == 'settings' }">Settings</li>
 	</ul>
-	<div class="main-right__content" v-show="website.mainRightTab">
-		<about-player v-show="website.mainRightTab == 'about'"></about-player>
-		<search-results v-show="website.mainRightTab == 'search'"></search-results>
-		<queue v-show="website.mainRightTab == 'queue'"></queue>
-		<div class="audius-chat" v-show="website.mainRightTab == 'chat'"> </div>
-		<settings v-show="website.mainRightTab == 'settings'"></settings>
+	<div class="main-right__content" v-show="mainRightTab">
+		<about-player v-show="mainRightTab == 'about'"></about-player>
+		<search-results v-show="mainRightTab == 'search'"></search-results>
+		<queue v-show="mainRightTab == 'queue'"></queue>
+		<div class="audius-chat" v-show="mainRightTab == 'chat'"> </div>
+		<settings v-show="mainRightTab == 'settings'"></settings>
 	</div>
 	<div
 		class="main-right__player"
 		v-bind:class="{
-			full: !website.mainRightTab,
+			full: !mainRightTab,
 			minimize: currentMedia.type == 'audio'
 		}">
 		<span
 			v-on:click="setMainRightTab('')"
-			v-if="website.mainRightTab"
+			v-if="mainRightTab"
 			class="main-right__player-full-btn wmp-icon-unfold_more"></span>
 		<youtube-player></youtube-player>
 	</div>
