@@ -81,7 +81,7 @@ ul.main-right__tabs
 	list-style: none
 	display: flex
 	width: 100%
-	height: $touch-size-small
+	min-height: $touch-size-small
 	li
 		flex: 1
 		display: flex
@@ -108,8 +108,6 @@ ul.main-right__tabs
 	border-top: 1px solid $color-aluminium
 	position: relative
 	background: $color-catskillwhite
-	&.full
-		height: 100%
 	&.minimize
 		height: 10%
 span.main-right__player-full-btn
