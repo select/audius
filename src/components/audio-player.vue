@@ -74,8 +74,7 @@ export default {
 		_startInterval() {
 			clearInterval(this.timeInterval);
 			this.timeInterval = setInterval(() => {
-				console.log('tiememe ',this.timeInterval);
-				this.setCurrentTime(this.player.currentTime, 'audio');
+				this.setCurrentTime(this.player.currentTime);
 			}, 1000);
 		},
 	},

@@ -48,7 +48,10 @@ export default {
 				// if isPlaying changed start stop video
 				if (this.currentMedia.type === 'youtube' && this.isPlaying && this.currentMedia.id) {
 					if (this.player.getPlayerState() !== 1) this.player.playVideo();
-				} else if (this.player && this.player.getPlayerState && ![0, 2].includes(this.player.getPlayerState())) {
+				} else if (this.player
+						&& this.player.getPlayerState
+						&& ![0, 2].includes(this.player.getPlayerState())
+					) {
 					this.player.pauseVideo();
 				}
 			}),
@@ -87,7 +90,7 @@ export default {
 			} else if (playerState === 1) {
 				this.clearInterval();
 				this.timeInterval = setInterval(() => {
-					this.setCurrentTime(this.player.getCurrentTime(), 'yt');
+					this.setCurrentTime(this.player.getCurrentTime());
 				}, 1000);
 				if (!this.isPlaying) this.play();
 			} else if (playerState === 0) {

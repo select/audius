@@ -439,7 +439,6 @@ export const store = new Vuex.Store({
 			else state.playList = playList;
 		},
 		moveTagsOrderd(state, tagsOrdered) {
-			console.log('tagsOrdered', tagsOrdered);
 			state.tagsOrdered = tagsOrdered;
 		},
 		addTags(state, { mediaIds = [], tag }) {
@@ -532,7 +531,6 @@ export const store = new Vuex.Store({
 			};
 		},
 		matrixLogout(state) {
-			console.log('matrix log out');
 			state.matrixLoggedIn = false;
 			state.radioStations = {};
 			state.radioStationsOrderd = [];
@@ -548,7 +546,7 @@ export const store = new Vuex.Store({
 			state.radioStationsOrderd = state.radioStationsOrderd.filter(id => id !== roomId);
 		},
 		updateRadioStation(state, { roomId, entities, playList = [] }) {
-			console.log('updateRadioStation ', roomId, playList, entities);
+			// console.log('updateRadioStation ', roomId, playList, entities);
 			const rs = state.radioStations[roomId];
 			if (rs) state.radioStations[roomId].playList = [...playList, ...rs.playList];
 			else state.radioStations[roomId] = { playList };
@@ -625,7 +623,6 @@ export const store = new Vuex.Store({
 						.then(() => matrixClient.login(state.matrix.credentials, dispatch))
 						.then(rooms => commit('setMatrixLoggedIn', rooms));
 				} else if (!state.matrixLoggedIn) {
-					console.log('log into matrix');
 					matrixClient
 						.login(state.matrix.credentials, dispatch)
 						.then(rooms => commit('setMatrixLoggedIn', rooms));

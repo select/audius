@@ -58,7 +58,7 @@ export default {
 					this.copyActive = false;
 				}, 800);
 			} catch (err) {
-				console.log('execCommand Error', err);
+				console.warn('execCommand Error', err);
 			}
 			window.getSelection().removeAllRanges();
 			tmpEl.parentNode.removeChild(tmpEl);

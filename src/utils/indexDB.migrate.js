@@ -31,7 +31,6 @@ function migrate0() {
 	return new Promise((resolve, reject) => {
 		const migrationVersion = 'audius_0.03';
 		if (!store.state.migration[migrationVersion]) {
-			console.log('migrate! ');
 			const stores = ['mediaEntities', 'state'];
 			indexedDB.webkitGetDatabaseNames().onsuccess = event => {
 				if (!Array.from(event.target.result).includes(migrationVersion)) {

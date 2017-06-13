@@ -3,7 +3,6 @@ import { store } from '../vuex/store';
 const state = store.state;
 
 document.addEventListener('keydown', (event) => {
-
 	if (event.target.tagName.toLowerCase() !== 'input') {
 		if (event.key === 'c' && !event.ctrlKey) {
 			store.commit('playPause');
@@ -31,7 +30,6 @@ document.addEventListener('keydown', (event) => {
 	}
 
 	if (state.showJump) {
-		// console.log('state show jumppp');
 		if (state.jumpCursor && event.key === 'q') {
 			store.commit('queueMedia', state.jumpCursor);
 		} else if (event.key === 'ArrowDown') {
@@ -65,14 +63,5 @@ document.addEventListener('keydown', (event) => {
 			else if (yt.results.indexOf(state.jumpCursor) <= 0) state.jumpCursor = yt.results[yt.results.length - 1];
 			else state.jumpCursor = yt.results[yt.results.indexOf(state.jumpCursor) - 1];
 		}
-		// Vue.nextTick(() => {
-		// 	const el = document.querySelector(`[data-id="${store.state.jumpCursor.id}"]`);
-		// 	if (el && !isElementInViewport(el)) {
-		// 		el.scrollIntoView({ block: 'start', behavior: 'smooth' });
-		// 	}
-		// });
 	}
-
 }, false);
-
-
