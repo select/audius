@@ -4,9 +4,9 @@ import { store } from '../vuex/store';
 
 const DB_VERSION = 'audius_0.03';
 
-function getDb() {
+function getDb(version) {
 	return new Promise((resolve, reject) => {
-		indexedDB.open(DB_VERSION, 1).onsuccess = event => {
+		indexedDB.open(version, 1).onsuccess = event => {
 			resolve(event.target.result);
 		};
 	});
@@ -27,33 +27,65 @@ function getObjectStore(db, name) {
 	});
 }
 
-export function migrate() {
-	if (!store.state.migration[DB_VERSION]) {
-		console.log('migrate! ');
-		const stores = ['mediaEntities', 'state'];
-		indexedDB.webkitGetDatabaseNames().onsuccess = event => {
-			if (!Array.from(event.target.result).includes(DB_VERSION)) {
-				store.commit('migrationSuccess', { version: DB_VERSION, toggleState: true });
-			} else {
-				getDb()
-					.then(db => Promise.all(stores.map(name => getObjectStore(db, name))))
-					.then(([entities, state]) => Object.assign(state, { entities }))
-					.then(data => {
-						store.commit('selectPlayList', undefined);
-						if (data.playList && data.entities) {
-							data.playList.reverse();
-							store.commit('importPlayList', { playList: data.playList, entities: data.entities });
-						}
-						if (data.tags) {
-							Object.keys(data.tags).forEach(tagName => {
-								const playList = data.tags[tagName];
-								playList.reverse();
-								store.commit('addTags', { tag: tagName, mediaIds: playList });
-							});
-						}
-						store.commit('migrationSuccess', { version: DB_VERSION, toggleState: true });
-					});
-			}
-		};
-	}
+function migrate0() {
+	return new Promise((resolve, reject) => {
+		const migrationVersion = 'audius_0.03';
+		if (!store.state.migration[migrationVersion]) {
+			console.log('migrate! ');
+			const stores = ['mediaEntities', 'state'];
+			indexedDB.webkitGetDatabaseNames().onsuccess = event => {
+				if (!Array.from(event.target.result).includes(migrationVersion)) {
+					store.commit('migrationSuccess', { version: migrationVersion, toggleState: true });
+				} else {
+					getDb(migrationVersion)
+						.then(db => Promise.all(stores.map(name => getObjectStore(db, name))))
+						.then(([entities, state]) => Object.assign(state, { entities }))
+						.then(data => {
+							store.commit('selectPlayList', undefined);
+							if (data.playList && data.entities) {
+								data.playList.reverse();
+								store.commit('importPlayList', { playList: data.playList, entities: data.entities });
+							}
+							if (data.tags) {
+								Object.keys(data.tags).forEach(tagName => {
+									const playList = data.tags[tagName];
+									playList.reverse();
+									store.commit('addTags', { tag: tagName, mediaIds: playList });
+								});
+							}
+							resolve(migrationVersion);
+						});
+				}
+			};
+		} else {
+			resolve();
+		}
+	});
 }
+
+function migrate1() {
+	return new Promise((resolve, reject) => {
+		const migrationVersion = 'audius_0.03.1';
+		if (!store.state.migration[migrationVersion]) {
+			const newEtities = Object.entries(store.state.entities).reduce((acc, [key, video])=> {
+				if (!video.type) video.type = 'youtube';
+				return { ...acc, [key]: video };
+			}, {});
+			store.commit('upgradeEntities', newEtities);
+			resolve(migrationVersion);
+		} else {
+			resolve();
+		}
+	});
+}
+
+export function migrate() {
+	migrate0()
+		.then((migrationVersion) => {
+			if (migrationVersion) store.commit('migrationSuccess', { version: migrationVersion, toggleState: true });
+			return migrate1();
+		}).then((migrationVersion) => {
+			if (migrationVersion) store.commit('migrationSuccess', { version: migrationVersion, toggleState: true });
+		});
+}
+

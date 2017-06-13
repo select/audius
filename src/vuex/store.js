@@ -38,13 +38,14 @@ const presistMutation = {
 	renamePlayList: ['tagsOrdered', 'tags', 'currentPlayList'],
 	deletePlayList: ['tagsOrdered', 'tags'],
 	toggleShuffle: ['shuffle'],
-	setExportURL: ['exportURL'],
+	setExportURL: ['exportURLs'],
 	movePlayListMedia: ['playList', 'tags'],
 	moveTagsOrderd: ['tagsOrdered'],
 	migrationSuccess: ['migration'],
 	removeVideo: ['playList', 'entities'],
 	setMatrixCredentials: ['matrix'],
 	setMatrixEnabled: ['matrixEnabled'],
+	upgradeEntities: ['entities'],
 };
 
 /* eslint-disable no-param-reassign */
@@ -131,6 +132,7 @@ export const store = new Vuex.Store({
 		entities: {},
 		currentMedia: {},
 		playList: [],
+		currentPlayList: '',
 		tags: {},
 		tagsOrdered: [],
 		radioStations: {},
@@ -148,14 +150,13 @@ export const store = new Vuex.Store({
 		currentTime: 0,
 		skipToTime: 0,
 		mute: false,
-		currentPlayList: '',
 		editPlayList: false,
 		youtubeApiKey,
 		showImport: false,
 		showExport: false,
 		showJump: false,
 		jumpCursor: '',
-		exportURL: '',
+		exportURLs: [],
 		migration: {
 			'audius_0.03': false,
 			'audius_0.03.1': false,
@@ -310,20 +311,7 @@ export const store = new Vuex.Store({
 			});
 			next(state);
 		},
-		UPGRADE_PLAYLIST(state) {
-			const seen = {};
-			const filteredPlaylist = [];
-			state.playList.forEach(id => {
-				if (!seen[id] && state.entities[id]) {
-					seen[id] = true;
-					filteredPlaylist.push(id);
-				}
-			});
-			const entities = {};
-			Object.keys(state.entities).forEach(key => {
-				entities[key] = Object.assign({}, videoBaseObject, state.entities[key]);
-			});
-			state.playList = [...filteredPlaylist];
+		upgradeEntities(state, entities) {
 			state.entities = entities;
 		},
 		importPlayList(state, data) {
@@ -496,7 +484,14 @@ export const store = new Vuex.Store({
 			else state.youtubeApiKey = youtubeApiKeyIn;
 		},
 		setExportURL(state, url) {
-			state.exportURL = url;
+			const now = new Date();
+			if (state.leftMenuTab === 'radio') {
+				// TODO
+			} else {
+				const name = state.currentPlayList || 'default';
+				state.exportURLs.unshift({ url, name, date: now.toString() });
+			}
+			while(state.exportURLs.length > 5) state.exportURLs.pop();
 		},
 		migrationSuccess(state, { version, toggleState }) {
 			state.migration[version] = toggleState;

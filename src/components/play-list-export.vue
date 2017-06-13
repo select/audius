@@ -8,7 +8,7 @@ export default {
 		'filteredPlayList',
 		'entities',
 	],
-	computed: mapState(['exportURL']),
+	computed: mapState(['exportURLs']),
 	methods: {
 		...mapActions(['exportToURL']),
 		exportPlayListFile() {
@@ -27,6 +27,12 @@ export default {
 			document.body.appendChild(element);
 			element.click();
 			document.body.removeChild(element);
+		},
+		niceDate(date) {
+			if (!date) return date;
+			const dateObject = new Date(date);
+			const minutes = dateObject.getMinutes() < 10 ? `0${dateObject.getMinutes()}` : dateObject.getMinutes();
+			return `${dateObject.getFullYear()}-${dateObject.getMonth()+1}-${dateObject.getDate()} ${dateObject.getHours()}:${minutes}`;
 		},
 	},
 };
@@ -47,12 +53,17 @@ export default {
 		<button
 			class="button btn--blue"
 			v-on:click="exportToURL">to Web</button>
-		<div v-if="exportURL">
+		<div v-if="exportURLs.length">
 			<p class="smaller">
 				Copy and paste the URL to share your playlist.
 			</p>
 			<p>
-				<b>{{exportURL}}</b>
+				<ul class="paly-list__exports">
+					<li v-for="item in exportURLs">
+						{{item.name}} - {{niceDate(item.date)}} <br>
+						<b>{{item.url}}</b>
+					</li>
+				</ul>
 			</p>
 		</div>
 	</div>
@@ -65,4 +76,11 @@ export default {
 
 .smaller
 	font-size: 0.9em
+.paly-list__exports
+	list-style: none
+	padding: 0
+	li
+		height: $touch-size-medium
+		&:hover
+			background: $color-catskillwhite
 </style>
