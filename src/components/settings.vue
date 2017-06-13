@@ -1,5 +1,5 @@
 <script>
-import { mapGetters, mapMutations, mapState } from 'vuex';
+import { mapGetters, mapMutations, mapState, mapActions } from 'vuex';
 
 export default {
 	computed: {
@@ -7,7 +7,8 @@ export default {
 		...mapState(['matrixLoggedIn', 'matrix', 'matrixEnabled']),
 	},
 	methods: {
-		...mapMutations(['setYoutubeApiKey', 'loginMatrixWithPassword', 'matrixRemoveAccount', 'matrixLogout', 'setMatrixEnabled']),
+		...mapMutations(['setYoutubeApiKey', 'matrixRemoveAccount', 'matrixLogout', 'setMatrixEnabled']),
+		...mapActions(['loginMatrixWithPassword']),
 		matrixLogin() {
 			const usernameEl = document.querySelector('#username');
 			const passwordEl = document.querySelector('#password');

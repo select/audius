@@ -3,8 +3,8 @@ import { mapMutations, mapState, mapActions } from 'vuex';
 
 export default {
 	methods: {
-		...mapMutations(['selectRadioStation', 'deleteRadioStation', 'moveRadioStationsOrderd']),
-		...mapActions(['joinRadioStation']),
+		...mapMutations(['selectRadioStation', 'moveRadioStationsOrderd']),
+		...mapActions(['joinRadioStation', 'leaveRadioStation']),
 		addRadioStation() {
 			const el = document.querySelector('.matrix-radio__input input');
 			this.joinRadioStation(el.value);
@@ -33,7 +33,7 @@ export default {
 				<span
 					class="wmp-icon-close"
 					title="Delte playlist"
-					@click.stop="deleteRadioStation(radioStations[roomId].name)"></span>
+					@click.stop="leaveRadioStation(roomId)"></span>
 			</div>
 		</li>
 		<li class="matrix-radio__input">

@@ -48,7 +48,14 @@ export const matrixClient = {
 	},
 	joinRoom(roomIdOrAlias) {
 		return new Promise(resolve => {
-			this.client.joinRoom(roomIdOrAlias).done(() => {
+			this.client.joinRoom(roomIdOrAlias).then((room) => {
+				resolve(room);
+			});
+		});
+	},
+	leaveRoom(roomIdOrAlias) {
+		return new Promise(resolve => {
+			this.client.leave(roomIdOrAlias).done(() => {
 				resolve(this.client.getRooms());
 			});
 		});

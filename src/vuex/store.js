@@ -515,6 +515,9 @@ export const store = new Vuex.Store({
 					state.radioStationsOrderd.unshift(room.roomId);
 				} else if (state.radioStations[room.roomId].name !== room.name) {
 					state.radioStations[room.roomId].name = room.name;
+					if (!state.radioStationsOrderd.includes(room.roomId)) {
+						state.radioStationsOrderd.unshift(room.roomId);
+					}
 				}
 			});
 		},
@@ -541,10 +544,15 @@ export const store = new Vuex.Store({
 		selectRadioStation(state, roomId) {
 			state.currentRadioStation = roomId;
 		},
+		deleteRadioStation(state, roomId) {
+			state.radioStationsOrderd = state.radioStationsOrderd.filter(id => id !== roomId);
+		},
 		updateRadioStation(state, { roomId, entities, playList = [] }) {
 			console.log('updateRadioStation ', roomId, playList, entities);
 			const rs = state.radioStations[roomId];
-			state.radioStations[roomId].playList = [...playList, ...rs.playList];
+			if (rs) state.radioStations[roomId].playList = [...playList, ...rs.playList];
+			else state.radioStations[roomId] = { playList };
+			if (!state.radioStationsOrderd.includes(roomId)) state.radioStationsOrderd.unshift(roomId);
 			state.entities = { ...state.entities, ...entities };
 		},
 	},
@@ -568,12 +576,9 @@ export const store = new Vuex.Store({
 			}, 1000);
 		},
 		search({ commit, state }, query) {
-
 			if (audioRegEx.test(query)) {
-				console.log('ttelelldld')
 				const player = new Audio();
 				player.addEventListener('loadeddata', () => {
-					console.log('data loooaaadded')
 					commit('audioSearchSuccess', {
 						url: query,
 						duration: Math.round(player.duration),
@@ -642,7 +647,10 @@ export const store = new Vuex.Store({
 			matrixClient.paginate(state.currentRadioStation);
 		},
 		joinRadioStation({ commit }, roomIdOrAlias) {
-			matrixClient.joinRoom(roomIdOrAlias).then(rooms => commit('setMatrixLoggedIn', rooms));
+			matrixClient.joinRoom(roomIdOrAlias).then(room => commit('setMatrixLoggedIn', [room]));
+		},
+		leaveRadioStation({ commit }, roomIdOrAlias) {
+			matrixClient.leaveRoom(roomIdOrAlias).then(() => commit('deleteRadioStation', roomIdOrAlias));
 		},
 		parseMatrixMessage({ state, commit }, { roomId, message }) {
 			console.log('parse ', message);
@@ -667,6 +675,7 @@ export const store = new Vuex.Store({
 								isPlaying: false,
 								id: v.id,
 								deleted: false,
+								type: 'youtube',
 							}),
 						}),
 						{}
