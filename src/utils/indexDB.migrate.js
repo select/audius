@@ -32,30 +32,35 @@ function migrate0() {
 		const migrationVersion = 'audius_0.03';
 		if (!store.state.migration[migrationVersion]) {
 			const stores = ['mediaEntities', 'state'];
-			indexedDB.webkitGetDatabaseNames().onsuccess = event => {
-				if (!Array.from(event.target.result).includes(migrationVersion)) {
-					store.commit('migrationSuccess', { version: migrationVersion, toggleState: true });
-				} else {
-					getDb(migrationVersion)
-						.then(db => Promise.all(stores.map(name => getObjectStore(db, name))))
-						.then(([entities, state]) => Object.assign(state, { entities }))
-						.then(data => {
-							store.commit('selectPlayList', undefined);
-							if (data.playList && data.entities) {
-								data.playList.reverse();
-								store.commit('importPlayList', { playList: data.playList, entities: data.entities });
-							}
-							if (data.tags) {
-								Object.keys(data.tags).forEach(tagName => {
-									const playList = data.tags[tagName];
-									playList.reverse();
-									store.commit('addTags', { tag: tagName, mediaIds: playList });
-								});
-							}
-							resolve(migrationVersion);
-						});
-				}
-			};
+			try {
+				indexedDB.webkitGetDatabaseNames().onsuccess = event => {
+					if (!Array.from(event.target.result).includes(migrationVersion)) {
+						store.commit('migrationSuccess', { version: migrationVersion, toggleState: true });
+					} else {
+						getDb(migrationVersion)
+							.then(db => Promise.all(stores.map(name => getObjectStore(db, name))))
+							.then(([entities, state]) => Object.assign(state, { entities }))
+							.then(data => {
+								store.commit('selectPlayList', undefined);
+								if (data.playList && data.entities) {
+									data.playList.reverse();
+									store.commit('importPlayList', { playList: data.playList, entities: data.entities });
+								}
+								if (data.tags) {
+									Object.keys(data.tags).forEach(tagName => {
+										const playList = data.tags[tagName];
+										playList.reverse();
+										store.commit('addTags', { tag: tagName, mediaIds: playList });
+									});
+								}
+								resolve(migrationVersion);
+							});
+					}
+				};
+			} catch (e) {
+				console.warn('error migrating ', e);
+				resolve(migrationVersion);
+			}
 		} else {
 			resolve();
 		}
