@@ -12,7 +12,7 @@ export default {
 		matrixLogin() {
 			const usernameEl = document.querySelector('#username');
 			const passwordEl = document.querySelector('#password');
-			this.loginMatrixWithPassword(usernameEl.value, passwordEl.value);
+			this.loginMatrixWithPassword({ username: usernameEl.value, password: passwordEl.value });
 			document.querySelector('#username').value = '';
 			document.querySelector('#password').value = '';
 		},
