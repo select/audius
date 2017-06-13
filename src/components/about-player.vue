@@ -99,7 +99,10 @@ export default {
 	<p>
 		<b>2.0.2</b><br>
 		<ul>
-			<li> Drag and drop search results into the current playlist. </li>
+			<li> Drag and drop search results into the current playlist.</li>
+			<li> Support for .mp3 .oga .wav URLs (paste into search box).</li>
+			<li> Experimental support for <a target="_blank" href="https://matrix.org/">Matrix.org</a> radio stations.</li>
+			<li> Store and list the 5 last web exports.</li>
 		</ul>
 		<b>2.0.1</b><br>
 		<ul>
@@ -107,7 +110,7 @@ export default {
 			<li> Fixed playlist sorting. </li>
 			<li> Fixed Firefox layout problems. </li>
 			<li> Fixed, shuffle does not play same songs again. </li>
-			<li> New (import)/export using <a href="http://myjson.com/">myjson.com</a>. </li>
+			<li> New (import)/export using <a target="_blank" href="http://myjson.com/">myjson.com</a>. </li>
 		</ul>
 	</p>
 	<h2>Install Audius as app</h2>
@@ -122,7 +125,7 @@ export default {
 			Chromebook users: Click <i>Add to shelf</i>. </li>
 		</ol>
 		<b>Chrome android:</b><br>
-		Tap the menu button and tap <i>Add to homescreen</i>. The app is not yet optimized for mobile phones, it might work on tables.
+		Tap the menu button and tap <i>Add to homescreen</i>. The app is not yet optimized for mobile phones, it might work on tablets.
 	</p>
 	<p>
 		<b>Local HTML5:</b><br>
@@ -219,9 +222,10 @@ export default {
 			<li><span style="text-decoration:line-through;">Redux</span> Vuex</li>
 			<li>Icomoon</li>
 			<li>Google material icons</li>
-			<li>Webpack</li>
+			<li>Webpack + Babel + Plugins</li>
 			<li>LivingStyleGuide</li>
-			<li><a href="https://rubaxa.github.io/Sortable/">sortablejs</a></li>
+			<li><a href="https://rubaxa.github.io/Sortable/">SortableJS</a></li>
+			<li><a target="_blank" href="http://myjson.com/">Myjson.com</a></li>
 		</ul>
 	</p>
 	<h2>Impressum</h2>

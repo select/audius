@@ -1,6 +1,11 @@
 # Audius
 
-Audius is the ultimate streaming music player. Create your own playlist
+Audius is the ultimate streaming music player.
+
+- Create playlist, no login required, stored in the indexDB in your browser.
+- Queue songs
+- Supports: YouTube, .mp3/.oga/.wav URLs.
+- Share your playlists in the web and as files.
 
 ## Keyboard shortcuts
 
@@ -19,62 +24,46 @@ Audius is the ultimate streaming music player. Create your own playlist
 	<dd>Find song on YouTube</dd>
 </dl>
 
-When search is active.
-
-<dl>
-	<dt>up / down</dt>
-	<dd>Select song</dd>
-	<dt>Ctrl + space</dt>
-	<dd>Add song to playlist</dd>
-	<dt>enter</dt>
-	<dd>Play selected song</dd>
-</dl>
-
-When jump to file is active.
-
-<dl>
-	<dt>up / down</dt>
-	<dd>Select song</dd>
-	<dt>enter</dt>
-	<dd>Play selected song</dd>
-	<dt>q</dt>
-	<dd>Queue selected song</dd>
-</dl>
-
 ## Community
 
 If you have questions or feedback, join the chat on gitter or create an issue on github.  
 
-<div class="about-player__community-btns"><button class="button btn--blue gitter-chat" v-on:click="openGitter">Join chat</button> [Create issue](https://github.com/select/audius/issues)</div>
+- [Join the chat](gitter.im/audius-player/Lobby) 
+- [Create an issue](https://github.com/select/audius/issues)
 
-* You must allow 3rd party cookies for the chat to work (default for almost everybody) or chat in a new window.
+## Change log
 
-## Extension
+**2.0.2**  
 
-[Audius Extension](https://chrome.google.com/webstore/detail/audius/ekpajajepcojhnjmlibfbjmdjcafajoh)
+*   Drag and drop search results into the current playlist.
+*   Support for .mp3 .oga .wav URLs (paste into search box).
+*   Experimental support for [Matrix.org](https://matrix.org/) radio stations.
+*   Store and list the 5 last web exports.
 
-The Audius extension allows you to collect and play music from any website. It will automatically collect all links for you so you can add them to your playlist. The songs will be played on this site ([background here](#motivation)).
+**2.0.1**  
 
-If you like to get fresh music that you like create a "Music" chat group on WhatsApp or Slack with your friends and use the extension!
-
-The extension is mostly working but not quite ready for prime time. Don't give up and report a bug.
+*   Replaced Redux with Vuex.
+*   Fixed playlist sorting.
+*   Fixed Firefox layout problems.
+*   Fixed, shuffle does not play same songs again.
+*   New (import)/export using [myjson.com](http://myjson.com/).
 
 ## Install Audius as app
 
 **Chrome desktop:**
 
-1.  At the top right, click _More_ (Icon <span class="wmp-icon-more_vert" style="font-size: .7em; display: inline-block; height: 1em; width: 1.3em"></span>).
+1.  At the top right, click _More_.
 2.  Click _More Tools_.
-3.  Add the app:
-    Windows users: Click _Add to taskbar_.
-    Linux users: Click _Add to desktop_.
+3.  Add the app:  
+    Windows users: Click _Add to taskbar_.  
+    Linux users: Click _Add to desktop_.  
     Chromebook users: Click _Add to shelf_.
 
-**Chrome android:**
-Tap the menu button and tap _Add to homescreen_. The app is not yet optimized for mobile phones, it might work on tables.
+**Chrome android:**  
+Tap the menu button and tap _Add to homescreen_. The app is not yet optimized for mobile phones, it might work on tablets.
 
-**Local HTML5:**
-Since this player is a pure HTML5 app without server side code you can simply download the HTML and JS code and run it from a local file. You can also download the latest version from the [source code](#source-code) repository at github.
+**Local HTML5:**  
+Since this player is a pure HTML5 app without server side code you can simply download the HTML and JS code and run it from a local file. You can also download the latest version from the [source code](#source-code) repository at github.  
 
 Why use the web version then?
 
@@ -108,18 +97,9 @@ If you like this project give it a star ★ and contribute some code!
 On Linux use [this script](https://github.com/select/audius/blob/master/src/scripts/streamus-export.sh) I created to dump the Streamus WebSql to a JSON file. The JSON can be imported using the IMPORT button below the playlist. Use the script like this:
 
 <pre>./streamus-export.sh ~/.config/google-chrome/Profile\ 1/Local\ Storage/chrome-extension_jbnkffmindojffecdhbbmekbmkkfpmjd_0.localstorage
-    </pre>
+</pre>
 
 Be sure to validate the JSON output, the script is just a quick hack and you might have to tweak it.
-
-## Other Projects
-
-Here are some other fun projects I created this year.
-
-*   [Boom, next video!](https://github.com/select/boomnext/)
-*   [ッ Emoji-text](http://emoji-text.com/)
-*   [FantasyPlanet](https://www.fantasyplanet.de/)
-*   ...
 
 ## Motivation
 
@@ -136,19 +116,15 @@ Just look at them and appreciate the simplicity of the Audius interface ... wait
 
 ## Credits
 
-This work is inspired by the incredible [Streamus](https://www.reddit.com/r/streamus/) app.
+This work is inspired by the incredible [Streamus](https://www.reddit.com/r/streamus/) app.  
 
 Here are the tools I used to create Audius.
 
 *   VueJs
-*   Redux
+*   <span style="text-decoration:line-through;">Redux</span> Vuex
 *   Icomoon
 *   Google material icons
-*   Webpack
+*   Webpack + Babel + Plugins
 *   LivingStyleGuide
-
-## License
-
-MIT
-
-</div>
+*   [SortableJS](https://rubaxa.github.io/Sortable/)
+*   [Myjson.com](http://myjson.com/)
