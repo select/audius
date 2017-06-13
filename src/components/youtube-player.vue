@@ -58,7 +58,7 @@ export default {
 		this.subscriptions.forEach((unsubscribe) => { unsubscribe(); });
 	},
 	mounted() {
-		const initialVideos = ['Es22YN2stg8', 'strzXKsfRMs', 'qMvLkpQcCKQ', 'KwoVARYA8jw', 'nzwrwfNHn5A'];
+		const initialVideos = ['Es22YN2stg8', 'strzXKsfRMs', 'KwoVARYA8jw', 'nzwrwfNHn5A'];
 		window.onYouTubeIframeAPIReady = () => {
 			this.player = new YT.Player('youtube-iframe', {
 				height: '100%',
