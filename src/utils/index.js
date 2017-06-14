@@ -9,3 +9,4 @@ export { importPlayListFromString } from './importPlayListFromString';
 export { findYouTubeIdsText, getYouTubeInfo } from './findVideos';
 export { starterPlaylist } from './config';
 export { hashCode } from './hashCode';
+export { cleanWindowLocation } from './windowLocationTools';
