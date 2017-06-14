@@ -2,8 +2,6 @@
 
 import { store } from '../vuex/store';
 
-const DB_VERSION = 'audius_0.03';
-
 function getDb(version) {
 	return new Promise((resolve, reject) => {
 		indexedDB.open(version, 1).onsuccess = event => {
@@ -69,7 +67,7 @@ function migrate0() {
 
 function migrate1() {
 	return new Promise((resolve, reject) => {
-		const migrationVersion = 'audius_0.03.1';
+		const migrationVersion = 'audius_0.03.2';
 		if (!store.state.migration[migrationVersion]) {
 			const newEtities = Object.entries(store.state.entities).reduce((acc, [key, video])=> {
 				if (!video.type) video.type = 'youtube';

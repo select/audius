@@ -160,7 +160,7 @@ export const store = new Vuex.Store({
 		exportURLs: [],
 		migration: {
 			'audius_0.03': false,
-			'audius_0.03.1': false,
+			'audius_0.03.2': false,
 		},
 		showLeftMenu: false,
 		leftMenuTab: 'playList',
@@ -244,7 +244,7 @@ export const store = new Vuex.Store({
 				})
 			);
 		},
-		webMediaSearchSuccess(state, { url, time, type }) {
+		webMediaSearchSuccess(state, { url, durationS, type }) {
 			state.mainRightTab = 'search';
 			state.search.isSearching = false;
 			const urlParts = url.split('/');
@@ -254,8 +254,8 @@ export const store = new Vuex.Store({
 					url,
 					title,
 					type,
-					duration: s2time(time),
-					durationS: time,
+					duration: s2time(durationS),
+					durationS,
 					id: `${hashCode(url)}`,
 				}),
 			];
@@ -578,22 +578,26 @@ export const store = new Vuex.Store({
 				player.addEventListener('loadeddata', () => {
 					commit('webMediaSearchSuccess', {
 						url: query,
-						time: Math.round(player.duration),
+						durationS: Math.round(player.duration),
 						type: 'audio',
 					});
 				}, true);
 				player.src = query;
 			} else if (videoRegEx.test(query)) {
 				const player = document.createElement('video');
+				player.hidden = true;
 				document.body.appendChild(player);
 				player.addEventListener('loadeddata', () => {
 					commit('webMediaSearchSuccess', {
 						url: query,
-						time: Math.round(player.duration),
+						durationS: Math.round(player.duration),
 						type: 'video',
 					});
 					player.parentNode.removeChild(player);
 				}, true);
+				setTimeout(() => {
+					if (player.parentNode) player.parentNode.removeChild(player);
+				}, 700);
 				player.src = query;
 			} else if (query) {
 				searchYoutubeDebounced(state.youtubeApiKey, query, result => {
