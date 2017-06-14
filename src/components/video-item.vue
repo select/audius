@@ -115,7 +115,7 @@ export default {
 				<span class="wmp-icon-more_vert"></span>
 				<div>
 					<a
-						v-if="video.type !='audio'"
+						v-if="video.type === 'youtube'"
 						v-bind:href="'https://youtu.be/'+video.id"
 						title="Watch on YouTube"
 						target="_blank">
