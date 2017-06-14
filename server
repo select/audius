@@ -26,6 +26,7 @@ config.plugins = [
 			website: true,
 		},
 	}),
+	new webpack.NamedModulesPlugin(),
 	new CircularDependencyPlugin(),
 	new webpack.HotModuleReplacementPlugin(),
 	// new SWPrecacheWebpackPlugin(
