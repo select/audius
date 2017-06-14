@@ -8,6 +8,11 @@ export default {
 		'filteredPlayList',
 		'entities',
 	],
+	data() {
+		return {
+			copyActive: null,
+		};
+	},
 	computed: mapState(['exportURLs']),
 	methods: {
 		...mapActions(['exportToURL']),
@@ -32,7 +37,29 @@ export default {
 			if (!date) return date;
 			const dateObject = new Date(date);
 			const minutes = dateObject.getMinutes() < 10 ? `0${dateObject.getMinutes()}` : dateObject.getMinutes();
-			return `${dateObject.getFullYear()}-${dateObject.getMonth()+1}-${dateObject.getDate()} ${dateObject.getHours()}:${minutes}`;
+			return `${dateObject.getFullYear()}-${dateObject.getMonth() + 1}-${dateObject.getDate()} ${dateObject.getHours()}:${minutes}`;
+		},
+		copyToClip(url, name) {
+			window.getSelection().removeAllRanges();
+			const tmpEl = document.createElement('div');
+			tmpEl.innerHTML = `${window.location.href}?import=${url}&title=${name}`;
+			document.body.appendChild(tmpEl);
+
+			const range = document.createRange();
+			range.selectNode(tmpEl);
+			window.getSelection().addRange(range);
+
+			try {
+				document.execCommand('copy');
+				this.copyActive = url;
+				setTimeout(() => {
+					this.copyActive = null;
+				}, 800);
+			} catch (err) {
+				console.warn('execCommand Error', err);
+			}
+			window.getSelection().removeAllRanges();
+			tmpEl.parentNode.removeChild(tmpEl);
 		},
 	},
 };
@@ -59,8 +86,14 @@ export default {
 			</p>
 			<p>
 				<ul class="paly-list__exports">
-					<li v-for="item in exportURLs">
-						{{item.name}} - {{niceDate(item.date)}} <br>
+					<li
+						v-for="item in exportURLs"
+						v-bind:class="{ active: copyActive == item.url }"
+						title="Copy URL"
+						@click="copyToClip(item.url, item.name)">
+						<div>
+							{{item.name}} - {{niceDate(item.date)}}
+						</div>
 						<b>{{item.url}}</b>
 					</li>
 				</ul>
@@ -81,6 +114,14 @@ export default {
 	padding: 0
 	li
 		height: $touch-size-medium
+		display: flex
+		flex-direction: column
+		justify-content: center
+		cursor: pointer
 		&:hover
 			background: $color-catskillwhite
+		&.active,
+		&.active:hover
+			background: $color-larioja
+			color: $color-white
 </style>
