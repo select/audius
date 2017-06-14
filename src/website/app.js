@@ -3,7 +3,7 @@ import Vue from 'vue';
 
 import WebApp from '../components/web-app.vue';
 
-import { indexDB } from '../utils';
+import { indexDB, cleanWindowLocation } from '../utils';
 // import '../utils/websiteMessageManager';
 import { store } from '../vuex/store';
 import { migrate } from '../utils/indexDB.migrate';
@@ -15,6 +15,7 @@ indexDB
 	.then((state) => {
 		store.commit('recoverState', state);
 		migrate();
+		cleanWindowLocation();
 	});
 
 
