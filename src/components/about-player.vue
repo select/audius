@@ -97,6 +97,10 @@ export default {
 	</p> -->
 	<h2>Change log</h2>
 	<p>
+		<b>2.0.3</b><br>
+		<ul>
+			<li> Added support for web video .mp4 .webm .ogg URLs.</li>
+		</ul>
 		<b>2.0.2</b><br>
 		<ul>
 			<li> Drag and drop search results into the current playlist.</li>
