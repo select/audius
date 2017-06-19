@@ -79,7 +79,9 @@ export default {
 			}
 		},
 		moveLimit(event, elName) {
-			const pos = Math.round(event.clientX / this.progressPos.xMax * 100);
+			let pos = Math.round(event.clientX / this.progressPos.xMax * 100);
+			if (pos > 100) pos = 100;
+			else if (pos < 0) pos = 0;
 			if (
 				(elName === 'start' && pos < this.limitPos.stop)
 				|| (elName === 'stop' && this.limitPos.start < pos)
@@ -89,7 +91,7 @@ export default {
 			}
 		},
 		dropLimit(event, elName) {
-			const pos = Math.round(event.clientX / this.progressPos.xMax * 100);
+			let pos = Math.round(event.clientX / this.progressPos.xMax * 100);
 			if (
 				(elName === 'start' && pos < this.limitPos.stop)
 				|| (elName === 'stop' && this.limitPos.start < pos)
@@ -100,6 +102,8 @@ export default {
 						seconds: Math.round(this.currentMedia.durationS * (pos/100)),
 					});
 				}
+				if (pos > 100) pos = 100;
+				else if (pos < 0) pos = 0;
 				this.limitPos[elName] = pos;
 				if (elName === 'start') this.limitEls[elName].style.left = `${pos}%`;
 				else this.limitEls[elName].style.right = `${100 - pos}%`;
