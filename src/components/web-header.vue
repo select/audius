@@ -78,6 +78,9 @@ export default {
 				setTimeout(() => { el.classList.remove('au--highlight'); }, 1000);
 			}
 		},
+		onDragStart(event) {
+			event.dataTransfer.setDragImage(this.dragImg, 0, 0);
+		},
 		moveLimit(event, elName) {
 			let pos = Math.round(event.clientX / this.progressPos.xMax * 100);
 			if (pos > 100) pos = 100;
@@ -115,6 +118,7 @@ export default {
 		...mapState(['currentTime', 'currentMedia', 'website', 'isPlaying', 'shuffle', 'mute']),
 	},
 	mounted() {
+		this.dragImg = document.createElement('img');
 		this.limitEls = {
 			start: document.querySelector('.au-header__progress-limit-start'),
 			stop: document.querySelector('.au-header__progress-limit-stop'),
@@ -221,10 +225,16 @@ export default {
 			</div>
 			<div class="au-header__progress-mouse"></div>
 			<div
+				draggable="true"
+				title="drag start limit"
+				v-on:dragstart="onDragStart"
 				v-on:drag="moveLimit($event, 'start')"
 				v-on:dragend="dropLimit($event, 'start')"
 				class="au-header__progress-limit-start"></div>
 			<div
+				draggable="true"
+				title="drag stop limit"
+				v-on:dragstart="onDragStart"
 				v-on:drag="moveLimit($event, 'stop')"
 				v-on:dragend="dropLimit($event, 'stop')"
 				class="au-header__progress-limit-stop"></div>
