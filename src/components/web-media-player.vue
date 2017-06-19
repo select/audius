@@ -43,6 +43,7 @@ export default {
 				}
 				if (['audio', 'video'].includes(this.currentMedia.type) && (this.currentMedia.url !== this._mediaUrl)) {
 					this.player.src = this.currentMedia.url;
+					if (this.currentMedia.start) this.player.currentTime = this.currentMedia.start;
 					this.player.play();
 					this._startInterval();
 					this._mediaUrl = this.currentMedia.url;
@@ -74,7 +75,7 @@ export default {
 
 			this.$store.watch(state => state.skipToTime, () => {
 				// if skip to time changed
-				if (this.skipToTimeLocal !== this.skipToTime) {
+				if (this.player && this.skipToTimeLocal !== this.skipToTime) {
 					this.skipToTimeLocal = this.skipToTime;
 					this.player.currentTime = this.skipToTime;
 				}
@@ -91,6 +92,13 @@ export default {
 		_startInterval() {
 			clearInterval(this.timeInterval);
 			this.timeInterval = setInterval(() => {
+				if (
+					this.currentMedia.stop
+					&& this.player.currentTime >= this.currentMedia.stop
+				) {
+					this.nextVideo();
+				}
+
 				this.setCurrentTime(this.player.currentTime);
 			}, 1000);
 		},

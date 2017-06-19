@@ -17,12 +17,21 @@ export default {
 		this.subscriptions = [
 			this.$store.watch(state => state.currentMedia, () => {
 				// if video changed, set new video in player
-				if (this.currentMedia.type === 'youtube' && this.currentMedia.id && this.player.getVideoData() && (this.player.getVideoData().video_id !== this.currentMedia.id)) {
+				if (
+					this.currentMedia.type === 'youtube'
+					&& this.currentMedia.id
+					&& this.player.getVideoData()
+					&& (this.player.getVideoData().video_id !== this.currentMedia.id)
+				) {
 					this.duration = this.player.getDuration();
 					this.player.loadVideoById({
 						videoId: this.currentMedia.id,
 						suggestedQuality: 'large',
 					});
+					if (this.currentMedia.start) this.player.seekTo(this.currentMedia.start, true);
+					this.player.playVideo();
+				} else if (this.currentMedia.type === 'youtube') {
+					this.player.playVideo();
 				} else {
 					this.player.pauseVideo();
 				}
@@ -49,9 +58,9 @@ export default {
 				if (this.currentMedia.type === 'youtube' && this.isPlaying && this.currentMedia.id) {
 					if (this.player.getPlayerState() !== 1) this.player.playVideo();
 				} else if (this.player
-						&& this.player.getPlayerState
-						&& ![0, 2].includes(this.player.getPlayerState())
-					) {
+					&& this.player.getPlayerState
+					&& ![0, 2].includes(this.player.getPlayerState())
+				) {
 					this.player.pauseVideo();
 				}
 			}),
@@ -90,6 +99,12 @@ export default {
 			} else if (playerState === 1) {
 				this.clearInterval();
 				this.timeInterval = setInterval(() => {
+					if (
+						this.currentMedia.stop
+						&& this.player.getCurrentTime() >= this.currentMedia.stop
+					) {
+						this.nextVideo();
+					}
 					this.setCurrentTime(this.player.getCurrentTime());
 				}, 1000);
 				if (!this.isPlaying) this.play();

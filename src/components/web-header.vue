@@ -6,16 +6,28 @@ import { isElementInViewport } from '../utils';
 
 export default {
 	created() {
-		this.unsubscribe = this.$store.watch(state => state.website.showSearch, () => {
-			if (this.website.showSearch) {
-				Vue.nextTick(() => {
-					document.querySelector('.au-header__search-input').focus();
-				});
-			}
-		});
+		this.dragLimitElement = {};
+		this.subscriptions = [
+			this.$store.watch(state => state.website.showSearch, () => {
+				if (this.website.showSearch) {
+					Vue.nextTick(() => {
+						document.querySelector('.au-header__search-input').focus();
+					});
+				}
+			}),
+			// if media changed, set new media in player
+			this.$store.watch(state => state.currentMedia, () => {
+				if (this.currentMedia.start) {
+					this.limitEls.start.style.left = `${this.currentMedia.start / this.currentMedia.durationS * 100}%`;
+				} else this.limitEls.start.style.left = '0%';
+				if (this.currentMedia.stop) {
+					this.limitEls.stop.style.right = `${100 - this.currentMedia.stop / this.currentMedia.durationS * 100}%`;
+				} else this.limitEls.stop.style.right = '0%';
+			}),
+		];
 	},
 	beforeDestroy() {
-		this.unsubscribe();
+		this.subscriptions.forEach((unsubscribe) => { unsubscribe(); });
 	},
 	methods: {
 		...mapMutations([
@@ -27,6 +39,7 @@ export default {
 			'toggleShuffle',
 			'toggleMute',
 			'playPause',
+			'setStartStopMarker',
 		]),
 		...mapActions(['search']),
 		searchInput(event) {
@@ -50,10 +63,10 @@ export default {
 			}, 800);
 		},
 		skipToTime(event) {
-			if (this.currentMedia) {
+			if (this.currentMedia.id) {
 				this.$store.commit(
 					'skipToTime',
-					this.currentMedia.durationS * (event.offsetX / event.currentTarget.offsetWidth),
+					this.currentMedia.durationS * (event.clientX / event.currentTarget.offsetWidth)
 				);
 			}
 		},
@@ -65,10 +78,55 @@ export default {
 				setTimeout(() => { el.classList.remove('au--highlight'); }, 1000);
 			}
 		},
+		moveLimit(event, elName) {
+			const pos = Math.round(event.clientX / this.progressPos.xMax * 100);
+			if (
+				(elName === 'start' && pos < this.limitPos.stop)
+				|| (elName === 'stop' && this.limitPos.start < pos)
+			) {
+				if (elName === 'start') this.limitEls[elName].style.left = `${pos}%`;
+				else this.limitEls[elName].style.right = `${100 - pos}%`;
+			}
+		},
+		dropLimit(event, elName) {
+			const pos = Math.round(event.clientX / this.progressPos.xMax * 100);
+			if (
+				(elName === 'start' && pos < this.limitPos.stop)
+				|| (elName === 'stop' && this.limitPos.start < pos)
+			) {
+				if (this.currentMedia.id) {
+					this.setStartStopMarker({
+						type: elName,
+						seconds: Math.round(this.currentMedia.durationS * (pos/100)),
+					});
+				}
+				this.limitPos[elName] = pos;
+				if (elName === 'start') this.limitEls[elName].style.left = `${pos}%`;
+				else this.limitEls[elName].style.right = `${100 - pos}%`;
+			}
+		},
 	},
 	computed: {
 		...mapGetters(['currentTimeObj', 'playList', 'progressWidth', 'sessionHistoryHasPrev']),
 		...mapState(['currentTime', 'currentMedia', 'website', 'isPlaying', 'shuffle', 'mute']),
+	},
+	mounted() {
+		this.limitEls = {
+			start: document.querySelector('.au-header__progress-limit-start'),
+			stop: document.querySelector('.au-header__progress-limit-stop'),
+		};
+		const progressEl = document.querySelector('.au-header__progress');
+		const rect = progressEl.getBoundingClientRect();
+		this.progressPos = {
+			x: rect.left,
+			xMax: rect.right,
+		};
+		this.limitPos = { start: 0, stop: rect.right };
+
+		const mouseEl = document.querySelector('.au-header__progress-mouse');
+		progressEl.addEventListener('mousemove', (event) => {
+			mouseEl.style.left = `${event.clientX - this.progressPos.x}px`;
+		}, false);
 	},
 };
 </script>
@@ -78,7 +136,7 @@ export default {
 		<div class="au-header__search">
 			<div>
 				<img class="au-header__logo" src="img/audius.logo.white.svg" alt="Audius - music player - logo">
-				<i>2.0.2</i>
+				<i>2.0.3</i>
 			</div>
 			<div class="au-header__search-controls">
 				<div
@@ -150,10 +208,22 @@ export default {
 			</div>
 		</div>
 		<div class="au-header__progress" @click="skipToTime">
+
+			<div class="au-header__progress-inner">
+				<div
+					v-if="currentMedia.id"
+					v-bind:style="{ width: progressWidth + '%' }"
+					class="au-header__progress-current"></div>
+			</div>
+			<div class="au-header__progress-mouse"></div>
 			<div
-				v-if="currentMedia"
-				v-bind:style="{ width: progressWidth + '%' }"
-				class="au-header__progress-current"></div>
+				v-on:drag="moveLimit($event, 'start')"
+				v-on:dragend="dropLimit($event, 'start')"
+				class="au-header__progress-limit-start"></div>
+			<div
+				v-on:drag="moveLimit($event, 'stop')"
+				v-on:dragend="dropLimit($event, 'stop')"
+				class="au-header__progress-limit-stop"></div>
 		</div>
 	</header>
 </template>
@@ -164,6 +234,7 @@ export default {
 
 header
 	width: 100%
+	position: relative
 .au-header__logo
 	width: #{20*$grid-space}
 	margin-left: #{2*$grid-space}
@@ -234,7 +305,7 @@ header
 		// 	color: $color-white
 
 .au-header__controls
-	height: $touch-size-large
+	height: 9 * $grid-space
 	display: flex
 	justify-content: flex-end
 	align-items: center
@@ -266,27 +337,75 @@ header
 		span:before
 			font-size: 1.5em
 .au-header__progress
+	position: absolute
+	z-index: 1
+	bottom: 0
 	width: 100%
-	height: 4px
-	background: $color-aluminium
+	height: 2*$grid-space
 	transition: all $transition-time
 	cursor: pointer
+	background: transparent
+	display: flex
 	&:hover
+		.au-header__progress-mouse,
+		.au-header__progress-limit-stop,
+		.au-header__progress-limit-start
+			display: block
 		.au-header__progress-current
 			&:after
 				content: ''
-				width: 10px
-				height: 10px
+				width: #{2 * $grid-space}
+				height: #{2 * $grid-space}
 				border-radius: 50%
 				position: absolute
-				top: -3px
+				bottom: -$grid-space*0.7
 				right: -3px
 				background: $color-pictonblue
+.au-header__progress-inner
+	position: absolute
+	bottom: 0
+	width: 100%
+	height: $grid-space/2
+	background: $color-aluminium
 
-	.au-header__progress-current
-		position: relative
-		background: $color-pictonblue
-		height: 100%
+.au-header__progress-current
+	position: relative
+	background: $color-pictonblue
+	height: 100%
+	height: $grid-space/2
+
+
+.au-header__progress-mouse
+	display: none
+	width: $grid-space
+	height: $grid-space
+	background: $color-clementine
+	position: absolute
+	bottom: -$grid-space*0.2
+	border-radius: 50%
+
+.au-header__progress-limit-stop,
+.au-header__progress-limit-start
+	display: none
+	position: absolute
+	bottom: 0
+	width: 3*$grid-space
+	height: 3*$grid-space
+	border: 2px solid $color-aluminium-dark
+	border-top-color: transparent
+	cursor: ew-resize
+	&:hover
+
+		border-color: $color-clementine
+		border-top-color: transparent
+
+.au-header__progress-limit-start.au-header__progress-limit-start
+	left: 0
+	border-right-color: transparent
+
+.au-header__progress-limit-stop.au-header__progress-limit-stop
+	right: 0
+	border-left-color: transparent
 
 .au-header__shuffle,
 .au-header__repeat

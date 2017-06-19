@@ -1,3 +1,5 @@
+/* eslint-disable no-multiple-empty-lines */
+
 import Vue from 'vue';
 import Vuex from 'vuex';
 
@@ -13,7 +15,7 @@ import {
 	ajax,
 	findYouTubeIdsText,
 	getYouTubeInfo,
-	hashCode
+	hashCode,
 } from '../utils';
 import { videoBaseObject } from './video';
 import { youtubeApiKey } from '../utils/config';
@@ -27,6 +29,13 @@ const videoRegEx = /\.(avi|mkv|mp4|webm|ogg)$/i;
 const searchYoutubeDebounced = debounce((...args) => searchYoutube(...args), 500);
 
 Vue.use(Vuex);
+
+
+
+
+
+
+
 
 const presistMutation = {
 	addSearchResult: ['entities', 'playList', 'tags'],
@@ -47,7 +56,16 @@ const presistMutation = {
 	setMatrixCredentials: ['matrix'],
 	setMatrixEnabled: ['matrixEnabled'],
 	upgradeEntities: ['entities'],
+	setStartStopMarker: ['entities'],
 };
+
+
+
+
+
+
+
+
 
 /* eslint-disable no-param-reassign */
 function play(state, mediaId, currentMedia) {
@@ -126,6 +144,16 @@ function next(state) {
 	}
 }
 
+
+
+
+
+
+
+
+
+
+
 export const store = new Vuex.Store({
 	state: {
 		db: undefined,
@@ -187,6 +215,18 @@ export const store = new Vuex.Store({
 			},
 		},
 	},
+
+
+
+
+
+
+
+
+
+
+
+
 	getters: {
 		playList(state) {
 			if (state.currentPlayList) return state.tags[state.currentPlayList];
@@ -224,6 +264,17 @@ export const store = new Vuex.Store({
 			return hlength > 0 && state.sessionHistoryPos < hlength - 1;
 		},
 	},
+
+
+
+
+
+
+
+
+
+
+
 	/* eslint-disable no-param-reassign */
 	mutations: {
 		recoverState(state, recoveredState) {
@@ -432,6 +483,7 @@ export const store = new Vuex.Store({
 		},
 		skipToTime(state, s) {
 			state.skipToTime = s;
+			state.currentTime = s;
 		},
 		movePlayListMedia(state, playList) {
 			if (state.currentPlayList) state.tags[state.currentPlayList] = playList;
@@ -489,10 +541,21 @@ export const store = new Vuex.Store({
 				const name = state.currentPlayList || 'Default';
 				state.exportURLs.unshift({ url, name, date: now.toString() });
 			}
-			while(state.exportURLs.length > 5) state.exportURLs.pop();
+			while (state.exportURLs.length > 5){
+				state.exportURLs.pop();
+			}
 		},
 		migrationSuccess(state, { version, toggleState }) {
 			state.migration[version] = toggleState;
+		},
+		setStartStopMarker(state, { type, seconds }) {
+			if (type === 'start') {
+				if (seconds > 3) state.currentMedia.start = seconds;
+				else delete state.currentMedia.start;
+			} else if (type === 'stop') {
+				if (seconds < (state.currentMedia.durationS - 3)) state.currentMedia.stop = seconds;
+				else delete state.currentMedia.stop;
+			}
 		},
 
 		// Matrix Radio
@@ -553,6 +616,15 @@ export const store = new Vuex.Store({
 			state.entities = { ...state.entities, ...entities };
 		},
 	},
+
+
+
+
+
+
+
+
+
 	plugins: [
 		vstore => {
 			vstore.subscribe((mutation, state) => {
@@ -566,6 +638,16 @@ export const store = new Vuex.Store({
 			});
 		},
 	],
+
+
+
+
+
+
+
+
+
+
 	actions: {
 		register({ commit }, userId) {
 			setTimeout(() => {
@@ -575,26 +657,34 @@ export const store = new Vuex.Store({
 		search({ commit, state }, query) {
 			if (audioRegEx.test(query)) {
 				const player = new Audio();
-				player.addEventListener('loadeddata', () => {
-					commit('webMediaSearchSuccess', {
-						url: query,
-						durationS: Math.round(player.duration),
-						type: 'audio',
-					});
-				}, true);
+				player.addEventListener(
+					'loadeddata',
+					() => {
+						commit('webMediaSearchSuccess', {
+							url: query,
+							durationS: Math.round(player.duration),
+							type: 'audio',
+						});
+					},
+					true
+				);
 				player.src = query;
 			} else if (videoRegEx.test(query)) {
 				const player = document.createElement('video');
 				player.hidden = true;
 				document.body.appendChild(player);
-				player.addEventListener('loadeddata', () => {
-					commit('webMediaSearchSuccess', {
-						url: query,
-						durationS: Math.round(player.duration),
-						type: 'video',
-					});
-					player.parentNode.removeChild(player);
-				}, true);
+				player.addEventListener(
+					'loadeddata',
+					() => {
+						commit('webMediaSearchSuccess', {
+							url: query,
+							durationS: Math.round(player.duration),
+							type: 'video',
+						});
+						player.parentNode.removeChild(player);
+					},
+					true
+				);
 				setTimeout(() => {
 					if (player.parentNode) player.parentNode.removeChild(player);
 				}, 700);
