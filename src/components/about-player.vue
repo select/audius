@@ -99,7 +99,9 @@ export default {
 	<p>
 		<b>2.0.3</b><br>
 		<ul>
+			<li> Improved header timeline design.</li>
 			<li> Added support for web video .mp4 .webm .ogg URLs.</li>
+			<li> Added draggable start stop limits for media (hover over timeline).</li>
 		</ul>
 		<b>2.0.2</b><br>
 		<ul>
