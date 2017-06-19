@@ -100,7 +100,7 @@ export default {
 			if (this.showJump) event.stopPropagation();
 		},
 		filterInput(event) {
-			if (event.key.length === 1 || event.key === 'Backspace') {
+			if ((event.key.length === 1 || event.key === 'Backspace') && (event.target.value.length > 1)) {
 				this.filterPlayList(event.target.value);
 			}
 		},
