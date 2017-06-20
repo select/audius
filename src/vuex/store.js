@@ -16,6 +16,7 @@ import {
 	findYouTubeIdsText,
 	getYouTubeInfo,
 	hashCode,
+	parseYoutubeDescription,
 } from '../utils';
 import { videoBaseObject } from './video';
 import { youtubeApiKey } from '../utils/config';
@@ -283,8 +284,9 @@ export const store = new Vuex.Store({
 		searchYoutubeSuccess(state, results) {
 			state.mainRightTab = 'search';
 			state.search.isSearching = false;
-			state.search.results = results.map(v =>
-				Object.assign({}, videoBaseObject, {
+			state.search.results = results.map(v => {
+				const songs = parseYoutubeDescription(v.snippet.description, v.contentDetails.duration)
+				return Object.assign({}, videoBaseObject, {
 					title: v.snippet.title,
 					duration: duration(v.contentDetails.duration),
 					durationS: time2s(duration(v.contentDetails.duration)),
@@ -292,8 +294,9 @@ export const store = new Vuex.Store({
 					id: v.id,
 					deleted: false,
 					type: 'youtube',
-				})
-			);
+					songs: songs.length ? songs : undefined,
+				});
+			});
 		},
 		webMediaSearchSuccess(state, { url, durationS, type }) {
 			state.mainRightTab = 'search';
