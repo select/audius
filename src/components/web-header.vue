@@ -18,10 +18,10 @@ export default {
 			// if media changed, set new media in player
 			this.$store.watch(state => state.currentMedia, () => {
 				if (this.currentMedia.start) {
-					this.limitEls.start.style.left = `${this.currentMedia.start / this.currentMedia.durationS * 100}%`;
+					this.limitEls.start.style.left = `${(this.currentMedia.start / this.currentMedia.durationS) * 100}%`;
 				} else this.limitEls.start.style.left = '0%';
 				if (this.currentMedia.stop) {
-					this.limitEls.stop.style.right = `${100 - this.currentMedia.stop / this.currentMedia.durationS * 100}%`;
+					this.limitEls.stop.style.right = `${100 - ((this.currentMedia.stop / this.currentMedia.durationS) * 100)}%`;
 				} else this.limitEls.stop.style.right = '0%';
 			}),
 		];
@@ -82,7 +82,7 @@ export default {
 			event.dataTransfer.setDragImage(this.dragImg, 0, 0);
 		},
 		moveLimit(event, elName) {
-			let pos = Math.round(event.clientX / this.progressPos.xMax * 100);
+			let pos = Math.round((event.clientX / this.progressPos.xMax) * 100);
 			if (pos > 100) pos = 100;
 			else if (pos < 0) pos = 0;
 			if (
@@ -94,7 +94,7 @@ export default {
 			}
 		},
 		dropLimit(event, elName) {
-			let pos = Math.round(event.clientX / this.progressPos.xMax * 100);
+			let pos = Math.round((event.clientX / this.progressPos.xMax) * 100);
 			if (
 				(elName === 'start' && pos < this.limitPos.stop)
 				|| (elName === 'stop' && this.limitPos.start < pos)
@@ -102,7 +102,7 @@ export default {
 				if (this.currentMedia.id) {
 					this.setStartStopMarker({
 						type: elName,
-						seconds: Math.round(this.currentMedia.durationS * (pos/100)),
+						seconds: Math.round(this.currentMedia.durationS * (pos / 100)),
 					});
 				}
 				if (pos > 100) pos = 100;
