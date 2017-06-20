@@ -3,20 +3,21 @@ import { mapMutations } from 'vuex';
 
 export default {
 	name: 'video-item',
-	props: [
-		'video',
-		'isPlaying',
-		'isQueue',
-		'queueIndex',
-		'isExtension',
-		'isSelected',
-		'isPlayList',
-		'isInPlayList',
-		'isEditPlayList',
-	],
+	props: {
+		video: { type: Object, required: true },
+		isPlaying: Boolean,
+		isQueue: Boolean,
+		queueIndex: Number,
+		isExtension: Boolean,
+		isSelected: Boolean,
+		isPlayList: Boolean,
+		isInPlayList: Boolean,
+		isEditPlayList: Boolean,
+	},
 	data() {
 		return {
 			copyActive: false,
+			showSongs: false,
 		};
 	},
 	methods: {
@@ -90,54 +91,84 @@ export default {
 			}"
 		v-on:dblclick="play"
 		v-bind:data-id="video.id">
-		<div class="media-list__thumbnail" v-bind:style="{ backgroundImage: _backgroundImage() }"></div>
-		<div
-			class="media-list__body"
-			v-on:click="addTags">
-			<div class="media-list__name">{{video.title}}</div>
-			<div class="media-list__duration" v-if="video.duration">
-				<span v-if="video.duration.h">{{video.duration.h}}:</span>{{video.duration.m}}:{{video.duration.s}}
+		<div class="media-list__main">
+			<div class="media-list__thumbnail" v-bind:style="{ backgroundImage: _backgroundImage() }"></div>
+			<div
+				class="media-list__body"
+				v-on:click="addTags">
+				<div class="media-list__name">{{video.title}}</div>
+				<div class="media-list__duration" v-if="video.duration">
+					<span v-if="video.duration.h">{{video.duration.h}}:</span>{{video.duration.m}}:{{video.duration.s}}
+				</div>
 			</div>
-		</div>
-		<div class="media-list__controls">
-			<div v-if="!video.hasError">
+			<div class="media-list__controls">
+
 				<span class="wmp-icon-pause" v-if="isPlaying" v-on:click="pause" title="Pause"></span>
 				<span class="wmp-icon-play" v-else v-on:click="play" title="Play"></span>
+
 				<span
 					class="wmp-icon-queue2 icon--small"
 					v-on:click="queue(video.id)"
 					v-if="!isQueue"
 					title="Add to queue"></span>
-			</div>
-			<span class="wmp-icon-search" v-else title="Search alternative"></span>
-			<span class="copy wmp-icon-copy icon--small" v-on:click="copyToClip" v-bind:class="{ active: copyActive }" title="Copy name and URL"></span>
-			<div class="media-list__more-controls">
-				<span class="wmp-icon-more_vert"></span>
-				<div>
-					<a
-						v-if="video.type === 'youtube'"
-						v-bind:href="'https://youtu.be/'+video.id"
-						title="Watch on YouTube"
-						target="_blank">
-						<span class="wmp-icon-youtube icon--small"></span>
-					</a>
-					<span
-						class="wmp-icon-close"
-						v-if="!isExtension"
-						v-on:click="remove"
-						title="Remove"></span>
+
+				<span
+					class="wmp-icon-search"
+					v-if="video.error"
+					title="Search alternative"></span>
+
+				<span
+					class="copy wmp-icon-copy icon--small"
+					v-on:click="copyToClip"
+					v-bind:class="{ active: copyActive }"
+					title="Copy name and URL"></span>
+
+				<div class="media-list__more-controls">
+					<span class="wmp-icon-more_vert"></span>
+					<div>
+						<a
+							v-if="video.type === 'youtube'"
+							v-bind:href="'https://youtu.be/'+video.id"
+							title="Watch oYouTube"
+							target="_blank">
+							<span class="wmp-icon-youtube icon--small"></span>
+						</a>
+						<span
+							class="wmp-icon-close"
+							v-if="!isExtension"
+							v-on:click="remove"
+							title="Remove"></span>
+					</div>
 				</div>
+
+				<span
+					v-if="video.tracks"
+					@click="showSongs = !showSongs"
+					v-bind:class="{ active: showSongs }"
+					class="wmp-icon-arrow_drop_down media-list__show-tracks"></span>
+
+				<span
+					class="wmp-icon-add"
+					v-if="isExtension"
+					v-on:click="addToPlaylist"
+					title="Add to playlist"></span>
 			</div>
-			<span
-				class="wmp-icon-add"
-				v-if="isExtension"
-				v-on:click="addToPlaylist"
-				title="Add to playlist"></span>
 		</div>
+		<ul
+			v-if="video.tracks"
+			v-bind:class="{ active: showSongs }"
+			class="media-list__tracks">
+			<video-item
+				v-for="track in video.tracks"
+				:video="track"
+				:isPlayList="false"
+				:key="track.start"
+				:isPlaying="false"></video-item>
+		</ul>
 	</li>
 </template>
 
-<style lang="sass?indentedSyntax">
+<style lang="sass?indentedSyntax">re
 @import '../sass/vars'
 @import '../sass/color'
 

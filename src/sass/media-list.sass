@@ -3,28 +3,28 @@ ul.media-list
 	padding: 0
 	margin: 0
 	overflow-x: hidden
-	li
-		height: $touch-size-large
-		padding: 0 $grid-space
-		display: flex
-		align-items: center
-		transition: all $transition-time
-		&:hover
-			background: $color-catskillwhite
-			.media-list__controls
-				display: flex
-				align-items: center
-		&.active
-			background: $color-pictonblue
+.media-list__main
+	height: $touch-size-large
+	padding: 0 $grid-space
+	display: flex
+	align-items: center
+	transition: all $transition-time
+	&:hover
+		background: $color-catskillwhite
+		.media-list__controls
+			display: flex
+			align-items: center
+	&.active
+		background: $color-pictonblue
+		color: $color-white
+		a,
+		span:hover
 			color: $color-white
-			a,
-			span:hover
-				color: $color-white
-		&.error
-			.media-list__body
-				text-decoration: line-through
-		&.selected
-			background: $color-aluminium
+	&.error
+		.media-list__body
+			text-decoration: line-through
+	&.selected
+		background: $color-aluminium
 .media-list__thumbnail
 	cursor: move
 	width: $touch-size-medium
@@ -66,3 +66,15 @@ ul.media-list
 			display: flex
 		> span
 			display: none
+.media-list__tracks
+	list-style: none
+	display: none
+	padding: 0
+	&.active
+		display: block
+.media-list__show-tracks
+	transition: all $transition-time
+	transform: rotate(-90deg)
+	&.active
+		transform: rotate(0deg)
+

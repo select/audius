@@ -48,20 +48,22 @@ export default {
 			selected: (jumpCursor && (jumpCursor.id === video.id)),
 		}"
 		v-bind:data-id="video.id">
-		<div class="media-list__thumbnail" v-bind:style="{ backgroundImage: _backgroundImage(video) }" ></div>
-		<div class="media-list__body">
-			<div class="media-list__name">{{video.title}}</div>
-			<div class="media-list__duration" v-if="video.duration">
-				<span v-if="video.duration.h">{{video.duration.h}}:</span>{{video.duration.m}}:{{video.duration.s}}
+		<div class="media-list__main">
+			<div class="media-list__thumbnail" v-bind:style="{ backgroundImage: _backgroundImage(video) }" ></div>
+			<div class="media-list__body">
+				<div class="media-list__name">{{video.title}}</div>
+				<div class="media-list__duration" v-if="video.duration">
+					<span v-if="video.duration.h">{{video.duration.h}}:</span>{{video.duration.m}}:{{video.duration.s}}
+				</div>
 			</div>
-		</div>
-		<div class="media-list__controls">
-			<span class="wmp-icon-add" @click="addToPlaylist(video)" title="Add to playlist"></span>
-			<span class="wmp-icon-pause" v-if="isPlaying(video)" @click="pause" title="Pause"></span>
-			<span class="wmp-icon-play" v-else @click="play({ currentMedia: video })" title="Play"></span>
-			<a v-bind:href="'https://youtu.be/'+video.id" title="watch on YouTube" target="_blank">
-				<span class="wmp-icon-youtube icon--small"></span>
-			</a>
+			<div class="media-list__controls">
+				<span class="wmp-icon-add" @click="addToPlaylist(video)" title="Add to playlist"></span>
+				<span class="wmp-icon-pause" v-if="isPlaying(video)" @click="pause" title="Pause"></span>
+				<span class="wmp-icon-play" v-else @click="play({ currentMedia: video })" title="Play"></span>
+				<a v-bind:href="'https://youtu.be/'+video.id" title="watch on YouTube" target="_blank">
+					<span class="wmp-icon-youtube icon--small"></span>
+				</a>
+			</div>
 		</div>
 	</li>
 </ul>

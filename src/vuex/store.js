@@ -285,7 +285,7 @@ export const store = new Vuex.Store({
 			state.mainRightTab = 'search';
 			state.search.isSearching = false;
 			state.search.results = results.map(v => {
-				const songs = parseYoutubeDescription(v.snippet.description, v.contentDetails.duration)
+				const tracks = parseYoutubeDescription(v);
 				return Object.assign({}, videoBaseObject, {
 					title: v.snippet.title,
 					duration: duration(v.contentDetails.duration),
@@ -294,7 +294,7 @@ export const store = new Vuex.Store({
 					id: v.id,
 					deleted: false,
 					type: 'youtube',
-					songs: songs.length ? songs : undefined,
+					tracks: tracks.length ? tracks : undefined,
 				});
 			});
 		},
@@ -723,7 +723,7 @@ export const store = new Vuex.Store({
 			});
 		},
 		initMatrix({ commit, state, dispatch }) {
-			import('../utils/matrixClient').then(module => {
+			import(/* webpackChunkName: "matrix-client" */ '../utils/matrixClient').then(module => {
 				matrixClient = module.matrixClient;
 				if (!state.matrix.hasCredentials) {
 					matrixClient
@@ -739,7 +739,7 @@ export const store = new Vuex.Store({
 			});
 		},
 		loginMatrixWithPassword({ commit, state, dispatch }, { username, password }) {
-			import('../utils/matrixClient').then(module => {
+			import(/* webpackChunkName: "matrix-client" */ '../utils/matrixClient').then(module => {
 				matrixClient = module.matrixClient;
 				matrixClient
 					.getCredentialsWithPassword(username, password)

@@ -1,13 +1,19 @@
-import { time2s, duration } from './timeConverter';
+import { time2s, s2time, duration } from './timeConverter';
+import { videoBaseObject } from '../vuex/video';
 
 const timeRegex = /((\d+):)?(\d+):(\d{1,2})/;
 const trimFRegex = /^[-\W\d]*/;
 const trimBRegex = /[-\W\d]*$/;
 
-export function parseYoutubeDescription(description, durationYt) {
+/* eslint-disable no-param-reassign */
+export function parseYoutubeDescription(v) {
+	const description = v.snippet.description;
+	const durationYt = v.contentDetails.duration;
+	const id = v.id;
+
 	const descriptionLines = description.split('\n');
-	const res = descriptionLines
-		.filter(line => timeRegex.test(line))
+	return descriptionLines
+		.filter(line => timeRegex.test(line)) // only lines with time information
 		.map(line => {
 			// Get the time parts
 			const [, , ht, mt, st] = timeRegex.exec(line);
@@ -15,16 +21,25 @@ export function parseYoutubeDescription(description, durationYt) {
 			const m = parseInt(mt, 10);
 			const s = parseInt(st, 10);
 			// Clean up the title from spaces minus and time
-			const title = line.replace(trimFRegex, '').replace(trimBRegex, '');
-			return {
+			const title = `${line.replace(trimFRegex, '').replace(trimBRegex, '')} - ${v.snippet.title}`;
+			return Object.assign({}, videoBaseObject, {
+				id,
 				start: (h * 3600) + (m * 60) + s,
 				title,
-			};
+				fullTitle: line,
+				type: 'youtube',
+				isTrack: true,
+			});
+		}).map((song, idx, thisArray) => {
+			// Add end times of each song from start of song after and end time of the media
+			if (idx === (thisArray.length - 1)) song.stop = time2s(duration(durationYt));
+			else song.stop = thisArray[idx + 1].start;
+			return song;
+		}).map(song => {
+			// Calculate duration of each song.
+			song.durationS = song.stop - song.start;
+			song.duration = s2time(song.durationS);
+			return song;
 		});
-	/* eslint-disable no-param-reassign */
-	res.forEach((song, idx) => {
-		if (idx === (res.length - 1)) song.stop = time2s(duration(durationYt));
-		else song.stop = res[idx + 1].start;
-	});
-	return res;
+
 }
