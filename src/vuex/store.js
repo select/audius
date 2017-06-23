@@ -99,11 +99,11 @@ function next(state) {
 	if (state.queue.length) {
 		// Play next song from queue.
 		const queue = [...state.queue];
-		mediaId = queue.shift();
+		const media = queue.shift();
 		Object.assign(state, {
 			sessionHistoryPos: -1,
-			sessionHistory: [...state.sessionHistory, mediaId],
-			currentMedia: state.entities[mediaId],
+			sessionHistory: [...state.sessionHistory, media.id],
+			currentMedia: media,
 			queue: [...queue],
 			isPlaying: true,
 		});
@@ -135,13 +135,24 @@ function next(state) {
 		state.isPlaying = false;
 	} else if (idx < playList.length - 1) {
 		// Play the next song.
-		mediaId = playList[idx + 1];
-		Object.assign(state, {
-			sessionHistoryPos: -1,
-			sessionHistory: [...state.sessionHistory, mediaId],
-			currentMedia: state.entities[mediaId],
-			isPlaying: true,
-		});
+		let isLastTrack = false;
+		if (state.currentMedia.isTrack) {
+			const parent = state.entities[state.currentMedia.id];
+			if ((state.currentMedia.trackId) <= parent.tracks.length) {
+				state.currentMedia = parent.tracks[state.currentMedia.trackId];
+			} else {
+				isLastTrack = true;
+			}
+		}
+		if (!state.currentMedia.isTrack || isLastTrack) {
+			mediaId = playList[idx + 1];
+			Object.assign(state, {
+				sessionHistoryPos: -1,
+				sessionHistory: [...state.sessionHistory, mediaId],
+				currentMedia: state.entities[mediaId],
+				isPlaying: true,
+			});
+		}
 	}
 }
 
@@ -253,7 +264,10 @@ export const store = new Vuex.Store({
 			return playList.reduce((entities, id) => ({ ...entities, [id]: state.entities[id] }), {});
 		},
 		currentTimeObj(state) {
-			return s2time(state.currentTime);
+			const currentTime = state.currentMedia.start
+				? state.currentTime - state.currentMedia.start
+				: state.currentTime;
+			return s2time(currentTime);
 		},
 		progressWidth(state) {
 			const d = state.currentMedia.durationAlbum || state.currentMedia.durationS;
@@ -431,13 +445,19 @@ export const store = new Vuex.Store({
 			state.playList = state.playList.filter(id => id !== video.id);
 			state.entities[video.id].deleted = true;
 		},
-		addSearchResult(state, video) {
+		addSearchResult(state, media) {
 			if (state.leftMenuTab === 'playList') {
-				state.entities[video.id] = video;
-				const id = video.id;
+				if (media.trackId) {
+					media = Object.assign({}, media);
+					media.id += `-Track${media.trackId}`;
+					delete media.trackId;
+					delete media.isTrack;
+				}
+				const id = media.id;
+				state.entities[id] = media;
 				if (state.currentPlayList) {
 					if (!state.tags[state.currentPlayList].includes(id)) {
-						state.tags[state.currentPlayList].unshift(video.id);
+						state.tags[state.currentPlayList].unshift(media.id);
 					}
 				} else if (!state.playList.includes(id)) {
 					state.playList.unshift(id);
@@ -487,14 +507,14 @@ export const store = new Vuex.Store({
 				});
 			}
 		},
-		queue(state, id) {
-			state.queue.push(id);
+		queue(state, media) {
+			state.queue.push(media);
 			state.mainRightTab = 'queue';
 		},
 		queuePlayIndex(state, index) {
-			const mediaId = state.queue.splice(index, 1)[0];
+			const media = state.queue.splice(index, 1)[0];
 			state.isPlaying = true;
-			state.currentMedia = state.entities[mediaId];
+			state.currentMedia = media;
 			state.sessionHistoryPos = 0;
 			state.sessionHistory.push(state.currentMedia.id);
 		},
@@ -718,7 +738,7 @@ export const store = new Vuex.Store({
 					if (player.parentNode) player.parentNode.removeChild(player);
 				}, 700);
 				player.src = query;
-			} else if (query) {
+			} else if (query.length > 1) {
 				searchYoutubeDebounced(state.youtubeApiKey, query, result => {
 					commit('searchYoutubeSuccess', result);
 				});

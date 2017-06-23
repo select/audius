@@ -31,6 +31,7 @@ export function parseYoutubeDescription(v) {
 				type: 'youtube',
 				isTrack: true,
 				trackId: idx + 1,
+				youtubeId: id,
 			});
 		}).map((song, idx, thisArray) => {
 			// Add end times of each song from start of song after and end time of the media

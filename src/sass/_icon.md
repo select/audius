@@ -24,6 +24,7 @@ To update the fonts go to https://icomoon.io/app/#/select import the `selection.
 ```
 
 ```
+<span class="wmp-icon-album"></span>
 <span class="wmp-icon-add"></span>
 <span class="wmp-icon-queue2"></span>
 <span class="wmp-icon-copy"></span>

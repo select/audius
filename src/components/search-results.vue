@@ -1,34 +1,18 @@
 <script>
 import Vue from 'vue';
-import { mapMutations, mapState } from 'vuex';
+import { mapState } from 'vuex';
 import Sortable from 'sortablejs';
+import VideoItem from './video-item.vue';
 import { isElementInViewport } from '../utils';
 
+
 export default {
-	computed: mapState(['search', 'currentMedia', 'website', 'jumpCursor']),
-	methods: {
-		...mapMutations(['play', 'pause']),
-		addToPlaylist(video) {
-			this.$store.commit('addSearchResult', video);
-			Vue.nextTick(() => {
-				const el = document.querySelector(`[data-id="${video.id}"]`);
-				if (el) {
-					if (!isElementInViewport(el)) el.scrollIntoView({ block: 'start', behavior: 'smooth' });
-					el.classList.add('au--highlight');
-					setTimeout(() => { el.classList.remove('au--highlight'); }, 1000);
-				}
-			});
-		},
-		isPlaying(video) {
-			return this.currentMedia.id === video.id;
-		},
-		_backgroundImage(video) {
-			if (video.type === 'youtube') return `url(https://i.ytimg.com/vi/${video.id}/default.jpg)`;
-			return '';
-		},
+	components: {
+		VideoItem,
 	},
+	computed: mapState(['search', 'currentMedia', 'isPlaying']),
 	mounted() {
-		const mediaListEl = document.querySelector('.main-right__content .media-list');
+		const mediaListEl = document.querySelector('.search-results');
 		Sortable.create(mediaListEl, {
 			name: 'searchResults',
 			group: 'lists',
@@ -36,35 +20,31 @@ export default {
 			sort: false,
 		});
 	},
+	methods: {
+		addToPlaylist(id) {
+			Vue.nextTick(() => {
+				const els = document.querySelectorAll(`[data-id="${id}"]`);
+				if (els.length) {
+					Array.from(els).forEach(el => {
+						if (!isElementInViewport(el)) el.scrollIntoView({ block: 'start', behavior: 'smooth' });
+						el.classList.add('au--highlight');
+						setTimeout(() => { el.classList.remove('au--highlight'); }, 1000);
+					});
+				}
+			});
+		},
+	},
 };
 </script>
 
 <template>
-<ul class="media-list">
-	<li
-		v-for="video in search.results"
-		v-bind:class="{
-			active: isPlaying(video),
-			selected: (jumpCursor && (jumpCursor.id === video.id)),
-		}"
-		v-bind:data-id="video.id">
-		<div class="media-list__main">
-			<div class="media-list__thumbnail" v-bind:style="{ backgroundImage: _backgroundImage(video) }" ></div>
-			<div class="media-list__body">
-				<div class="media-list__name">{{video.title}}</div>
-				<div class="media-list__duration" v-if="video.duration">
-					<span v-if="video.duration.h">{{video.duration.h}}:</span>{{video.duration.m}}:{{video.duration.s}}
-				</div>
-			</div>
-			<div class="media-list__controls">
-				<span class="wmp-icon-add" @click="addToPlaylist(video)" title="Add to playlist"></span>
-				<span class="wmp-icon-pause" v-if="isPlaying(video)" @click="pause" title="Pause"></span>
-				<span class="wmp-icon-play" v-else @click="play({ currentMedia: video })" title="Play"></span>
-				<a v-bind:href="'https://youtu.be/'+video.id" title="watch on YouTube" target="_blank">
-					<span class="wmp-icon-youtube icon--small"></span>
-				</a>
-			</div>
-		</div>
-	</li>
+<ul class="media-list search-results">
+	<video-item
+		v-for="media in search.results"
+		:isSearchResult="true"
+		:isPlaying="currentMedia.id == media.id && isPlaying"
+		:key="media.id+media.trackId"
+		v-on:addToPlaylist="addToPlaylist"
+		:video="media"></video-item>
 </ul>
 </template>

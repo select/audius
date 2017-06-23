@@ -18,24 +18,23 @@ export default {
 		this.subscriptions = [
 			this.$store.watch(state => state.currentMedia, () => {
 				// if video changed, set new video in player
-				if (
-					this.currentMedia.type === 'youtube'
-					&& this.currentMedia.id
-					&& this.player.getVideoData()
-					&& (this.player.getVideoData().video_id !== this.currentMedia.id)
-				) {
-					this.duration = this.player.getDuration();
-					this.player.loadVideoById({
-						videoId: this.currentMedia.id,
-						suggestedQuality: 'large',
-					});
-					if (this.currentMedia.start) this.player.seekTo(this.currentMedia.start, true);
-					this.player.playVideo();
-					this.lastTrackId = this.currentMedia.trackId;
-				} else if (this.currentMedia.trackId !== this.lastTrackId) {
-					this.player.seekTo(this.currentMedia.start, true);
-					this.lastTrackId = this.currentMedia.trackId;
-				} else if (this.currentMedia.type === 'youtube') {
+				if (this.currentMedia.type === 'youtube') {
+					const videoId = this.player.getVideoData()
+						? this.player.getVideoData().video_id
+						: undefined;
+					const currentMediaId = this.currentMedia.youtubeId || this.currentMedia.id;
+					if (videoId !== currentMediaId) {
+						this.duration = this.player.getDuration();
+						this.player.loadVideoById({
+							videoId: currentMediaId,
+							suggestedQuality: 'large',
+						});
+						if (this.currentMedia.start) this.player.seekTo(this.currentMedia.start, true);
+						this.lastTrackId = this.currentMedia.trackId;
+					} else if (this.currentMedia.trackId !== this.lastTrackId) {
+						this.player.seekTo(this.currentMedia.start, true);
+						this.lastTrackId = this.currentMedia.trackId;
+					}
 					this.player.playVideo();
 				} else {
 					this.player.pauseVideo();
@@ -60,7 +59,8 @@ export default {
 
 			this.$store.watch(state => state.isPlaying, () => {
 				// if isPlaying changed start stop video
-				if (this.currentMedia.type === 'youtube' && this.isPlaying && this.currentMedia.id) {
+				const currentMediaId = this.currentMedia.youtubeId || this.currentMedia.id;
+				if (this.currentMedia.type === 'youtube' && this.isPlaying && currentMediaId) {
 					if (this.player.getPlayerState() !== 1) this.player.playVideo();
 				} else if (this.player
 					&& this.player.getPlayerState

@@ -73,6 +73,7 @@ export default {
 	top: calc(50% - #{$touch-size-small/2})
 	right: -2em
 	cursor: pointer
+	z-index: 1
 	&:hover
 		span
 			color: $color-aluminium-dark

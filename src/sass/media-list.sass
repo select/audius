@@ -4,20 +4,22 @@ ul.media-list
 	margin: 0
 	overflow-x: hidden
 	li.active
-		background: $color-pictonblue
-		color: $color-white
-		a,
-		span:hover
+		> .media-list__main
+			background: $color-pictonblue
 			color: $color-white
-		&:hover
-			color: inherit
-
+			a,
+			span:hover
+				color: $color-white
+			&:hover
+				color: inherit
 	li:hover
-		background: $color-catskillwhite
-		.media-list__controls
-			display: flex
-			align-items: center
+		> .media-list__main
+			background: $color-catskillwhite
+			.media-list__controls
+				display: flex
+				align-items: center
 .media-list__main
+	position: relative
 	height: $touch-size-large
 	padding: 0 $grid-space
 	display: flex
@@ -37,6 +39,14 @@ ul.media-list
 	background-position: center
 	border-radius: 50%
 	margin-right: $grid-space
+
+.media-list__album-hint
+	font-size: 0.5em
+	position: absolute
+	left: $touch-size-medium
+	bottom: 0
+	width: #{2 * $grid-space}
+	height: #{2 * $grid-space}
 .media-list__body
 	display: flex
 	flex-direction: column
@@ -64,7 +74,8 @@ ul.media-list
 .media-list__more-controls
 	> div
 		display: none
-	&:hover
+	&:hover,
+	&.active
 		> div
 			display: flex
 		> span

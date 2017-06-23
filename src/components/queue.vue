@@ -6,7 +6,7 @@ export default {
 	components: {
 		VideoItem,
 	},
-	computed: mapState(['queue', 'entities']),
+	computed: mapState(['queue']),
 };
 </script>
 
@@ -17,11 +17,11 @@ export default {
 	</p>
 	<ul class="media-list">
 		<video-item
-			v-for="(id, index) in queue"
+			v-for="(media, index) in queue"
 			:isQueue="true"
 			:queueIndex="index"
-			:key="id"
-			:video="entities[id]"></video-item>
+			:key="media.id+media.trackId"
+			:video="media"></video-item>
 	</ul>
 </div>
 </template>

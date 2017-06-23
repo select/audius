@@ -17,7 +17,8 @@ export function searchYoutube(YOUTUBE_API_KEY, query, callback) {
 			ajax(
 				getYtContentDetailURL(
 					YOUTUBE_API_KEY,
-					searchData.items.map(item => item.id.videoId).join(',')
+					searchData.items.map(item => item.id.videoId).join(','),
+					true
 				),
 				data => {
 					callback(searchData.items.map((item, idx) => Object.assign({}, item, data.items[idx])));

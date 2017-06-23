@@ -13,6 +13,7 @@ export default {
 		isPlayList: Boolean,
 		isInPlayList: Boolean,
 		isEditPlayList: Boolean,
+		isSearchResult: Boolean,
 	},
 	data() {
 		return {
@@ -37,6 +38,17 @@ export default {
 		},
 		addToPlaylist() {
 			this.$store.commit('addSearchResult', this.video);
+			this.$emit('addToPlaylist', this.video.id);
+		},
+		youtubeLink() {
+			let link = `https://youtu.be/${this.video.id}`;
+			if (this.video.start || this.video.stop) link += '?';
+			if (this.video.start) link += `start=${this.video.start}`;
+			if (this.video.stop) {
+				if (this.video.start) link += '&';
+				link += `end=${this.video.stop}`;
+			}
+			return link;
 		},
 		copyToClip() {
 			window.getSelection().removeAllRanges();
@@ -44,7 +56,7 @@ export default {
 			if (this.video.type !== 'youtube') {
 				tmpEl.innerHTML = `${this.video.url}`;
 			} else {
-				tmpEl.innerHTML = `${this.video.title} https://youtu.be/${this.video.id}`;
+				tmpEl.innerHTML = `${this.video.title} ${this.youtubeLink()}`;
 			}
 			document.body.appendChild(tmpEl);
 
@@ -74,7 +86,9 @@ export default {
 			}
 		},
 		_backgroundImage() {
-			if (this.video.type === 'youtube') return `url(https://i.ytimg.com/vi/${this.video.id}/default.jpg)`;
+			if (this.video.type === 'youtube') {
+				return `url(https://i.ytimg.com/vi/${this.video.youtubeId || this.video.id}/default.jpg)`;
+			}
 			return '';
 		},
 	},
@@ -92,6 +106,7 @@ export default {
 		v-on:dblclick="play"
 		v-bind:data-id="video.id">
 		<div class="media-list__main">
+			<span class="wmp-icon-album media-list__album-hint" v-if="video.tracks"></span>
 			<div class="media-list__thumbnail" v-bind:style="{ backgroundImage: _backgroundImage() }"></div>
 			<div
 				class="media-list__body"
@@ -107,8 +122,15 @@ export default {
 				<span class="wmp-icon-play" v-else v-on:click="play" title="Play"></span>
 
 				<span
+					v-if="video.tracks && !isQueue"
+					@click="showSongs = !showSongs"
+					v-bind:class="{ active: showSongs }"
+					title="Toggle album tracks"
+					class="wmp-icon-album media-list__show-tracks"></span>
+
+				<span
 					class="wmp-icon-queue2 icon--small"
-					v-on:click="queue(video.id)"
+					v-on:click="queue(video)"
 					v-if="!isQueue"
 					title="Add to queue"></span>
 
@@ -123,35 +145,37 @@ export default {
 					v-bind:class="{ active: copyActive }"
 					title="Copy name and URL"></span>
 
-				<div class="media-list__more-controls">
+				<div class="media-list__more-controls" v-bind:class="{active: isSearchResult}">
 					<span class="wmp-icon-more_vert"></span>
 					<div>
 						<a
 							v-if="video.type === 'youtube'"
-							v-bind:href="'https://youtu.be/'+video.id"
-							title="Watch oYouTube"
+							v-bind:href="this.youtubeLink()"
+							title="Watch on YouTube"
 							target="_blank">
 							<span class="wmp-icon-youtube icon--small"></span>
 						</a>
 						<span
 							class="wmp-icon-close"
-							v-if="!isExtension"
+							v-if="!isExtension && !isSearchResult"
 							v-on:click="remove"
 							title="Remove"></span>
 					</div>
 				</div>
 
-				<span
-					v-if="video.tracks && !isQueue"
-					@click="showSongs = !showSongs"
-					v-bind:class="{ active: showSongs }"
-					class="wmp-icon-arrow_drop_down media-list__show-tracks"></span>
 
 				<span
 					class="wmp-icon-add"
 					v-if="isExtension"
 					v-on:click="addToPlaylist"
 					title="Add to playlist"></span>
+
+				<span
+					v-if="isSearchResult"
+					class="wmp-icon-add"
+					@click="addToPlaylist(video)"
+					title="Add to playlist"></span>
+
 			</div>
 		</div>
 		<ul
@@ -163,6 +187,7 @@ export default {
 				:video="track"
 				:isPlayList="false"
 				:key="track.start"
+				:isSearchResult="isSearchResult"
 				:isPlaying="false"></video-item>
 		</ul>
 	</li>
