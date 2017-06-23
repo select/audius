@@ -13,7 +13,7 @@ export default {
 		'tags',
 	],
 	methods: {
-		...mapActions(['importPlayListFromString']),
+		...mapActions(['importPlayListFromString', 'importURL']),
 		importPlayListHandler(event) {
 			const files = event.target.files || event.dataTransfer.files;
 			Array.from(files).forEach((file) => {
@@ -21,7 +21,6 @@ export default {
 				reader.onload = (event2) => {
 					this.importPlayListFromString(event2.target.result);
 					this.$emit('toggleImport', false);
-
 				};
 				reader.readAsText(file);
 			});
@@ -32,29 +31,29 @@ export default {
 				document.querySelector('.play-list__import-url-input').focus();
 			});
 		},
-		importURL() {
+		_importURL() {
 			const el = document.querySelector('.play-list__import-url-input');
-			this.$emit('importURL', el.value);
+			this.importURL({ url: el.value });
 			el.value = '';
 			this.$emit('toggleImport', false);
 		},
 		importOtherPlayList() {
-			const el = document.querySelector('.paly-list__other-playlist-input');
+			const el = document.querySelector('.play-list__other-playlist-input');
 			this.$emit('importOtherPlayList', el.value);
 			el.value = '';
 			this.$emit('toggleImport', false);
 		},
 		exit() {
 			this.importURLinput = false;
-			this.$emit('toggleImport', false)
-		}
+			this.$emit('toggleImport', false);
+		},
 	},
 };
 </script>
 
 <template>
-	<div class="paly-list__import" >
-		<div class="paly-list__import-header">
+	<div class="play-list__import" >
+		<div class="play-list__import-header">
 			<div> Import playlist </div>
 			<span
 				class="wmp-icon-close"
@@ -67,19 +66,19 @@ export default {
 			class="button btn--blue"
 			v-show="!importURLinput"
 			v-on:click="showImportURL">from web</button>
-		<div class="paly-list__import-url" v-show="importURLinput">
+		<div class="play-list__import-url" v-show="importURLinput">
 			<input
 				class="play-list__import-url-input"
 				type="text"
 				placeholder="https://api.myjson.com/bins/122zfl">
-			<button class="button btn--blue" v-on:click="importURL">load</button>
+			<button class="button btn--blue" v-on:click="_importURL">load</button>
 		</div>
 		<button
 			class="button btn--blue"
 			v-if="!showImportOtherPlaylist"
 			v-on:click="showImportOtherPlaylist = true">other playlist</button>
 		<div v-if="showImportOtherPlaylist">
-			<select class="paly-list__other-playlist-input">
+			<select class="play-list__other-playlist-input">
 				<option v-for="playListName in tags">{{playListName}}</option>
 			</select>
 			<button class="button btn--blue" v-on:click="importOtherPlayList">load</button>

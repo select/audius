@@ -76,7 +76,7 @@ function play(state, mediaId, currentMedia) {
 		else if (state.currentPlayList) mediaId = state.tags[state.currentPlayList][0];
 		else mediaId = state.playList[0];
 	}
-	if (currentMedia) state.entities[mediaId] = currentMedia;
+	// if (currentMedia) state.entities[mediaId] = currentMedia;
 	state.currentMedia = currentMedia || state.entities[mediaId];
 	state.sessionHistory.push(mediaId);
 	state.sessionHistoryPos = -1;
@@ -187,6 +187,7 @@ export const store = new Vuex.Store({
 		showJump: false,
 		jumpCursor: '',
 		exportURLs: [],
+		pendingImportURL: null,
 		migration: {
 			'audius_0.03': false,
 			'audius_0.03.2': false,
@@ -255,7 +256,8 @@ export const store = new Vuex.Store({
 			return s2time(state.currentTime);
 		},
 		progressWidth(state) {
-			return state.currentTime / state.currentMedia.durationS * 100;
+			const d = state.currentMedia.durationAlbum || state.currentMedia.durationS;
+			return (state.currentTime / d) * 100;
 		},
 		youtubeApiKeyUI(state) {
 			return state.youtubeApiKey === youtubeApiKey ? '' : state.youtubeApiKey;
@@ -263,6 +265,9 @@ export const store = new Vuex.Store({
 		sessionHistoryHasPrev(state) {
 			const hlength = state.sessionHistory.length;
 			return hlength > 0 && state.sessionHistoryPos < hlength - 1;
+		},
+		tagNames(state) {
+			return Object.keys(state.tags);
 		},
 	},
 
@@ -367,10 +372,28 @@ export const store = new Vuex.Store({
 		upgradeEntities(state, entities) {
 			state.entities = entities;
 		},
-		importPlayList(state, data) {
-			let playList = getCurrenPlayList(state);
-			playList = [...playList, ...data.playList.filter(id => !playList.includes(id))];
-			if (state.currentPlayList) {
+		importPlayList(state, { data, tagName }) {
+			console.log("data, tagName", data, tagName);
+
+			let playList;
+			if (tagName !== undefined) {
+				if (tagName) {
+					if (!state.tagsOrdered.includes(tagName)) {
+						state.tagsOrdered.push(tagName);
+						state.tags[tagName] = [];
+					}
+					playList = state.tags[tagName];
+				} else playList = state.playList;
+			} else {
+				playList = getCurrenPlayList(state);
+			}
+			playList = [...data.playList.filter(id => !playList.includes(id)), ...playList];
+			if (tagName !== undefined) {
+				if (tagName) {
+					state.tags[tagName] = playList;
+				} else state.playList = playList;
+				state.currentPlayList = tagName;
+			} else if (state.currentPlayList) {
 				state.tags[state.currentPlayList] = playList;
 			} else {
 				state.playList = playList;
@@ -544,7 +567,7 @@ export const store = new Vuex.Store({
 				const name = state.currentPlayList || 'Default';
 				state.exportURLs.unshift({ url, name, date: now.toString() });
 			}
-			while (state.exportURLs.length > 5){
+			while (state.exportURLs.length > 5) {
 				state.exportURLs.pop();
 			}
 		},
@@ -559,6 +582,9 @@ export const store = new Vuex.Store({
 				if (seconds < (state.currentMedia.durationS - 3)) state.currentMedia.stop = seconds;
 				else delete state.currentMedia.stop;
 			}
+		},
+		setPendingImportURL(state, data) {
+			state.pendingImportURL = data;
 		},
 
 		// Matrix Radio
@@ -703,13 +729,14 @@ export const store = new Vuex.Store({
 				if (error) {
 					commit('error', error);
 				} else {
-					commit('importPlayList', data);
+					commit('importPlayList', { data });
 				}
 			});
 		},
-		importURL({ commit }, url) {
+		importURL({ commit }, { url, name }) {
 			ajax(url, data => {
-				commit('importPlayList', data);
+				commit('importPlayList', { data, tagName: name });
+				commit('setPendingImportURL', null);
 			});
 		},
 		exportToURL({ commit, getters }) {

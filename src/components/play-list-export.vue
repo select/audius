@@ -1,5 +1,4 @@
 <script>
-import { ajaxPost } from '../utils';
 import { mapState, mapActions } from 'vuex';
 
 export default {
@@ -11,6 +10,7 @@ export default {
 	data() {
 		return {
 			copyActive: null,
+			copyURLActive: null,
 		};
 	},
 	computed: mapState(['exportURLs']),
@@ -42,7 +42,8 @@ export default {
 		copyToClip(url, name) {
 			window.getSelection().removeAllRanges();
 			const tmpEl = document.createElement('div');
-			tmpEl.innerHTML = `${window.location.href}?import=${url}&title=${name}`;
+			if (!name) tmpEl.innerHTML = url;
+			else tmpEl.innerHTML = `${window.location.href}?import=${url}&title=${name}`;
 			document.body.appendChild(tmpEl);
 
 			const range = document.createRange();
@@ -51,9 +52,11 @@ export default {
 
 			try {
 				document.execCommand('copy');
-				this.copyActive = url;
+				if (!name) this.copyURLActive = url;
+				else this.copyActive = url;
 				setTimeout(() => {
-					this.copyActive = null;
+					if (!name) this.copyURLActive = null;
+					else this.copyActive = null;
 				}, 800);
 			} catch (err) {
 				console.warn('execCommand Error', err);
@@ -66,8 +69,8 @@ export default {
 </script>
 
 <template>
-	<div class="paly-list__import"  >
-		<div class="paly-list__import-header">
+	<div class="play-list__import"  >
+		<div class="play-list__import-header">
 			<div> Export playlist </div>
 			<span
 				class="wmp-icon-close"
@@ -82,19 +85,30 @@ export default {
 			v-on:click="exportToURL">to Web</button>
 		<div v-if="exportURLs.length">
 			<p class="smaller">
-				Copy and paste the URL to share your playlist.
+				Click and paste to share your playlist.
 			</p>
 			<p>
-				<ul class="paly-list__exports">
+				<ul class="play-list__exports">
 					<li
-						v-for="item in exportURLs"
-						v-bind:class="{ active: copyActive == item.url }"
-						title="Copy URL"
-						@click="copyToClip(item.url, item.name)">
-						<div>
-							{{item.name}} - {{niceDate(item.date)}}
+						v-for="item in exportURLs">
+						<div
+							class="play-list__full"
+							v-bind:class="{ active: copyActive == item.url }"
+							@click="copyToClip(item.url, item.name)"
+							title="Share with Audius">
+							<div>
+								<div class="play-list__date">
+									{{item.name}} - {{niceDate(item.date)}}
+								</div>
+								<b>{{item.url}}</b>
+							</div>
 						</div>
-						<b>{{item.url}}</b>
+						<div
+							@click="copyToClip(item.url, null)"
+							v-bind:class="{ active: copyURLActive == item.url }"
+							title="Copy data URL">
+							<span class="wmp-icon-copy"></span>
+						</div>
 					</li>
 				</ul>
 			</p>
@@ -109,19 +123,28 @@ export default {
 
 .smaller
 	font-size: 0.9em
-.paly-list__exports
+.play-list__exports
 	list-style: none
 	padding: 0
 	li
 		height: $touch-size-medium
 		display: flex
-		flex-direction: column
-		justify-content: center
-		cursor: pointer
-		&:hover
-			background: $color-catskillwhite
-		&.active,
-		&.active:hover
-			background: $color-larioja
-			color: $color-white
+		flex-direction: row
+		> div
+			display: flex
+			flex-direction: row
+			cursor: pointer
+			&:hover
+				background: $color-catskillwhite
+			&.active,
+			&.active:hover
+				background: $color-larioja
+				color: $color-white
+		.wmp-icon-copy
+			color: $color-aluminium
+.play-list__full
+	flex: 1
+	align-items: flex-start
+.play-list__date
+	white-space: nowrap
 </style>

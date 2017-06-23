@@ -3,6 +3,7 @@ import WebHeader from './web-header.vue';
 import MainRight from './main-right.vue';
 import PlayList from './play-list.vue';
 import LeftMenu from './left-menu.vue';
+import ImportModal from './import-modal.vue';
 
 export default {
 	components: {
@@ -10,6 +11,7 @@ export default {
 		MainRight,
 		LeftMenu,
 		PlayList,
+		ImportModal,
 	},
 };
 </script>
@@ -22,6 +24,7 @@ export default {
 		<play-list></play-list>
 		<main-right></main-right>
 	</main>
+	<import-modal></import-modal>
 </div>
 </template>
 
@@ -32,6 +35,7 @@ export default {
 @import '../sass/color'
 @import '../sass/input'
 @import '../sass/icon'
+@import '../sass/modal'
 
 @import '../sass/media-list'
 

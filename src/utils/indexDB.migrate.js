@@ -42,7 +42,7 @@ function migrate0() {
 								store.commit('selectPlayList', undefined);
 								if (data.playList && data.entities) {
 									data.playList.reverse();
-									store.commit('importPlayList', { playList: data.playList, entities: data.entities });
+									store.commit('importPlayList', {data: { playList: data.playList, entities: data.entities }});
 								}
 								if (data.tags) {
 									Object.keys(data.tags).forEach(tagName => {
