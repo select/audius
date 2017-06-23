@@ -14,7 +14,7 @@ export function parseYoutubeDescription(v) {
 	const descriptionLines = description.split('\n');
 	return descriptionLines
 		.filter(line => timeRegex.test(line)) // only lines with time information
-		.map(line => {
+		.map((line, idx) => {
 			// Get the time parts
 			const [, , ht, mt, st] = timeRegex.exec(line);
 			const h = ht ? parseInt(ht, 10) : 0;
@@ -27,8 +27,10 @@ export function parseYoutubeDescription(v) {
 				start: (h * 3600) + (m * 60) + s,
 				title,
 				fullTitle: line,
+				durationAlbum: time2s(duration(v.contentDetails.duration)),
 				type: 'youtube',
 				isTrack: true,
+				trackId: idx + 1,
 			});
 		}).map((song, idx, thisArray) => {
 			// Add end times of each song from start of song after and end time of the media

@@ -78,7 +78,7 @@ export default {
 		]),
 		...mapActions(['importURL', 'matrixPaginate']),
 		addMusic() {
-			this.importURL(starterPlaylist);
+			this.importURL({ url: starterPlaylist });
 		},
 		clear(close) {
 			if (!this.filterQuery) this.toggleJump(false);
@@ -110,6 +110,7 @@ export default {
 			'filteredPlayList',
 			'filteredPlayListLength',
 			'currentEntities',
+			'tagNames',
 		]),
 		...mapState([
 			'currentMedia',
@@ -120,7 +121,6 @@ export default {
 			'editPlayList',
 			'entities',
 			'isPlaying',
-			'tags',
 			'filterQuery',
 			'tags',
 			'jumpCursor',
@@ -160,24 +160,26 @@ export default {
 			<span @click="toggleSearch()">
 				<span class="wmp-icon-search" title="[f] Search on YouTube"></span> Search
 			</span>
-				and add some songs.
+				and add some songs. Or click
+				<button
+					class="play-list__btn-add-music button btn--blue"
+					@click="addMusic">add music</button>
 		</h2>
 
-		<div class="paly-list__import" v-show="editPlayList" >
-			<div class="paly-list__import-header">
+		<div class="play-list__import" v-show="editPlayList" >
+			<div class="play-list__import-header">
 				<div> Edit playlist: {{currentPlayList}} </div>
 				<span
 					class="wmp-icon-close"
 					title="[Esc] Close"
 					@click="toggleEditPlayList(undefined, false)"></span>
-				<div class="paly-list__edit-description">Click below to add songs to the playlist.</div>
+				<div class="play-list__edit-description">Click below to add songs to the playlist.</div>
 			</div>
 		</div>
 
 		<play-list-import
-			:tags="Object.keys(tags)"
+			:tags="tagNames"
 			v-on:toggleImport="toggleImport"
-			v-on:importURL="importURL"
 			v-on:importOtherPlayList="importOtherPlayList"
 			v-show="showImport"></play-list-import>
 
@@ -207,7 +209,7 @@ export default {
 				v-for="id in filteredPlayList"
 				:video="entities[id]"
 				:isEditPlayList="editPlayList"
-				:isPlayList="currentPlayList"
+				:isPlayList="!!currentPlayList"
 				:isInPlayList="editPlayList && tags[currentPlayList].includes(id)"
 				:isSelected="jumpCursor === id"
 				:key="id"
@@ -350,13 +352,13 @@ export default {
 	margin-left: #{ 2* $grid-space + $touch-size-medium}
 
 .play-list__jump-header,
-.paly-list__import-header
+.play-list__import-header
 	font-size: 1.5em
 	span
 		font-size: 0.8em
 		cursor: pointer
 
-.paly-list__import-header
+.play-list__import-header
 	position: relative
 	width: 100%
 	text-align: center
@@ -369,10 +371,10 @@ export default {
 		top: 0
 		right: 0
 
-.paly-list__edit-description
+.play-list__edit-description
 	font-size: 1rem
 
-.paly-list__import
+.play-list__import
 	display: flex
 	flex-direction: column
 	justify-content: center
@@ -395,7 +397,7 @@ export default {
 			color: $color-aluminium
 		// +placeholder
 		// 	color: $color-aluminium
-	.paly-list__import-url
+	.play-list__import-url
 		display: flex
 		flex-direction: column
 	form span

@@ -17,11 +17,12 @@ export default {
 			}),
 			// if media changed, set new media in player
 			this.$store.watch(state => state.currentMedia, () => {
+				const duration = this.currentMedia.durationAlbum || this.currentMedia.durationS;
 				if (this.currentMedia.start) {
-					this.limitEls.start.style.left = `${(this.currentMedia.start / this.currentMedia.durationS) * 100}%`;
+					this.limitEls.start.style.left = `${(this.currentMedia.start / duration) * 100}%`;
 				} else this.limitEls.start.style.left = '0%';
 				if (this.currentMedia.stop) {
-					this.limitEls.stop.style.right = `${100 - ((this.currentMedia.stop / this.currentMedia.durationS) * 100)}%`;
+					this.limitEls.stop.style.right = `${100 - ((this.currentMedia.stop / duration) * 100)}%`;
 				} else this.limitEls.stop.style.right = '0%';
 			}),
 		];
@@ -64,9 +65,10 @@ export default {
 		},
 		skipToTime(event) {
 			if (this.currentMedia.id) {
+				const duration = this.currentMedia.durationAlbum || this.currentMedia.durationS;
 				this.$store.commit(
 					'skipToTime',
-					this.currentMedia.durationS * (event.clientX / event.currentTarget.offsetWidth)
+					duration * (event.clientX / event.currentTarget.offsetWidth)
 				);
 			}
 		},
@@ -100,9 +102,10 @@ export default {
 				|| (elName === 'stop' && this.limitPos.start < pos)
 			) {
 				if (this.currentMedia.id) {
+					const duration = this.currentMedia.durationAlbum || this.currentMedia.durationS;
 					this.setStartStopMarker({
 						type: elName,
-						seconds: Math.round(this.currentMedia.durationS * (pos / 100)),
+						seconds: Math.round(duration * (pos / 100)),
 					});
 				}
 				if (pos > 100) pos = 100;

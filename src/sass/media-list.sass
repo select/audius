@@ -3,23 +3,26 @@ ul.media-list
 	padding: 0
 	margin: 0
 	overflow-x: hidden
+	li.active
+		background: $color-pictonblue
+		color: $color-white
+		a,
+		span:hover
+			color: $color-white
+		&:hover
+			color: inherit
+
+	li:hover
+		background: $color-catskillwhite
+		.media-list__controls
+			display: flex
+			align-items: center
 .media-list__main
 	height: $touch-size-large
 	padding: 0 $grid-space
 	display: flex
 	align-items: center
 	transition: all $transition-time
-	&:hover
-		background: $color-catskillwhite
-		.media-list__controls
-			display: flex
-			align-items: center
-	&.active
-		background: $color-pictonblue
-		color: $color-white
-		a,
-		span:hover
-			color: $color-white
 	&.error
 		.media-list__body
 			text-decoration: line-through

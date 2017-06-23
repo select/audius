@@ -24,7 +24,7 @@ export default {
 		...mapMutations(['pause', 'queue']),
 		play() {
 			if (this.isQueue) this.$store.commit('queuePlayIndex', this.queueIndex);
-			else this.$store.commit('play', { mediaId: this.video.id });
+			else this.$store.commit('play', { currentMedia: this.video });
 		},
 		remove() {
 			if (this.isPlayList) {
@@ -142,7 +142,7 @@ export default {
 				</div>
 
 				<span
-					v-if="video.tracks"
+					v-if="video.tracks && !isQueue"
 					@click="showSongs = !showSongs"
 					v-bind:class="{ active: showSongs }"
 					class="wmp-icon-arrow_drop_down media-list__show-tracks"></span>
@@ -155,7 +155,7 @@ export default {
 			</div>
 		</div>
 		<ul
-			v-if="video.tracks"
+			v-if="video.tracks && !isQueue"
 			v-bind:class="{ active: showSongs }"
 			class="media-list__tracks">
 			<video-item

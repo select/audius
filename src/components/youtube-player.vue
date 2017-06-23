@@ -14,6 +14,7 @@ export default {
 		};
 	},
 	created() {
+		this.lastTrackId = null;
 		this.subscriptions = [
 			this.$store.watch(state => state.currentMedia, () => {
 				// if video changed, set new video in player
@@ -30,6 +31,10 @@ export default {
 					});
 					if (this.currentMedia.start) this.player.seekTo(this.currentMedia.start, true);
 					this.player.playVideo();
+					this.lastTrackId = this.currentMedia.trackId;
+				} else if (this.currentMedia.trackId !== this.lastTrackId) {
+					this.player.seekTo(this.currentMedia.start, true);
+					this.lastTrackId = this.currentMedia.trackId;
 				} else if (this.currentMedia.type === 'youtube') {
 					this.player.playVideo();
 				} else {
