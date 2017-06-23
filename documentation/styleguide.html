@@ -44,6 +44,23 @@ for(var e,l='article aside footer header nav section time picture'.split(' ');e=
   align-items: center;
   text-decoration: none;
 }
+/* line 24, src/sass/_input.sass */
+.audius select,
+.web-app select {
+  background: transparent;
+  border: 1px solid #C8CCD5;
+  height: 5vmin;
+  display: block;
+  width: 100%;
+  font-size: 1em;
+}
+
+/* line 32, src/sass/_input.sass */
+input {
+  height: 5vmin;
+  font-size: 1rem;
+  padding: 0 1vmin;
+}
 
 @font-face {
   font-family: "WampIcons";
@@ -83,6 +100,11 @@ for(var e,l='article aside footer header nav section time picture'.split(' ');e=
 /* line 36, src/sass/_icon.sass */
 .icon--small:before {
   font-size: 1.2em;
+}
+
+/* line 42, src/sass/_icon.sass */
+.wmp-icon-album:before {
+  content: "";
 }
 
 /* line 42, src/sass/_icon.sass */
@@ -221,7 +243,7 @@ for(var e,l='article aside footer header nav section time picture'.split(' ');e=
 }
 
 /* line 42, src/sass/_icon.sass */
-.wmp-icon-local_offer22:before {
+.wmp-icon-local_offer2:before {
   content: "";
 }
 
@@ -1044,12 +1066,12 @@ for(var e,l='article aside footer header nav section time picture'.split(' ');e=
 
 /* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
 .\$icon-uuid:after {
-  content: '"6cbdbf85"';
+  content: '"ff90ac23"';
 }
 
 /* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
 .\$icon-map:after {
-  content: '(sort: "", zoom_out_map: "", label: "", label_outline: "", queue_music: "", mode_edit: "", format_list_bulleted: "", dehaze: "", reorder: "", more_vert: "", unfold_more: "", arrow_drop_down: "", arrow_drop_up: "", previous: "", play: "", pause: "", next: "", shuffle: "", repeat: "", repeat_one: "", volume_off: "", volume_up: "", search: "", close: "", add: "", queue2: "", copy: "", local_offer22: "", link: "", delete: "", cloud_upload: "", youtube: "")';
+  content: '(album: "", sort: "", zoom_out_map: "", label: "", label_outline: "", queue_music: "", mode_edit: "", format_list_bulleted: "", dehaze: "", reorder: "", more_vert: "", unfold_more: "", arrow_drop_down: "", arrow_drop_up: "", previous: "", play: "", pause: "", next: "", shuffle: "", repeat: "", repeat_one: "", volume_off: "", volume_up: "", search: "", close: "", add: "", queue2: "", copy: "", local_offer2: "", link: "", delete: "", cloud_upload: "", youtube: "")';
 }
 
 /* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
@@ -1500,13 +1522,15 @@ $touch-size-huge:      9*$grid-space</code></pre><h4 class="livingstyleguide--su
 <b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-link"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
 <b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-delete"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
 <b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-cloud_upload"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b></code></pre><div class="livingstyleguide--example">
-  <span class="wmp-icon-add"></span>
+  <span class="wmp-icon-album"></span>
+<span class="wmp-icon-add"></span>
 <span class="wmp-icon-queue2"></span>
 <span class="wmp-icon-copy"></span>
 <span class="wmp-icon-youtube"></span>
 <span class="wmp-icon-close"></span>
 </div>
-<pre class="livingstyleguide--code-block"><code class="livingstyleguide--code"><b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-add"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
+<pre class="livingstyleguide--code-block"><code class="livingstyleguide--code"><b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-album"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
+<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-add"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
 <b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-queue2"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
 <b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-copy"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
 <b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-youtube"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>

@@ -10,12 +10,14 @@
   </head>
   <body>
     <article class="markdown-body"><h1 id="audius"><a class="header-link" href="#audius"></a>Audius</h1>
-<p>Web app</p>
-<p>and extension </p>
-<p>are in the making</p>
-<p><a href="https://chrome.google.com/webstore/detail/???">
-<img alt="Try it now" src="https://camo.githubusercontent.com/334b4f665751356b1f4afb758f8ddde55b9c71b8/68747470733a2f2f7261772e6769746875622e636f6d2f476f6f676c654368726f6d652f6368726f6d652d6170702d73616d706c65732f6d61737465722f74727969746e6f77627574746f6e5f736d616c6c2e706e67" title="Click here to install this app from the Chrome Web Store" data-canonical-src="https://raw.github.com/GoogleChrome/chrome-app-samples/master/tryitnowbutton_small.png" style="max-width:100%;">
-</a></p>
+<p>Audius is the ultimate streaming music player.</p>
+<ul class="list">
+<li>Create playlist, no login required, stored in the indexDB in your browser.</li>
+<li>Share your playlists in the web and as files.</li>
+<li>Queue songs</li>
+<li>Supports: YouTube/.mp3/.oga/.wav/.mp4/.webm/.ogg URLs.</li>
+<li>Runs &quot;offline&quot; - a pure HTML5 app that can run without a server.</li>
+</ul>
 <h2 id="keyboard-shortcuts"><a class="header-link" href="#keyboard-shortcuts"></a>Keyboard shortcuts</h2>
 <dl>
     <dt>c</dt>
@@ -24,6 +26,8 @@
     <dd>Next song</dd>
     <dt>s</dt>
     <dd>Shuffle on / off</dd>
+    <dt>m</dt>
+    <dd>Mute / unmute</dd>
     <dt>j</dt>
     <dd>Jump to song</dd>
     <dt>f</dt>
@@ -31,22 +35,54 @@
 </dl>
 
 <h2 id="community"><a class="header-link" href="#community"></a>Community</h2>
-<p>If you have questions or feedback, join the chat on gitter or <a href="https://github.com/select/audius/issues">create an issue</a>.</p>
-<p><a href="https://gitter.im/audius-player/Lobby"><img src="https://badges.gitter.im/gitterHQ/gitter.png" alt="Gitter chat"></a></p>
-<h2 id="install-as-app"><a class="header-link" href="#install-as-app"></a>Install as app</h2>
+<p>If you have questions or feedback, join the chat on gitter or create an issue on github.  </p>
+<ul class="list">
+<li><a href="gitter.im/audius-player/Lobby">Join the chat</a> </li>
+<li><a href="https://github.com/select/audius/issues">Create an issue</a></li>
+</ul>
+<h2 id="change-log"><a class="header-link" href="#change-log"></a>Change log</h2>
+<p><strong>2.0.3</strong>  </p>
+<ul class="list">
+<li>Improved header timeline design.</li>
+<li>Added support for web video .mp4 .webm .ogg URLs.</li>
+<li>Added draggable start stop limits for media (hover over timeline).</li>
+</ul>
+<p><strong>2.0.2</strong>  </p>
+<ul class="list">
+<li>Drag and drop search results into the current playlist.</li>
+<li>Support for .mp3 .oga .wav URLs (paste into search box).</li>
+<li>Experimental support for <a href="https://matrix.org/">Matrix.org</a> radio stations.</li>
+<li>Store and list the 5 last web exports.</li>
+</ul>
+<p><strong>2.0.1</strong>  </p>
+<ul class="list">
+<li>Replaced Redux with Vuex.</li>
+<li>Fixed playlist sorting.</li>
+<li>Fixed Firefox layout problems.</li>
+<li>Fixed, shuffle does not play same songs again.</li>
+<li>New (import)/export using <a href="http://myjson.com/">myjson.com</a>.</li>
+</ul>
+<h2 id="install-audius-as-app"><a class="header-link" href="#install-audius-as-app"></a>Install Audius as app</h2>
 <p><strong>Chrome desktop:</strong></p>
 <ol class="list">
-<li>At the top right, click <em>More</em> (Icon top right).</li>
+<li>At the top right, click <em>More</em>.</li>
 <li>Click <em>More Tools</em>.</li>
-<li>Add the app:
-Windows users: Click <em>Add to taskbar</em>.
-Linux users: Click <em>Add to desktop</em>.
-Chromebook users: Click <em>Add to shelf</em>.</li>
+<li>Add the app:<br>Windows users: Click <em>Add to taskbar</em>.<br>Linux users: Click <em>Add to desktop</em>.<br>Chromebook users: Click <em>Add to shelf</em>.</li>
 </ol>
-<p><strong>Chrome android:</strong>
-Tap the menu button and tap <em>Add to homescreen</em>. The app is not yet optimized for mobile phones, it might work on tables.</p>
-<p><strong>Local HTML5:</strong>
-Since this player is a pure HTML5 app without server side code you can simply download the HTML and JS code and run it from a local file. You can also download the latest version from the source code repository at github (see <a href="#source-code">Source code</a>). Use the web version to always get the latest updates automatically. A word of caution: I recognized that using this app from a local file block$ a lot of videos on YouTube :(</p>
+<p><strong>Chrome android:</strong><br>Tap the menu button and tap <em>Add to homescreen</em>. The app is not yet optimized for mobile phones, it might work on tablets.</p>
+<p><strong>Local HTML5:</strong><br>Since this player is a pure HTML5 app without server side code you can simply download the HTML and JS code and run it from a local file. You can also download the latest version from the <a href="#source-code">source code</a> repository at github.  </p>
+<p>Why use the web version then?</p>
+<ol class="list">
+<li>A click on &quot;reload page&quot; will pull the latests updates.</li>
+<li>I recognized that using this app from a local file blocks a lot of videos on YouTube (e.g. all Vevo videos) :(</li>
+</ol>
+<h2 id="legality,-security,-saftey,-and-privacy"><a class="header-link" href="#legality,-security,-saftey,-and-privacy"></a>Legality, security, saftey, and privacy</h2>
+<ul class="list">
+<li><strong>Legality</strong> This app sould be completely legal since it embedds videos from legal streaming providers (currently only YouTube). I do not provide any links to streams (except for the initial playlist containing only legal links from my friends)</li>
+<li><strong>Security</strong> This app is open source so you can make sure that there is no malicious code included. In addition to that there is no advertisement (... yet :-O) that could spread malicious code. But to be clear streams and streaming APIs are provided by external entites ... read more below about privacy.</li>
+<li><strong>Safety</strong> If you back up your playlist (and this app) to a file it will be save even if this server goes down. Do it now and save your precius playlist!</li>
+<li><strong>Privacy</strong> This app stores all your data in your browser (Menu &gt; More tools &gt; Developer tools &gt; Application &gt; IndexDB), nothing is saved on my server. I currently do not use any analytics tool (though it&#39;s very tempting). The streams however are provided by external entities (Google-YouTube) that will track you. As stated before I currently have no intentions of showing external advertisement. I think if Audius gets popular there are nicer ways to profit from it. ... how about a song of your band on the initial playlist? It&#39;s really cheap (0€) right now :P</li>
+</ul>
 <p>Web apps are true freedom! Support an open and liberal web without geo borders and login screens.</p>
 <h2 id="system-requirements"><a class="header-link" href="#system-requirements"></a>System requirements</h2>
 <ul class="list">
@@ -55,46 +91,37 @@ Since this player is a pure HTML5 app without server side code you can simply do
 <li>FireFox &gt;= 49</li>
 <li>Internet Explorer &amp; Safari ... not supported, might work though</li>
 </ul>
-<h2 id="extension"><a class="header-link" href="#extension"></a>Extension</h2>
-<p>... development started, but now stopped until the main app is ready.</p>
-<p>The Audius extension allows you to open a music player on any website. It will then automatically collect all linked videos and add it to a playlist similar to the one in this app. The videos will still be played in this app due to <a href="#motivation">restrictions of some websites</a>. This setup allows you to create a &quot;Music&quot; chat group on Whatsapp or Slack and have fresh music from your friends every day playing right where you share it. You can then continue and add this music to you regular playlist with a simple click.</p>
+<h2 id="source-code"><a class="header-link" href="#source-code"></a>Source code</h2>
+<p>The source code for this project is located at <a href="https://github.com/select/audius" title="Source code on select@github audius">https://github.com/select/audius</a>.</p>
+<p>If you like this project give it a star ★ and contribute some code!</p>
 <h2 id="migration-from-streamus"><a class="header-link" href="#migration-from-streamus"></a>Migration from Streamus</h2>
 <p>On Linux use <a href="https://github.com/select/audius/blob/master/src/scripts/streamus-export.sh">this script</a> I created to dump the Streamus WebSql to a JSON file. The JSON can be imported using the IMPORT button below the playlist. Use the script like this:</p>
-<pre class="hljs"><code>.<span class="hljs-regexp">/streamus-export.sh ~/</span>.config<span class="hljs-regexp">/google-chrome/</span>Profile\ <span class="hljs-number">1</span><span class="hljs-regexp">/Local\ Storage/</span>chrome-extension_jbnkffmindojffecdhbbmekbmkkfpmjd_0.localstorage</code></pre><p>Be sure to validate the JSON output, the script is just a quick hack and you might have to tweak it.</p>
-<h2 id="other-projects"><a class="header-link" href="#other-projects"></a>Other Projects</h2>
-<p>Here are some other fun projects I created this year.</p>
-<ul class="list">
-<li><a href="https://github.com/select/boomnext/">Boom, next video!</a></li>
-<li><a href="http://emoji-text.com/">ッ Emoji-text</a></li>
-<li><a href="https://www.fantasyplanet.de/">FantasyPlanet</a></li>
-<li>...</li>
-</ul>
+<pre>./streamus-export.sh ~/.config/google-chrome/Profile\ 1/Local\ Storage/chrome-extension_jbnkffmindojffecdhbbmekbmkkfpmjd_0.localstorage
+</pre>
+
+<p>Be sure to validate the JSON output, the script is just a quick hack and you might have to tweak it.</p>
 <h2 id="motivation"><a class="header-link" href="#motivation"></a>Motivation</h2>
 <p>You are writing another music player, seriously? That&#39;s what I thought a lot when creating this, but you know ...</p>
-<p>The extension should have been the actual player since the original idea was to create a Chrome/FireFox extension with a media player for <em>web.whatsapp</em>. This however failed since the conten security policy does not allow the embdding of youtube videos and somehow it is not possible to overwrite the header fields of web.whatsapp. That meant no player, no music. The only way around this issue I could come up with is to create a background process that the extension cummunicates with and that sends messages to a main player web app. This is currently still untested but that is the plan.</p>
-<h2 id="contributing"><a class="header-link" href="#contributing"></a>Contributing</h2>
-<ol class="list">
-<li>Fork it!</li>
-<li>Create your feature branch: <code>git checkout -b my-new-feature</code></li>
-<li>Commit your changes: <code>git commit -am &#39;Add some feature&#39;</code></li>
-<li>Push to the branch: <code>git push origin my-new-feature</code></li>
-<li>Submit a pull request :D</li>
-</ol>
+<p>The extension (inactive for now) should have been the actual player since the original idea was to create a Chrome/FireFox extension with a media player for <em>web.whatsapp.com</em>. After struggeling alot with <a href="https://stackoverflow.com/questions/40309872/youtube-video-in-chrome-extension-content-script">getting the YouTube player to run in an extension content script</a> the plan completely failed when the <a href="https://content-security-policy.com/">content security policy</a> did not allow the embdding of youtube videos. Even though it should be possible to overwrite the header fields for the content security policy of web.whatsapp.com I could not get it to work (it worked on every page <a href="https://stackoverflow.com/questions/40322156/chrome-extension-can-not-get-header-with-onheadersreceived">except web.whatsapp.com</a>). That meant no YouTube player, no music. The only way out of this mess was to create an extension with a a content script (grabs links) that communicates with a background script (relays found links) that in turn communicates with the a main player (this web app, that plays the songs). But this also meant that I had to write an extension and a web app. Well what the heck, I was still using Streamus but over the time less and less worked so I needed a replacement anyway. I tried <a href="https://www.tomahawk-player.org/">tomahawk</a> and it seemed quite promising, but I just could not get it to work with dragged in or paste in <a href="https://github.com/tomahawk-player/tomahawk-resolvers/issues/126">youtube links</a>. Also the search was quite slow and did not show many results. This kind of left me no other option but to write Audius.</p>
+<p>Here are some alternatives to Audius that are also interesting:</p>
+<ul class="list">
+<li><a href="http://streamsquid.com/">StreamSquid</a></li>
+<li><a href="https://mycloudplayers.com">My Cloud Player</a></li>
+</ul>
+<p>Just look at them and appreciate the simplicity of the Audius interface ... wait what don&#39;t leave X-D</p>
 <h2 id="credits"><a class="header-link" href="#credits"></a>Credits</h2>
-<p>This work is inspired by the incredible <a href="https://www.reddit.com/r/streamus/">Streamus</a> app.
-It was created with:</p>
+<p>This work is inspired by the incredible <a href="https://www.reddit.com/r/streamus/">Streamus</a> app.  </p>
+<p>Here are the tools I used to create Audius.</p>
 <ul class="list">
 <li>VueJs</li>
-<li>Redux</li>
+<li><span style="text-decoration:line-through;">Redux</span> Vuex</li>
 <li>Icomoon</li>
 <li>Google material icons</li>
-<li>Webpack</li>
+<li>Webpack + Babel + Plugins</li>
 <li>LivingStyleGuide</li>
+<li><a href="https://rubaxa.github.io/Sortable/">SortableJS</a></li>
+<li><a href="http://myjson.com/">Myjson.com</a></li>
 </ul>
-<h2 id="history"><a class="header-link" href="#history"></a>History</h2>
-<p>... still working on version 0.0.1</p>
-<h2 id="license"><a class="header-link" href="#license"></a>License</h2>
-<p>MIT</p>
     </article>
   </body>
 </html>
