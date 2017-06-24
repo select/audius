@@ -570,6 +570,7 @@ export const store = new Vuex.Store({
 		deletePlayList(state, playListName) {
 			delete state.tags[playListName];
 			state.tagsOrdered = state.tagsOrdered.filter(name => name !== playListName);
+			if (state.currentPlayList === playListName) state.currentPlayList = '';
 		},
 		toggleEditPlayList(state, { toggleState, playListName }) {
 			state.editPlayList = toggleState !== undefined ? toggleState : !state.editPlayList;
