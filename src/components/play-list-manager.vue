@@ -25,7 +25,7 @@ export default {
 				this.moveTagsOrderd(
 					Array
 						.from(listEl.querySelectorAll('li:not(.play-list-manager__input)'))
-						.map(el => el.dataset.tag),
+						.map(el => el.dataset.tag)
 				);
 			},
 		});

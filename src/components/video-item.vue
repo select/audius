@@ -110,7 +110,7 @@ export default {
 			<div class="media-list__thumbnail" v-bind:style="{ backgroundImage: _backgroundImage() }"></div>
 			<div
 				class="media-list__body"
-				v-on:click="addTags">
+				@click="addTags">
 				<div class="media-list__name">{{video.title}}</div>
 				<div class="media-list__duration" v-if="video.duration">
 					<span v-if="video.duration.h">{{video.duration.h}}:</span>{{video.duration.m}}:{{video.duration.s}}
@@ -118,8 +118,8 @@ export default {
 			</div>
 			<div class="media-list__controls">
 
-				<span class="wmp-icon-pause" v-if="isPlaying" v-on:click="pause" title="Pause"></span>
-				<span class="wmp-icon-play" v-else v-on:click="play" title="Play"></span>
+				<span class="wmp-icon-pause" v-if="isPlaying" @click="pause" title="Pause"></span>
+				<span class="wmp-icon-play" v-else @click="play" title="Play"></span>
 
 				<span
 					v-if="video.tracks && !isQueue"
@@ -130,7 +130,7 @@ export default {
 
 				<span
 					class="wmp-icon-queue2 icon--small"
-					v-on:click="queue(video)"
+					@click="queue(video)"
 					v-if="!isQueue"
 					title="Add to queue"></span>
 
@@ -141,7 +141,7 @@ export default {
 
 				<span
 					class="copy wmp-icon-copy icon--small"
-					v-on:click="copyToClip"
+					@click="copyToClip"
 					v-bind:class="{ active: copyActive }"
 					title="Copy name and URL"></span>
 
@@ -158,7 +158,7 @@ export default {
 						<span
 							class="wmp-icon-close"
 							v-if="!isExtension && !isSearchResult"
-							v-on:click="remove"
+							@click="remove"
 							title="Remove"></span>
 					</div>
 				</div>
@@ -167,7 +167,7 @@ export default {
 				<span
 					class="wmp-icon-add"
 					v-if="isExtension"
-					v-on:click="addToPlaylist"
+					@click="addToPlaylist"
 					title="Add to playlist"></span>
 
 				<span
