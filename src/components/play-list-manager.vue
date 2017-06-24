@@ -74,10 +74,12 @@ export default {
 				</div>
 			</li>
 			<li class="play-list-manager__input">
-				<input
-					v-on:keyup.enter="addTags"
-					type="text"
-					placeholder="... new playlist">
+				<div class="play-list-manager__tag-body">
+					<input
+						v-on:keyup.enter="addTags"
+						type="text"
+						placeholder="... new playlist">
+				</div>
 				<span class="wmp-icon-add" @click="addTags"></span>
 			</li>
 		</ul>
@@ -165,7 +167,6 @@ export default {
 		border: 0
 		border-radius: $border-radius
 		height: 100%
-		width: 100%
 		padding-left: #{2*$grid-space}
 		font-size: 1em
 		&::-webkit-input-placeholder
