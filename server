@@ -60,6 +60,7 @@ new WebpackDevServer(webpack(config), {
 	stats: {
 		colors: true,
 		chunks: false,
+		modules: false,
 	},
 	hot: true,
 	inline: true,
