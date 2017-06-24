@@ -15,6 +15,7 @@ export default {
 		const mediaListEl = document.querySelector('.search-results');
 		Sortable.create(mediaListEl, {
 			name: 'searchResults',
+			handle: '.media-list__thumbnail',
 			group: 'lists',
 			pull: 'clone',
 			sort: false,
