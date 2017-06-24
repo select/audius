@@ -7,7 +7,7 @@ export default {
 		...mapMutations(['selectPlayList', 'deletePlayList', 'renamePlayList', 'moveTagsOrderd']),
 		addTags() {
 			const el = document.querySelector('.play-list-manager__input input');
-			this.$store.commit('addTags', { tagName: el.value });
+			this.$store.commit('addTags', { tag: el.value });
 			el.value = '';
 		},
 	},
