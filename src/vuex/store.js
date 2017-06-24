@@ -47,7 +47,7 @@ const presistMutation = {
 	removeTags: ['tags'],
 	selectPlayList: ['currentPlayList'],
 	renamePlayList: ['tagsOrdered', 'tags', 'currentPlayList'],
-	deletePlayList: ['tagsOrdered', 'tags'],
+	deletePlayList: ['tagsOrdered', 'tags', 'currentPlayList'],
 	toggleShuffle: ['shuffle'],
 	setExportURL: ['exportURLs'],
 	movePlayListMedia: ['playList', 'tags'],
