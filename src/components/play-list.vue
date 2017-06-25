@@ -41,6 +41,9 @@ export default {
 		const mediaListEl = document.querySelector('.play-list .media-list');
 		Sortable.create(mediaListEl, {
 			group: 'lists',
+			name: 'playList',
+			pull: 'clone',
+			revertClone: true,
 			put: ['searchResults'],
 			animation: 250,
 			scrollSpeed: 20,
@@ -49,13 +52,13 @@ export default {
 			onUpdate: () => {
 				if (!this.showJump) {
 					this.movePlayListMedia(
-						Array.from(mediaListEl.childNodes).map(el => el.dataset.id),
+						Array.from(mediaListEl.childNodes).map(el => el.dataset.id)
 					);
 				}
 			},
 			onAdd: (event) => { // Element is dropped into the list from another list
 				if (!this.showJump) {
-					const itemEl = event.item;  // dragged HTMLElement
+					const itemEl = event.item; // dragged HTMLElement
 					const itemId = itemEl.dataset.id;
 					const playList = Array.from(mediaListEl.childNodes).map(el => el.dataset.id);
 					this.dropSearchResult({ itemId, playList });

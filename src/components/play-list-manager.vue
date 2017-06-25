@@ -1,10 +1,14 @@
 <script>
 import { mapGetters, mapMutations, mapState } from 'vuex';
 import Sortable from 'sortablejs';
+import PlayListTag from './play-list-tag.vue';
 
 export default {
+	components: {
+		PlayListTag,
+	},
 	methods: {
-		...mapMutations(['selectPlayList', 'deletePlayList', 'renamePlayList', 'moveTagsOrderd']),
+		...mapMutations(['moveTagsOrderd', 'dropMoveItem', 'selectPlayList']),
 		addTags() {
 			const el = document.querySelector('.play-list-manager__input input');
 			this.$store.commit('addTags', { tag: el.value });
@@ -12,7 +16,7 @@ export default {
 		},
 	},
 	computed: {
-		...mapGetters(['playListLength', 'currentPlayList']),
+		...mapGetters(['playListLength']),
 		...mapState(['tags', 'tagsOrdered', 'currentPlayList']),
 	},
 	mounted() {
@@ -29,6 +33,18 @@ export default {
 				);
 			},
 		});
+		Sortable.create(this.$el.querySelector('.play-list-manager__default-playlist .play-list-manager__tag-body'), {
+			group: 'lists',
+			put: ['playList', 'searchResults'],
+			animation: 250,
+			sort: false,
+			onAdd: (event) => { // Element is dropped into the list from another lists
+				const itemEl = event.item; // dragged HTMLElement
+				const itemId = itemEl.dataset.id;
+				this.dropMoveItem({ itemId, from: this.currentPlayList, to: '' });
+				itemEl.parentNode.removeChild(itemEl);
+			},
+		});
 	},
 };
 </script>
@@ -38,6 +54,7 @@ export default {
 		<ul>
 			<li
 				v-bind:class="{ active: !currentPlayList }"
+				class="play-list-manager__default-playlist"
 				@click="selectPlayList()">
 				<div class="play-list-manager__drag-handle play-list-manager--default"></div>
 				<div class="play-list-manager__tag-body">
@@ -48,31 +65,10 @@ export default {
 			<li class="spacer"></li>
 		</ul>
 		<ul class="play-list-manager__tags">
-			<li
+			<play-list-tag
 				v-for="tagName in tagsOrdered"
-				v-bind:data-tag="tagName"
-				v-bind:class="{ active: currentPlayList == tagName }"
-				@click="selectPlayList(tagName)">
-				<div class="play-list-manager__drag-handle"></div>
-				<div class="play-list-manager__tag-body">
-					<div v-show="currentPlayList != tagName">{{tagName}}</div>
-					<div v-show="currentPlayList == tagName">
-						<input
-							class="play-list-manager__tag-name-input"
-							type="text"
-							v-bind:value="tagName"
-							v-on:input="renamePlayList({oldName: tagName, newName: $event.target.value})"
-							placeholder="... playlist name">
-					</div>
-					<div>{{tags[tagName].length}} Songs</div>
-				</div>
-				<div class="play-list-manager__menu">
-					<span
-						class="wmp-icon-close"
-						title="Delte playlist"
-						@click.stop="deletePlayList(tagName)"></span>
-				</div>
-			</li>
+				:key="tagName"
+				v-bind:tagName="tagName"></play-list-tag>
 			<li class="play-list-manager__input">
 				<div class="play-list-manager__tag-body">
 					<input
@@ -132,11 +128,6 @@ export default {
 			background: transparent
 			height: $grid-space
 
-.play-list-manager__tag-body
-	flex: 1
-	text-overflow: ellipsis
-	white-space: nowrap
-	overflow: hidden
 
 .play-list-manager__drag-handle
 	width: #{2*$grid-space}
@@ -146,17 +137,6 @@ export default {
 
 .play-list-manager__menu
 	display: none
-
-.play-list-manager__tag-body
-	display: flex
-	flex-direction: column
-	div:last-child
-		font-size: 0.7em
-	input
-		font-size: 1em
-		border: 0
-		color: $color-palesky
-		padding: 0
 
 .play-list-manager__input
 	padding: 0
@@ -177,9 +157,6 @@ export default {
 			color: $color-palesky
 		// +placeholder
 		// 	color: $color-palesky
-
-.play-list-manager__tag-name-input
-	height: $touch-size-extratiny
 </style>
 
 

@@ -41,6 +41,7 @@ Vue.use(Vuex);
 const presistMutation = {
 	addSearchResult: ['entities', 'playList', 'tags'],
 	dropSearchResult: ['entities', 'playList', 'tags'],
+	dropMoveItem: ['playList', 'tags'],
 	importPlayList: ['entities', 'playList', 'tags'],
 	toggleLeftMenu: ['showLeftMenu'],
 	addTags: ['tagsOrdered', 'tags'],
@@ -474,6 +475,17 @@ export const store = new Vuex.Store({
 				}
 			} else if (!state.playList.includes(id)) {
 				state.playList = playList;
+			}
+		},
+		dropMoveItem(state, { itemId, from, to }) {
+			if (state.leftMenuTab !== 'radio') {
+				if (to) {
+					if (!state.tags[to].includes(itemId)) {
+						state.tags[to].unshift(itemId);
+					}
+				} else if (!state.playList.includes(itemId)) {
+					state.playList.unshift(itemId);
+				}
 			}
 		},
 		pause(state) {

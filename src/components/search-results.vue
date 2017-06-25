@@ -18,6 +18,7 @@ export default {
 			handle: '.media-list__thumbnail',
 			group: 'lists',
 			pull: 'clone',
+			revertClone: true,
 			sort: false,
 		});
 	},
