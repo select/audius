@@ -5,7 +5,7 @@
   "description": "Play media files posted in conversations",
   "main": "index.js",
   "scripts": {
-    "start": "./server",
+    "start": "node ./server",
     "test": "eslint ./src/**/*.js",
     "build:prod:app": "./node_modules/.bin/webpack --config='./config/webpack.production.app.js' --progress --display-error-details",
     "build:prod:extension": "./node_modules/.bin/webpack --config='./config/webpack.production.extension.js' --progress --display-error-details",

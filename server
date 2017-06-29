@@ -1,4 +1,4 @@
-#!/usr/bin/env nodejs
+#!/usr/bin/env node
 
 const WebpackDevServer = require('webpack-dev-server');
 const webpack = require('webpack');
@@ -62,6 +62,10 @@ new WebpackDevServer(webpack(config), {
 		chunks: false,
 		modules: false,
 	},
+	watchOptions: {
+    aggregateTimeout: 300,
+    poll: 1000
+  },
 	hot: true,
 	inline: true,
 }).listen(8080, 'localhost', function(err, res) {
