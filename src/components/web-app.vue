@@ -4,6 +4,8 @@ import MainRight from './main-right.vue';
 import PlayList from './play-list.vue';
 import LeftMenu from './left-menu.vue';
 import ImportModal from './import-modal.vue';
+import Messages from './messages.vue';
+import WebAppMobile from './web-app-mobile.vue';
 
 export default {
 	components: {
@@ -12,19 +14,50 @@ export default {
 		LeftMenu,
 		PlayList,
 		ImportModal,
+		Messages,
+		WebAppMobile,
+	},
+	data() {
+		return {
+			isMobileDevice: false,
+		};
+	},
+	methods: {
+		setIsMobile() {
+			const w = window;
+			const d = document;
+			const e = d.documentElement;
+			const g = d.getElementsByTagName('body')[0];
+			const x = w.innerWidth || e.clientWidth || g.clientWidth;
+			const y = w.innerHeight || e.clientHeight || g.clientHeight;
+			// console.log(x + ' × ' + y);
+			this.isMobileDevice = x < 500;
+		},
+	},
+	created() {
+		this.setIsMobile();
+		window.addEventListener('resize', () => {
+			this.setIsMobile();
+		}, true);
 	},
 };
 </script>
 
 <template>
 <div class="web-app">
-	<web-header></web-header>
-	<main class="box">
-		<left-menu></left-menu>
-		<play-list></play-list>
-		<main-right></main-right>
-	</main>
+	<div v-if="!isMobileDevice" class="web-app__desktop">
+		<web-header></web-header>
+		<main
+			class="box">
+			<left-menu></left-menu>
+			<play-list></play-list>
+			<main-right></main-right>
+		</main>
+	</div>
+
+	<web-app-mobile v-if="isMobileDevice"></web-app-mobile>
 	<import-modal></import-modal>
+	<messages></messages>
 </div>
 </template>
 
@@ -44,6 +77,7 @@ html,
 	margin: 0
 	padding: 0
 	height: 100%
+
 body
 	font-family: 'Nobile', sans-serif
 	font-size: 2.3vmin
@@ -69,6 +103,10 @@ body
 	::-webkit-scrollbar-thumb
 		background: $color-aluminium-dark
 
+@media screen and (max-width: 500px)
+	body
+		font-size: 4.7vmin
+
 .box-1-1
 	display: flex
 	>div
@@ -89,7 +127,11 @@ body
 	overflow: hidden
 	display: flex
 	flex-direction: column
-
+.web-app__desktop
+	flex: 1
+	overflow: hidden
+	display: flex
+	flex-direction: column
 main.box
 	flex: 1
 	display: flex

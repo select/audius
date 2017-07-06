@@ -98,6 +98,11 @@ export default {
 	</p> -->
 	<h2>Change log</h2>
 	<p>
+		<b>2.0.4</b><br>
+		<ul>
+			<li> Drag and drop to copy songs between playlists.</li>
+			<li> Added repeat for one song, all songs (only if shuffle is not active).</li>
+		</ul>
 		<b>2.0.3</b><br>
 		<ul>
 			<li> Improved header timeline design.</li>
@@ -155,17 +160,17 @@ export default {
 	<h2>Legality, security, saftey, and privacy</h2>
 	<p>
 	<ul>
-		<li><b>Legality</b> This app sould be completely legal since it embedds videos from legal streaming providers (currently only YouTube).
-			I do not provide any links to streams (except for the initial playlist containing only legal links from my friends)</li>
+		<li><b>Legality</b> This app sould be completely legal since it streams audio and videos from other providers.
+			I do not provide any links to streams (except for the initial playlist containing only legal links from my friends). Please mind what you are sharing.</li>
 		<li><b>Security</b> This app is open source so you can make sure that there is no malicious code included.
-			In addition to that there is no advertisement (... yet :-O) that could spread malicious code.
+			In addition to that there is no advertisement that could spread malicious code.
 			But to be clear streams and streaming APIs are provided by external entites ... read more below about privacy.</li>
-		<li><b>Safety</b> If you back up your playlist (and this app) to a file it will be save even if this server goes down. Do it now and save your precius playlist!</li>
+		<li><b>Safety</b> If you back up your playlist (and this app, it runs offline) to a file it will continue working even if this server goes down. Do back up your precius playlists now!</li>
 		<li><b>Privacy</b> This app stores all your data in your browser (Menu > More tools > Developer tools > Application > IndexDB), nothing is saved on my server.
 			I currently do not use any analytics tool (though it's very tempting).
 			The streams however are provided by external entities (Google-YouTube) that will track you.
 			As stated before I currently have no intentions of showing external advertisement.
-			I think if Audius gets popular there are nicer ways to profit from it. ... how about a song of your band on the initial playlist? It's really cheap (0€) right now :P</li>
+			I think if Audius gets popular there are nicer ways to profit from it.</li>
 	</ul>
 	</p>
 	<p>
@@ -210,7 +215,7 @@ export default {
 		You are writing another music player, seriously? That's what I thought a lot when creating this, but you know ...
 	</p>
 	<p>
-		The extension should have been the actual player since the original idea was to create a Chrome/FireFox extension with a media player for <i>web.whatsapp.com</i>. After struggeling alot with <a href="https://stackoverflow.com/questions/40309872/youtube-video-in-chrome-extension-content-script" target="_blank">getting the YouTube player to run in an extension content script</a> the plan completely failed when the <a href="https://content-security-policy.com/" target="_blank">content security policy</a> did not allow the embdding of youtube videos. Even though it should be possible to overwrite the header fields for the content security policy of web.whatsapp.com I could not get it to work (it worked on every page <a href="https://stackoverflow.com/questions/40322156/chrome-extension-can-not-get-header-with-onheadersreceived" target="_blank">except web.whatsapp.com</a>). That meant no YouTube player, no music. The only way out of this mess was to create an extension with a a content script (grabs links) that communicates with a background script (relays found links) that in turn communicates with the a main player (this web app, that plays the songs). But this also meant that I had to write an extension and a web app. Well what the heck, I was still using Streamus but over the time less and less worked so I needed a replacement anyway. I tried <a href="https://www.tomahawk-player.org/" target="_blank">tomahawk</a> and it seemed quite promising, but I just could not get it to work with dragged in or paste in <a href="https://github.com/tomahawk-player/tomahawk-resolvers/issues/126">youtube links</a>. Also the search was quite slow and did not show many results. This kind of left me no other option but to write Audius.
+		The extension (currently discontinued) should have been the actual player since the original idea was to create a Chrome/FireFox extension with a media player for <i>web.whatsapp.com</i>. After struggeling alot with <a href="https://stackoverflow.com/questions/40309872/youtube-video-in-chrome-extension-content-script" target="_blank">getting the YouTube player to run in an extension content script</a> the plan completely failed when the <a href="https://content-security-policy.com/" target="_blank">content security policy</a> did not allow the embdding of youtube videos. Even though it should be possible to overwrite the header fields for the content security policy of web.whatsapp.com I could not get it to work (it worked on every page <a href="https://stackoverflow.com/questions/40322156/chrome-extension-can-not-get-header-with-onheadersreceived" target="_blank">except web.whatsapp.com</a>). That meant no YouTube player, no music. The only way out of this mess was to create an extension with a a content script (grabs links) that communicates with a background script (relays found links) that in turn communicates with the a main player (this web app, that plays the songs). But this also meant that I had to write an extension and a web app. Well what the heck, I was still using Streamus but over the time less and less worked so I needed a replacement anyway. I tried <a href="https://www.tomahawk-player.org/" target="_blank">tomahawk</a> and it seemed quite promising, but I just could not get it to work with dragged in or paste in <a href="https://github.com/tomahawk-player/tomahawk-resolvers/issues/126">youtube links</a>. Also the search was quite slow and did not show many results. This kind of left me no other option but to write Audius.
 	</p>
 	<p>
 		Here are some alternatives to Audius that are also interesting:

@@ -3,15 +3,17 @@ import { mapMutations, mapState, mapActions } from 'vuex';
 
 import PlayListManager from './play-list-manager.vue';
 import MatrixRadioManager from './matrix-radio-manager.vue';
+import WebScraperManager from './web-scraper-manager.vue';
 
 export default {
 	components: {
 		PlayListManager,
 		MatrixRadioManager,
+		WebScraperManager,
 	},
 	methods: {
 		...mapMutations(['toggleLeftMenu', 'setLeftMenuTab']),
-		...mapActions(['initMatrix']),
+		...mapActions(['initMatrix', 'initWebScraper']),
 	},
 	computed: {
 		...mapState(['showLeftMenu', 'leftMenuTab', 'matrixEnabled']),
@@ -34,10 +36,14 @@ export default {
 		<li
 			v-on:click="setLeftMenuTab('radio');initMatrix()"
 			v-bind:class="{ active: leftMenuTab == 'radio' }">Radio</li>
+		<li
+			v-on:click="setLeftMenuTab('tv');initWebScraper()"
+			v-bind:class="{ active: leftMenuTab == 'tv' }">TV</li>
 	</ul>
 	<div class="left-menu__wrapper">
 		<play-list-manager v-show="leftMenuTab == 'playList'"></play-list-manager>
 		<matrix-radio-manager v-show="leftMenuTab == 'radio'"></matrix-radio-manager>
+		<web-scraper-manager v-show="leftMenuTab == 'tv'"></web-scraper-manager>
 	</div>
 </div>
 </template>

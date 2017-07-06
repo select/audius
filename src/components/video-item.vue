@@ -11,9 +11,8 @@ export default {
 		isExtension: Boolean,
 		isSelected: Boolean,
 		isPlayList: Boolean,
-		isInPlayList: Boolean,
-		isEditPlayList: Boolean,
 		isSearchResult: Boolean,
+		isOld: Boolean,
 	},
 	data() {
 		return {
@@ -22,7 +21,7 @@ export default {
 		};
 	},
 	methods: {
-		...mapMutations(['pause', 'queue']),
+		...mapMutations(['pause', 'queue', 'error']),
 		play() {
 			if (this.isQueue) this.$store.commit('queuePlayIndex', this.queueIndex);
 			else this.$store.commit('play', { currentMedia: this.video });
@@ -71,23 +70,16 @@ export default {
 					this.copyActive = false;
 				}, 800);
 			} catch (err) {
-				console.warn('execCommand Error', err);
+				this.error(`Error copying to clipboard ${err}`);
 			}
 			window.getSelection().removeAllRanges();
 			tmpEl.parentNode.removeChild(tmpEl);
 		},
-		addTags() {
-			if (this.isEditPlayList) {
-				if (!this.isInPlayList) {
-					this.$store.commit('addTags', { mediaIds: [this.video.id] });
-				} else {
-					this.$store.commit('removeTags', { mediaIds: [this.video.id] });
-				}
-			}
-		},
 		_backgroundImage() {
-			if (this.video.type === 'youtube') {
+			if ((this.video.type === 'youtube') && !this.video.hasError) {
 				return `url(https://i.ytimg.com/vi/${this.video.youtubeId || this.video.id}/default.jpg)`;
+			} else if (this.video.thumbUrl) {
+				return `url(${this.video.thumbUrl})`;
 			}
 			return '';
 		},
@@ -101,16 +93,16 @@ export default {
 			active: isPlaying,
 			error: video.hasError,
 			selected: isSelected,
-			'in-playlist': isInPlayList,
+			old: isOld,
 			}"
+		v-bind:title="isOld ? '🕑 hide in < 5min' : ''"
 		v-on:dblclick="play"
 		v-bind:data-id="video.id">
 		<div class="media-list__main">
 			<span class="wmp-icon-album media-list__album-hint" v-if="video.tracks"></span>
 			<div class="media-list__thumbnail" v-bind:style="{ backgroundImage: _backgroundImage() }"></div>
 			<div
-				class="media-list__body"
-				@click="addTags">
+				class="media-list__body">
 				<div class="media-list__name">{{video.title}}</div>
 				<div class="media-list__duration" v-if="video.duration">
 					<span v-if="video.duration.h">{{video.duration.h}}:</span>{{video.duration.m}}:{{video.duration.s}}

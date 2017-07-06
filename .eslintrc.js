@@ -23,6 +23,7 @@ module.exports = {
 		'arrow-parens': 'off', // FIXME jsPrettier must fix this and then we can remove the rule again
 		indent: [2, 'tab', { SwitchCase: 1 }], // indent with tabs
 		'no-tabs': 'off',
+		'no-plusplus': 'off',
 		'no-underscore-dangle': 'off',
 		'comma-dangle': [
 			'error',

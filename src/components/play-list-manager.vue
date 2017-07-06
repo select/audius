@@ -1,50 +1,36 @@
 <script>
 import { mapGetters, mapMutations, mapState } from 'vuex';
-import Sortable from 'sortablejs';
+import draggable from 'vuedraggable';
 import PlayListTag from './play-list-tag.vue';
 
 export default {
 	components: {
 		PlayListTag,
+		draggable,
 	},
 	methods: {
-		...mapMutations(['moveTagsOrderd', 'dropMoveItem', 'selectPlayList']),
+		...mapMutations(['moveTagsOrderd', 'dropMoveItem', 'selectMediaSource']),
 		addTags() {
 			const el = document.querySelector('.play-list-manager__input input');
 			this.$store.commit('addTags', { tag: el.value });
 			el.value = '';
 		},
+		dropAdd(event) { // Element is dropped into the list from another list
+			const itemId = event.item.dataset.id;
+			this.dropMoveItem({ itemId, from: this.currentPlayList, to: '' });
+		},
 	},
 	computed: {
 		...mapGetters(['playListLength']),
 		...mapState(['tags', 'tagsOrdered', 'currentPlayList']),
-	},
-	mounted() {
-		const listEl = document.querySelector('.play-list-manager__tags');
-		Sortable.create(listEl, {
-			animation: 250,
-			scrollSpeed: 20,
-			handle: '.play-list-manager__drag-handle',
-			onUpdate: () => { // Element dragging ended
-				this.moveTagsOrderd(
-					Array
-						.from(listEl.querySelectorAll('li:not(.play-list-manager__input)'))
-						.map(el => el.dataset.tag)
-				);
+		_tagsOrdered: {
+			get() {
+				return this.tagsOrdered;
 			},
-		});
-		Sortable.create(this.$el.querySelector('.play-list-manager__default-playlist .play-list-manager__tag-body'), {
-			group: 'lists',
-			put: ['playList', 'searchResults'],
-			animation: 250,
-			sort: false,
-			onAdd: (event) => { // Element is dropped into the list from another lists
-				const itemEl = event.item; // dragged HTMLElement
-				const itemId = itemEl.dataset.id;
-				this.dropMoveItem({ itemId, from: this.currentPlayList, to: '' });
-				itemEl.parentNode.removeChild(itemEl);
+			set(value) {
+				this.moveTagsOrderd(value);
 			},
-		});
+		},
 	},
 };
 </script>
@@ -53,22 +39,44 @@ export default {
 	<div class="play-list-manager__wrapper">
 		<ul>
 			<li
-				v-bind:class="{ active: !currentPlayList }"
+				v-bind:class="{ active: currentPlayList !== null && !currentPlayList }"
 				class="play-list-manager__default-playlist"
-				@click="selectPlayList()">
+				@click="selectMediaSource({type: 'playList', id: ''})">
 				<div class="play-list-manager__drag-handle play-list-manager--default"></div>
-				<div class="play-list-manager__tag-body">
-					<div>Default</div>
-					<div>{{playListLength}} Songs</div>
-				</div>
+				<draggable
+					class="play-list-manager__tag-drop-zone"
+					@add="dropAdd"
+					:options="{
+						sort: false,
+						group: {
+							name: 'lists',
+						}
+					}">
+					<div class="play-list-manager__tag-body">
+						<div>Default</div>
+						<div>{{playListLength}} Songs</div>
+					</div>
+				</draggable>
 			</li>
 			<li class="spacer"></li>
 		</ul>
-		<ul class="play-list-manager__tags">
+
+
+		<draggable
+			class="play-list-manager__tags"
+			v-model="_tagsOrdered"
+			element="ul"
+			:options="{
+				animation: 150,
+				scrollSpeed: 20,
+				handle: '.play-list-manager__drag-handle',
+			}">
 			<play-list-tag
-				v-for="tagName in tagsOrdered"
-				:key="tagName"
-				v-bind:tagName="tagName"></play-list-tag>
+				v-for="(tagName, index) in tagsOrdered"
+				:key="index"
+				v-bind:index="index"></play-list-tag>
+		</draggable>
+		<ul class="play-list-manager__tags">
 			<li class="play-list-manager__input">
 				<div class="play-list-manager__tag-body">
 					<input

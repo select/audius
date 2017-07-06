@@ -63,12 +63,12 @@ new WebpackDevServer(webpack(config), {
 		modules: false,
 	},
 	watchOptions: {
-    aggregateTimeout: 300,
-    poll: 1000
-  },
+		aggregateTimeout: 300,
+		poll: 1000,
+	},
 	hot: true,
 	inline: true,
-}).listen(8080, 'localhost', function(err, res) {
+}).listen(8080,  'localhost', function(err, res) {
 	if (err) console.warn(err);
 	console.log('Listening on localhost:8080');
 });

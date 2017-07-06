@@ -1,5 +1,5 @@
 <script>
-import { mapState, mapMutations } from 'vuex';
+import { mapState, mapMutations, mapActions } from 'vuex';
 
 window.AudioContext = window.AudioContext || window.webkitAudioContext;
 
@@ -88,7 +88,8 @@ export default {
 	},
 	computed: mapState(['currentMedia', 'mute', 'skipToTime', 'isPlaying']),
 	methods: {
-		...mapMutations(['play', 'pause', 'setCurrentTime', 'nextVideo', 'videoError']),
+		...mapMutations(['play', 'pause', 'setCurrentTime', 'videoError']),
+		...mapActions(['nextVideo']),
 		_startInterval() {
 			clearInterval(this.timeInterval);
 			this.timeInterval = setInterval(() => {
@@ -120,6 +121,7 @@ export default {
 
 .video-player
 	width: 100%
+	height: 100%
 	flex: 1
 	background: $color-black
 

@@ -1,0 +1,60 @@
+import { youtubeApiKey } from '../utils/config';
+import { s2time } from '../utils';
+
+import { getCurrentPlayListEntities, getCurrentName } from './getCurrentPlayList';
+
+export const getters = {
+	playList(state) {
+		if (state.currentPlayList) return state.tags[state.currentPlayList];
+		return state.playList;
+	},
+	playListLength(state) {
+		return state.playList.length;
+	},
+	currentExportData(state, _getters) {
+		return {
+			AudiusDump: true,
+			playList: _getters.filteredPlayList.map(({ id }) => id),
+			entities: _getters.filteredPlayListEntities,
+		};
+	},
+	filteredPlayList(state) {
+		const playListEntities = getCurrentPlayListEntities(state);
+		if (!state.filterQuery) return playListEntities;
+		return playListEntities.filter(media =>
+			media.title.toLowerCase().includes(state.filterQuery)
+		);
+	},
+	filteredPlayListLength(state, _getters) {
+		if (!_getters.filteredPlayList) return 0;
+		return _getters.filteredPlayList.length;
+	},
+	// currentEntities
+	filteredPlayListEntities(state) {
+		return getCurrentPlayListEntities(state)
+			.reduce((entities, media) => ({ ...entities, [media.id]: media }), {});
+	},
+	currentName(state) {
+		return getCurrentName(state);
+	},
+	currentTimeObj(state) {
+		const currentTime = state.currentMedia.start
+			? state.currentTime - state.currentMedia.start
+			: state.currentTime;
+		return s2time(currentTime);
+	},
+	progressWidth(state) {
+		const d = state.currentMedia.durationAlbum || state.currentMedia.durationS;
+		return state.currentTime / d * 100;
+	},
+	youtubeApiKeyUI(state) {
+		return state.youtubeApiKey === youtubeApiKey ? '' : state.youtubeApiKey;
+	},
+	sessionHistoryHasPrev(state) {
+		const hlength = state.sessionHistory.length;
+		return hlength > 0 && state.sessionHistoryPos < hlength - 1;
+	},
+	tagNames(state) {
+		return Object.keys(state.tags);
+	},
+};

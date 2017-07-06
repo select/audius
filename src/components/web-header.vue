@@ -36,13 +36,13 @@ export default {
 			'toggleLeftMenu',
 			'setShowSettings',
 			'previousVideo',
-			'nextVideo',
 			'toggleShuffle',
 			'toggleMute',
+			'toggleRepeat',
 			'playPause',
 			'setStartStopMarker',
 		]),
-		...mapActions(['search']),
+		...mapActions(['search', 'nextVideo']),
 		searchInput(event) {
 			if (event.key.length === 1 || event.key === 'Backspace') {
 				this.search(event.target.value);
@@ -118,7 +118,7 @@ export default {
 	},
 	computed: {
 		...mapGetters(['currentTimeObj', 'playList', 'progressWidth', 'sessionHistoryHasPrev']),
-		...mapState(['currentTime', 'currentMedia', 'website', 'isPlaying', 'shuffle', 'mute']),
+		...mapState(['currentTime', 'currentMedia', 'website', 'isPlaying', 'shuffle', 'mute', 'repeat1', 'repeatAll']),
 	},
 	mounted() {
 		this.dragImg = document.createElement('img');
@@ -147,7 +147,7 @@ export default {
 		<div class="au-header__search">
 			<div>
 				<img class="au-header__logo" src="img/audius.logo.white.svg" alt="Audius - music player - logo">
-				<i>2.0.3</i>
+				<i>2.0.4</i>
 			</div>
 			<div class="au-header__search-controls">
 				<div
@@ -204,17 +204,28 @@ export default {
 						@click="toggleShuffle"
 						v-bind:class="{ active: shuffle }"
 						title="[s] Shuffle"></span>
+					<div
+						@click="toggleRepeat"
+						class="au-header__repeat">
+						<span
+							v-if="repeat1"
+							class="wmp-icon-repeat_one active"
+							title="Repeat this song"></span>
+						<span
+							v-if="repeatAll"
+							class="wmp-icon-repeat active"
+							title="Repeat all songs in playlist"></span>
+						<span
+							v-if="!(repeat1 || repeatAll)"
+							class="wmp-icon-repeat"
+							title="Repeat"></span>
+					</div>
 					<div class="au-header__mute"
 						v-bind:disabled="currentMedia.type == 'audio'"
 						@click="toggleMute">
 						<span class="wmp-icon-volume_up" v-if="!mute"></span>
 						<span class="wmp-icon-volume_off" v-else></span>
 					</div>
-					<!-- <span
-						class="au-header__repeat wmp-icon-repeat"
-						@click="store.dispatch(Actions.togglePlayList())"
-						v-bind:class="{ active: mediaPlayer.repeatAll }"
-						title="Repeat"></span> -->
 				</div>
 			</div>
 		</div>
@@ -427,6 +438,7 @@ header
 .au-header__shuffle,
 .au-header__repeat
 	color: $color-athensgrey
-	&.active
+	&.active,
+	.active
 		color: $color-pictonblue
 </style>

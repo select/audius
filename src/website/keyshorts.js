@@ -7,7 +7,7 @@ document.addEventListener('keydown', (event) => {
 		if (event.key === 'c' && !event.ctrlKey) {
 			store.commit('playPause');
 		} else if (event.key === 'b') {
-			store.commit('nextVideo');
+			store.dispatch('nextVideo');
 		} else if (event.key === 's') {
 			store.commit('toggleShuffle');
 		} else if (event.key === 'm') {

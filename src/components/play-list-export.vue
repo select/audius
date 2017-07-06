@@ -1,32 +1,27 @@
 <script>
-import { mapState, mapActions } from 'vuex';
+import { mapState, mapActions, mapGetters } from 'vuex';
 
 export default {
-	props: [
-		'currentPlayList',
-		'filteredPlayList',
-		'entities',
-	],
 	data() {
 		return {
 			copyActive: null,
 			copyURLActive: null,
 		};
 	},
-	computed: mapState(['exportURLs']),
+	computed: {
+		...mapState(['exportURLs']),
+		...mapGetters(['currentName', 'currentExportData']),
+	},
 	methods: {
 		...mapActions(['exportToURL']),
 		exportPlayListFile() {
-			const data = {
-				AudiusDump: true,
-				playList: this.filteredPlayList,
-				entities: this.entities,
-			};
+			debugger;
+			const data = this.currentExportData();
 			const element = document.createElement('a');
 			element.setAttribute('href', `data:text/plain;charset=utf-8,${encodeURIComponent(JSON.stringify(data))}`);
 			element.setAttribute(
 				'download',
-				this.currentPlayList ? `${this.currentPlayList}.audius-playlist` : 'default.audius-playlist'
+				this.currentName ? `${this.currentName}.audius-playlist` : 'default.audius-playlist'
 			);
 			element.style.display = 'none';
 			document.body.appendChild(element);

@@ -3,7 +3,7 @@ import { mapMutations, mapState, mapActions } from 'vuex';
 
 export default {
 	methods: {
-		...mapMutations(['selectRadioStation', 'moveRadioStationsOrderd']),
+		...mapMutations(['selectMediaSource', 'moveRadioStationsOrderd']),
 		...mapActions(['joinRadioStation', 'leaveRadioStation']),
 		addRadioStation() {
 			const el = document.querySelector('.matrix-radio__input input');
@@ -24,7 +24,7 @@ export default {
 			v-for="roomId in radioStationsOrderd"
 			v-bind:data-name="radioStations[roomId].name"
 			v-bind:class="{ active: currentRadioStation == roomId }"
-			@click="selectRadioStation(roomId)">
+			@click="selectMediaSource({type:'radio', id:roomId})">
 			<div class="matrix-radio__drag-handle"></div>
 			<div class="matrix-radio__tag-body">
 				<div>{{radioStations[roomId].name}}</div>

@@ -12,7 +12,10 @@ ul.media-list
 				color: $color-white
 			&:hover
 				color: inherit
+	li.old
+		opacity: .4
 	li:hover
+		opacity: 1
 		> .media-list__main
 			background: $color-catskillwhite
 			.media-list__controls
@@ -30,6 +33,8 @@ ul.media-list
 			text-decoration: line-through
 	&.selected
 		background: $color-aluminium
+
+
 .media-list__thumbnail
 	cursor: move
 	width: $touch-size-medium
@@ -39,6 +44,7 @@ ul.media-list
 	background-position: center
 	border-radius: 50%
 	margin-right: $grid-space
+
 
 .media-list__album-hint
 	font-size: 0.5em
@@ -92,3 +98,10 @@ ul.media-list
 	&.active
 		transform: rotate(0deg)
 
+@media screen and (max-width: 500px)
+	.media-list__main
+		height: inherit
+		padding: .5em 0
+	.media-list__thumbnail
+		width: 3em
+		height: 3em

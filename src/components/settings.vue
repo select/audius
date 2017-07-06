@@ -34,12 +34,12 @@ export default {
 	</div>
 	<div v-if="matrixEnabled">
 		<p v-if="matrixLoggedIn">
-				You are <b>connected</b> as {{matrix.credentials.userId}}. <br>
+				You are <b>connected</b> as {{matrix.credentials.userId}}. <br><br>
 				<button @click="matrixLogout" type="button" class="button btn--blue">Log out</button>
 				<button @click="matrixRemoveAccount" type="button" class="button btn--blue">Remove Account</button>
 		</p>
 		<p v-else>
-			You are currently <b>not connected</b>.
+			You are currently <b>not connected</b>.<br><br>
 		</p>
 		<p>
 			<table>

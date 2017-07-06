@@ -1,7 +1,7 @@
 <script>
 import Vue from 'vue';
 import { mapState } from 'vuex';
-import Sortable from 'sortablejs';
+import draggable from 'vuedraggable';
 import VideoItem from './video-item.vue';
 import { isElementInViewport } from '../utils';
 
@@ -9,19 +9,9 @@ import { isElementInViewport } from '../utils';
 export default {
 	components: {
 		VideoItem,
+		draggable,
 	},
 	computed: mapState(['search', 'currentMedia', 'isPlaying']),
-	mounted() {
-		const mediaListEl = document.querySelector('.search-results');
-		Sortable.create(mediaListEl, {
-			name: 'searchResults',
-			handle: '.media-list__thumbnail',
-			group: 'lists',
-			pull: 'clone',
-			revertClone: true,
-			sort: false,
-		});
-	},
 	methods: {
 		addToPlaylist(id) {
 			Vue.nextTick(() => {
@@ -40,13 +30,25 @@ export default {
 </script>
 
 <template>
-<ul class="media-list search-results">
+<draggable
+	class="media-list search-results"
+	v-model="search.results"
+	element="ul"
+	:options="{
+		sort: false,
+		handle: '.media-list__thumbnail',
+		group: {
+			name: 'lists',
+			pull: 'clone',
+			revertClone: true,
+		}
+	}">
 	<video-item
 		v-for="media in search.results"
+		v-on:addToPlaylist="addToPlaylist"
 		:isSearchResult="true"
 		:isPlaying="currentMedia.id == media.id && isPlaying"
 		:key="media.id+media.trackId"
-		v-on:addToPlaylist="addToPlaylist"
 		:video="media"></video-item>
-</ul>
+</draggable>
 </template>

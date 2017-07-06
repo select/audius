@@ -1,31 +1,27 @@
 <script>
 import { mapGetters, mapMutations, mapState } from 'vuex';
-import Sortable from 'sortablejs';
+import draggable from 'vuedraggable';
 
 export default {
+	components: {
+		draggable,
+	},
 	props: [
-		'tagName',
+		'index',
 	],
 	methods: {
-		...mapMutations(['selectPlayList', 'deletePlayList', 'renamePlayList', 'dropMoveItem']),
+		...mapMutations(['selectMediaSource', 'deletePlayList', 'renamePlayList', 'dropMoveItem']),
+		dropAdd(event) { // Element is dropped into the list from another list
+			const itemId = event.item.dataset.id;
+			this.dropMoveItem({ itemId, from: this.currentPlayList, to: this.tagName });
+		},
 	},
 	computed: {
 		...mapGetters(['playListLength', 'currentPlayList']),
 		...mapState(['tags', 'tagsOrdered', 'currentPlayList']),
-	},
-	mounted() {
-		Sortable.create(this.$el.querySelector('.play-list-manager__tag-body'), {
-			group: 'lists',
-			put: ['playList', 'searchResults'],
-			animation: 250,
-			sort: false,
-			onAdd: (event) => { // Element is dropped into the list from another lists
-				const itemEl = event.item; // dragged HTMLElement
-				const itemId = itemEl.dataset.id;
-				this.dropMoveItem({ itemId, from: this.currentPlayList, to: this.tagName });
-				itemEl.parentNode.removeChild(itemEl);
-			},
-		});
+		tagName() {
+			return this.tagsOrdered[this.index];
+		},
 	},
 };
 </script>
@@ -34,20 +30,30 @@ export default {
 	<li
 		v-bind:data-tag="tagName"
 		v-bind:class="{ active: currentPlayList == tagName }"
-		@click="selectPlayList(tagName)">
+		@click="selectMediaSource({type: 'playList', id: tagName})">
 		<div class="play-list-manager__drag-handle"></div>
-		<div class="play-list-manager__tag-body">
-			<div v-show="currentPlayList != tagName">{{tagName}}</div>
-			<div v-show="currentPlayList == tagName">
-				<input
-					class="play-list-manager__tag-name-input"
-					type="text"
-					v-bind:value="tagName"
-					v-on:input="renamePlayList({oldName: tagName, newName: $event.target.value})"
-					placeholder="... playlist name">
+		<draggable
+			class="play-list-manager__tag-drop-zone"
+			@add="dropAdd"
+			:options="{
+				sort: false,
+				group: {
+					name: 'lists',
+				}
+			}">
+			<div class="play-list-manager__tag-body">
+				<div v-show="currentPlayList != tagName">{{tagName}}</div>
+				<div v-show="currentPlayList == tagName">
+					<input
+						class="play-list-manager__tag-name-input"
+						type="text"
+						v-bind:value="tagName"
+						v-on:input="renamePlayList({oldName: tagName, newName: $event.target.value})"
+						placeholder="... playlist name">
+				</div>
+				<div>{{tags[tagName].length}} Songs</div>
 			</div>
-			<div>{{tags[tagName].length}} Songs</div>
-		</div>
+		</draggable>
 		<div class="play-list-manager__menu">
 			<span
 				class="wmp-icon-close"
@@ -62,7 +68,7 @@ export default {
 @import '../sass/color'
 
 .play-list-manager__drag-handle
-	width: #{2*$grid-space}
+	min-width: #{2*$grid-space}
 	height: 100%
 	&:not(.play-list-manager--default)
 		cursor: move
@@ -70,12 +76,19 @@ export default {
 .play-list-manager__menu
 	display: none
 
-.play-list-manager__tag-body
+li ~ .play-list-manager__tag-body
+	display: none
+
+.play-list-manager__tag-drop-zone
 	flex: 1
+	overflow: hidden
+
+.play-list-manager__tag-body
 	text-overflow: ellipsis
 	white-space: nowrap
 	overflow: hidden
 	display: flex
+	flex: 1
 	flex-direction: column
 	div:last-child
 		font-size: 0.7em

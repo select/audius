@@ -1,30 +1,31 @@
 <script>
 import Vue from 'vue';
 import { mapGetters, mapMutations, mapState, mapActions } from 'vuex';
-import Sortable from 'sortablejs';
+import draggable from 'vuedraggable';
 
-import { isElementInViewport, starterPlaylist } from '../utils';
+import { starterPlaylist } from '../utils';
 import VideoItem from './video-item.vue';
 import PlayListExport from './play-list-export.vue';
 import PlayListImport from './play-list-import.vue';
 
 export default {
 	components: {
+		draggable,
 		VideoItem,
 		PlayListExport,
 		PlayListImport,
 	},
 	created() {
 		this.subscriptions = [
-			this.$store.watch(state => state.currentMedia, () => {
-				if (this.currentMediaId !== this.currentMedia.id) {
-					Vue.nextTick(() => {
-						const el = document.querySelector('.play-list li.active');
-						if (el && !isElementInViewport(el)) el.scrollIntoView({ block: 'start', behavior: 'smooth' });
-					});
-					this.currentMediaId = this.currentMedia.id;
-				}
-			}),
+			// this.$store.watch(state => state.currentMedia, () => {
+			// 	if (this.currentMediaId !== this.currentMedia.id) {
+			// 		Vue.nextTick(() => {
+			// 			const el = document.querySelector('.play-list li.active');
+			// 			if (el && !isElementInViewport(el)) el.scrollIntoView({ block: 'start', behavior: 'smooth' });
+			// 		});
+			// 		this.currentMediaId = this.currentMedia.id;
+			// 	}
+			// }),
 			this.$store.watch(state => state.showJump, () => {
 				if (this.showJump) {
 					Vue.nextTick(() => {
@@ -37,49 +38,24 @@ export default {
 	beforeDestroy() {
 		this.subscriptions.forEach((unsub) => { unsub(); });
 	},
-	mounted() {
-		const mediaListEl = document.querySelector('.play-list .media-list');
-		Sortable.create(mediaListEl, {
-			group: 'lists',
-			name: 'playList',
-			pull: 'clone',
-			revertClone: true,
-			put: ['searchResults'],
-			animation: 250,
-			scrollSpeed: 20,
-			handle: '.media-list__thumbnail',
-			// Element dragging ended
-			onUpdate: () => {
-				if (!this.showJump) {
-					this.movePlayListMedia(
-						Array.from(mediaListEl.childNodes).map(el => el.dataset.id)
-					);
-				}
-			},
-			onAdd: (event) => { // Element is dropped into the list from another list
-				if (!this.showJump) {
-					const itemEl = event.item; // dragged HTMLElement
-					const itemId = itemEl.dataset.id;
-					const playList = Array.from(mediaListEl.childNodes).map(el => el.dataset.id);
-					this.dropSearchResult({ itemId, playList });
-					itemEl.parentNode.removeChild(itemEl);
-				}
-			},
-		});
-	},
 	methods: {
 		...mapMutations([
 			'dropSearchResult',
 			'toggleImport',
 			'toggleExport',
-			'toggleEditPlayList',
 			'toggleSearch',
 			'importOtherPlayList',
 			'filterPlayList',
 			'movePlayListMedia',
 			'toggleJump',
 		]),
-		...mapActions(['importURL', 'matrixPaginate']),
+		dropAdd(event) { // Element is dropped into the list from another list
+			if (!this.showJump) {
+				const itemId = event.item.dataset.id;
+				this.dropSearchResult({ itemId, index: event.newIndex });
+			}
+		},
+		...mapActions(['importURL', 'matrixPaginate', 'runWebScraper']),
 		addMusic() {
 			this.importURL({ url: starterPlaylist });
 		},
@@ -110,9 +86,8 @@ export default {
 	},
 	computed: {
 		...mapGetters([
-			'filteredPlayList',
 			'filteredPlayListLength',
-			'currentEntities',
+			'filteredPlayListEntities',
 			'tagNames',
 		]),
 		...mapState([
@@ -121,7 +96,6 @@ export default {
 			'showImport',
 			'showExport',
 			'currentPlayList',
-			'editPlayList',
 			'entities',
 			'isPlaying',
 			'filterQuery',
@@ -129,7 +103,21 @@ export default {
 			'jumpCursor',
 			'leftMenuTab',
 			'currentRadioStation',
+			'currentWebScraper',
+			'webScrapers',
 		]),
+		_entities: {
+			get() {
+				return this.$store.getters.filteredPlayList;
+			},
+			set(value) {
+				if (!this.showJump) {
+					this.movePlayListMedia(
+						value.map(media => media.id)
+					);
+				}
+			},
+		},
 		showWelcome() {
 			return !(this.showImport || this.showExport || this.showJump || this.filteredPlayListLength);
 		},
@@ -169,17 +157,6 @@ export default {
 					@click="addMusic">add music</button>
 		</h2>
 
-		<div class="play-list__import" v-show="editPlayList" >
-			<div class="play-list__import-header">
-				<div> Edit playlist: {{currentPlayList}} </div>
-				<span
-					class="wmp-icon-close"
-					title="[Esc] Close"
-					@click="toggleEditPlayList(undefined, false)"></span>
-				<div class="play-list__edit-description">Click below to add songs to the playlist.</div>
-			</div>
-		</div>
-
 		<play-list-import
 			:tags="tagNames"
 			v-on:toggleImport="toggleImport"
@@ -187,9 +164,6 @@ export default {
 			v-show="showImport"></play-list-import>
 
 		<play-list-export
-			:currentPlayList="currentPlayList"
-			:filteredPlayList="filteredPlayList"
-			:entities="currentEntities"
 			v-on:toggleExport="toggleExport()"
 			v-if="showExport"></play-list-export>
 
@@ -204,20 +178,35 @@ export default {
 		</div>
 
 		<!-- play list here -->
-		<ul
+		<draggable
 			class="media-list"
-			v-bind:class="{ 'media-list--editing': editPlayList }"
-			v-show="!(showImport || showExport || (leftMenuTab == 'radio' && !currentRadioStation))">
+			v-show="!(showImport || showExport || (leftMenuTab == 'radio' && leftMenuTab == 'tv' && !currentRadioStation))"
+			element="ul"
+			v-model="_entities"
+			@add="dropAdd"
+			:options="{
+				animation: 150,
+				scrollSpeed: 20,
+				handle: '.media-list__thumbnail',
+				group: {
+					name: 'lists',
+					pull: 'clone',
+					revertClone: true,
+				}
+			}">
 			<video-item
-				v-for="id in filteredPlayList"
-				:video="entities[id]"
-				:isEditPlayList="editPlayList"
+				v-for="media in _entities"
+				:key="media.id"
+				:video="media"
 				:isPlayList="!!currentPlayList"
-				:isInPlayList="editPlayList && tags[currentPlayList].includes(id)"
-				:isSelected="jumpCursor === id"
-				:key="id"
-				:isPlaying="isPlaying && entities[id] && (currentMedia.id == entities[id].id)"></video-item>
-		</ul>
+				:isSelected="jumpCursor === media.id"
+				:isOld="currentWebScraper && (media.id in webScrapers[currentWebScraper].playedMedia)"
+				:isPlaying="isPlaying && (currentMedia.id == media.id)"></video-item>
+		</draggable>
+		<div
+			v-if="currentWebScraper"
+			@click="runWebScraper"
+			class="play-list__load-more"> … load more </div>
 		<!-- ends here -->
 
 	</div>
@@ -374,9 +363,6 @@ export default {
 		top: 0
 		right: 0
 
-.play-list__edit-description
-	font-size: 1rem
-
 .play-list__import
 	display: flex
 	flex-direction: column
@@ -415,7 +401,14 @@ export default {
 		align-items: center
 		cursor: pointer
 
-.media-list--editing .media-list__body
+.play-list__load-more
+	padding-left: $touch-size-medium
+	height: $touch-size-medium
+	display: flex
+	align-items: center
+	color: $color-aluminium
 	cursor: pointer
+	&:hover
+		background: $color-catskillwhite
 
 </style>

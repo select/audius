@@ -1,6 +1,6 @@
 <script>
 /* global YT */
-import { mapState, mapMutations } from 'vuex';
+import { mapState, mapMutations, mapActions } from 'vuex';
 import { injectScript } from '../utils';
 
 
@@ -19,23 +19,27 @@ export default {
 			this.$store.watch(state => state.currentMedia, () => {
 				// if video changed, set new video in player
 				if (this.currentMedia.type === 'youtube') {
-					const videoId = this.player.getVideoData()
-						? this.player.getVideoData().video_id
-						: undefined;
-					const currentMediaId = this.currentMedia.youtubeId || this.currentMedia.id;
-					if (videoId !== currentMediaId) {
-						this.duration = this.player.getDuration();
-						this.player.loadVideoById({
-							videoId: currentMediaId,
-							suggestedQuality: 'large',
-						});
-						if (this.currentMedia.start) this.player.seekTo(this.currentMedia.start, true);
-						this.lastTrackId = this.currentMedia.trackId;
-					} else if (this.currentMedia.trackId !== this.lastTrackId) {
-						this.player.seekTo(this.currentMedia.start, true);
-						this.lastTrackId = this.currentMedia.trackId;
+					try {
+						const videoId = this.player.getVideoData()
+							? this.player.getVideoData().video_id
+							: undefined;
+						const currentMediaId = this.currentMedia.youtubeId || this.currentMedia.id;
+						if (videoId !== currentMediaId) {
+							this.duration = this.player.getDuration();
+							this.player.loadVideoById({
+								videoId: currentMediaId,
+								suggestedQuality: 'large',
+							});
+							if (this.currentMedia.start) this.player.seekTo(this.currentMedia.start, true);
+							this.lastTrackId = this.currentMedia.trackId;
+						} else if (this.currentMedia.trackId !== this.lastTrackId) {
+							this.player.seekTo(this.currentMedia.start, true);
+							this.lastTrackId = this.currentMedia.trackId;
+						}
+						this.player.playVideo();
+					} catch (e) {
+						this.error('YouTub player was not ready, try again.');
 					}
-					this.player.playVideo();
 				} else {
 					this.player.pauseVideo();
 				}
@@ -61,7 +65,11 @@ export default {
 				// if isPlaying changed start stop video
 				const currentMediaId = this.currentMedia.youtubeId || this.currentMedia.id;
 				if (this.currentMedia.type === 'youtube' && this.isPlaying && currentMediaId) {
-					if (this.player.getPlayerState() !== 1) this.player.playVideo();
+					try {
+						if (this.player.getPlayerState() !== 1) this.player.playVideo();
+					} catch (e) {
+						this.error('YouTub player was not ready, try again.');
+					}
 				} else if (this.player
 					&& this.player.getPlayerState
 					&& ![0, 2].includes(this.player.getPlayerState())
@@ -91,9 +99,11 @@ export default {
 	},
 	computed: mapState(['currentMedia', 'mute', 'skipToTime', 'isPlaying']),
 	methods: {
-		...mapMutations(['play', 'pause', 'setCurrentTime', 'nextVideo', 'videoError']),
+		...mapMutations(['play', 'pause', 'setCurrentTime', 'videoError', 'error']),
+		...mapActions(['nextVideo']),
 		onPlayerError(event) {
 			this.videoError(event.data);
+			this.error(`YouTube could not play the video. Error Code ${event.data}`);
 		},
 		onPlayerStateChange() {
 			const playerState = this.player.getPlayerState();
