@@ -1,5 +1,6 @@
 <script>
 import { mapState, mapMutations, mapActions } from 'vuex';
+import { s2time } from '../utils';
 
 window.AudioContext = window.AudioContext || window.webkitAudioContext;
 
@@ -80,7 +81,7 @@ export default {
 	},
 	computed: mapState(['currentMedia', 'mute', 'skipToTime', 'isPlaying']),
 	methods: {
-		...mapMutations(['play', 'pause', 'setCurrentTime', 'videoError', 'error']),
+		...mapMutations(['play', 'pause', 'setCurrentTime', 'videoError', 'error', 'updateCurrentMedia']),
 		...mapActions(['nextVideo']),
 		_startInterval() {
 			clearInterval(this.timeInterval);
@@ -99,7 +100,13 @@ export default {
 			const playPromise = player.play();
 			if (playPromise !== undefined) {
 				playPromise.then(() => {
-					// Automatic playback started!
+					if (!this.currentMedia.durationS) {
+						const durationS = Math.round(player.duration);
+						this.updateCurrentMedia({
+							duration: s2time(durationS),
+							durationS,
+						});
+					}
 				}).catch((error) => {
 					this.videoError(error.message);
 					this.error(`The video could not be played: ${error.message}`);

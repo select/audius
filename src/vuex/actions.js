@@ -8,7 +8,8 @@ import {
 	ajax,
 	findYouTubeIdsText,
 	getYouTubeInfo,
-	webScraper
+	webScraper,
+	getMediaDuration
 } from '../utils';
 import { videoBaseObject } from './video';
 import { getCurrentPlayListEntities } from './getCurrentPlayList';
@@ -21,46 +22,23 @@ const videoRegEx = /\.(avi|mkv|mp4|webm|ogg)$/i;
 
 /* eslint-disable no-param-reassign */
 export const actions = {
-	register({ commit }, userId) {
-		setTimeout(() => {
-			commit('register', userId);
-		}, 1000);
-	},
 	search({ commit, state }, query) {
 		if (audioRegEx.test(query)) {
-			const player = new Audio();
-			player.addEventListener(
-				'loadeddata',
-				() => {
-					commit('webMediaSearchSuccess', {
-						url: query,
-						durationS: Math.round(player.duration),
-						type: 'audio',
-					});
-				},
-				true
-			);
-			player.src = query;
+			getMediaDuration(query, 'video').then(durationS => {
+				commit('webMediaSearchSuccess', {
+					url: query,
+					durationS,
+					type: 'audio',
+				});
+			});
 		} else if (videoRegEx.test(query)) {
-			const player = document.createElement('video');
-			player.hidden = true;
-			document.body.appendChild(player);
-			player.addEventListener(
-				'loadeddata',
-				() => {
-					commit('webMediaSearchSuccess', {
-						url: query,
-						durationS: Math.round(player.duration),
-						type: 'video',
-					});
-					player.parentNode.removeChild(player);
-				},
-				true
-			);
-			setTimeout(() => {
-				if (player.parentNode) player.parentNode.removeChild(player);
-			}, 700);
-			player.src = query;
+			getMediaDuration(query, 'video').then(durationS => {
+				commit('webMediaSearchSuccess', {
+					url: query,
+					durationS,
+					type: 'video',
+				});
+			});
 		} else if (/^https?:\/\//.test(query)) {
 			console.warn('parse page ', query);
 		} else if (query.length > 1) {

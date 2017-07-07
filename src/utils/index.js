@@ -12,3 +12,4 @@ export { hashCode } from './hashCode';
 export { cleanWindowLocation, getParameterByName } from './windowLocationTools';
 export { parseYoutubeDescription } from './parseYoutubeDescription';
 export { webScraper } from './webScraper';
+export { getMediaDuration } from './getMediaDuration';

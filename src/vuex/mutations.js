@@ -170,6 +170,9 @@ export const mutations = {
 		});
 		next(state);
 	},
+	updateCurrentMedia(state, media) {
+		Object.assign(state.currentMedia, media);
+	},
 	upgradeEntities(state, entities) {
 		state.entities = entities;
 	},

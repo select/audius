@@ -38,6 +38,7 @@ const presistMutation = {
 	setStartStopMarker: ['entities'],
 	updateWebScraper: ['webScrapers'],
 	videoError: ['entities'],
+	updateCurrentMedia: ['entities'],
 };
 
 export const store = new Vuex.Store({
