@@ -1,5 +1,5 @@
 <script>
-import { mapActions, mapState, mapGetters, mapMutations } from 'vuex';
+import { mapState } from 'vuex';
 
 export default {
 	created() {
@@ -12,7 +12,7 @@ export default {
 							el.querySelector(`[data-id="${idx}"]`).hidden = true;
 						});
 						kidx.push(...newIdxs);
-					}, 2000);
+					}, 3000);
 				})(
 					this.$el,
 					[...Array(this.errorMessages.length).keys()].filter(idx => !knownIdxs.includes(idx)),
