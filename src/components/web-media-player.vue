@@ -44,7 +44,7 @@ export default {
 				if (['audio', 'video'].includes(this.currentMedia.type) && (this.currentMedia.url !== this._mediaUrl)) {
 					this.player.src = this.currentMedia.url;
 					if (this.currentMedia.start) this.player.currentTime = this.currentMedia.start;
-					this.player.play();
+					this._play(this.player);
 					this._startInterval();
 					this._mediaUrl = this.currentMedia.url;
 				}
@@ -53,10 +53,10 @@ export default {
 			this.$store.watch(state => state.isPlaying, () => {
 				// if isPlaying changed start stop video
 				if (this.currentMedia.type === 'audio' && this.isPlaying) {
-					this.audioPlayer.play();
+					this._play(this.audioPlayer);
 					this._startInterval();
 				} else if (this.currentMedia.type === 'video' && this.isPlaying) {
-					this.videoPlayer.play();
+					this._play(this.videoPlayer);
 					this._startInterval();
 				} else {
 					clearInterval(this.timeInterval);
@@ -64,14 +64,6 @@ export default {
 					this.audioPlayer.pause();
 				}
 			}),
-
-			// this.$store.watch(state => state.mute,() => {
-			// 	// if mute changeds
-			// 	if (this.player && this.player.isMuted && (this.player.isMuted() !== this.mute)) {
-			// 		if (this.mute) this.player.mute();
-			// 		else this.player.unMute();
-			// 	}
-			// }),
 
 			this.$store.watch(state => state.skipToTime, () => {
 				// if skip to time changed
@@ -88,7 +80,7 @@ export default {
 	},
 	computed: mapState(['currentMedia', 'mute', 'skipToTime', 'isPlaying']),
 	methods: {
-		...mapMutations(['play', 'pause', 'setCurrentTime', 'videoError']),
+		...mapMutations(['play', 'pause', 'setCurrentTime', 'videoError', 'error']),
 		...mapActions(['nextVideo']),
 		_startInterval() {
 			clearInterval(this.timeInterval);
@@ -102,6 +94,17 @@ export default {
 
 				this.setCurrentTime(this.player.currentTime);
 			}, 1000);
+		},
+		_play(player) {
+			const playPromise = player.play();
+			if (playPromise !== undefined) {
+				playPromise.then(() => {
+					// Automatic playback started!
+				}).catch((error) => {
+					this.videoError(error.message);
+					this.error(`The video could not be played: ${error.message}`);
+				});
+			}
 		},
 	},
 };
