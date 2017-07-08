@@ -106,6 +106,7 @@ ul.main-right__tabs
 
 .main-right__player
 	flex: 1
+	overflow: hidden
 	border-top: 1px solid $color-aluminium
 	position: relative
 	background: $color-catskillwhite

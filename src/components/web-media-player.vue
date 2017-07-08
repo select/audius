@@ -130,9 +130,12 @@ export default {
 @import '../sass/color'
 
 .video-player
+	position: absolute
+	top: 0
+	display: flex
+	align-items: center
 	width: 100%
-	height: 100%
-	flex: 1
+	max-height: 100%
 	background: $color-black
 
 </style>
