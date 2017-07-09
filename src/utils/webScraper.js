@@ -5,7 +5,6 @@ export const webScraper = {
 	currentVideoIndex: -1,
 	baseURL: 'https://api.imgur.com/3/gallery/hot/viral/',
 	requestHeader: ['Authorization', 'Client-ID c35fbc04fe9ccda'],
-	// videos: []; // provided in bas,
 	parserName: 'imgur API',
 	parserRunning: false,
 
@@ -16,6 +15,7 @@ export const webScraper = {
 				...this.videos,
 				...JSON.parse(rawJsonIndex).data.filter(item => item.mp4).map(item => ({
 					id: `${hashCode(item.mp4)}`,
+					href: item.link,
 					url: item.mp4,
 					type: 'video',
 					title: item.title,

@@ -13,6 +13,7 @@ export default {
 		isPlayList: Boolean,
 		isSearchResult: Boolean,
 		isOld: Boolean,
+		isWebScraper: Boolean,
 	},
 	data() {
 		return {
@@ -53,7 +54,7 @@ export default {
 			window.getSelection().removeAllRanges();
 			const tmpEl = document.createElement('div');
 			if (this.video.type !== 'youtube') {
-				tmpEl.innerHTML = `${this.video.url}`;
+				tmpEl.innerHTML = `${this.video.title} ${this.video.url}`;
 			} else {
 				tmpEl.innerHTML = `${this.video.title} ${this.youtubeLink()}`;
 			}
@@ -137,7 +138,7 @@ export default {
 					v-bind:class="{ active: copyActive }"
 					title="Copy name and URL"></span>
 
-				<div class="media-list__more-controls" v-bind:class="{active: isSearchResult}">
+				<div class="media-list__more-controls" v-bind:class="{active: (isSearchResult || isWebScraper)}">
 					<span class="wmp-icon-more_vert"></span>
 					<div>
 						<a
@@ -147,20 +148,21 @@ export default {
 							target="_blank">
 							<span class="wmp-icon-youtube icon--small"></span>
 						</a>
+						<a
+							v-if="video.href"
+							v-bind:href="video.href"
+							title="Go to source"
+							target="_blank">
+							<span class="wmp-icon-link"></span>
+						</a>
 						<span
 							class="wmp-icon-close"
-							v-if="!isExtension && !isSearchResult"
+							v-if="!(isExtension || isSearchResult || isWebScraper)"
 							@click="remove"
 							title="Remove"></span>
 					</div>
 				</div>
 
-
-				<span
-					class="wmp-icon-add"
-					v-if="isExtension"
-					@click="addToPlaylist"
-					title="Add to playlist"></span>
 
 				<span
 					v-if="isSearchResult"
