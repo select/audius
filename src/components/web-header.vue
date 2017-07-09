@@ -117,7 +117,7 @@ export default {
 		},
 	},
 	computed: {
-		...mapGetters(['currentTimeObj', 'playList', 'progressWidth', 'sessionHistoryHasPrev']),
+		...mapGetters(['currentTimeObj', 'filteredPlayListLength', 'progressWidth', 'sessionHistoryHasPrev']),
 		...mapState(['currentTime', 'currentMedia', 'website', 'isPlaying', 'shuffle', 'mute', 'repeat1', 'repeatAll']),
 	},
 	mounted() {
@@ -186,7 +186,7 @@ export default {
 					<span v-if="currentMedia.duration.h">{{currentMedia.duration.h}}:</span>{{currentMedia.duration.m}}:{{currentMedia.duration.s}}
 				</div>
 			</div>
-			<div class="au-header__controls" :disabled="!playList.length ">
+			<div class="au-header__controls" :disabled="!filteredPlayListLength ">
 				<span
 					class="wmp-icon-previous"
 					@click="previousVideo"
