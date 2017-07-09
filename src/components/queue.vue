@@ -1,28 +1,51 @@
 <script>
-import { mapState } from 'vuex';
+import draggable from 'vuedraggable';
 import VideoItem from './video-item.vue';
 
 export default {
 	components: {
 		VideoItem,
+		draggable,
 	},
-	computed: mapState(['queue']),
+	computed: {
+		_queue: {
+			get() {
+				return this.$store.state.queue;
+			},
+			set(value) {
+				this.$store.commit('moveQueue', value);
+			},
+		},
+	},
 };
 </script>
 
 <template>
 <div class="queue">
-	<p v-if="!queue.length">
-		... queue with <span class="wmp-icon-queue2"></span>
+	<p v-if="!_queue.length">
+		... queue with <span class="wmp-icon-queue2"></span> or drag and drop
 	</p>
-	<ul class="media-list">
+	<draggable
+		class="media-list"
+		element="ul"
+		v-model="_queue"
+		:options="{
+			animation: 150,
+			scrollSpeed: 20,
+			handle: '.media-list__thumbnail',
+			group: {
+				name: 'lists',
+				pull: 'clone',
+				revertClone: true,
+			}
+		}">
 		<video-item
-			v-for="(media, index) in queue"
+			v-for="(media, index) in _queue"
 			:isQueue="true"
 			:queueIndex="index"
-			:key="media.id+media.trackId"
+			:key="index"
 			:video="media"></video-item>
-	</ul>
+	</draggable>
 </div>
 </template>
 
@@ -31,6 +54,10 @@ export default {
 @import '../sass/color'
 
 .queue
+	display: flex
+	flex-direction: column
+	height: 100%
+	overflow: hidden
 	p
 		width: 100%
 		text-align: center
@@ -39,4 +66,7 @@ export default {
 		align-items: center
 		span
 			font-size: .7em
+	.media-list
+		flex: 1
+		width: 100%
 </style>

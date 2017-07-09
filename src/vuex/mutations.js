@@ -365,6 +365,9 @@ export const mutations = {
 	moveTagsOrderd(state, tagsOrdered) {
 		state.tagsOrdered = tagsOrdered;
 	},
+	moveQueue(state, queue) {
+		state.queue = queue;
+	},
 	addTags(state, { mediaIds = [], tag }) {
 		if (mediaIds.length) tag = tag || state.currentPlayList;
 		if (!tag) {
