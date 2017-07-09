@@ -40,7 +40,7 @@ export default {
 					} catch (e) {
 						this.error('YouTub player was not ready, try again.');
 					}
-				} else {
+				} else if (this.player) {
 					this.player.pauseVideo();
 				}
 			}),
