@@ -100,8 +100,10 @@ export default {
 	<p>
 		<b>2.0.4</b><br>
 		<ul>
-			<li> Drag and drop to copy songs between playlists.</li>
+			<li> Drag and drop to copy songs between playlists and queue.</li>
+			<li> Sort queue with drag and drop.</li>
 			<li> Added repeat for one song, all songs (only if shuffle is not active).</li>
+			<li> Added support for web scraper TV stations (Imgur for now, more planned).</li>
 		</ul>
 		<b>2.0.3</b><br>
 		<ul>
