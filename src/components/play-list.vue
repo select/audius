@@ -49,12 +49,6 @@ export default {
 			'movePlayListMedia',
 			'toggleJump',
 		]),
-		dropAdd(event) { // Element is dropped into the list from another list
-			if (!this.showJump) {
-				const itemId = event.item.dataset.id;
-				this.dropSearchResult({ itemId, index: event.newIndex });
-			}
-		},
 		...mapActions(['importURL', 'matrixPaginate', 'runWebScraper']),
 		addMusic() {
 			this.importURL({ url: starterPlaylist });
@@ -87,7 +81,7 @@ export default {
 	computed: {
 		...mapGetters([
 			'filteredPlayListLength',
-			'filteredPlayListEntities',
+			'filteredPlayList',
 			'tagNames',
 		]),
 		...mapState([
@@ -108,7 +102,7 @@ export default {
 		]),
 		_entities: {
 			get() {
-				return this.$store.getters.filteredPlayList;
+				return this.filteredPlayList;
 			},
 			set(value) {
 				if (!this.showJump) {
@@ -180,10 +174,9 @@ export default {
 		<!-- play list here -->
 		<draggable
 			class="media-list"
-			v-show="!(showImport || showExport || (leftMenuTab == 'radio' && leftMenuTab == 'tv' && !currentRadioStation))"
+			v-show="!(showImport || showExport || (leftMenuTab == 'radio' && !currentRadioStation))"
 			element="ul"
 			v-model="_entities"
-			@add="dropAdd"
 			:options="{
 				animation: 150,
 				scrollSpeed: 20,
@@ -201,6 +194,7 @@ export default {
 				:isPlayList="!!currentPlayList"
 				:isSelected="jumpCursor === media.id"
 				:isOld="currentWebScraper && (media.id in webScrapers[currentWebScraper].playedMedia)"
+				:isWebScraper="!!currentWebScraper"
 				:isPlaying="isPlaying && (currentMedia.id == media.id)"></video-item>
 		</draggable>
 		<div
