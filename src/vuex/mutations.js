@@ -253,7 +253,6 @@ export const mutations = {
 		}
 	},
 	dropSearchResult(state, { itemId, index }) {
-		console.log('dropSearchResult')
 		const video = state.search.results.find(item => item.id === itemId);
 		if (!video) return;
 		state.entities[video.id] = video;
@@ -501,8 +500,18 @@ export const mutations = {
 	},
 	updateWebScraper(state, { name, videos }) {
 		const pl = state.webScrapers[name].playList;
-		const index = new Set(pl.map(({ id }) => id));
-		state.webScrapers[name].playList = [...pl, ...videos.filter(v => !index.has(v.id))];
+		const archive = state.webScrapers[name].archive || [];
+		const index = new Set([...pl.map(({ id }) => id), ...archive]);
+		const playList = [...pl, ...videos.filter(v => !index.has(v.id))];
+		while (playList.length > 3000) {
+			const media = playList.shift();
+			archive.push(media.id);
+		}
+		Object.assign(state.webScrapers[name], {
+			playList,
+			archive,
+		});
+		state.webScrapers = Object.assign({}, state.webScrapers);
 	},
 	incrementWebScraperIndex(state, name) {
 		if (!(name in state.webScrapersIndex)) state.webScrapersIndex[name] = 0;
