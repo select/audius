@@ -132,10 +132,10 @@ export default {
 .video-player
 	position: absolute
 	top: 0
+	width: 100%
+	height: 100%
 	display: flex
 	align-items: center
-	width: 100%
-	max-height: 100%
 	background: $color-black
 
 </style>

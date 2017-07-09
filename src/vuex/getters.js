@@ -15,7 +15,7 @@ export const getters = {
 		return {
 			AudiusDump: true,
 			playList: _getters.filteredPlayList.map(({ id }) => id),
-			entities: _getters.filteredPlayListEntities,
+			entities: _getters.playListEntities,
 		};
 	},
 	filteredPlayList(state) {
@@ -30,7 +30,7 @@ export const getters = {
 		return _getters.filteredPlayList.length;
 	},
 	// currentEntities
-	filteredPlayListEntities(state) {
+	playListEntities(state) {
 		return getCurrentPlayListEntities(state)
 			.reduce((entities, media) => ({ ...entities, [media.id]: media }), {});
 	},

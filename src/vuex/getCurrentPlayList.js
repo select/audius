@@ -13,9 +13,6 @@ export function getCurrentPlayListEntities(state) {
 		const ws = state.webScrapers[state.currentWebScraper];
 		const fiveMinutes = 5 * 60 * 1000; /* ms */
 		if (ws) {
-			const a = ws.playList
-				.filter(({ id }) => id in ws.playedMedia)
-				.map(({ id }) => [new Date() - ws.playedMedia[id], new Date() - ws.playedMedia[id] < fiveMinutes]);
 			return ws.playList.filter(
 				({ id }) => !(id in ws.playedMedia) || new Date() - ws.playedMedia[id] < fiveMinutes
 			);
