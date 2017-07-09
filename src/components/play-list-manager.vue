@@ -46,12 +46,7 @@ export default {
 				<draggable
 					class="play-list-manager__tag-drop-zone"
 					@add="dropAdd"
-					:options="{
-						sort: false,
-						group: {
-							name: 'lists',
-						}
-					}">
+					:options="{ sort: false, group: { name: 'lists' } }">
 					<div class="play-list-manager__tag-body">
 						<div>Default</div>
 						<div>{{playListLength}} Songs</div>
@@ -78,12 +73,10 @@ export default {
 		</draggable>
 		<ul class="play-list-manager__tags">
 			<li class="play-list-manager__input">
-				<div class="play-list-manager__tag-body">
-					<input
-						v-on:keyup.enter="addTags"
-						type="text"
-						placeholder="... new playlist">
-				</div>
+				<input
+					v-on:keyup.enter="addTags"
+					type="text"
+					placeholder="... new playlist">
 				<span class="wmp-icon-add" @click="addTags"></span>
 			</li>
 		</ul>
@@ -101,6 +94,8 @@ export default {
 	  background: $color-athensgrey
 	&::-webkit-scrollbar-track
 		background: $color-aluminium-dark
+	div
+		text-overflow: ellipsis
 	ul
 		padding: 0
 		list-style: none
@@ -111,18 +106,15 @@ export default {
 			margin: $grid-space
 			border-radius: $border-radius
 			align-items: center
-			// border: 1px solid $color-mineshaft
 			background: $color-athensgrey
 			color: $color-palesky
 			cursor: pointer
-			// font-weight: bold
 			&.active
 				font-weight: bold
 				background: $color-white
 				.play-list-manager__drag-handle
 					border-left: 1vw solid $color-pictonblue
 
-			// &.active,
 			&:hover:not(.spacer)
 				border-color: $color-pictonblue
 				color: $color-pictonblue
@@ -155,6 +147,7 @@ export default {
 		border: 0
 		border-radius: $border-radius
 		height: 100%
+		width: 100%
 		padding-left: #{2*$grid-space}
 		font-size: 1em
 		&::-webkit-input-placeholder
@@ -163,8 +156,6 @@ export default {
 			color: $color-palesky
 		&::-moz-placeholder
 			color: $color-palesky
-		// +placeholder
-		// 	color: $color-palesky
 </style>
 
 

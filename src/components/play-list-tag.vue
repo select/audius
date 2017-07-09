@@ -35,12 +35,7 @@ export default {
 		<draggable
 			class="play-list-manager__tag-drop-zone"
 			@add="dropAdd"
-			:options="{
-				sort: false,
-				group: {
-					name: 'lists',
-				}
-			}">
+			:options="{ sort: false, group: { name: 'lists' } }">
 			<div class="play-list-manager__tag-body">
 				<div v-show="currentPlayList != tagName">{{tagName}}</div>
 				<div v-show="currentPlayList == tagName">
@@ -84,14 +79,15 @@ li ~ .play-list-manager__tag-body
 	overflow: hidden
 
 .play-list-manager__tag-body
-	text-overflow: ellipsis
-	white-space: nowrap
-	overflow: hidden
+	// flex: 1
 	display: flex
-	flex: 1
 	flex-direction: column
-	div:last-child
-		font-size: 0.7em
+	div
+		overflow: hidden
+		text-overflow: ellipsis
+		white-space: nowrap
+		&:last-child
+			font-size: 0.7em
 	input
 		font-size: 1em
 		border: 0
