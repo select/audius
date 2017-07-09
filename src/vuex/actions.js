@@ -149,11 +149,11 @@ export const actions = {
 			});
 		}
 	},
-	initWebScraper({ state, commit, dispatch }) {
-		if (!(name in state.webScrapers)) {
-			commit('addWebScraper', state.currentWebScraper);
+	initWebScraper({ state, commit, dispatch }, name) {
+		if (name && !(name in state.webScrapers)) {
+			commit('addWebScraper', name);
 		}
-		if (!state.webScrapers[state.currentWebScraper].playList.length) {
+		if (!state.webScrapers[name].playList.length) {
 			dispatch('runWebScraper');
 		}
 	},

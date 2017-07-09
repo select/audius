@@ -13,7 +13,7 @@ export default {
 	},
 	methods: {
 		...mapMutations(['toggleLeftMenu', 'setLeftMenuTab']),
-		...mapActions(['initMatrix', 'initWebScraper']),
+		...mapActions(['initMatrix']),
 	},
 	computed: {
 		...mapState(['showLeftMenu', 'leftMenuTab', 'matrixEnabled']),
@@ -29,15 +29,16 @@ export default {
 		<div class="nav-handle__tab"></div>
 		<span class="wmp-icon-queue_music"></span>
 	</div>
-	<ul class="main-right__tabs" v-if="matrixEnabled">
+	<ul class="main-right__tabs">
 		<li
 			v-on:click="setLeftMenuTab('playList')"
 			v-bind:class="{ active: leftMenuTab == 'playList' }">Playlist</li>
 		<li
+			v-if="matrixEnabled"
 			v-on:click="setLeftMenuTab('radio');initMatrix()"
 			v-bind:class="{ active: leftMenuTab == 'radio' }">Radio</li>
 		<li
-			v-on:click="setLeftMenuTab('tv');initWebScraper()"
+			v-on:click="setLeftMenuTab('tv');"
 			v-bind:class="{ active: leftMenuTab == 'tv' }">TV</li>
 	</ul>
 	<div class="left-menu__wrapper">
