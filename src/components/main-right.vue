@@ -13,9 +13,9 @@ export default {
 		AboutPlayer,
 		SearchResults,
 		Queue,
+		Settings,
 		YoutubePlayer,
 		WebMediaPlayer,
-		Settings,
 	},
 	computed: mapState(['website', 'mainRightTab', 'search', 'showSettings', 'currentMedia']),
 	methods: mapMutations(['setMainRightTab']),
@@ -24,7 +24,7 @@ export default {
 
 <template>
 <div class="main-right">
-	<ul class="main-right__tabs">
+	<ul class="tabs">
 		<li
 			v-on:click="setMainRightTab('queue')"
 			v-bind:class="{ active: mainRightTab == 'queue' }">Queue</li>
@@ -76,30 +76,6 @@ export default {
 	display: flex
 	flex-direction: column
 	height: 100%
-ul.main-right__tabs
-	padding: 0
-	margin: 0
-	list-style: none
-	display: flex
-	width: 100%
-	min-height: $touch-size-small
-	li
-		flex: 1
-		display: flex
-		justify-content: center
-		align-items: center
-		background: $color-catskillwhite
-		color: $color-aluminium-dark
-		cursor: pointer
-		text-transform: uppercase
-		white-space: nowrap
-		font-size: 0.7em
-		transition: all $transition-time
-		&.active,
-		&:hover
-			background: $color-aluminium
-			color: $color-white
-
 .main-right__content
 	flex: 2
 	overflow-y: auto

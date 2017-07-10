@@ -1,9 +1,21 @@
 <script>
-import { mapState } from 'vuex';
+import { mapState, mapMutations, mapActions } from 'vuex';
+
 import PlayList from './play-list.vue';
+import WebHeader from './web-header.vue';
+
 import YoutubePlayer from './youtube-player.vue';
 import WebMediaPlayer from './web-media-player.vue';
-import WebHeader from './web-header.vue';
+
+import AboutPlayer from './about-player.vue';
+import SearchResults from './search-results.vue';
+import Queue from './queue.vue';
+import Settings from './settings.vue';
+
+import PlayListManager from './play-list-manager.vue';
+import MatrixRadioManager from './matrix-radio-manager.vue';
+import WebScraperManager from './web-scraper-manager.vue';
+
 
 export default {
 	components: {
@@ -11,16 +23,66 @@ export default {
 		PlayList,
 		YoutubePlayer,
 		WebMediaPlayer,
+		AboutPlayer,
+		SearchResults,
+		Queue,
+		Settings,
+		PlayListManager,
+		MatrixRadioManager,
+		WebScraperManager,
 	},
-	computed: mapState(['currentMedia']),
+	computed: mapState(['currentMedia', 'search', 'website', 'leftMenuTab', 'matrixEnabled', 'mainRightTab']),
+	methods: {
+		...mapMutations(['setMainRightTab', 'setLeftMenuTab']),
+		...mapActions(['initMatrix']),
+	},
 };
 </script>
 
 <template>
 <div class="web-app-mobile">
-
+		<ul class="tabs">
+			<li
+				v-on:click="setLeftMenuTab(''); setMainRightTab('')"
+				v-bind:class="{ active: !(mainRightTab || leftMenuTab) }"><span class="wmp-icon-queue_music"></span></li>
+			<li
+				v-on:click="setLeftMenuTab('playList');setMainRightTab('');"
+				v-bind:class="{ active: leftMenuTab == 'playList' }">PlayList</li>
+			<li
+				v-if="matrixEnabled"
+				v-on:click="setLeftMenuTab('radio');setMainRightTab('');;initMatrix()"
+				v-bind:class="{ active: leftMenuTab == 'radio' }">Radio</li>
+			<li
+				v-on:click="setLeftMenuTab('tv');setMainRightTab('');"
+				v-bind:class="{ active: leftMenuTab == 'tv' }">TV</li>
+			<li
+				v-on:click="setMainRightTab('queue');setLeftMenuTab('');"
+				v-bind:class="{ active: mainRightTab == 'queue' }">Queue</li>
+			<li
+				v-if="search.results.length"
+				v-on:click="setMainRightTab('search');setLeftMenuTab('');"
+				v-bind:class="{ active: mainRightTab == 'search' }">Search</li>
+			<li
+				v-on:click="setMainRightTab('about');setLeftMenuTab('');"
+				v-bind:class="{ active: mainRightTab == 'about' }">About</li>
+			<li
+				v-if="website.showChat"
+				v-on:click="setMainRightTab('chat');setLeftMenuTab('');"
+				v-bind:class="{ active: mainRightTab == 'chat' }">Chat</li>
+			<li
+				v-on:click="setMainRightTab('settings');setLeftMenuTab('');"
+				v-bind:class="{ active: mainRightTab == 'settings' }"><span class="wmp-icon-more_vert"></span></li>
+		</ul>
 		<div class="web-app-mobile__playlist">
-			<play-list></play-list>
+			<play-list v-show="!(mainRightTab || leftMenuTab)"></play-list>
+			<about-player v-show="mainRightTab == 'about'"></about-player>
+			<search-results v-show="mainRightTab == 'search'"></search-results>
+			<queue v-show="mainRightTab == 'queue'"></queue>
+			<div class="audius-chat" v-show="mainRightTab == 'chat'"> </div>
+			<settings v-show="mainRightTab == 'settings'"></settings>
+			<play-list-manager v-show="leftMenuTab == 'playList'"></play-list-manager>
+			<matrix-radio-manager v-show="leftMenuTab == 'radio'"></matrix-radio-manager>
+			<web-scraper-manager v-show="leftMenuTab == 'tv'"></web-scraper-manager>
 		</div>
 		<div class="web-app-mobile__players">
 			<div class="web-app-mobile__yt" v-bind:class="{'web-app-mobile--hide-yt': currentMedia.type !== 'youtube'}">
@@ -40,9 +102,35 @@ export default {
 	flex: 1
 	display: flex
 	flex-direction: column
+	.play-list-footer li,
+	.play-list-footer__search,
+	.play-list-footer__search.active input,
+	.play-list-footer__search.active span,
+	.au-header__search,
+	.au-header__search-input-group,
+	.play-list-footer,
+	.tabs
+		height: 3rem
+	[class^="wmp-icon-"]
+		height: 3rem
+		width: 3rem
+	.au-header__search-controls > span
+		display: none
+	.au-header__control-bar,
+	.au-header__controls
+		height: 4rem
+	.au-header__current-song
+		flex-direction: row
+		flex-wrap: wrap
+		.au-header__current-song-name
+			font-size: 0.7em
+		.au-header__current-song-time
+			font-size: 0.6em
+
 .web-app-mobile__players
 	flex: 1
 	overflow: hidden
+	position: relative
 	.web-app-mobile__yt
 		height: 100%
 		&.web-app-mobile--hide-yt

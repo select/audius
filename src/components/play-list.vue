@@ -17,15 +17,6 @@ export default {
 	},
 	created() {
 		this.subscriptions = [
-			// this.$store.watch(state => state.currentMedia, () => {
-			// 	if (this.currentMediaId !== this.currentMedia.id) {
-			// 		Vue.nextTick(() => {
-			// 			const el = document.querySelector('.play-list li.active');
-			// 			if (el && !isElementInViewport(el)) el.scrollIntoView({ block: 'start', behavior: 'smooth' });
-			// 		});
-			// 		this.currentMediaId = this.currentMedia.id;
-			// 	}
-			// }),
 			this.$store.watch(state => state.showJump, () => {
 				if (this.showJump) {
 					Vue.nextTick(() => {
@@ -210,7 +201,7 @@ export default {
 				{{filteredPlayListLength}} Songs
 			</li>
 			<li
-				v-if="leftMenuTab == 'playList'"
+				v-if="!!currentPlayList"
 				v-bind:class="{ active: showImport }"
 				@click="toggleImport()">
 				Import

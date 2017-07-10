@@ -69,6 +69,7 @@ export default {
 @import '../sass/input'
 @import '../sass/icon'
 @import '../sass/modal'
+@import '../sass/tabs'
 
 @import '../sass/media-list'
 

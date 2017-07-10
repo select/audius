@@ -1,0 +1,23 @@
+ul.tabs
+	padding: 0
+	margin: 0
+	list-style: none
+	display: flex
+	width: 100%
+	min-height: $touch-size-small
+	li
+		flex: 1
+		display: flex
+		justify-content: center
+		align-items: center
+		background: $color-catskillwhite
+		color: $color-aluminium-dark
+		cursor: pointer
+		text-transform: uppercase
+		white-space: nowrap
+		font-size: 0.7em
+		transition: all $transition-time
+		&.active,
+		&:hover
+			background: $color-aluminium
+			color: $color-white

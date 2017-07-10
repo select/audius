@@ -29,7 +29,7 @@ export default {
 		<div class="nav-handle__tab"></div>
 		<span class="wmp-icon-queue_music"></span>
 	</div>
-	<ul class="main-right__tabs">
+	<ul class="tabs">
 		<li
 			v-on:click="setLeftMenuTab('playList')"
 			v-bind:class="{ active: leftMenuTab == 'playList' }">Playlist</li>
