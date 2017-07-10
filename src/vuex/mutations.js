@@ -325,10 +325,10 @@ export const mutations = {
 	previousVideo(state) {
 		if (state.sessionHistory.length >= -1 * state.sessionHistoryPos) {
 			const sessionHistoryPos = state.sessionHistoryPos + 1;
-			const mediaId = state.sessionHistory[state.sessionHistory.length - 1 - sessionHistoryPos];
+			const media = state.sessionHistory[state.sessionHistory.length - 2 - sessionHistoryPos];
 			Object.assign(state, {
 				sessionHistoryPos,
-				currentMedia: state.entities[mediaId],
+				currentMedia: media,
 				isPlaying: true,
 			});
 		}

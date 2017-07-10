@@ -52,7 +52,7 @@ export const getters = {
 	},
 	sessionHistoryHasPrev(state) {
 		const hlength = state.sessionHistory.length;
-		return hlength > 0 && state.sessionHistoryPos < hlength - 1;
+		return hlength > 0 && state.sessionHistoryPos < hlength - 2;
 	},
 	tagNames(state) {
 		return Object.keys(state.tags);
