@@ -90,6 +90,7 @@ function play(state, mediaId, currentMedia) {
 export const mutations = {
 	recoverState(state, recoveredState) {
 		state = Object.assign(state, recoveredState);
+		if (state.currentPlayList === null) state.currentPlayList = '';
 	},
 	searchYoutubeSuccess(state, results) {
 		state.mainRightTab = 'search';
