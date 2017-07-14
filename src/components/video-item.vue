@@ -12,7 +12,7 @@ export default {
 		isSelected: Boolean,
 		isPlayList: Boolean,
 		isSearchResult: Boolean,
-		isOld: Boolean,
+		expiryDate: Date,
 		isWebScraper: Boolean,
 	},
 	data() {
@@ -94,9 +94,9 @@ export default {
 			active: isPlaying,
 			error: video.hasError,
 			selected: isSelected,
-			old: isOld,
+			old: !!expiryDate,
 			}"
-		v-bind:title="isOld ? '🕑 hide in < 5min' : ''"
+		v-bind:title="expiryDate ? '🕑 hide in < 5min' : ''"
 		v-on:dblclick="play"
 		v-bind:data-id="video.id">
 		<div class="media-list__main">

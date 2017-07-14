@@ -184,7 +184,7 @@ export default {
 				:video="media"
 				:isPlayList="!!currentPlayList"
 				:isSelected="jumpCursor === media.id"
-				:isOld="currentWebScraper && (media.id in webScrapers[currentWebScraper].playedMedia)"
+				:expiryDate="currentWebScraper ? webScrapers[currentWebScraper].playedMedia[media.id] : null"
 				:isWebScraper="!!currentWebScraper"
 				:isPlaying="isPlaying && (currentMedia.id == media.id)"></video-item>
 		</draggable>
