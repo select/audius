@@ -2,9 +2,10 @@
 // time
 $transition-time: 250ms
 
+
 // #Grid base `$grid-space`
 // This is the most important variable since all grid values are based on it
-$grid-space: 1vmin
+$grid-space: 0.45rem
 
 // ##Inputs
 // touch sizes are multiples of $grid-size (7px)
@@ -18,17 +19,6 @@ $touch-size-huge: 9*$grid-space
 
 $border-radius: 2px
 
-
-// Scrollbar width, this is sometimes necessary if we expect
-// a scrollbar could appear on overflowing content. This value
-// is not aribtrily chosen.
-// Don't change!
-// Please read, to learn more https://www.google.de/search?q=scrollbar+width
-$scroll-bar-size: 17px
-
-
-// Font-Sizes
-$font-size-normal: 2vmin
 
 =optional-at-root($sel)
 	@at-root #{if(not &, $sel, selector-append(&, $sel))}

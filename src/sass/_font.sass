@@ -1,1 +1,28 @@
 @import url('https://fonts.googleapis.com/css?family=Nobile')
+
+
+// https://medium.freecodecamp.org/the-100-correct-way-to-do-css-breakpoints-88d6a5ba1862
+// https://www.smashingmagazine.com/2011/10/16-pixels-body-copy-anything-less-costly-mistake/
+// http://www.rapidtables.com/web/dev/screen-resolution-statistics.htm
+// https://css-tricks.com/snippets/sass/viewport-sized-typography-minimum-maximum-sizes/
+
+// for all desktop screens 4:3 and 16:9
+html
+	font-size: 2.3vmin
+
+// for mobile screens landscape and portrait
+@media screen and (max-width: 680px)
+	html
+		font-size: 4.7vmin
+
+// For large desktop screens have a maximum font size
+@media screen and (min-height: 1800px)
+	html
+		// 1800px * 0.023
+		font-size: 41px
+
+// for tvs make ist large!
+@media tv
+	html
+		font-size: 2.3vmin
+

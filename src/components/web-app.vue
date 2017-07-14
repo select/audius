@@ -1,4 +1,5 @@
 <script>
+import { mapState } from 'vuex';
 import WebHeader from './web-header.vue';
 import MainRight from './main-right.vue';
 import PlayList from './play-list.vue';
@@ -17,35 +18,13 @@ export default {
 		Messages,
 		WebAppMobile,
 	},
-	data() {
-		return {
-			isMobileDevice: false,
-		};
-	},
-	methods: {
-		setIsMobile() {
-			const w = window;
-			const d = document;
-			const e = d.documentElement;
-			const g = d.getElementsByTagName('body')[0];
-			const x = w.innerWidth || e.clientWidth || g.clientWidth;
-			const y = w.innerHeight || e.clientHeight || g.clientHeight;
-			// console.log(x + ' × ' + y);
-			this.isMobileDevice = x < 500;
-		},
-	},
-	created() {
-		this.setIsMobile();
-		window.addEventListener('resize', () => {
-			this.setIsMobile();
-		}, true);
-	},
+	computed: mapState(['isMobile']),
 };
 </script>
 
 <template>
 <div class="web-app">
-	<div v-if="!isMobileDevice" class="web-app__desktop">
+	<div v-if="!isMobile" class="web-app__desktop">
 		<web-header></web-header>
 		<main
 			class="box">
@@ -55,7 +34,7 @@ export default {
 		</main>
 	</div>
 
-	<web-app-mobile v-if="isMobileDevice"></web-app-mobile>
+	<web-app-mobile v-if="isMobile"></web-app-mobile>
 	<import-modal></import-modal>
 	<messages></messages>
 </div>
@@ -81,7 +60,6 @@ html,
 
 body
 	font-family: 'Nobile', sans-serif
-	font-size: 2.3vmin
 	display: flex
 	flex-direction: column
 	align-items: center
@@ -103,10 +81,6 @@ body
 
 	::-webkit-scrollbar-thumb
 		background: $color-aluminium-dark
-
-@media screen and (max-width: 500px)
-	body
-		font-size: 4.7vmin
 
 .box-1-1
 	display: flex

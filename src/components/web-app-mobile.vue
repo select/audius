@@ -102,31 +102,6 @@ export default {
 	flex: 1
 	display: flex
 	flex-direction: column
-	.play-list-footer li,
-	.play-list-footer__search,
-	.play-list-footer__search.active input,
-	.play-list-footer__search.active span,
-	.au-header__search,
-	.au-header__search-input-group,
-	.play-list-footer,
-	.tabs
-		height: 3rem
-	[class^="wmp-icon-"]
-		height: 3rem
-		width: 3rem
-	.au-header__search-controls > span
-		display: none
-	.au-header__control-bar,
-	.au-header__controls
-		height: 4rem
-	.au-header__current-song
-		flex-direction: row
-		flex-wrap: wrap
-		.au-header__current-song-name
-			font-size: 0.7em
-		.au-header__current-song-time
-			font-size: 0.6em
-
 .web-app-mobile__players
 	flex: 1
 	overflow: hidden

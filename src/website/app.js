@@ -9,6 +9,18 @@ import { store } from '../vuex/store';
 import { migrate } from '../utils/indexDB.migrate';
 import './keyshorts';
 
+
+function isMobile() {
+	const w = window;
+	const d = document;
+	const e = d.documentElement;
+	const g = d.getElementsByTagName('body')[0];
+	const x = w.innerWidth || e.clientWidth || g.clientWidth;
+	// const y = w.innerHeight || e.clientHeight || g.clientHeight;
+	// console.log(x + ' × ' + y);
+	return (x < 500);
+}
+
 indexDB
 	.init()
 	.then(() => indexDB.recoverState())
@@ -19,6 +31,12 @@ indexDB
 		const name = getParameterByName('title');
 		if (url) store.commit('setPendingImportURL', { url, name });
 		cleanWindowLocation();
+
+		store.commit('setIsMobile', isMobile());
+		console.log("isMobile()", isMobile());
+		window.addEventListener('resize', () => {
+			store.commit('setIsMobile', isMobile());
+		}, true);
 	});
 
 

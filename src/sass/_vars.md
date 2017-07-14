@@ -9,12 +9,17 @@ $transition-time: 250ms
 
 ## Space
 
+### Base Font Size
+
+```js
+$base-font-size: 2.3vmin
+```
 
 ### Grid base
 This is the most important variable since all grid values are based on it
 
 ```js
-$grid-space: 1vmin
+$grid-space: 0.45em
 ```
 
 ### Input shadows
@@ -69,7 +74,3 @@ input
 		color: $color-pictonblue
 ```
 
-### Font size
-```js
-$font-size-normal: 2vmin
-```

@@ -87,6 +87,7 @@ export const store = new Vuex.Store({
 		leftMenuTab: 'playList',
 		showSettings: false,
 		mainRightTab: 'about',
+		isMobile: false,
 		website: {
 			showSearch: false,
 			showChat: false,

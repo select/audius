@@ -159,6 +159,18 @@ export const mutations = {
 	toggleLeftMenu(state) {
 		state.showLeftMenu = !state.showLeftMenu;
 	},
+	setIsMobile(state, toggleState) {
+		if (state.isMobile !== toggleState) {
+			if (toggleState) {
+				state.leftMenuTab = '';
+				state.mainRightTab = '';
+			} else {
+				state.leftMenuTab = 'playList';
+				state.mainRightTab = 'about';
+			}
+		}
+		state.isMobile = toggleState;
+	},
 	// ----------------------------------------------------------
 	error(state, message) {
 		state.errorMessages = [...state.errorMessages, message];
@@ -406,6 +418,10 @@ export const mutations = {
 			state.currentWebScraper = null;
 			state.currentRadioStation = null;
 			state.currentPlayList = id;
+		}
+		if (state.isMobile) {
+			state.leftMenuTab = '';
+			state.mainRightTab = '';
 		}
 	},
 	deletePlayList(state, playListName) {
