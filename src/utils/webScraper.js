@@ -44,17 +44,25 @@ export const webScraper = {
 		return promise;
 	},
 
-	findVideo(html) {
+	findVideos(html) {
 		const node = document.createElement('div');
 		node.innerHTML = html;
-		const ytNode = node.querySelector('iframe[allowfullscreen], iframe.youtube-player');
-		const mp4Node = node.querySelector('a[href$=".mp4"]');
-		const ytURL = ytNode ? ytNode.src.replace(/\?.*$/, '') : null;
-		return {
-			id: ytURL || mp4Node.href,
-			youtube: { url: ytURL },
-			mp4: mp4Node ? mp4Node.href : null,
-		};
+		const ytNodes = node.querySelectorAll('iframe[allowfullscreen], iframe.youtube-player');
+		const mp4Nodes = node.querySelectorAll('a[href$=".mp4"]');
+		return [
+			...Array.from(ytNodes).map(_node => ({
+				type: 'youtube',
+				url: _node.src.replace(/\?.*$/, ''),
+			})),
+			...Array.from(mp4Nodes).map(_node => ({
+				type: 'video',
+				url: _node.href,
+			})),
+		];
+	},
+
+	scanUrl(url) {
+		return this.ajax(url).then(rawHTML => this.findVideos(rawHTML));
 	},
 
 	getNext() {

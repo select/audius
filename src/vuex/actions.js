@@ -40,7 +40,11 @@ export const actions = {
 				});
 			});
 		} else if (/^https?:\/\//.test(query)) {
-			console.warn('parse page ', query);
+
+			console.warn('Please install the audius extension');
+			// webScraper.scanUrl(query).then(videos => {
+			// 	console.log('schan url, ', videos);
+			// });
 		} else if (query.length > 1) {
 			searchYoutubeDebounced(state.youtubeApiKey, query, result => {
 				commit('searchYoutubeSuccess', result);
