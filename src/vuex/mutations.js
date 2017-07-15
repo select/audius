@@ -267,6 +267,7 @@ export const mutations = {
 		}
 	},
 	dropSearchResult(state, { itemId, index }) {
+		console.log('dropSearchResult');
 		const video = state.search.results.find(item => item.id === itemId);
 		if (!video) return;
 		state.entities[video.id] = video;
@@ -277,17 +278,20 @@ export const mutations = {
 				pl.splice(index, 0, itemId);
 				// state.tags = Object.assign({}, state.tags);
 			}
-		} else if (!state.playList.includes(id)) {
+		} else if ((state.currentPlayList === '') && !state.playList.includes(id)) {
 			state.playList.splice(index, 0, itemId);
 		}
 	},
 	dropMoveItem(state, { itemId, from, to }) {
-		if (state.leftMenuTab !== 'radio') {
+		if (state.leftMenuTab === 'playList') {
 			if (state.currentWebScraper) {
-				state.entities[itemId] = Object.assign({}, state
+				const media = Object.assign({}, state
 					.webScrapers[state.currentWebScraper]
 					.playList
 					.find(({ id }) => id === itemId));
+				if (media) {
+					state.entities[media.id] = media;
+				}
 			}
 			if (to) {
 				if (!state.tags[to].includes(itemId)) {
@@ -515,17 +519,16 @@ export const mutations = {
 	// ---
 	addWebScraper(state, name) {
 		state.webScrapers[name] = { playList: [], playedMedia: {} };
+		state.currentWebScraper = name;
 	},
-	updateWebScraper(state, { name, videos }) {
-		const pl = state.webScrapers[name].playList;
-		const archive = state.webScrapers[name].archive || [];
-		const index = new Set([...pl.map(({ id }) => id), ...archive]);
-		const playList = [...pl, ...videos.filter(v => !index.has(v.id))];
+	updateWebScraper(state, { name, playList }) {
+		const ws = state.webScrapers[name] || {};
+		const archive = ws.archive ? ws.archive : [];
 		while (playList.length > 3000) {
 			const media = playList.shift();
 			archive.push(media.id);
 		}
-		Object.assign(state.webScrapers[name], {
+		state.webScrapers[name] = Object.assign(ws, {
 			playList,
 			archive,
 		});
@@ -534,5 +537,8 @@ export const mutations = {
 	incrementWebScraperIndex(state, name) {
 		if (!(name in state.webScrapersIndex)) state.webScrapersIndex[name] = 0;
 		state.webScrapersIndex[name]++;
+	},
+	setWebScraperEmptyCount(state, { name, count }) {
+		state.webScraperEmptyCount[name] = count;
 	},
 };

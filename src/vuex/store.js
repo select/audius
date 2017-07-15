@@ -60,6 +60,7 @@ export const store = new Vuex.Store({
 		webScrapers: {},
 		webScrapersOrderd: ['Imgur'],
 		webScrapersIndex: {},
+		webScraperEmptyCount: {},
 		sessionHistoryPos: -1,
 		sessionHistory: [],
 		queue: [],

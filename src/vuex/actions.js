@@ -158,17 +158,34 @@ export const actions = {
 			commit('addWebScraper', name);
 		}
 		if (!state.webScrapers[name].playList.length) {
-			dispatch('runWebScraper');
+			dispatch('runWebScraper', name);
 		}
 	},
-	runWebScraper({ state, commit }) {
-		if (!state.webScrapersIndex[state.currentWebScraper]) {
-			commit('incrementWebScraperIndex', state.currentWebScraper);
+	runWebScraper({ state, commit, dispatch }, name) {
+		if (!name) {
+			commit('error', 'Run web scraper name is missing.');
+			return;
 		}
-		webScraper.getVideosFromIndex(state.webScrapersIndex[state.currentWebScraper]).then(videos => {
-			const name = state.currentWebScraper;
-			if (videos) commit('updateWebScraper', { name, videos });
-			commit('incrementWebScraperIndex', state.currentWebScraper);
+		if (!state.webScrapersIndex[name]) {
+			commit('incrementWebScraperIndex', name);
+		}
+		webScraper.getVideosFromIndex(state.webScrapersIndex[name]).then(videos => {
+			const ws = state.webScrapers[name];
+			const pl = ws ? ws.playList : [];
+			const archive = ws && ws.archive ? ws.archive : [];
+			const index = new Set([...pl.map(({ id }) => id), ...archive]);
+			const newVideos = videos.filter(v => !index.has(v.id));
+			const playList = [...pl, ...newVideos];
+
+			if (videos) commit('updateWebScraper', { name, playList });
+			commit('incrementWebScraperIndex', name);
+
+			if (!newVideos.length) {
+				commit('setWebScraperEmptyCount', { name, count: (state.webScraperEmptyCount[name] + 1) });
+				dispatch('runWebScraper', name);
+			} else {
+				commit('setWebScraperEmptyCount', { name, count: 0 });
+			}
 		});
 	},
 	nextVideo({ state, commit, dispatch }) {
@@ -176,7 +193,7 @@ export const actions = {
 			const cp = getCurrentPlayListEntities(state);
 			const idx = cp.findIndex(m => m.id === state.currentMedia.id);
 			if (idx >= cp.length - 4) {
-				dispatch('runWebScraper');
+				dispatch('runWebScraper', state.currentWebScraper);
 			}
 		}
 		commit('nextVideo');
