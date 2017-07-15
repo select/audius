@@ -33,10 +33,12 @@ indexDB
 		cleanWindowLocation();
 
 		store.commit('setIsMobile', isMobile());
-		console.log("isMobile()", isMobile());
 		window.addEventListener('resize', () => {
 			store.commit('setIsMobile', isMobile());
 		}, true);
+	})
+	.catch(error => {
+		store.commit('error', { error, sticky: true });
 	});
 
 
