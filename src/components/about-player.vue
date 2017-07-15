@@ -104,6 +104,7 @@ export default {
 			<li> Sort queue with drag and drop.</li>
 			<li> Added repeat for one song, all songs (only if shuffle is not active).</li>
 			<li> Added support for web scraper TV stations (Imgur for now, more planned).</li>
+			<li> Basic support for mobile screens (next release will add full mobile support).</li>
 		</ul>
 		<b>2.0.3</b><br>
 		<ul>
