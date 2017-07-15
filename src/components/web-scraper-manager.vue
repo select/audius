@@ -3,7 +3,7 @@ import { mapActions, mapMutations, mapState } from 'vuex';
 
 export default {
 	methods: {
-		...mapMutations(['moveTagsOrderd', 'dropMoveItem', 'selectMediaSource']),
+		...mapMutations(['selectMediaSource']),
 		...mapActions(['initWebScraper']),
 		addTags() {
 			const el = document.querySelector('.play-list-manager__input input');
