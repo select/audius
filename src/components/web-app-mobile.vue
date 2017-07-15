@@ -102,6 +102,33 @@ export default {
 	flex: 1
 	display: flex
 	flex-direction: column
+	.au-header__control-bar
+		flex-direction: column
+	.au-header__current-song
+		font-size: 0.8em
+		flex-direction: row
+		max-height: 4 * $grid-space
+		overflow: hidden
+	.au-header__search
+		height: $touch-size-small
+		i
+			display: none
+	.au-header__controls
+		height: 7 * $grid-space
+	.au-header__logo
+		width: 6rem
+	.au-header__search-controls > span
+		display: none
+	.tabs
+		height: $touch-size-small
+	.media-list__main
+		height: inherit
+		padding: .5em 0
+	.media-list__thumbnail
+		width: 2.2em
+		height: 2.2em
+	.media-list__album-hint
+		left: 2.8em
 .web-app-mobile__players
 	flex: 1
 	overflow: hidden
@@ -113,4 +140,6 @@ export default {
 .web-app-mobile__playlist
 	flex: 2
 	overflow: auto
+
+
 </style>

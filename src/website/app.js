@@ -16,9 +16,9 @@ function isMobile() {
 	const e = d.documentElement;
 	const g = d.getElementsByTagName('body')[0];
 	const x = w.innerWidth || e.clientWidth || g.clientWidth;
-	// const y = w.innerHeight || e.clientHeight || g.clientHeight;
+	const y = w.innerHeight || e.clientHeight || g.clientHeight;
 	// console.log(x + ' × ' + y);
-	return (x < 500);
+	return (x < (y * 0.8));
 }
 
 indexDB

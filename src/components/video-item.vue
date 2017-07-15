@@ -1,5 +1,5 @@
 <script>
-import { mapMutations } from 'vuex';
+import { mapMutations, mapState } from 'vuex';
 
 export default {
 	name: 'video-item',
@@ -15,6 +15,7 @@ export default {
 		expiryDate: Date,
 		isWebScraper: Boolean,
 	},
+	computed: mapState(['isMobile']),
 	data() {
 		return {
 			copyActive: false,
@@ -138,7 +139,7 @@ export default {
 					v-bind:class="{ active: copyActive }"
 					title="Copy name and URL"></span>
 
-				<div class="media-list__more-controls" v-bind:class="{active: (isSearchResult || isWebScraper)}">
+				<div class="media-list__more-controls" v-bind:class="{active: (isSearchResult || isWebScraper || isMobile)}">
 					<span class="wmp-icon-more_vert"></span>
 					<div>
 						<a

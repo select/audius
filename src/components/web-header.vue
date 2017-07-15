@@ -265,8 +265,8 @@ header
 	position: relative
 .au-header__logo
 	width: #{20*$grid-space}
-	margin-left: #{2*$grid-space}
 .au-header__search
+	padding-left: #{2*$grid-space}
 	color: $color-white
 	height: $touch-size-medium
 	background: $color-pictonblue
