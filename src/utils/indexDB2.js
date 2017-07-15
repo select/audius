@@ -24,7 +24,7 @@ export const indexDB = {
 					resolve();
 				};
 
-				openRequest.onerror = () => reject('Error: could not connect to indexDB.');
+				openRequest.onerror = (event) => reject(`Could not connect to indexDB. ${event.target.error}`);
 			}
 		});
 	},
