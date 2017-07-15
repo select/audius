@@ -173,6 +173,7 @@ export const mutations = {
 	},
 	// ----------------------------------------------------------
 	error(state, message) {
+		if (typeof message === 'string') message = { error: message };
 		state.errorMessages = [...state.errorMessages, message];
 	},
 	videoError(state, message) {

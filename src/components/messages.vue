@@ -15,7 +15,9 @@ export default {
 					}, 3000);
 				})(
 					this.$el,
-					[...Array(this.errorMessages.length).keys()].filter(idx => !knownIdxs.includes(idx)),
+					[...Array(this.errorMessages.length).keys()].filter(
+						idx => !knownIdxs.includes(idx) && !this.errorMessages[idx].sticky
+					),
 					knownIdxs
 				);
 			}),
@@ -36,7 +38,7 @@ export default {
 			v-for="(message, idx) in errorMessages"
 			v-bind:data-id="idx"
 			class="messages__message">
-			{{message}}
+			{{message.error}}
 		</div>
 	</div>
 </template>
