@@ -64,8 +64,10 @@ export default {
 			if (this.showJump) event.stopPropagation();
 		},
 		filterInput(event) {
-			if ((event.key.length === 1 || event.key === 'Backspace') && (event.target.value.length > 1)) {
+			if (event.target.value.length > 1) {
 				this.filterPlayList(event.target.value);
+			} else {
+				this.filterPlayList('');
 			}
 		},
 	},
@@ -227,8 +229,8 @@ export default {
 					class="play-list-footer__search-input"
 					placeholder="Jump to"
 					@click="stopPropagation"
-					v-on:keyup="filterInput"
-					v-on:blur="delayBlur"
+					@input="filterInput"
+					@blur="delayBlur"
 					v-show="showJump">
 			<span
 				class="wmp-icon-close"

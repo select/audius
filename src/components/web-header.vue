@@ -44,9 +44,7 @@ export default {
 		]),
 		...mapActions(['search', 'nextVideo']),
 		searchInput(event) {
-			if (event.key.length === 1 || event.key === 'Backspace') {
-				this.search(event.target.value);
-			}
+			this.search(event.target.value);
 		},
 		stopPropagation(event) {
 			if (this.website.showSearch) event.stopPropagation();
@@ -160,9 +158,9 @@ export default {
 						class="au-header__search-input"
 						placeholder="Search"
 						@click="stopPropagation"
-						v-on:keyup="searchInput"
-						v-on:keyup.esc="clear"
-						v-on:blur="delayBlur">
+						@input="searchInput"
+						@keyup.esc="clear"
+						@blur="delayBlur">
 					<span class="wmp-icon-close" v-show="website.showSearch" @click="clear"></span>
 				</div>
 				<span
