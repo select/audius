@@ -78,7 +78,9 @@ export default {
 		<button
 			class="button btn--blue"
 			v-on:click="exportToURL">to Web</button>
-		<div v-if="exportURLs.length">
+		<div
+			class="play-list__export-list-wrapper"
+			v-if="exportURLs.length">
 			<p class="smaller">
 				Click and paste to share your playlist.
 			</p>
@@ -118,6 +120,9 @@ export default {
 
 .smaller
 	font-size: 0.9em
+.play-list__export-list-wrapper
+	width: 100%
+	overflow: hidden
 .play-list__exports
 	list-style: none
 	padding: 0
@@ -140,6 +145,7 @@ export default {
 .play-list__full
 	flex: 1
 	align-items: flex-start
+	overflow: hidden
 .play-list__date
 	white-space: nowrap
 </style>
