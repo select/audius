@@ -2,6 +2,7 @@ import {
 	duration,
 	time2s,
 	searchYoutube,
+	isYouTubeVideoRegEx,
 	debounce,
 	importPlayListFromString,
 	ajaxPostJSON,
@@ -39,8 +40,11 @@ export const actions = {
 					type: 'video',
 				});
 			});
+		} else if (isYouTubeVideoRegEx.test(query)) {
+			searchYoutubeDebounced(state.youtubeApiKey, query, result => {
+				commit('searchYoutubeSuccess', result);
+			});
 		} else if (/^https?:\/\//.test(query)) {
-
 			console.warn('Please install the audius extension');
 			// webScraper.scanUrl(query).then(videos => {
 			// 	console.log('schan url, ', videos);

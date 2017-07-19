@@ -28,7 +28,7 @@ const presistMutation = {
 	setExportURL: ['exportURLs'],
 	play: ['webScrapers'],
 	nextVideo: ['webScrapers'],
-	movePlayListMedia: ['playList', 'tags'],
+	movePlayListMedia: ['playList', 'tags', 'entities'],
 	moveTagsOrderd: ['tagsOrdered'],
 	migrationSuccess: ['migration'],
 	removeVideo: ['playList', 'entities'],

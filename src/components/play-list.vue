@@ -68,12 +68,6 @@ export default {
 				this.filterPlayList(event.target.value);
 			}
 		},
-		dropAdd(event) { // Element is dropped into the list from another list
-			if (!this.showJump) {
-				const itemId = event.item.dataset.id;
-				this.dropSearchResult({ itemId, index: event.newIndex });
-			}
-		},
 	},
 	computed: {
 		...mapGetters([
@@ -174,7 +168,6 @@ export default {
 			v-show="!(showImport || showExport || (leftMenuTab == 'radio' && !currentRadioStation))"
 			element="ul"
 			v-model="_entities"
-			@add="dropAdd"
 			:options="{
 				animation: 150,
 				scrollSpeed: 20,

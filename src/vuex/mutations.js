@@ -266,22 +266,6 @@ export const mutations = {
 			}
 		}
 	},
-	dropSearchResult(state, { itemId, index }) {
-		console.log('dropSearchResult');
-		const video = state.search.results.find(item => item.id === itemId);
-		if (!video) return;
-		state.entities[video.id] = video;
-		const id = video.id;
-		if (state.currentPlayList) {
-			if (!state.tags[state.currentPlayList].includes(id)) {
-				const pl = state.tags[state.currentPlayList];
-				pl.splice(index, 0, itemId);
-				// state.tags = Object.assign({}, state.tags);
-			}
-		} else if ((state.currentPlayList === '') && !state.playList.includes(id)) {
-			state.playList.splice(index, 0, itemId);
-		}
-	},
 	dropMoveItem(state, { itemId, from, to }) {
 		if (state.leftMenuTab === 'playList') {
 			if (state.currentWebScraper) {
@@ -376,6 +360,12 @@ export const mutations = {
 		state.currentTime = s;
 	},
 	movePlayListMedia(state, playList) {
+		playList
+			.filter(id => !(id in state.entities))
+			.map(id => state.search.results.find(item => item.id === id))
+			.filter(media => media)
+			.forEach(media => state.entities[media.id] = media);
+
 		if (state.currentPlayList) state.tags[state.currentPlayList] = playList;
 		else state.playList = playList;
 	},
