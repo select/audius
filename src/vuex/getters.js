@@ -29,7 +29,6 @@ export const getters = {
 		if (!_getters.filteredPlayList) return 0;
 		return _getters.filteredPlayList.length;
 	},
-	// currentEntities
 	playListEntities(state) {
 		return getCurrentPlayListEntities(state)
 			.reduce((entities, media) => ({ ...entities, [media.id]: media }), {});
