@@ -98,6 +98,10 @@ export default {
 	</p> -->
 	<h2>Change log</h2>
 	<p>
+		<b>2.0.5</b><br>
+		<ul>
+			<li> Bug fix release: YouTube skip, YouTube URLs in search, mobile version, d&d search results, history for all played items.</li>
+		</ul>
 		<b>2.0.4</b><br>
 		<ul>
 			<li> Drag and drop to copy songs between playlists and queue.</li>

@@ -21,6 +21,9 @@ If you have questions or feedback, join the chat on gitter or create an issue on
 
 ## Change log
 
+**2.0.5**
+*   Bug fix release: YouTube skip, YouTube URLs in search, mobile version, d&d search results, history for all played items.
+
 **2.0.4**
 *   Drag and drop to copy songs between playlists and queue.
 *   Sort queue with drag and drop.
