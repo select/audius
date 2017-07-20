@@ -77,12 +77,13 @@ export function next(state) {
 	}
 }
 
-function play(state, mediaId, currentMedia) {
-	if (!(mediaId || currentMedia)) {
-		next(state);
+function play(state, mediaId, media) {
+	if (!(mediaId || media)) {
+		if (state.currentMedia.id) state.isPlaying = true;
+		else next(state);
 	} else {
-		const media = currentMedia || state.entities[mediaId];
-		if (media) playMedia(state, media);
+		const _media = media || state.entities[mediaId];
+		if (_media) playMedia(state, _media);
 	}
 }
 
@@ -290,8 +291,8 @@ export const mutations = {
 		state.isPlaying = false;
 	},
 	play(state, options = {}) {
-		const { mediaId, currentMedia } = options;
-		play(state, mediaId, currentMedia);
+		const { mediaId, media } = options;
+		play(state, mediaId, media);
 	},
 	playPause(state) {
 		if (state.isPlaying) state.isPlaying = false;
