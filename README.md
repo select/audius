@@ -74,6 +74,36 @@ Why use the web version then?
 1.  A click on "reload page" will pull the latests updates.
 2.  I recognized that using this app from a local file blocks a lot of videos on YouTube (e.g. all Vevo videos) :(
 
+
+## Development
+
+Get the code and install all dependencies.
+```
+git clone git@github.com:select/audius.git
+cd audius
+npm install
+```
+
+Run the dev server (with hot module replacement).
+```
+npm start
+```
+Open http://localhost:8080/ to test.
+
+
+Build a debug version that includes source maps and the full vue runtime.
+```
+npm run build
+```
+The build is located in `/dist-website`, open `index.html` to test.
+
+Build a production version with with minimal runtime and without source maps
+```
+npm run build:prod:app
+```
+The build is also located in `/dist-website`, open `index.html` to test.
+
+
 ## Legality, security, saftey, and privacy
 
 *   **Legality** This app sould be completely legal since it embedds videos from legal streaming providers (currently only YouTube). I do not provide any links to streams (except for the initial playlist containing only legal links from my friends)
