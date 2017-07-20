@@ -23,18 +23,18 @@ export default {
 		};
 	},
 	methods: {
-		...mapMutations(['pause', 'queue', 'error']),
-		play() {
+		...mapMutations(['pause', 'play', 'queue', 'error', 'removeTags', 'queueRemoveIndex', 'removeVideo']),
+		_play() {
 			if (this.isQueue) this.$store.commit('queuePlayIndex', this.queueIndex);
-			else this.$store.commit('play', { currentMedia: this.video });
+			else this.play({ media: this.video });
 		},
 		remove() {
 			if (this.isPlayList) {
-				this.$store.commit('removeTags', { mediaIds: [this.video.id] });
+				this.removeTags({ mediaIds: [this.video.id] });
 			} else if (this.isQueue) {
-				this.$store.commit('queueRemoveIndex', this.queueIndex);
+				this.queueRemoveIndex(this.queueIndex);
 			} else {
-				this.$store.commit('removeVideo', this.video);
+				this.removeVideo(this.video);
 			}
 		},
 		addToPlaylist() {
@@ -98,7 +98,7 @@ export default {
 			old: !!expiryDate,
 			}"
 		v-bind:title="expiryDate ? '🕑 hide in < 5min' : ''"
-		v-on:dblclick="play"
+		v-on:dblclick="_play"
 		v-bind:data-id="video.id">
 		<div class="media-list__main">
 			<span class="wmp-icon-album media-list__album-hint" v-if="video.tracks"></span>
@@ -113,7 +113,7 @@ export default {
 			<div class="media-list__controls">
 
 				<span class="wmp-icon-pause" v-if="isPlaying" @click="pause" title="Pause"></span>
-				<span class="wmp-icon-play" v-else @click="play" title="Play"></span>
+				<span class="wmp-icon-play" v-else @click="_play" title="Play"></span>
 
 				<span
 					v-if="video.tracks && !isQueue"
@@ -139,31 +139,25 @@ export default {
 					v-bind:class="{ active: copyActive }"
 					title="Copy name and URL"></span>
 
-				<div class="media-list__more-controls" v-bind:class="{active: (isSearchResult || isWebScraper || isMobile)}">
-					<span class="wmp-icon-more_vert"></span>
-					<div>
-						<a
-							v-if="video.type === 'youtube'"
-							v-bind:href="this.youtubeLink()"
-							title="Watch on YouTube"
-							target="_blank">
-							<span class="wmp-icon-youtube icon--small"></span>
-						</a>
-						<a
-							v-if="video.href"
-							v-bind:href="video.href"
-							title="Go to source"
-							target="_blank">
-							<span class="wmp-icon-link"></span>
-						</a>
-						<span
-							class="wmp-icon-close"
-							v-if="!(isExtension || isSearchResult || isWebScraper)"
-							@click="remove"
-							title="Remove"></span>
-					</div>
-				</div>
-
+				<a
+					v-if="video.type === 'youtube'"
+					v-bind:href="this.youtubeLink()"
+					title="Watch on YouTube"
+					target="_blank">
+					<span class="wmp-icon-youtube icon--small"></span>
+				</a>
+				<a
+					v-if="video.href"
+					v-bind:href="video.href"
+					title="Go to source"
+					target="_blank">
+					<span class="wmp-icon-link"></span>
+				</a>
+				<span
+					class="wmp-icon-close"
+					v-if="!(isExtension || isSearchResult || isWebScraper)"
+					@click="remove"
+					title="Remove"></span>
 
 				<span
 					v-if="isSearchResult"
