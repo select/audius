@@ -3,51 +3,45 @@
 Audius is the ultimate streaming music player.
 
 - Create playlist, no login required, stored in the indexDB in your browser.
-- Share your playlists in the web and as files.
+- Share your playlists as hyperlinks and as files.
 - Queue songs
+- Organize playlists with drag and drop.
 - Supports: YouTube/.mp3/.oga/.wav/.mp4/.webm/.ogg URLs.
 - Runs "offline" - a pure HTML5 app that can run without a server.
-
-## Keyboard shortcuts
-
-<dl>
-	<dt>c</dt>
-	<dd>Play / pause</dd>
-	<dt>b</dt>
-	<dd>Next song</dd>
-	<dt>s</dt>
-	<dd>Shuffle on / off</dd>
-	<dt>m</dt>
-	<dd>Mute / unmute</dd>
-	<dt>j</dt>
-	<dd>Jump to song</dd>
-	<dt>f</dt>
-	<dd>Find song on YouTube</dd>
-</dl>
+- Plays Imgur Top as video stream.
+- Set start end times of songs (e.g. to cut of trailing silence)
+- Split YouTube full albums into seperate songs.
 
 ## Community
 
-If you have questions or feedback, join the chat on gitter or create an issue on github.  
+If you have questions or feedback, join the chat on gitter or create an issue on github.
 
-- [Join the chat](gitter.im/audius-player/Lobby) 
+- [Join the chat](gitter.im/audius-player/Lobby)
 - [Create an issue](https://github.com/select/audius/issues)
 
 ## Change log
 
-**2.0.3**  
+**2.0.4**
+*   Drag and drop to copy songs between playlists and queue.
+*   Sort queue with drag and drop.
+*   Added repeat for one song, all songs (only if shuffle is not active).
+*   Added support for web scraper TV stations (Imgur for now, more planned).
+*   Basic support for mobile screens (next release will add full mobile support).
+
+**2.0.3**
 
 *   Improved header timeline design.
 *   Added support for web video .mp4 .webm .ogg URLs.
 *   Added draggable start stop limits for media (hover over timeline).
 
-**2.0.2**  
+**2.0.2**
 
 *   Drag and drop search results into the current playlist.
 *   Support for .mp3 .oga .wav URLs (paste into search box).
 *   Experimental support for [Matrix.org](https://matrix.org/) radio stations.
 *   Store and list the 5 last web exports.
 
-**2.0.1**  
+**2.0.1**
 
 *   Replaced Redux with Vuex.
 *   Fixed playlist sorting.
@@ -61,16 +55,16 @@ If you have questions or feedback, join the chat on gitter or create an issue on
 
 1.  At the top right, click _More_.
 2.  Click _More Tools_.
-3.  Add the app:  
-    Windows users: Click _Add to taskbar_.  
-    Linux users: Click _Add to desktop_.  
+3.  Add the app:
+    Windows users: Click _Add to taskbar_.
+    Linux users: Click _Add to desktop_.
     Chromebook users: Click _Add to shelf_.
 
-**Chrome android:**  
+**Chrome android:**
 Tap the menu button and tap _Add to homescreen_. The app is not yet optimized for mobile phones, it might work on tablets.
 
-**Local HTML5:**  
-Since this player is a pure HTML5 app without server side code you can simply download the HTML and JS code and run it from a local file. You can also download the latest version from the [source code](#source-code) repository at github.  
+**Local HTML5:**
+Since this player is a pure HTML5 app without server side code you can simply download the HTML and JS code and run it from a local file. You can also download the latest version from the [source code](#source-code) repository at github.
 
 Why use the web version then?
 
@@ -81,8 +75,8 @@ Why use the web version then?
 
 *   **Legality** This app sould be completely legal since it embedds videos from legal streaming providers (currently only YouTube). I do not provide any links to streams (except for the initial playlist containing only legal links from my friends)
 *   **Security** This app is open source so you can make sure that there is no malicious code included. In addition to that there is no advertisement (... yet :-O) that could spread malicious code. But to be clear streams and streaming APIs are provided by external entites ... read more below about privacy.
-*   **Safety** If you back up your playlist (and this app) to a file it will be save even if this server goes down. Do it now and save your precius playlist!
-*   **Privacy** This app stores all your data in your browser (Menu > More tools > Developer tools > Application > IndexDB), nothing is saved on my server. I currently do not use any analytics tool (though it's very tempting). The streams however are provided by external entities (Google-YouTube) that will track you. As stated before I currently have no intentions of showing external advertisement. I think if Audius gets popular there are nicer ways to profit from it. ... how about a song of your band on the initial playlist? It's really cheap (0€) right now :P
+*   **Safety** If you back up your playlist (and this app, it runs offline) to a file it will continue working even if this server goes down. Do back up your precius playlists now!
+*   **Privacy** This app stores all your data in your browser (Menu > More tools > Developer tools > Application > IndexDB), nothing is saved on my server. I currently do not use any analytics tool (though it's very tempting). The streams however are provided by external entities (Google-YouTube) that will track you. As stated before I currently have no intentions of showing external advertisement. I think if Audius gets popular there are nicer ways to profit from it.
 
 Web apps are true freedom! Support an open and liberal web without geo borders and login screens.
 
@@ -133,5 +127,5 @@ Here are the tools I used to create Audius.
 *   Google material icons
 *   Webpack + Babel + Plugins
 *   LivingStyleGuide
-*   [SortableJS](https://rubaxa.github.io/Sortable/)
+*   <span style="text-decoration:line-through;">[SortableJS](https://rubaxa.github.io/Sortable/)</span> vuedraggable
 *   [Myjson.com](http://myjson.com/)
