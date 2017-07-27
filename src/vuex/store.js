@@ -17,7 +17,7 @@ const presistMutation = {
 	addSearchResult: ['entities', 'playList', 'tags'],
 	dropSearchResult: ['entities', 'playList', 'tags'],
 	dropMoveItem: ['playList', 'tags', 'entities'],
-	importPlayList: ['entities', 'playList', 'tags'],
+	importPlayList: ['entities', 'playList', 'tags', 'tagsOrdered'],
 	toggleLeftMenu: ['showLeftMenu'],
 	addTags: ['tagsOrdered', 'tags'],
 	removeTags: ['tags'],
