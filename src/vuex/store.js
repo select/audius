@@ -39,6 +39,7 @@ const presistMutation = {
 	updateWebScraper: ['webScrapers'],
 	videoError: ['entities'],
 	updateCurrentMedia: ['entities'],
+	addWebScraper: ['webScrapersOrderd', 'webScrapers'],
 };
 
 export const store = new Vuex.Store({
@@ -87,6 +88,7 @@ export const store = new Vuex.Store({
 		showLeftMenu: false,
 		leftMenuTab: 'playList',
 		showSettings: false,
+		showWebScraperSettings: false,
 		mainRightTab: 'about',
 		isMobile: false,
 		website: {

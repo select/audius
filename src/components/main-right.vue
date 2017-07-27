@@ -6,6 +6,7 @@ import Queue from './queue.vue';
 import Settings from './settings.vue';
 import YoutubePlayer from './youtube-player.vue';
 import WebMediaPlayer from './web-media-player.vue';
+import WebScraperSettings from './web-scraper-settings.vue';
 
 export default {
 	name: 'main-right',
@@ -16,8 +17,9 @@ export default {
 		Settings,
 		YoutubePlayer,
 		WebMediaPlayer,
+		WebScraperSettings,
 	},
-	computed: mapState(['website', 'mainRightTab', 'search', 'showSettings', 'currentMedia']),
+	computed: mapState(['website', 'mainRightTab', 'search', 'showSettings', 'showWebScraperSettings', 'currentMedia']),
 	methods: mapMutations(['setMainRightTab']),
 };
 </script>
@@ -40,6 +42,10 @@ export default {
 			v-on:click="setMainRightTab('chat')"
 			v-bind:class="{ active: mainRightTab == 'chat' }">Chat</li>
 		<li
+			v-if="showWebScraperSettings"
+			v-on:click="setMainRightTab('webScraperSettings')"
+			v-bind:class="{ active: mainRightTab == 'webScraperSettings' }">TV Settings</li>
+		<li
 			v-if="showSettings"
 			v-on:click="setMainRightTab('settings')"
 			v-bind:class="{ active: mainRightTab == 'settings' }">Settings</li>
@@ -49,6 +55,7 @@ export default {
 		<search-results v-show="mainRightTab == 'search'"></search-results>
 		<queue v-show="mainRightTab == 'queue'"></queue>
 		<div class="audius-chat" v-show="mainRightTab == 'chat'"> </div>
+		<web-scraper-settings v-show="mainRightTab == 'webScraperSettings'"></web-scraper-settings>
 		<settings v-show="mainRightTab == 'settings'"></settings>
 	</div>
 	<div

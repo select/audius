@@ -23,7 +23,7 @@ export default {
 </script>
 
 <template>
-<div class="web-app">
+<div class="web-app" id="audius-website">
 	<div v-if="!isMobile" class="web-app__desktop">
 		<web-header></web-header>
 		<main

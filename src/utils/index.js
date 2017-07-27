@@ -2,14 +2,18 @@ export { ajax, ajaxPostJSON } from './ajax';
 export { debounce } from './debounce';
 export { injectScript } from './injectScript';
 export { duration, s2time, time2s } from './timeConverter';
-export { searchYoutube, isYouTubeVideoRegEx } from './searchYoutube';
+export {
+	searchYoutube,
+	isYouTubeVideoRegEx,
+	parseYoutubeDescription,
+	findYouTubeIdsText,
+	getYouTubeInfo
+} from './youtube';
 export { isElementInViewport } from './isElementInViewport';
 export { indexDB } from './indexDB2';
 export { importPlayListFromString } from './importPlayListFromString';
-export { findYouTubeIdsText, getYouTubeInfo } from './findVideos';
 export { starterPlaylist } from './config';
 export { hashCode } from './hashCode';
 export { cleanWindowLocation, getParameterByName } from './windowLocationTools';
-export { parseYoutubeDescription } from './parseYoutubeDescription';
 export { webScraper } from './webScraper';
 export { getMediaDuration } from './getMediaDuration';

@@ -39,10 +39,15 @@ export default {
 			'filterPlayList',
 			'movePlayListMedia',
 			'toggleJump',
+			'dropMoveItem',
 		]),
 		...mapActions(['importURL', 'matrixPaginate', 'runWebScraper']),
 		addMusic() {
 			this.importURL({ url: starterPlaylist });
+		},
+		dropAdd(event) { // Element is dropped into the list from another list
+			const itemId = event.item.dataset.id;
+			this.dropMoveItem({ itemId, to: this.currentPlayList });
 		},
 		clear(close) {
 			if (!this.filterQuery) this.toggleJump(false);
@@ -120,19 +125,12 @@ export default {
 			Listen to a radio station from the <a href="https://matrix.org">matrix.org</a> chat network. <br><br>
 			♫♪.ılılıll|̲̅̅●̲̅̅|̲̅̅=̲̅̅|̲̅̅●̲̅̅|llılılı.♫♪
 		</h2>
-		<h2 v-if="showWelcome && !currentPlayList && leftMenuTab == 'playList'">
+		<draggable
+			element="h2"
+			v-show="showWelcome && leftMenuTab == 'playList'"
+			@add="dropAdd"
+			:options="{ sort: false, group: { name: 'lists' } }">
 			The playlist is empty <br>
-			┐(・。・┐) ♪ <br>
-			<br>
-			<span @click="toggleSearch()">
-				<span class="wmp-icon-search" title="[f] Search on YouTube"></span> Search
-			</span>
-				and add some songs. Or just
-			<button
-				class="play-list__btn-add-music button btn--blue"
-				@click="addMusic">add music</button>
-		</h2>
-		<h2 v-if="showWelcome && currentPlayList && leftMenuTab == 'playList'">
 			(⊃｡•́‿•̀｡)⊃ <br>
 			<br>
 			<span @click="toggleSearch()">
@@ -142,7 +140,7 @@ export default {
 				<button
 					class="play-list__btn-add-music button btn--blue"
 					@click="addMusic">add music</button>
-		</h2>
+		</draggable>
 
 		<play-list-import
 			:tags="tagNames"

@@ -245,7 +245,7 @@ export default {
 			<li>Google material icons</li>
 			<li>Webpack + Babel + Plugins</li>
 			<li>LivingStyleGuide</li>
-			<li><a href="https://rubaxa.github.io/Sortable/">SortableJS</a></li>
+			<li><a href="https://rubaxa.github.io/Sortable/">SortableJS</a>; vuedraggable</li>
 			<li><a target="_blank" href="http://myjson.com/">Myjson.com</a></li>
 		</ul>
 	</p>

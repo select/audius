@@ -22,6 +22,7 @@ module.exports = Object.assign(configDev, {
 	devtool: undefined,
 	plugins: [
 		...configDev.plugins,
+		new webpack.optimize.ModuleConcatenationPlugin(),
 		new webpack.optimize.OccurrenceOrderPlugin(),
 		new webpack.optimize.UglifyJsPlugin({
 			compress: {

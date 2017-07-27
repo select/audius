@@ -36,7 +36,7 @@ export default {
 					@click.stop="leaveRadioStation(roomId)"></span>
 			</div>
 		</li>
-		<li class="matrix-radio__input">
+		<li class="play-list-manager__input">
 			<input
 				v-on:keyup.enter="addRadioStation"
 				type="text"
@@ -103,25 +103,6 @@ export default {
 		cursor: move
 .matrix-radio__menu
 	display: none
-
-.matrix-radio__input
-	padding: 0
-	background: $color-athensgrey
-	input
-		background: transparent
-		box-sizing: border-box
-		border: 0
-		border-radius: $border-radius
-		height: 100%
-		width: 100%
-		padding-left: #{2*$grid-space}
-		font-size: 1em
-		&::-webkit-input-placeholder
-			color: $color-palesky
-		&:-moz-placeholder
-			color: $color-palesky
-		&::-moz-placeholder
-			color: $color-palesky
 
 </style>
 

@@ -3,13 +3,14 @@ import { mapActions, mapMutations, mapState } from 'vuex';
 
 export default {
 	methods: {
-		...mapMutations(['selectMediaSource']),
+		...mapMutations(['selectMediaSource', 'openWebScraperSettings', 'addWebScraper', 'deleteWebScraper']),
 		...mapActions(['initWebScraper']),
-		addTags() {
-			const el = document.querySelector('.play-list-manager__input input');
-			this.$store.commit('addTags', { tag: el.value });
+		_addWebScraper() {
+			const el = document.querySelector('.ws-manager__input input');
+			this.addWebScraper(el.value);
 			el.value = '';
 		},
+
 	},
 	computed: {
 		...mapState(['webScrapersOrderd', 'currentWebScraper']),
@@ -23,11 +24,28 @@ export default {
 			<li
 				v-for="id in webScrapersOrderd"
 				@click="initWebScraper(id);selectMediaSource({type: 'tv', id: id})"
-				v-bind:class="{ active: currentWebScraper }">
+				v-bind:class="{ active: currentWebScraper === id }">
 				<div class="play-list-manager__drag-handle"></div>
 				<div class="play-list-manager__tag-body">
 					{{id}}
 				</div>
+				<div class="play-list-manager__menu">
+					<span
+						class="wmp-icon-mode_edit"
+						title="TV Settings"
+						@click.stop="openWebScraperSettings(id)"></span>
+					<span
+						class="wmp-icon-close"
+						title="Delte channel"
+						@click.stop="deleteWebScraper(id)"></span>
+				</div>
+			</li>
+			<li class="play-list-manager__input ws-manager__input">
+				<input
+					v-on:keyup.enter="addScraper"
+					type="text"
+					placeholder="... new channel">
+				<span class="wmp-icon-add" @click="_addWebScraper"></span>
 			</li>
 		</ul>
 	</div>

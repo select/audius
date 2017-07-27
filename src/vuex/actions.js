@@ -10,51 +10,60 @@ import {
 	findYouTubeIdsText,
 	getYouTubeInfo,
 	webScraper,
-	getMediaDuration
+	getMediaDuration,
+	s2time,
+	hashCode
 } from '../utils';
 import { videoBaseObject } from './video';
 import { getCurrentPlayListEntities } from './getCurrentPlayList';
 // the matrix client will be lazy loaded since it's not need on startup
 let matrixClient = null;
 const searchYoutubeDebounced = debounce((...args) => searchYoutube(...args), 500);
+const webScraperDebounced = debounce((...args) => window.dispatchEvent(...args), 500);
 
 const audioRegEx = /\.(mp3|oga|m4a|flac|wav|aiff|aif|wma|asf)$/i;
 const videoRegEx = /\.(avi|mkv|mp4|webm|ogg)$/i;
+
+function refineWebSearchResult(media) {
+	let title = media.title;
+	if (media.url) {
+		const urlParts = media.url.split('/');
+		if (!title) title = urlParts.length ? urlParts[urlParts.length - 1] : media.url;
+	}
+	return Object.assign({}, videoBaseObject, media, {
+		title,
+		duration: media.durationS ? s2time(media.durationS) : undefined,
+		id: media.id || `${hashCode(media.url)}`,
+	});
+}
 
 /* eslint-disable no-param-reassign */
 export const actions = {
 	search({ commit, state }, query) {
 		if (audioRegEx.test(query)) {
-			getMediaDuration(query, 'video').then(durationS => {
-				commit('webMediaSearchSuccess', {
-					url: query,
-					durationS,
-					type: 'audio',
-				});
-			});
+			getMediaDuration(query, 'video')
+				.then(durationS => refineWebSearchResult({ url: query, durationS, type: 'audio' }))
+				.then(media => commit('webMediaSearchSuccess', { mediaList: [media], id: query }));
 		} else if (videoRegEx.test(query)) {
-			getMediaDuration(query, 'video').then(durationS => {
-				commit('webMediaSearchSuccess', {
-					url: query,
-					durationS,
-					type: 'video',
-				});
-			});
+			getMediaDuration(query, 'video')
+				.then(durationS => refineWebSearchResult({ url: query, durationS, type: 'video' }))
+				.then(media => commit('webMediaSearchSuccess', { mediaList: [media], id: query }));
 		} else if (isYouTubeVideoRegEx.test(query)) {
 			searchYoutubeDebounced(state.youtubeApiKey, query, result => {
 				commit('searchYoutubeSuccess', result);
 			});
 		} else if (/^https?:\/\//.test(query)) {
 			console.warn('Please install the audius extension');
-			// webScraper.scanUrl(query).then(videos => {
-			// 	console.log('schan url, ', videos);
-			// });
+			webScraperDebounced(new CustomEvent('audiusExtension', {
+				detail: { audius: true, type: 'scanUrl', url: query, youtubeApiKey: state.youtubeApiKey },
+			}));
 		} else if (query.length > 1) {
 			searchYoutubeDebounced(state.youtubeApiKey, query, result => {
 				commit('searchYoutubeSuccess', result);
 			});
 		}
 	},
+
 	importPlayListFromString({ commit }, importString) {
 		importPlayListFromString(importString).then((data, error) => {
 			if (error) {
@@ -128,33 +137,14 @@ export const actions = {
 
 		if (ids.length) {
 			// get info for all new unknown ids
-			getYouTubeInfo(
-				ids.filter(id => !(id in state.entities)),
-				state.youtubeApiKey
-			).then(results => {
-				const entities = results.reduce(
-					(acc, v) => ({
-						// covert the raw result
-						...acc,
-						[v.id]: Object.assign({}, videoBaseObject, {
-							title: v.snippet.title,
-							duration: duration(v.contentDetails.duration),
-							durationS: time2s(duration(v.contentDetails.duration)),
-							isPlaying: false,
-							id: v.id,
-							deleted: false,
-							type: 'youtube',
-						}),
-					}),
-					{}
-				);
-
-				commit('updateRadioStation', {
-					roomId,
-					entities,
-					playList: ids,
+			getYouTubeInfo(ids.filter(id => !(id in state.entities)), state.youtubeApiKey)
+				.then(results => {
+					commit('updateRadioStation', {
+						roomId,
+						entities: results.reduce((acc, v) => ({ ...acc, [v.id]: v }), {}),
+						playList: ids,
+					});
 				});
-			});
 		}
 	},
 	initWebScraper({ state, commit, dispatch }, name) {
@@ -181,7 +171,7 @@ export const actions = {
 			const newVideos = videos.filter(v => !index.has(v.id));
 			const playList = [...pl, ...newVideos];
 
-			if (videos) commit('updateWebScraper', { name, playList });
+			if (videos) commit('updateWebScraper', { name, values: { playList } });
 			commit('incrementWebScraperIndex', name);
 
 			if (!newVideos.length) {

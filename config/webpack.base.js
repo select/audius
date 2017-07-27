@@ -36,9 +36,6 @@ module.exports = {
 			},
 		],
 	},
-	node: {
-		fs: 'empty',
-	},
 	plugins: [
 		new CopyWebpackPlugin([
 			{ context: './src/website/static/', from: '**/*', to: './' },

@@ -36,6 +36,12 @@ indexDB
 		window.addEventListener('resize', () => {
 			store.commit('setIsMobile', isMobile());
 		}, true);
+
+		window.addEventListener('audius', (event) => {
+			if (event.detail && event.detail.vuex) {
+				store[event.detail.vuex](event.detail.type, event.detail.data);
+			}
+		}, false);
 	})
 	.catch(error => {
 		store.commit('error', { error, sticky: true });

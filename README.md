@@ -4,12 +4,12 @@ Audius is the ultimate streaming music player.
 
 - Create playlist, no login required, stored in the indexDB in your browser.
 - Share your playlists as hyperlinks and as files.
-- Queue songs
+- Queue songs, play history.
 - Organize playlists with drag and drop.
 - Supports: YouTube/.mp3/.oga/.wav/.mp4/.webm/.ogg URLs.
 - Runs "offline" - a pure HTML5 app that can run without a server.
-- Plays Imgur Top as video stream.
-- Set start end times of songs (e.g. to cut of trailing silence)
+- Plays Imgur "Most Viral" as video stream.
+- Set start end times of media items (e.g. to cut of trailing silence)
 - Split YouTube full albums into seperate songs.
 
 ## Community

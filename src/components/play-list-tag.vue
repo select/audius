@@ -79,7 +79,7 @@ li ~ .play-list-manager__tag-body
 	overflow: hidden
 
 .play-list-manager__tag-body
-	// flex: 1
+	flex: 1
 	display: flex
 	flex-direction: column
 	div

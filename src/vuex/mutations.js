@@ -1,7 +1,11 @@
-import { duration, time2s, s2time, hashCode, parseYoutubeDescription } from '../utils';
+import { duration, time2s, parseYoutubeDescription } from '../utils';
 import { youtubeApiKey } from '../utils/config';
 import { videoBaseObject } from './video';
-import { getCurrentPlayListEntities, getCurrentPlayList, getCurrentName } from './getCurrentPlayList';
+import {
+	getCurrentPlayListEntities,
+	getCurrentPlayList,
+	getCurrentName,
+} from './getCurrentPlayList';
 
 /* eslint-disable no-param-reassign */
 function playMedia(state, media) {
@@ -16,6 +20,34 @@ function playMedia(state, media) {
 		currentMedia: media,
 		isPlaying: true,
 	});
+}
+
+function selectMediaSource(state, { type, id }) {
+	if (type === 'tv') {
+		state.currentPlayList = null;
+		state.currentRadioStation = null;
+		state.currentWebScraper = id;
+	} else if (type === 'radio') {
+		state.currentWebScraper = null;
+		state.currentPlayList = null;
+		state.currentRadioStation = id;
+	} else if (type === 'playList') {
+		state.currentWebScraper = null;
+		state.currentRadioStation = null;
+		state.currentPlayList = id;
+	}
+	if (state.isMobile) {
+		state.leftMenuTab = '';
+		state.mainRightTab = '';
+	}
+}
+
+function addMissingMediaToEntities(state, playList) {
+	playList
+		.filter(id => !(id in state.entities))
+		.map(id => state.search.results.find(item => item.id === id))
+		.filter(media => media)
+		.forEach(media => { state.entities[media.id] = media; });
 }
 
 export function next(state) {
@@ -110,21 +142,17 @@ export const mutations = {
 			});
 		});
 	},
-	webMediaSearchSuccess(state, { url, durationS, type }) {
+	webMediaSearchSuccess(state, { mediaList = [], id = null }) {
 		state.mainRightTab = 'search';
 		state.search.isSearching = false;
-		const urlParts = url.split('/');
-		const title = urlParts.length ? urlParts[urlParts.length - 1] : url;
-		state.search.results = [
-			Object.assign({}, videoBaseObject, {
-				url,
-				title,
-				type,
-				duration: s2time(durationS),
-				durationS,
-				id: `${hashCode(url)}`,
-			}),
-		];
+		if (!mediaList.length)
+			state.errorMessages = [...state.errorMessages, { error: 'No media found (҂⌣̀_⌣́)ᕤ' }];
+		if (state.search.id !== id) {
+			state.search.results = mediaList;
+			state.search.id = id;
+		} else {
+			state.search.results = [...state.search.results, ...mediaList];
+		}
 	},
 	toggleSearch(state, toggleState) {
 		state.website.showSearch = toggleState !== undefined ? toggleState : !state.website.showSearch;
@@ -135,13 +163,18 @@ export const mutations = {
 	setLeftMenuTab(state, id) {
 		state.leftMenuTab = id;
 	},
-	showChat(state) {
-		state.mainRightTab = 'search';
+	showTabChat(state) {
 		state.website.showChat = true;
+		state.mainRightTab = 'search';
 	},
 	setShowSettings(state) {
 		state.showSettings = true;
 		state.mainRightTab = 'settings';
+	},
+	openWebScraperSettings(state, name) {
+		state.showWebScraperSettings = true;
+		state.mainRightTab = 'webScraperSettings';
+		selectMediaSource(state, { type: 'tv', id: name });
 	},
 	toggleJump(state, toggleState) {
 		state.showJump = toggleState !== undefined ? toggleState : !state.showJump;
@@ -216,6 +249,7 @@ export const mutations = {
 			state.playList = playList;
 		}
 		state.entities = Object.assign({}, state.entities, data.entities);
+		state.tags = Object.assign({}, state.tags);
 	},
 	importOtherPlayList(state, playListName) {
 		if (!state.currentPlayList) {
@@ -246,7 +280,7 @@ export const mutations = {
 	},
 	removeVideo(state, video) {
 		state.playList = state.playList.filter(id => id !== video.id);
-		state.entities[video.id].deleted = true;
+		if (video.id in state.entities) state.entities[video.id].deleted = true;
 	},
 	addSearchResult(state, media) {
 		if (state.leftMenuTab === 'playList') {
@@ -267,20 +301,25 @@ export const mutations = {
 			}
 		}
 	},
-	dropMoveItem(state, { itemId, from, to }) {
+	dropMoveItem(state, { itemId, to }) {
 		if (state.leftMenuTab === 'playList') {
+			// Dropped item comes from a webscraper.
 			if (state.currentWebScraper) {
-				const media = Object.assign({}, state
-					.webScrapers[state.currentWebScraper]
-					.playList
-					.find(({ id }) => id === itemId));
+				const media = Object.assign(
+					{},
+					state.webScrapers[state.currentWebScraper].playList.find(({ id }) => id === itemId)
+				);
 				if (media) {
 					state.entities[media.id] = media;
 				}
+			// Dropped item comes from the search results.
+			} else {
+				addMissingMediaToEntities(state, [itemId]);
 			}
 			if (to) {
 				if (!state.tags[to].includes(itemId)) {
 					state.tags[to].unshift(itemId);
+					state.tags = Object.assign({}, state.tags);
 				}
 			} else if (!state.playList.includes(itemId)) {
 				state.playList.unshift(itemId);
@@ -361,12 +400,7 @@ export const mutations = {
 		state.currentTime = s;
 	},
 	movePlayListMedia(state, playList) {
-		playList
-			.filter(id => !(id in state.entities))
-			.map(id => state.search.results.find(item => item.id === id))
-			.filter(media => media)
-			.forEach(media => state.entities[media.id] = media);
-
+		addMissingMediaToEntities(state, playList);
 		if (state.currentPlayList) state.tags[state.currentPlayList] = playList;
 		else state.playList = playList;
 	},
@@ -381,9 +415,10 @@ export const mutations = {
 		if (!tag) {
 			// if we want to use the current playlist action.tag === undefined
 			let counter = 1;
-			do {
-				tag = `Playlist ${counter}`;
-			} while (state.tags[`Playlist ${counter++}`]);
+			tag = `Playlist ${counter}`;
+			while (tag in state.tags) {
+				tag = `Playlist ${counter++}`;
+			}
 		}
 
 		if (!state.tagsOrdered.includes(tag)) state.tagsOrdered.push(tag);
@@ -394,6 +429,7 @@ export const mutations = {
 				...mediaIds.filter(id => !state.tags[tag].includes(id)),
 			];
 		} else state.tags[tag] = mediaIds;
+		selectMediaSource(state, { type: 'playList', id: tag });
 	},
 	removeTags(state, { mediaIds = [], tag }) {
 		tag = tag || state.currentPlayList;
@@ -401,25 +437,7 @@ export const mutations = {
 			state.tags[tag] = state.tags[tag].filter(id => !mediaIds.includes(id));
 		}
 	},
-	selectMediaSource(state, { type, id }) {
-		if (type === 'tv') {
-			state.currentPlayList = null;
-			state.currentRadioStation = null;
-			state.currentWebScraper = id;
-		} else if (type === 'radio') {
-			state.currentWebScraper = null;
-			state.currentPlayList = null;
-			state.currentRadioStation = id;
-		} else if (type === 'playList') {
-			state.currentWebScraper = null;
-			state.currentRadioStation = null;
-			state.currentPlayList = id;
-		}
-		if (state.isMobile) {
-			state.leftMenuTab = '';
-			state.mainRightTab = '';
-		}
-	},
+	selectMediaSource,
 	deletePlayList(state, playListName) {
 		delete state.tags[playListName];
 		state.tagsOrdered = state.tagsOrdered.filter(name => name !== playListName);
@@ -509,18 +527,33 @@ export const mutations = {
 	// Web Scraper
 	// ---
 	addWebScraper(state, name) {
-		state.webScrapers[name] = { playList: [], playedMedia: {} };
+		debugger;
+		if (!name) {
+			let counter = 1;
+			name = `Channel ${counter}`;
+			while (name in state.webScrapers) {
+				name = `Channel ${counter++}`;
+			}
+		}
+
+		state.webScrapers[name] = { playList: [], playedMedia: {}, settings: {} };
+		if (!state.webScrapersOrderd.includes(name)) state.webScrapersOrderd.push(name);
 		state.currentWebScraper = name;
 	},
-	updateWebScraper(state, { name, playList }) {
+	deleteWebScraper(state, name) {
+		delete state.webScrapers[name];
+		state.webScrapersOrderd = state.webScrapersOrderd.filter(n => n !== name);
+	},
+	updateWebScraper(state, { name, values }) {
 		const ws = state.webScrapers[name] || {};
-		const archive = ws.archive ? ws.archive : [];
-		while (playList.length > 3000) {
-			const media = playList.shift();
-			archive.push(media.id);
+		const archive = ws.archive || [];
+		if (values.playList) {
+			while (values.playList.length > 3000) {
+				const media = values.playList.shift();
+				archive.push(media.id);
+			}
 		}
-		state.webScrapers[name] = Object.assign(ws, {
-			playList,
+		state.webScrapers[name] = Object.assign(ws, values, {
 			archive,
 		});
 		state.webScrapers = Object.assign({}, state.webScrapers);

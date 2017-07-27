@@ -141,6 +141,8 @@ export default {
 .play-list-manager__input
 	padding: 0
 	background: $color-athensgrey
+	span
+	 color: $color-aluminium-dark
 	input
 		background: transparent
 		box-sizing: border-box
@@ -151,11 +153,11 @@ export default {
 		padding-left: #{2*$grid-space}
 		font-size: 1em
 		&::-webkit-input-placeholder
-			color: $color-palesky
+			color: $color-aluminium-dark
 		&:-moz-placeholder
-			color: $color-palesky
+			color: $color-aluminium-dark
 		&::-moz-placeholder
-			color: $color-palesky
+			color: $color-aluminium-dark
 </style>
 
 
