@@ -125,6 +125,9 @@ export default {
 			Listen to a radio station from the <a href="https://matrix.org">matrix.org</a> chat network. <br><br>
 			♫♪.ılılıll|̲̅̅●̲̅̅|̲̅̅=̲̅̅|̲̅̅●̲̅̅|llılılı.♫♪
 		</h2>
+		<h2 v-if="currentWebScraper && !_entities.length">
+			There are currently no results from this channel, press below to load more.
+		</h2>
 		<draggable
 			element="h2"
 			v-show="showWelcome && leftMenuTab == 'playList'"

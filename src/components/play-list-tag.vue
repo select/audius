@@ -82,6 +82,7 @@ li ~ .play-list-manager__tag-body
 	flex: 1
 	display: flex
 	flex-direction: column
+	overflow: hidden
 	div
 		overflow: hidden
 		text-overflow: ellipsis
