@@ -8,13 +8,14 @@ import YoutubePlayer from './youtube-player.vue';
 import WebMediaPlayer from './web-media-player.vue';
 
 import AboutPlayer from './about-player.vue';
-import SearchResults from './search-results.vue';
 import Queue from './queue.vue';
-import Settings from './settings.vue';
 
 import PlayListManager from './play-list-manager.vue';
-import MatrixRadioManager from './matrix-radio-manager.vue';
-import WebScraperManager from './web-scraper-manager.vue';
+
+const Settings = () => import(/* webpackChunkName: "settings" */'./settings.vue');
+const SearchResults = () => import(/* webpackChunkName: "search-results" */'./search-results.vue');
+const MatrixRadioManager = () => import(/* webpackChunkName: "matrix-radio-manager" */'./matrix-radio-manager.vue');
+const WebScraperManager = () => import(/* webpackChunkName: "web-scraper-manager" */'./web-scraper-manager.vue');
 
 
 export default {
@@ -76,13 +77,13 @@ export default {
 		<div class="web-app-mobile__playlist">
 			<play-list v-show="!(mainRightTab || leftMenuTab)"></play-list>
 			<about-player v-show="mainRightTab == 'about'"></about-player>
-			<search-results v-show="mainRightTab == 'search'"></search-results>
+			<search-results v-if="mainRightTab == 'search'"></search-results>
 			<queue v-show="mainRightTab == 'queue'"></queue>
 			<div class="audius-chat" v-show="mainRightTab == 'chat'"> </div>
-			<settings v-show="mainRightTab == 'settings'"></settings>
+			<settings v-if="mainRightTab == 'settings'"></settings>
 			<play-list-manager v-show="leftMenuTab == 'playList'"></play-list-manager>
-			<matrix-radio-manager v-show="leftMenuTab == 'radio'"></matrix-radio-manager>
-			<web-scraper-manager v-show="leftMenuTab == 'tv'"></web-scraper-manager>
+			<matrix-radio-manager v-if="leftMenuTab == 'radio'"></matrix-radio-manager>
+			<web-scraper-manager v-if="leftMenuTab == 'tv'"></web-scraper-manager>
 		</div>
 		<div class="web-app-mobile__players">
 			<div class="web-app-mobile__yt" v-bind:class="{'web-app-mobile--hide-yt': currentMedia.type !== 'youtube'}">

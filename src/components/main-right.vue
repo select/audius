@@ -1,12 +1,13 @@
 <script >
 import { mapMutations, mapState } from 'vuex';
 import AboutPlayer from './about-player.vue';
-import SearchResults from './search-results.vue';
 import Queue from './queue.vue';
-import Settings from './settings.vue';
 import YoutubePlayer from './youtube-player.vue';
 import WebMediaPlayer from './web-media-player.vue';
-import WebScraperSettings from './web-scraper-settings.vue';
+
+const Settings = () => import(/* webpackChunkName: "settings" */'./settings.vue');
+const SearchResults = () => import(/* webpackChunkName: "search-results" */'./search-results.vue');
+const WebScraperSettings = () => import(/* webpackChunkName: "web-scraper-settings" */'./web-scraper-settings.vue');
 
 export default {
 	name: 'main-right',
@@ -19,7 +20,15 @@ export default {
 		WebMediaPlayer,
 		WebScraperSettings,
 	},
-	computed: mapState(['website', 'mainRightTab', 'search', 'showSettings', 'showWebScraperSettings', 'currentMedia']),
+	computed: mapState([
+		'website',
+		'mainRightTab',
+		'search',
+		'showSettings',
+		'showWebScraperSettings',
+		'currentMedia',
+		'currentWebScraper',
+	]),
 	methods: mapMutations(['setMainRightTab']),
 };
 </script>
@@ -42,7 +51,7 @@ export default {
 			v-on:click="setMainRightTab('chat')"
 			v-bind:class="{ active: mainRightTab == 'chat' }">Chat</li>
 		<li
-			v-if="showWebScraperSettings"
+			v-if="showWebScraperSettings && currentWebScraper"
 			v-on:click="setMainRightTab('webScraperSettings')"
 			v-bind:class="{ active: mainRightTab == 'webScraperSettings' }">TV Settings</li>
 		<li
@@ -52,11 +61,11 @@ export default {
 	</ul>
 	<div class="main-right__content" v-show="mainRightTab">
 		<about-player v-show="mainRightTab == 'about'"></about-player>
-		<search-results v-show="mainRightTab == 'search'"></search-results>
+		<search-results v-if="mainRightTab == 'search'"></search-results>
 		<queue v-show="mainRightTab == 'queue'"></queue>
 		<div class="audius-chat" v-show="mainRightTab == 'chat'"> </div>
-		<web-scraper-settings v-show="mainRightTab == 'webScraperSettings'"></web-scraper-settings>
-		<settings v-show="mainRightTab == 'settings'"></settings>
+		<web-scraper-settings v-if="mainRightTab == 'webScraperSettings'"></web-scraper-settings>
+		<settings v-if="mainRightTab == 'settings'"></settings>
 	</div>
 	<div
 		class="main-right__player"

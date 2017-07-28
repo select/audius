@@ -2,8 +2,10 @@
 import { mapMutations, mapState, mapActions } from 'vuex';
 
 import PlayListManager from './play-list-manager.vue';
-import MatrixRadioManager from './matrix-radio-manager.vue';
-import WebScraperManager from './web-scraper-manager.vue';
+
+const MatrixRadioManager = () => import(/* webpackChunkName: "matrix-radio-manager" */'./matrix-radio-manager.vue');
+const WebScraperManager = () => import(/* webpackChunkName: "web-scraper-manager" */'./web-scraper-manager.vue');
+
 
 export default {
 	components: {
@@ -43,8 +45,8 @@ export default {
 	</ul>
 	<div class="left-menu__wrapper">
 		<play-list-manager v-show="leftMenuTab == 'playList'"></play-list-manager>
-		<matrix-radio-manager v-show="leftMenuTab == 'radio'"></matrix-radio-manager>
-		<web-scraper-manager v-show="leftMenuTab == 'tv'"></web-scraper-manager>
+		<matrix-radio-manager v-if="leftMenuTab == 'radio'"></matrix-radio-manager>
+		<web-scraper-manager v-if="leftMenuTab == 'tv'"></web-scraper-manager>
 	</div>
 </div>
 </template>
