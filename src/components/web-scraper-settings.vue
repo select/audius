@@ -1,23 +1,27 @@
 <script>
-import { mapGetters, mapMutations, mapState, mapActions } from 'vuex';
+import { mapGetters, mapMutations, mapState } from 'vuex';
 
 export default {
 	computed: {
 		...mapGetters(['youtubeApiKeyUI']),
-		...mapState(['matrixLoggedIn', 'matrix', 'matrixEnabled']),
+		...mapState(['webScrapers', 'currentWebScraper']),
+		webScraperSettings() {
+			return this.webScrapers[this.currentWebScraper];
+		},
+		urlPatterns() {
+			if (!(this.currentWebScraper && this.webScrapers[this.currentWebScraper].settings)) return [];
+			return this.webScrapers[this.currentWebScraper].settings.urlPatterns || [];
+		},
 	},
 	methods: {
-		...mapMutations(['setYoutubeApiKey', 'matrixRemoveAccount', 'matrixLogout', 'setMatrixEnabled']),
-		...mapActions(['loginMatrixWithPassword']),
-		matrixLogin() {
-			const usernameEl = document.querySelector('#username');
-			const passwordEl = document.querySelector('#password');
-			this.loginMatrixWithPassword({ username: usernameEl.value, password: passwordEl.value });
-			document.querySelector('#username').value = '';
-			document.querySelector('#password').value = '';
-		},
-		addUrlPattern() {
-			// this.$el.querySelector('.ws-settings__input').value;
+		...mapMutations(['updateWebScraper', 'addUrlPattern']),
+		_addUrlPattern() {
+			const el = this.$el.querySelector('.ws-settings__input');
+			this.addUrlPattern({
+				id: this.currentWebScraper,
+				urlPattern: el.value,
+			});
+			el.value = '';
 		},
 	},
 };
@@ -26,17 +30,17 @@ export default {
 <template>
 <div class="settings ws-settings">
 	<p>
-		<input type="text" placeholder="... name">
+		<input type="text" placeholder="... name" v-bind:value="this.currentWebScraper">
 	</p>
 	<p>
 		URLS
 		<ul>
-			<li>
-				http blaa
+			<li v-for="pattern in urlPatterns">
+				{{pattern}}
 			</li>
 			<li>
 				<input class="ws-settings__input" type="text" placeholder="http://www.example.com/page/[1-100]">
-				<span class="wmp-icon-add" @click="addUrlPattern"></span>
+				<span class="wmp-icon-add" @click="_addUrlPattern"></span>
 			</li>
 		</ul>
 	</p>
@@ -47,11 +51,18 @@ export default {
 @import '../sass/vars'
 @import '../sass/color'
 
-.web-scraper-settings
+.ws-settings
 	input
 		background: transparent
 		border: 0
 		padding: 0
+		flex: 1
+		&::-webkit-input-placeholder
+			color: $color-aluminium
+		&:-moz-placeholder
+			color: $color-aluminium
+		&::-moz-placeholder
+			color: $color-aluminium
 	ul
 		padding: 0
 		li
@@ -64,4 +75,5 @@ export default {
 			background: $color-catskillwhite
 		li:hover
 			background: $color-athensgrey
+
 </style>

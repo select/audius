@@ -13,7 +13,7 @@ export default {
 
 	},
 	computed: {
-		...mapState(['webScrapersOrderd', 'currentWebScraper']),
+		...mapState(['webScrapersOrderd', 'webScrapers', 'currentWebScraper']),
 	},
 };
 </script>
@@ -29,7 +29,9 @@ export default {
 				<div class="play-list-manager__tag-body">
 					{{id}}
 				</div>
-				<div class="play-list-manager__menu">
+				<div
+					v-if="webScrapers[id] && webScrapers[id].settings"
+					class="play-list-manager__menu">
 					<span
 						class="wmp-icon-mode_edit"
 						title="TV Settings"
@@ -42,7 +44,7 @@ export default {
 			</li>
 			<li class="play-list-manager__input ws-manager__input">
 				<input
-					v-on:keyup.enter="addScraper"
+					v-on:keyup.enter="_addWebScraper"
 					type="text"
 					placeholder="... new channel">
 				<span class="wmp-icon-add" @click="_addWebScraper"></span>
@@ -55,6 +57,8 @@ export default {
 @import '../sass/vars'
 @import '../sass/color'
 
+.play-list-manager__menu .wmp-icon-mode_edit
+	font-size: .9rem;
 
 </style>
 

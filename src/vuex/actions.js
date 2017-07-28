@@ -1,6 +1,4 @@
 import {
-	duration,
-	time2s,
 	searchYoutube,
 	isYouTubeVideoRegEx,
 	debounce,
@@ -55,7 +53,18 @@ export const actions = {
 		} else if (/^https?:\/\//.test(query)) {
 			console.warn('Please install the audius extension');
 			webScraperDebounced(new CustomEvent('audiusExtension', {
-				detail: { audius: true, type: 'scanUrl', url: query, youtubeApiKey: state.youtubeApiKey },
+				detail: {
+					audius: true,
+					wsAction: 'scanUrl',
+					url: query,
+					youtubeApiKey: state.youtubeApiKey,
+					response: {
+						audius: true,
+						type: 'webMediaSearchSuccess',
+						vuex: 'commit',
+						data: { id: query },
+					},
+				},
 			}));
 		} else if (query.length > 1) {
 			searchYoutubeDebounced(state.youtubeApiKey, query, result => {
@@ -147,40 +156,65 @@ export const actions = {
 				});
 		}
 	},
-	initWebScraper({ state, commit, dispatch }, name) {
-		if (name && !(name in state.webScrapers)) {
-			commit('addWebScraper', name);
+	initWebScraper({ state, commit, dispatch }, id) {
+		if (id && !(id in state.webScrapers)) {
+			commit('addWebScraper', id);
 		}
-		if (!state.webScrapers[name].playList.length) {
-			dispatch('runWebScraper', name);
+		if (!state.webScrapers[id].playList.length) {
+			dispatch('runWebScraper', id);
 		}
 	},
-	runWebScraper({ state, commit, dispatch }, name) {
-		if (!name) {
-			commit('error', 'Run web scraper name is missing.');
+	runWebScraper({ state, commit, dispatch }, id) {
+		if (!id) {
+			commit('error', `Can not find channel "${id}".`);
 			return;
 		}
-		if (!state.webScrapersIndex[name]) {
-			commit('incrementWebScraperIndex', name);
-		}
-		webScraper.getVideosFromIndex(state.webScrapersIndex[name]).then(videos => {
-			const ws = state.webScrapers[name];
-			const pl = ws ? ws.playList : [];
-			const archive = ws && ws.archive ? ws.archive : [];
-			const index = new Set([...pl.map(({ id }) => id), ...archive]);
-			const newVideos = videos.filter(v => !index.has(v.id));
-			const playList = [...pl, ...newVideos];
-
-			if (videos) commit('updateWebScraper', { name, values: { playList } });
-			commit('incrementWebScraperIndex', name);
-
-			if (!newVideos.length) {
-				commit('setWebScraperEmptyCount', { name, count: (state.webScraperEmptyCount[name] + 1) });
-				dispatch('runWebScraper', name);
+		const ws = state.webScrapers[id];
+		if (ws.settings) {
+			if (state.webScrapersIndex[id] >= (ws.settings.urlPatterns.length - 1)) {
+				commit('error', 'Checked all URLs in channel, try again next time.');
+			} else if (!(ws.settings.urlPatterns && ws.settings.urlPatterns.length)) {
+				commit('error', 'Channel URLs missing');
 			} else {
-				commit('setWebScraperEmptyCount', { name, count: 0 });
+				window.dispatchEvent(new CustomEvent('audiusExtension', {
+					detail: {
+						audius: true,
+						wsAction: 'scanUrl',
+						url: ws.settings.urlPatterns[0],
+						youtubeApiKey: state.youtubeApiKey,
+						response: {
+							audius: true,
+							vuex: 'dispatch',
+							type: 'webScraperUpdateSuccess',
+							data: { id },
+						},
+					},
+				}));
 			}
-		});
+		} else if (id === 'Imgur') {
+			webScraper.getVideosFromIndex(state.webScrapersIndex[id]).then(mediaList => {
+				dispatch('webScraperUpdateSuccess', mediaList);
+			});
+		}
+	},
+	webScraperUpdateSuccess({ state, commit, dispatch }, { id, mediaList }){
+		const ws = state.webScrapers[id];
+		const pl = ws ? ws.playList : [];
+		const archive = ws && ws.archive ? ws.archive : [];
+		const index = new Set([...pl.map((v) => v.id), ...archive]);
+		const newVideos = mediaList.filter(v => !index.has(v.id));
+		const playList = [...pl, ...newVideos];
+
+		if (newVideos.length) {
+			commit('updateWebScraper', { id, values: { playList } });
+		} else {
+			// Only scrape websites every 2 seconds.
+			setTimeout(() => {
+				// Count the number of attempts without finding any resulsts.
+				commit('setWebScraperEmptyCount', { id, count: (state.webScraperEmptyCount[id] + 1) });
+				dispatch('runWebScraper', id);
+			}, 2000);
+		}
 	},
 	nextVideo({ state, commit, dispatch }) {
 		if (state.leftMenuTab === 'tv' && state.currentWebScraper) {

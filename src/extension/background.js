@@ -21,22 +21,19 @@ function getAudiusTabs(callback) {
 browser.runtime.onMessage.addListener(request => {
 	if (request.audius) {
 		getAudiusTabs(async tabs => {
-			if (!tabs.length) console.warn('Could not find audius tab');
-			else if (request.type === 'scanUrl') {
+			console.log('background got request ', request);
+			if (!tabs.length) window.console.warn('Could not find audius tab');
+			else if (request.wsAction === 'scanUrl') {
 				const promises = webScraper.scanUrl(request);
 				for (let i = 0; i < promises.length; i++) {
 					try {
 						const mediaList = await promises[i];
 						console.log("mediaList", mediaList);
+						const data = Object.assign({}, request.response.data, { mediaList });
 						tabs.forEach(tab => {
 							chrome.tabs.sendMessage(
 								tab.id,
-								{
-									audius: true,
-									vuex: 'commit',
-									type: 'webMediaSearchSuccess',
-									data: { mediaList, id: request.url },
-								},
+								Object.assign({}, request.response, { data }),
 								() => {} // response callback
 							);
 						});
@@ -55,15 +52,6 @@ browser.runtime.onMessage.addListener(request => {
 						});
 					}
 				}
-			} else if (request.type in webScraper) {
-				// webScraper[request.type](request).then(data => {
-				// 	console.log(`background.js ${request.type} `, data);
-				// 	chrome.tabs.sendMessage(
-				// 		tab.id,
-				// 		{ audius: true, vuex: 'commit', type: 'webMediaSearchSuccess', data },
-				// 		response => {}
-				// 	);
-				// });
 			}
 		});
 	}

@@ -37,6 +37,7 @@ const presistMutation = {
 	upgradeEntities: ['entities'],
 	setStartStopMarker: ['entities'],
 	updateWebScraper: ['webScrapers'],
+	addUrlPattern: ['webScrapers'],
 	videoError: ['entities'],
 	updateCurrentMedia: ['entities'],
 	addWebScraper: ['webScrapersOrderd', 'webScrapers'],

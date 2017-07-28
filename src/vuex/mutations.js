@@ -50,6 +50,12 @@ function addMissingMediaToEntities(state, playList) {
 		.forEach(media => { state.entities[media.id] = media; });
 }
 
+function setWebScraperEmptyCount(state, { id, count }) {
+	if (!state.webScrapersIndex[id]) state.webScrapersIndex[id] = -1;
+	state.webScrapersIndex[id]++;
+	state.webScraperEmptyCount[id] = count;
+}
+
 export function next(state) {
 	const playListEntities = getCurrentPlayListEntities(state);
 	const idx = playListEntities.findIndex(m => m.id === state.currentMedia.id);
@@ -143,6 +149,7 @@ export const mutations = {
 		});
 	},
 	webMediaSearchSuccess(state, { mediaList = [], id = null }) {
+		console.log("webMediaSearchSuccess", id, mediaList);
 		state.mainRightTab = 'search';
 		state.search.isSearching = false;
 		if (!mediaList.length)
@@ -540,29 +547,31 @@ export const mutations = {
 		if (!state.webScrapersOrderd.includes(name)) state.webScrapersOrderd.push(name);
 		state.currentWebScraper = name;
 	},
-	deleteWebScraper(state, name) {
-		delete state.webScrapers[name];
-		state.webScrapersOrderd = state.webScrapersOrderd.filter(n => n !== name);
+	deleteWebScraper(state, id) {
+		delete state.webScrapers[id];
+		state.webScrapersOrderd = state.webScrapersOrderd.filter(n => n !== id);
 	},
-	updateWebScraper(state, { name, values }) {
-		const ws = state.webScrapers[name] || {};
+	addUrlPattern(state, { id, urlPattern }) {
+		const patterns = state.webScrapers[id].settings.urlPatterns || [];
+		if (!patterns.some(p => p === urlPattern)) {
+			state.webScrapers[id].settings.urlPatterns = [...patterns, urlPattern];
+		}
+		state.webScrapers = Object.assign({}, state.webScrapers);
+	},
+	updateWebScraper(state, { id, values }) {
+		const ws = state.webScrapers[id] || {};
 		const archive = ws.archive || [];
 		if (values.playList) {
+			setWebScraperEmptyCount(state, { id, count: 0 });
 			while (values.playList.length > 3000) {
 				const media = values.playList.shift();
 				archive.push(media.id);
 			}
 		}
-		state.webScrapers[name] = Object.assign(ws, values, {
+		state.webScrapers[id] = Object.assign(ws, values, {
 			archive,
 		});
 		state.webScrapers = Object.assign({}, state.webScrapers);
 	},
-	incrementWebScraperIndex(state, name) {
-		if (!(name in state.webScrapersIndex)) state.webScrapersIndex[name] = 0;
-		state.webScrapersIndex[name]++;
-	},
-	setWebScraperEmptyCount(state, { name, count }) {
-		state.webScraperEmptyCount[name] = count;
-	},
+	setWebScraperEmptyCount,
 };
