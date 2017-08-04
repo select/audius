@@ -28,6 +28,7 @@ export default {
 				<div class="play-list-manager__drag-handle"></div>
 				<div class="play-list-manager__tag-body">
 					{{id}}
+					<div v-if="webScrapers[id]">{{webScrapers[id].playList.length - Object.keys(webScrapers[id].playedMedia).length}} New {{Object.keys(webScrapers[id].playedMedia).length + webScrapers[id].archive.length}} Watched </div>
 				</div>
 				<div
 					v-if="webScrapers[id] && webScrapers[id].settings"

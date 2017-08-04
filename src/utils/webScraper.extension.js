@@ -1,7 +1,7 @@
 import { hashCode } from './hashCode';
 import { getYouTubeInfo } from './youtube';
+import { webScraper as wsBase } from './webScraper';
 
-const range = (start, end) => Array(end - start + 1).fill().map((_, idx) => start + idx);
 
 export const webScraper = {
 	videos: [],
@@ -10,25 +10,6 @@ export const webScraper = {
 	requestHeader: ['Authorization', 'Client-ID c35fbc04fe9ccda'],
 	parserName: 'imgur API',
 	parserRunning: false,
-
-	ajax(url, requestHeader) {
-		const promise = new Promise((resolve, reject) => {
-			const xhr = new XMLHttpRequest();
-			xhr.open('GET', url, true);
-			xhr.onload = function load() {
-				if (this.status >= 200 && this.status < 300) resolve(this.responseText);
-				else reject(`Request failed - ${this.status} ${this.statusText}`);
-			};
-			if (requestHeader) {
-				xhr.setRequestHeader(...requestHeader);
-			}
-			xhr.onerror = event => {
-				reject(`Error requesting ${url}`);
-			};
-			xhr.send();
-		});
-		return promise;
-	},
 
 	findVideos(html, youtubeApiKey) {
 		const node = document.createElement('div');
@@ -48,8 +29,12 @@ export const webScraper = {
 		// hyperlinks to videos
 		const videoHrefNodes = node.querySelectorAll('[href$=".(avi|mkv|mp4|webm|ogg)"]');
 		const videoSrcNodes = node.querySelectorAll('[src$=".(avi|mkv|mp4|webm|ogg)"]');
-		const audioHrefNodes = node.querySelectorAll('[href$=".(mp3|oga|m4a|flac|wav|aiff|aif|wma|asf)"]');
-		const audioSrcNodes = node.querySelectorAll('[src$=".(mp3|oga|m4a|flac|wav|aiff|aif|wma|asf)"]');
+		const audioHrefNodes = node.querySelectorAll(
+			'[href$=".(mp3|oga|m4a|flac|wav|aiff|aif|wma|asf)"]'
+		);
+		const audioSrcNodes = node.querySelectorAll(
+			'[src$=".(mp3|oga|m4a|flac|wav|aiff|aif|wma|asf)"]'
+		);
 		//
 		const mediaList = [
 			...Array.from(videoHrefNodes).map(_node => ({
@@ -94,34 +79,30 @@ export const webScraper = {
 	},
 
 	_scanOneUrl({ url, youtubeApiKey }) {
-		return new Promise((resolve) => {
-			setTimeout(() => {
-				resolve(this.ajax(url)
-					.then(rawHTML => this.findVideos(rawHTML, youtubeApiKey))
-					.then(mediaList =>
-						mediaList.map(media =>
-							Object.assign({}, media, {
-								url: media.url ? media.url.replace(`${window.location.origin}/`, url) : undefined,
-							})
-						)
-					)
-				);
-			}, 2000);
-		});
+		return wsBase.ajax(url)
+			.then(rawHTML => this.findVideos(rawHTML, youtubeApiKey))
+			.then(mediaList =>
+				mediaList.map(media =>
+					Object.assign({}, media, {
+						url: media.url ? media.url.replace(`${window.location.origin}/`, url) : undefined,
+					})
+				)
+			);
 		// .then(r => {console.log('map ', r); return r});
 	},
+	/**
+	 * scanUrl - from a URL or URL pattern return a list of
+	 * promises that each return a list of media objects that could be
+	 * found at the URL or list of URLS
+	 * @param {String} options.url URL or URL pattern e.g. `http://example.com/page/[1-5]`
+	 * @param {String} options.youtubeApiKey key for youtube API
+	 * @return {[Promise]} list of promises that each return media a object list
+	 */
 	scanUrl({ url, youtubeApiKey }) {
-		const globbingRegEx = /\[(\d+)-(\d+)\]/;
-		if (!globbingRegEx.test(url)) return [this._scanOneUrl({ url, youtubeApiKey })];
-
-		const [fullMatch, start, end] = globbingRegEx.exec(url);
 		try {
-			return range(parseInt(start, 10), parseInt(end, 10))
-				.map(index => url.replace(fullMatch, index))
-				.map(_url => this._scanOneUrl({ url: _url, youtubeApiKey }));
+			return wsBase.patternToUrls(url).map(_url => this._scanOneUrl({ url: _url, youtubeApiKey }));
 		} catch (error) {
 			return [];
 		}
 	},
 };
-

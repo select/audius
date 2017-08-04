@@ -1,5 +1,8 @@
 import { hashCode } from './hashCode';
 
+const range = (start, end) => Array(end - start + 1).fill().map((_, idx) => start + idx);
+const globbingRegEx = /\[(\d+)-(\d+)\]/;
+
 export const webScraper = {
 	videos: [],
 	currentVideoIndex: -1,
@@ -27,6 +30,15 @@ export const webScraper = {
 			];
 		});
 	},
+
+	patternToUrls(url) {
+		if (!globbingRegEx.test(url)) return [url];
+		const [fullMatch, start, end] = globbingRegEx.exec(url);
+		return range(parseInt(start, 10), parseInt(end, 10)).map(index =>
+			url.replace(fullMatch, index)
+		);
+	},
+
 
 	ajax(url, requestHeader) {
 		const promise = new Promise((resolve, reject) => {

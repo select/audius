@@ -18,6 +18,12 @@ function getAudiusTabs(callback) {
 	});
 }
 
+function delay(time) {
+	return new Promise(resolve => {
+		setTimeout(resolve, time);
+	});
+}
+
 browser.runtime.onMessage.addListener(request => {
 	if (request.audius) {
 		getAudiusTabs(async tabs => {
@@ -28,7 +34,6 @@ browser.runtime.onMessage.addListener(request => {
 				for (let i = 0; i < promises.length; i++) {
 					try {
 						const mediaList = await promises[i];
-						console.log("mediaList", mediaList);
 						const data = Object.assign({}, request.response.data, { mediaList });
 						tabs.forEach(tab => {
 							chrome.tabs.sendMessage(
@@ -37,7 +42,8 @@ browser.runtime.onMessage.addListener(request => {
 								() => {} // response callback
 							);
 						});
-					} catch(error) {
+						await delay(2000);
+					} catch (error) {
 						tabs.forEach(tab => {
 							chrome.tabs.sendMessage(
 								tab.id,

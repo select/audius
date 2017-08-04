@@ -1,4 +1,4 @@
-import { duration, time2s, parseYoutubeDescription } from '../utils';
+import { duration, time2s, parseYoutubeDescription, webScraper } from '../utils';
 import { youtubeApiKey } from '../utils/config';
 import { videoBaseObject } from './video';
 import {
@@ -47,13 +47,9 @@ function addMissingMediaToEntities(state, playList) {
 		.filter(id => !(id in state.entities))
 		.map(id => state.search.results.find(item => item.id === id))
 		.filter(media => media)
-		.forEach(media => { state.entities[media.id] = media; });
-}
-
-function setWebScraperEmptyCount(state, { id, count }) {
-	if (!state.webScrapersIndex[id]) state.webScrapersIndex[id] = -1;
-	state.webScrapersIndex[id]++;
-	state.webScraperEmptyCount[id] = count;
+		.forEach(media => {
+			state.entities[media.id] = media;
+		});
 }
 
 export function next(state) {
@@ -149,11 +145,12 @@ export const mutations = {
 		});
 	},
 	webMediaSearchSuccess(state, { mediaList = [], id = null }) {
-		console.log("webMediaSearchSuccess", id, mediaList);
+		console.log('webMediaSearchSuccess', id, mediaList);
 		state.mainRightTab = 'search';
 		state.search.isSearching = false;
-		if (!mediaList.length)
+		if (!mediaList.length) {
 			state.errorMessages = [...state.errorMessages, { error: 'No media found (҂⌣̀_⌣́)ᕤ' }];
+		}
 		if (state.search.id !== id) {
 			state.search.results = mediaList;
 			state.search.id = id;
@@ -319,7 +316,7 @@ export const mutations = {
 				if (media) {
 					state.entities[media.id] = media;
 				}
-			// Dropped item comes from the search results.
+				// Dropped item comes from the search results.
 			} else {
 				addMissingMediaToEntities(state, [itemId]);
 			}
@@ -534,7 +531,6 @@ export const mutations = {
 	// Web Scraper
 	// ---
 	addWebScraper(state, name) {
-		debugger;
 		if (!name) {
 			let counter = 1;
 			name = `Channel ${counter}`;
@@ -552,17 +548,25 @@ export const mutations = {
 		state.webScrapersOrderd = state.webScrapersOrderd.filter(n => n !== id);
 	},
 	addUrlPattern(state, { id, urlPattern }) {
-		const patterns = state.webScrapers[id].settings.urlPatterns || [];
-		if (!patterns.some(p => p === urlPattern)) {
-			state.webScrapers[id].settings.urlPatterns = [...patterns, urlPattern];
+		const urls = state.webScrapers[id].settings.urls || [];
+		const { settings } = state.webScrapers[id];
+		if (!urls.some(p => p === urlPattern)) {
+			settings.urls = [
+				...urls,
+				{ url: urlPattern, numPages: webScraper.patternToUrls(urlPattern).length },
+			];
+			settings.numPages = settings.urls.reduce((acc, { numPages }) => acc + numPages, 0);
 		}
 		state.webScrapers = Object.assign({}, state.webScrapers);
+	},
+	setWebScraperIndex(state, { id, index }) {
+		state.webScrapersIndex[id] = index;
+		state.webScrapersIndex = Object.assign({}, state.webScrapersIndex);
 	},
 	updateWebScraper(state, { id, values }) {
 		const ws = state.webScrapers[id] || {};
 		const archive = ws.archive || [];
 		if (values.playList) {
-			setWebScraperEmptyCount(state, { id, count: 0 });
 			while (values.playList.length > 3000) {
 				const media = values.playList.shift();
 				archive.push(media.id);
@@ -573,5 +577,4 @@ export const mutations = {
 		});
 		state.webScrapers = Object.assign({}, state.webScrapers);
 	},
-	setWebScraperEmptyCount,
 };

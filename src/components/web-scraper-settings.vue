@@ -8,9 +8,9 @@ export default {
 		webScraperSettings() {
 			return this.webScrapers[this.currentWebScraper];
 		},
-		urlPatterns() {
+		urls() {
 			if (!(this.currentWebScraper && this.webScrapers[this.currentWebScraper].settings)) return [];
-			return this.webScrapers[this.currentWebScraper].settings.urlPatterns || [];
+			return this.webScrapers[this.currentWebScraper].settings.urls || [];
 		},
 	},
 	methods: {
@@ -35,8 +35,8 @@ export default {
 	<p>
 		URLS
 		<ul>
-			<li v-for="pattern in urlPatterns">
-				{{pattern}}
+			<li v-for="url in urls">
+				{{url.url}} ({{url.numPages}} Page{{url.numPages > 1 ? 's' : ''}})
 			</li>
 			<li>
 				<input class="ws-settings__input" type="text" placeholder="http://www.example.com/page/[1-100]">

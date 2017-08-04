@@ -97,6 +97,7 @@ export default {
 			'currentRadioStation',
 			'currentWebScraper',
 			'webScrapers',
+			'webScrapersIndex',
 		]),
 		_entities: {
 			get() {
@@ -194,7 +195,7 @@ export default {
 		<div
 			v-if="currentWebScraper"
 			@click="runWebScraper(currentWebScraper)"
-			class="play-list__load-more"> … load more </div>
+			class="play-list__load-more"> … load more (Page {{webScrapersIndex[currentWebScraper] || 0}}) </div>
 		<!-- ends here -->
 
 	</div>

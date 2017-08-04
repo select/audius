@@ -170,17 +170,31 @@ export const actions = {
 			return;
 		}
 		const ws = state.webScrapers[id];
+		const index = state.webScrapersIndex[id] || 0;
 		if (ws.settings) {
-			if (state.webScrapersIndex[id] >= (ws.settings.urlPatterns.length - 1)) {
+			let requestIndex = index;
+			if (index >= (ws.settings.numPages - 1)) {
 				commit('error', 'Checked all URLs in channel, try again next time.');
-			} else if (!(ws.settings.urlPatterns && ws.settings.urlPatterns.length)) {
+			} else if (!ws.settings.urls) {
 				commit('error', 'Channel URLs missing');
 			} else {
+				let acc = 0;
+				let requestUrl;
+				ws.settings.urls.every(url => {
+					acc += url.numPages;
+					if (acc > index) {
+						requestUrl = url.url;
+						return false;
+					}
+					requestIndex -= url.numPages;
+					return true;
+				});
+				commit('setWebScraperIndex', { id, index: index + 1 });
 				window.dispatchEvent(new CustomEvent('audiusExtension', {
 					detail: {
 						audius: true,
 						wsAction: 'scanUrl',
-						url: ws.settings.urlPatterns[0],
+						url: webScraper.patternToUrls(requestUrl)[requestIndex],
 						youtubeApiKey: state.youtubeApiKey,
 						response: {
 							audius: true,
@@ -192,8 +206,9 @@ export const actions = {
 				}));
 			}
 		} else if (id === 'Imgur') {
+			commit('setWebScraperIndex', { id, index: index + 1 });
 			webScraper.getVideosFromIndex(state.webScrapersIndex[id]).then(mediaList => {
-				dispatch('webScraperUpdateSuccess', mediaList);
+				dispatch('webScraperUpdateSuccess', { id, mediaList });
 			});
 		}
 	},
@@ -210,8 +225,6 @@ export const actions = {
 		} else {
 			// Only scrape websites every 2 seconds.
 			setTimeout(() => {
-				// Count the number of attempts without finding any resulsts.
-				commit('setWebScraperEmptyCount', { id, count: (state.webScraperEmptyCount[id] + 1) });
 				dispatch('runWebScraper', id);
 			}, 2000);
 		}
