@@ -19,7 +19,7 @@ export function getCurrentPlayListEntities(state) {
 		}
 		return [];
 	}
-	return (getCurrentPlayList(state) || []).map(id => state.entities[id] || {});
+	return (getCurrentPlayList(state) || []).map(id => state.entities[id] || { id });
 }
 
 export function getCurrentName(state) {
