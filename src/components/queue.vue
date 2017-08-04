@@ -22,9 +22,6 @@ export default {
 
 <template>
 <div class="queue">
-	<p v-if="!_queue.length">
-		... queue with <span class="wmp-icon-queue2"></span> or drag and drop
-	</p>
 	<draggable
 		class="media-list"
 		element="ul"
@@ -39,6 +36,9 @@ export default {
 				revertClone: true,
 			}
 		}">
+		<li v-if="!_queue.length" class="queue__hint">
+			... queue with <span class="wmp-icon-queue2"></span> or drag and drop
+		</li>
 		<video-item
 			v-for="(media, index) in _queue"
 			:isQueue="true"
@@ -58,15 +58,15 @@ export default {
 	flex-direction: column
 	height: 100%
 	overflow: hidden
-	p
-		width: 100%
-		text-align: center
-		display: flex
-		justify-content: center
-		align-items: center
-		span
-			font-size: .7em
 	.media-list
 		flex: 1
 		width: 100%
+.queue__hint
+	width: 100%
+	text-align: center
+	display: flex
+	justify-content: center
+	align-items: center
+	span
+		font-size: .7em
 </style>
