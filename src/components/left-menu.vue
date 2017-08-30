@@ -38,10 +38,10 @@ export default {
 		<li
 			v-if="matrixEnabled"
 			v-on:click="setLeftMenuTab('radio');initMatrix()"
-			v-bind:class="{ active: leftMenuTab == 'radio' }">Radio</li>
+			v-bind:class="{ active: leftMenuTab == 'radio' }">Matrix</li>
 		<li
 			v-on:click="setLeftMenuTab('tv');"
-			v-bind:class="{ active: leftMenuTab == 'tv' }">TV</li>
+			v-bind:class="{ active: leftMenuTab == 'tv' }">Web</li>
 	</ul>
 	<div class="left-menu__wrapper">
 		<play-list-manager v-show="leftMenuTab == 'playList'"></play-list-manager>
@@ -99,10 +99,9 @@ export default {
 	width: 2.5em
 	position: absolute
 	top: 0.1em
-	left: 0
+	left: 0.2em
 	transform: rotate(90deg) perspective(2em) rotateX(30deg)
-	background: $color-aluminium-dark
-	border: 1px solid $color-aluminium
+	background: $color-aluminium
 	border-bottom: 0
 .left-menu__tag-name-input
 	height: $touch-size-extratiny

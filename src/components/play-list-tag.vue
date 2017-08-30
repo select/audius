@@ -43,7 +43,7 @@ export default {
 						class="play-list-manager__tag-name-input"
 						type="text"
 						v-bind:value="tagName"
-						v-on:input="renamePlayList({oldName: tagName, newName: $event.target.value})"
+						@input="renamePlayList({oldName: tagName, newName: $event.target.value})"
 						placeholder="... playlist name">
 				</div>
 				<div>{{tags[tagName].length}} Songs</div>
@@ -90,7 +90,7 @@ li ~ .play-list-manager__tag-body
 		&:last-child
 			font-size: 0.7em
 	input
-		font-size: 1em
+		font-size: 1rem
 		border: 0
 		color: $color-palesky
 		padding: 0

@@ -83,6 +83,7 @@ export default {
 		this.subscriptions.forEach((unsubscribe) => { unsubscribe(); });
 	},
 	mounted() {
+		console.log('createe yt playyyer')
 		const initialVideos = ['Es22YN2stg8', 'strzXKsfRMs', 'KwoVARYA8jw', 'nzwrwfNHn5A'];
 		window.onYouTubeIframeAPIReady = () => {
 			this.player = new YT.Player('youtube-iframe', {

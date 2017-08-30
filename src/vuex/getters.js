@@ -4,6 +4,9 @@ import { s2time } from '../utils';
 import { getCurrentPlayListEntities, getCurrentName } from './getCurrentPlayList';
 
 export const getters = {
+	exportTypeName(state) {
+		return state.currentWebScraper ? 'channel' : state.currentMatrixRoom ? 'room' : 'playlist';
+	},
 	playList(state) {
 		if (state.currentPlayList) return state.tags[state.currentPlayList];
 		return state.playList;
@@ -12,6 +15,15 @@ export const getters = {
 		return state.playList.length;
 	},
 	currentExportData(state, _getters) {
+		if (state.currentWebScraper) {
+			const ws = state.webScrapers[state.currentWebScraper];
+			return Object.assign({}, ws, {
+				AudiusChannel: true,
+				playList: ws.playList,
+				archive: [],
+				playedMedia: {},
+			});
+		}
 		return {
 			AudiusDump: true,
 			playList: _getters.filteredPlayList.map(({ id }) => id),

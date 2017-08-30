@@ -18,7 +18,7 @@ function isMobile() {
 	const x = w.innerWidth || e.clientWidth || g.clientWidth;
 	const y = w.innerHeight || e.clientHeight || g.clientHeight;
 	// console.log(x + ' × ' + y);
-	return (x < (y * 0.8));
+	return (x < (y * 0.6));
 }
 
 indexDB
@@ -27,12 +27,7 @@ indexDB
 	.then((state) => {
 		store.commit('recoverState', state);
 		migrate();
-		const url = getParameterByName('import');
-		const name = getParameterByName('title');
-		if (url) store.commit('setPendingImportURL', { url, name });
-		cleanWindowLocation();
 
-		store.commit('setIsMobile', isMobile());
 		window.addEventListener('resize', () => {
 			store.commit('setIsMobile', isMobile());
 		}, true);
@@ -42,19 +37,26 @@ indexDB
 				store[event.detail.vuex](event.detail.type, event.detail.data);
 			}
 		}, false);
+
+		const url = getParameterByName('import');
+		if (url) {
+			store.commit('setPendingImportURL', {
+				url,
+				name: getParameterByName('title'),
+				type: getParameterByName('type'),
+			});
+		}
+		cleanWindowLocation();
+
+		new Vue({
+			el: '#app',
+			render: h => h(WebApp),
+			store,
+		});
 	})
 	.catch(error => {
 		store.commit('error', { error, sticky: true });
 	});
-
-
-document.addEventListener('DOMContentLoaded', () => {
-	new Vue({
-		el: '#app',
-		render: h => h(WebApp),
-		store,
-	});
-});
 
 
 // if ('serviceWorker' in navigator && process.env.NODE_ENV === 'production') {

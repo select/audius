@@ -40,6 +40,7 @@ export default {
 			'movePlayListMedia',
 			'toggleJump',
 			'dropMoveItem',
+			'setShowWatched',
 		]),
 		...mapActions(['importURL', 'matrixPaginate', 'runWebScraper']),
 		addMusic() {
@@ -75,12 +76,22 @@ export default {
 				this.filterPlayList('');
 			}
 		},
+		_expiryDate(id) {
+			if (this.currentWebScraper) {
+				return this.webScrapers[this.currentWebScraper].playedMedia[id];
+			}
+			if (this.currentMatrixRoom) {
+				return this.matrixRooms[this.currentMatrixRoom].playedMedia[id];
+			}
+			return null;
+		},
 	},
 	computed: {
 		...mapGetters([
 			'filteredPlayListLength',
 			'filteredPlayList',
 			'tagNames',
+			'currentName',
 		]),
 		...mapState([
 			'currentMedia',
@@ -94,10 +105,12 @@ export default {
 			'tags',
 			'jumpCursor',
 			'leftMenuTab',
-			'currentRadioStation',
+			'currentMatrixRoom',
 			'currentWebScraper',
 			'webScrapers',
 			'webScrapersIndex',
+			'matrixRooms',
+			'showWatched',
 		]),
 		_entities: {
 			get() {
@@ -121,12 +134,7 @@ export default {
 <template>
 <div class="play-list">
 	<div class="play-list__body">
-		<h2 v-if="leftMenuTab == 'radio' && !currentRadioStation">
-			α-feature <br> <br>
-			Listen to a radio station from the <a href="https://matrix.org">matrix.org</a> chat network. <br><br>
-			♫♪.ılılıll|̲̅̅●̲̅̅|̲̅̅=̲̅̅|̲̅̅●̲̅̅|llılılı.♫♪
-		</h2>
-		<h2 v-if="currentWebScraper && !_entities.length">
+		<h2 v-if="currentWebScraper && !_entities.length ">
 			There are currently no results from this channel, press below to load more.
 		</h2>
 		<draggable
@@ -166,37 +174,52 @@ export default {
 				@click="clear(true)"></span>
 		</div>
 
-		<!-- play list here -->
-		<draggable
-			class="media-list"
-			v-show="!(showImport || showExport || (leftMenuTab == 'radio' && !currentRadioStation))"
-			element="ul"
-			v-model="_entities"
-			:options="{
-				animation: 150,
-				scrollSpeed: 20,
-				handle: '.media-list__thumbnail',
-				group: {
-					name: 'lists',
-					pull: 'clone',
-					revertClone: true,
-				}
-			}">
-			<video-item
-				v-for="media in _entities"
-				:key="media.id"
-				:video="media"
-				:isPlayList="!!currentPlayList"
-				:isSelected="jumpCursor === media.id"
-				:expiryDate="currentWebScraper ? webScrapers[currentWebScraper].playedMedia[media.id] : null"
-				:isWebScraper="!!currentWebScraper"
-				:isPlaying="isPlaying && (currentMedia.id == media.id)"></video-item>
-		</draggable>
 		<div
-			v-if="currentWebScraper"
-			@click="runWebScraper(currentWebScraper)"
-			class="play-list__load-more"> … load more (Page {{webScrapersIndex[currentWebScraper] || 0}}) </div>
-		<!-- ends here -->
+			v-show="!(showImport || showExport)"
+			>
+
+			<div
+				v-if="(currentWebScraper || currentMatrixRoom) && !showWatched[currentName]"
+				@click="setShowWatched({ id: currentName, toggleState: true })"
+				class="play-list__load-more"> show watched items </div>
+			<div
+				v-if="(currentWebScraper || currentMatrixRoom) && showWatched[currentName]"
+				@click="setShowWatched({ id: currentName, toggleState: false })"
+				class="play-list__load-more"> hide watched items </div>
+			<draggable
+				class="media-list"
+				element="ul"
+				v-model="_entities"
+				:options="{
+					animation: 150,
+					scrollSpeed: 20,
+					handle: '.media-list__thumbnail',
+					group: {
+						name: 'lists',
+						pull: 'clone',
+						revertClone: true,
+					}
+				}">
+				<video-item
+					v-for="(media, index) in _entities"
+					:key="index"
+					:video="media"
+					:isPlayList="!!currentPlayList"
+					:isSelected="jumpCursor === media.id"
+					:expiryDate="_expiryDate(media.id)"
+					:isWebScraper="!!(currentWebScraper || currentMatrixRoom)"
+					:isPlaying="isPlaying && (currentMedia.id == media.id)"></video-item>
+			</draggable>
+			<div
+				v-show="!(showImport || showExport || (leftMenuTab == 'radio' && !currentMatrixRoom))"
+				v-if="currentWebScraper"
+				@click="runWebScraper(currentWebScraper)"
+				class="play-list__load-more"> … load more (Page {{webScrapersIndex[currentWebScraper] || 0}}) </div>
+			<div
+				v-if="leftMenuTab == 'radio' && !(showImport || showExport)"
+				@click="matrixPaginate"
+				class="play-list__load-more"> … load more </div>
+		</div>
 
 	</div>
 	<div class="play-list-footer">
@@ -209,11 +232,6 @@ export default {
 				v-bind:class="{ active: showImport }"
 				@click="toggleImport()">
 				Import
-			</li>
-			<li
-				v-if="leftMenuTab == 'radio'"
-				@click="matrixPaginate">
-				matrixPaginate
 			</li>
 			<li
 				v-bind:class="{ active: showExport }"
@@ -255,7 +273,7 @@ export default {
 		font-weight: 100
 		width: 100%
 		text-align: center
-		line-height: 2em
+		line-height: 2rem
 		[class^='wmp-icon']
 			height: #{3 * $grid-space}
 			&:before
@@ -277,7 +295,7 @@ export default {
 	background: $color-catskillwhite
 	color: $color-aluminium-dark
 	display: flex
-	font-size: 0.7em
+	font-size: 0.7rem
 	overflow: hidden
 	ul
 		flex: 1
@@ -366,7 +384,6 @@ export default {
 	input
 		height: $touch-size-small
 		box-sizing: border-box
-		font-size: 1em
 		&::-webkit-input-placeholder
 				color: $color-aluminium
 		&:-moz-placeholder
@@ -379,7 +396,7 @@ export default {
 		display: flex
 		flex-direction: column
 	form span
-		font-size: 0.8em
+		font-size: 0.8rem
 
 #import-playlist
 	display: none

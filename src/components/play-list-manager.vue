@@ -9,7 +9,7 @@ export default {
 		draggable,
 	},
 	methods: {
-		...mapMutations(['moveTagsOrderd', 'dropMoveItem', 'selectMediaSource']),
+		...mapMutations(['moveTagsOrdered', 'dropMoveItem', 'selectMediaSource']),
 		addTags() {
 			const el = document.querySelector('.play-list-manager__input input');
 			this.$store.commit('addTags', { tag: el.value });
@@ -28,7 +28,7 @@ export default {
 				return this.tagsOrdered;
 			},
 			set(value) {
-				this.moveTagsOrderd(value);
+				this.moveTagsOrdered(value);
 			},
 		},
 	},
@@ -67,7 +67,7 @@ export default {
 				handle: '.play-list-manager__drag-handle',
 			}">
 			<play-list-tag
-				v-for="(tagName, index) in tagsOrdered"
+				v-for="(tagName, index) in _tagsOrdered"
 				:key="index"
 				v-bind:index="index"></play-list-tag>
 		</draggable>
@@ -151,7 +151,7 @@ export default {
 		height: 100%
 		width: 100%
 		padding-left: #{2*$grid-space}
-		font-size: 1em
+		font-size: 1rem
 		&::-webkit-input-placeholder
 			color: $color-aluminium-dark
 		&:-moz-placeholder

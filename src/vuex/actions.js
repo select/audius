@@ -13,11 +13,14 @@ import {
 	hashCode
 } from '../utils';
 import { videoBaseObject } from './video';
-import { getCurrentPlayListEntities } from './getCurrentPlayList';
+import { getCurrentPlayListEntities, getMediaEntity } from './getCurrentPlayList';
 // the matrix client will be lazy loaded since it's not need on startup
-let matrixClient = null;
 const searchYoutubeDebounced = debounce((...args) => searchYoutube(...args), 500);
 const webScraperDebounced = debounce((...args) => window.dispatchEvent(...args), 500);
+
+// This must be avialable in the whole module since it's lazy loaded.
+// Do not delete;
+let matrixClient;
 
 const audioRegEx = /\.(mp3|oga|m4a|flac|wav|aiff|aif|wma|asf)$/i;
 const videoRegEx = /\.(avi|mkv|mp4|webm|ogg)$/i;
@@ -32,6 +35,24 @@ function refineWebSearchResult(media) {
 		title,
 		duration: media.durationS ? s2time(media.durationS) : undefined,
 		id: media.id || `${hashCode(media.url)}`,
+	});
+}
+
+function addMatrixMessage(state, commit, roomId, results) {
+	const room = state.matrixRooms[roomId];
+	if (!results.length) return;
+	const playList = [...room.playList, ...results];
+	const archive = [...room.archive];
+	while (playList.length > 3000) {
+		const media = playList.shift();
+		archive.push(media.id);
+	}
+	commit('updateMatrixRoom', {
+		roomId,
+		values: {
+			playList,
+			archive,
+		},
 	});
 }
 
@@ -95,8 +116,8 @@ export const actions = {
 		});
 	},
 	initMatrix({ commit, state, dispatch }) {
-		import(/* webpackChunkName: "matrix-client" */ '../utils/matrixClient').then(module => {
-			matrixClient = module.matrixClient;
+		import(/* webpackChunkName: "matrix-client" */ '../utils/matrixClient').then(mc => {
+			matrixClient = mc.matrixClient;
 			if (!state.matrix.hasCredentials) {
 				matrixClient
 					.getCredentials()
@@ -111,8 +132,8 @@ export const actions = {
 		});
 	},
 	loginMatrixWithPassword({ commit, state, dispatch }, { username, password }) {
-		import(/* webpackChunkName: "matrix-client" */ '../utils/matrixClient').then(module => {
-			matrixClient = module.matrixClient;
+		import(/* webpackChunkName: "matrix-client" */ '../utils/matrixClient').then(mc => {
+			matrixClient = mc.matrixClient;
 			matrixClient
 				.getCredentialsWithPassword(username, password)
 				.then(credentials => commit('setMatrixCredentials', credentials))
@@ -120,17 +141,30 @@ export const actions = {
 				.then(rooms => commit('setMatrixLoggedIn', rooms));
 		});
 	},
-	matrixPaginate({ state }) {
-		matrixClient.paginate(state.currentRadioStation);
+	matrixSend({ state }, { itemId, roomId }) {
+		import(/* webpackChunkName: "matrix-client" */ '../utils/matrixClient').then(mc => {
+			matrixClient = mc.matrixClient;
+			matrixClient.sendEvent(roomId, getMediaEntity(state, itemId));
+		});
 	},
-	joinRadioStation({ commit }, roomIdOrAlias) {
+	matrixPaginate({ state }) {
+		matrixClient.paginate(state.currentMatrixRoom);
+	},
+	joinMatrixRoom({ commit }, roomIdOrAlias) {
+		console.log("roomIdOrAlias", roomIdOrAlias);
+
 		matrixClient.joinRoom(roomIdOrAlias).then(room => {
 			room.name = roomIdOrAlias;
 			commit('setMatrixLoggedIn', [room]);
+
+			commit('selectMediaSource', { type: 'radio', id: room.roomId });
+			commit('setLeftMenuTab', 'radio')
+		}).catch(error => {
+			commit('error', `${error}`);
 		});
 	},
-	leaveRadioStation({ commit }, roomIdOrAlias) {
-		matrixClient.leaveRoom(roomIdOrAlias).then(() => commit('deleteRadioStation', roomIdOrAlias));
+	leaveMatrixRoom({ commit }, roomIdOrAlias) {
+		matrixClient.leaveRoom(roomIdOrAlias).then(() => commit('deleteMatrixRoom', roomIdOrAlias));
 	},
 	matrixLogout({ commit }) {
 		// FIXIME this is async and could return a promis
@@ -139,21 +173,52 @@ export const actions = {
 		commit('matrixLogout');
 	},
 	parseMatrixMessage({ state, commit }, { roomId, message }) {
-		console.log('parse ', message);
+
+		const room = state.matrixRooms[roomId];
+		if (!(roomId in state.matrixRooms)) {
+			commit('error', `could not find matrix room ${roomId}`);
+			commit('updateMatrixRoom', { roomId });
+			return;
+		}
+
+		const index = new Set([...room.playList.map((v) => v.id), ...room.archive]);
+		if (typeof message === 'object') {
+			if (!index.has(message.id)) addMatrixMessage(state, commit, roomId, [message]);
+			console.log(`[Matrix-Media] %c${message.title}`, 'color: #2DA7EF;');
+			return;
+		}
+		console.log(`[Matrix-Text] %c${message}`, 'color: #2DA7EF;');
+
 		const ids = findYouTubeIdsText(message)
-			.filter(id => id) // filter empty
+			.filter(id => id && !index.has(id)) // filter empty
 			.filter((item, pos, self) => self.indexOf(item) === pos); // filter dublicates
 
 		if (ids.length) {
 			// get info for all new unknown ids
-			getYouTubeInfo(ids.filter(id => !(id in state.entities)), state.youtubeApiKey)
+			getYouTubeInfo(ids, state.youtubeApiKey)
 				.then(results => {
-					commit('updateRadioStation', {
-						roomId,
-						entities: results.reduce((acc, v) => ({ ...acc, [v.id]: v }), {}),
-						playList: ids,
-					});
+					addMatrixMessage(state, commit, roomId, results);
 				});
+		}
+	},
+	webScraperUpdateSuccess({ state, commit, dispatch }, { id, mediaList }) {
+		const ws = state.webScrapers[id];
+		const pl = ws ? ws.playList : [];
+		const archive = ws && ws.archive ? ws.archive : [];
+		const index = new Set([...pl.map((v) => v.id), ...archive]);
+		const newVideos = mediaList.filter(v => !index.has(v.id));
+		const playList = [...pl, ...newVideos];
+		while (playList.length > 3000) {
+			const media = playList.shift();
+			archive.push(media.id);
+		}
+		if (newVideos.length) {
+			commit('updateWebScraper', { id, values: { playList, archive } });
+		} else {
+			// Only scrape websites every 2 seconds.
+			setTimeout(() => {
+				dispatch('runWebScraper', id);
+			}, 2000);
 		}
 	},
 	initWebScraper({ state, commit, dispatch }, id) {
@@ -212,23 +277,7 @@ export const actions = {
 			});
 		}
 	},
-	webScraperUpdateSuccess({ state, commit, dispatch }, { id, mediaList }){
-		const ws = state.webScrapers[id];
-		const pl = ws ? ws.playList : [];
-		const archive = ws && ws.archive ? ws.archive : [];
-		const index = new Set([...pl.map((v) => v.id), ...archive]);
-		const newVideos = mediaList.filter(v => !index.has(v.id));
-		const playList = [...pl, ...newVideos];
 
-		if (newVideos.length) {
-			commit('updateWebScraper', { id, values: { playList } });
-		} else {
-			// Only scrape websites every 2 seconds.
-			setTimeout(() => {
-				dispatch('runWebScraper', id);
-			}, 2000);
-		}
-	},
 	nextVideo({ state, commit, dispatch }) {
 		if (state.leftMenuTab === 'tv' && state.currentWebScraper) {
 			const cp = getCurrentPlayListEntities(state);

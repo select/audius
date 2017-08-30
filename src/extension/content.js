@@ -28,6 +28,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 window.addEventListener(
 	'audiusExtension',
 	event => {
+		console.log('content relay request ', event.detail)
 		chrome.runtime.sendMessage(event.detail, response => {});
 	},
 	false

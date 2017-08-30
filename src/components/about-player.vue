@@ -287,7 +287,7 @@ export default {
 			display: flex
 			align-items: center
 	pre
-		font-size: .7em
+		font-size: .7rem
 		white-space: inherit
 		overflow: auto
 .about-player__community-btns

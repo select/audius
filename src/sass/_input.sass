@@ -17,6 +17,10 @@
 			border-color: $color-pictonblue
 			background: $color-pictonblue
 			color: $color-white
+		&.disabled
+			pointer-events: none
+			background-color: $color-aluminium
+			border: 1px solid $color-aluminium
 	a.button
 		display: flex
 		align-items: center
@@ -28,6 +32,44 @@
 		display: block
 		width: 100%
 		font-size: 1em
+	[type='checkbox']
+		display: none
+		& + label
+			// @extend .icon-checkmark
+			// reset foundation
+			margin-left: 0
+			position: relative
+			display: inline-flex
+			align-items: center
+			box-sizing: border-box
+			height: $touch-size-small
+			min-width: $touch-size-small
+			padding-right: $grid-space
+			cursor: pointer
+			&:before
+				content: ' '
+				font-family: 'shoutr'
+				font-size: 1rem
+				width: $touch-size-tiny
+				height: $touch-size-tiny
+				line-height: $touch-size-tiny
+				margin-right: $grid-space
+				transition: $transition-time
+				color: $color-white
+				border: 1px solid $color-pictonblue
+				border-radius: 2px
+				background-color: $color-white
+		&:checked +label:before
+			background-color: $color-pictonblue
+			content: ''
+			// use a better icon from e.g. a icomoon.com font here
+			// content: '✓'
+		&:disabled +label
+			pointer-events: none
+			&:before
+				border-color: $color-aluminium
+		&:disabled:checked +label:before
+			background-color: $color-aluminium
 
 input
 	height: $touch-size-small

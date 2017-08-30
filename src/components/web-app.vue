@@ -72,10 +72,7 @@ body
 	input:focus
 		outline: 0
 	::-webkit-scrollbar
-		width: 9px
-		&:hover
-			width: 10px
-
+		width: #{1.2 * $grid-space}
 	::-webkit-scrollbar-track
 		background: $color-catskillwhite
 

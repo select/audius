@@ -26,7 +26,8 @@ export const matrixClient = {
 				const message = event.event.content.body;
 				const roomId = event.event.room_id;
 				if (!(roomId in this.firstEvent)) this.firstEvent[roomId] = event.event.event_id;
-				if (message) dispatch('parseMatrixMessage', { roomId, message });
+				if (event.event.type === 'audiusMedia') dispatch('parseMatrixMessage', { roomId, message: event.event.content });
+				else if (message) dispatch('parseMatrixMessage', { roomId, message });
 			});
 
 			this.client.on('sync', (syncState, prevState, data) => {
@@ -59,6 +60,12 @@ export const matrixClient = {
 				resolve(this.client.getRooms());
 			});
 		});
+	},
+	sendEvent(roomId, media) {
+		this.client.sendEvent(roomId, 'audiusMedia', media);
+	},
+	sendMessage(roomId, media) {
+		this.client.sendTextMessage(roomId, JSON.stringify(media));
 	},
 	getCredentialsWithPassword(username, password) {
 		return new Promise(resolve => {

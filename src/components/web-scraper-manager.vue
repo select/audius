@@ -10,10 +10,14 @@ export default {
 			this.addWebScraper(el.value);
 			el.value = '';
 		},
-
+		numWatched(id) {
+			if (!(id in this.webScrapers)) return 0;
+			const res = this.webScrapers[id].archive ? this.webScrapers[id].archive.length : 0;
+			return res + Object.keys(this.webScrapers[id].playedMedia).length;
+		},
 	},
 	computed: {
-		...mapState(['webScrapersOrderd', 'webScrapers', 'currentWebScraper']),
+		...mapState(['webScrapersOrdered', 'webScrapers', 'currentWebScraper']),
 	},
 };
 </script>
@@ -22,13 +26,13 @@ export default {
 	<div class="play-list-manager__wrapper">
 		<ul class="play-list-manager__tags">
 			<li
-				v-for="id in webScrapersOrderd"
+				v-for="id in webScrapersOrdered"
 				@click="initWebScraper(id);selectMediaSource({type: 'tv', id: id})"
 				v-bind:class="{ active: currentWebScraper === id }">
 				<div class="play-list-manager__drag-handle"></div>
 				<div class="play-list-manager__tag-body">
 					{{id}}
-					<div v-if="webScrapers[id]">{{webScrapers[id].playList.length - Object.keys(webScrapers[id].playedMedia).length}} New {{Object.keys(webScrapers[id].playedMedia).length + webScrapers[id].archive.length}} Watched </div>
+					<div v-if="webScrapers[id] && webScrapers[id].playList">{{webScrapers[id].playList.length - Object.keys(webScrapers[id].playedMedia).length}} New {{numWatched(id)}} Watched </div>
 				</div>
 				<div
 					v-if="webScrapers[id] && webScrapers[id].settings"
