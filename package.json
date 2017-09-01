@@ -8,11 +8,11 @@
     "start": "node ./config/webpack.devserver.js",
     "test": "eslint ./src/**/*.js",
     "build:prod:app": "./node_modules/.bin/webpack --config='./config/webpack.production.app.js' --progress --display-error-details",
-    "build:prod:extension": "./node_modules/.bin/webpack --config='./config/webpack.production.extension.js' --progress --display-error-details",
     "build": "./node_modules/.bin/webpack --config='./config/webpack.base.js' --progress --display-error-details",
     "build:extension": "./node_modules/.bin/webpack --config='./config/webpack.dev.extension.js' --progress --display-error-details --watch",
     "docu": "livingstyleguide compile ./src/sass/styleguide.lsg ./documentation/styleguide.html && nodejs node_modules/.bin/generate-md --layout github --input README.md --output ./documentation/",
-    "zip": "npm run build:prod:extension; cd dist-extension/; zip -r ../audius.extension.zip . *",
+    "extension:rls": "npm run build:prod:extension; cd dist-extension/; zip -r ../audius.extension.zip . *",
+    "build:prod:extension": "./node_modules/.bin/webpack --config='./config/webpack.production.extension.js' --progress --display-error-details",
     "icons": "./config/convert-icomoon.js ./src/icons/media-player.zip ./src/sass/_icon.map.sass ./src/fonts/"
   },
   "license": "MIT",
