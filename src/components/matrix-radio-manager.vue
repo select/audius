@@ -74,11 +74,11 @@ export default {
 
 	<ul class="matrix-radio__tags">
 
-		<li class="play-list-manager__input">
+		<li class="play-list-manager__input matrix-radio__input">
 			<input
 				v-on:keyup.enter="addMatrixRoom"
 				type="text"
-				placeholder="... matrix.org room">
+				placeholder="... join room">
 			<span class="wmp-icon-add" @click="addMatrixRoom"></span>
 		</li>
 	</ul>
