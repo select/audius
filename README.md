@@ -12,6 +12,21 @@ Audius is the ultimate streaming music player.
 - Set start end times of media items (e.g. to cut of trailing silence)
 - Split YouTube full albums into seperate songs.
 
+## Extension
+
+Install the [audius extension](https://chrome.google.com/webstore/detail/ekpajajepcojhnjmlibfbjmdjcafajoh) to search  external webpages.
+	
+## Share your Music with Matrix
+[Matrix](https://matrix.org/) is a chat network that Audius uses to share songs.
+
+Join a room and drag and drop to add new music.
+
+ - [Random](https://audius.rockdapus.org/?import=!zKinTrtpQEyHfnIbnI:matrix.org&type=room&title=Random)
+ - [Rock](https://audius.rockdapus.org/?import=!VTIhlnDdHsxZFZQNFh:matrix.org&type=room&title=Rock)
+
+Create your own rooms and share them with your friends.
+With the [Riot web client](https://riot.im/app/) or [any other client](https://matrix.org/docs/projects/try-matrix-now.html#clients)
+
 ## Community
 
 If you have questions or feedback, join the chat on gitter or create an issue on github.
@@ -20,6 +35,13 @@ If you have questions or feedback, join the chat on gitter or create an issue on
 - [Create an issue](https://github.com/select/audius/issues)
 
 ## Change log
+
+**2.0.6**
+*	Extension for searching external websites for content.
+*	Share playlists, matrix rooms, web channels with one click link.
+*	Add your own web channels with URL patterns (needs extension).
+*	Matrix chat pagination working.
+*	Share media in matrix room with drag and drop.
 
 **2.0.5**
 *   Bug fix release: YouTube skip, YouTube URLs in search, mobile version, d&d search results, history for all played items.
@@ -103,6 +125,11 @@ npm run build:prod:app
 ```
 The build is also located in `/dist-website`, open `index.html` to test.
 
+The chrome extension can be build with
+```
+npm run build:extension
+```
+
 
 ## Legality, security, saftey, and privacy
 
@@ -140,6 +167,8 @@ Be sure to validate the JSON output, the script is just a quick hack and you mig
 You are writing another music player, seriously? That's what I thought a lot when creating this, but you know ...
 
 The extension (inactive for now) should have been the actual player since the original idea was to create a Chrome/FireFox extension with a media player for _web.whatsapp.com_. After struggeling alot with [getting the YouTube player to run in an extension content script](https://stackoverflow.com/questions/40309872/youtube-video-in-chrome-extension-content-script) the plan completely failed when the [content security policy](https://content-security-policy.com/) did not allow the embdding of youtube videos. Even though it should be possible to overwrite the header fields for the content security policy of web.whatsapp.com I could not get it to work (it worked on every page [except web.whatsapp.com](https://stackoverflow.com/questions/40322156/chrome-extension-can-not-get-header-with-onheadersreceived)). That meant no YouTube player, no music. The only way out of this mess was to create an extension with a a content script (grabs links) that communicates with a background script (relays found links) that in turn communicates with the a main player (this web app, that plays the songs). But this also meant that I had to write an extension and a web app. Well what the heck, I was still using Streamus but over the time less and less worked so I needed a replacement anyway. I tried [tomahawk](https://www.tomahawk-player.org/) and it seemed quite promising, but I just could not get it to work with dragged in or paste in [youtube links](https://github.com/tomahawk-player/tomahawk-resolvers/issues/126). Also the search was quite slow and did not show many results. This kind of left me no other option but to write Audius.
+
+As Audius evolved I tried out new technologies, one of them the Matrix chat network. Matrix is similar to email (multiple federated servers) and offers open and encryped real time data and chat message transfer. This was a fun opportunity to create a new medium for the music chat rooms that I am part of. Music chat rooms are the best way to break out of filter bubbles from services that use algorithms, they allow you to discover new music your friends and strangers curate for you.
 
 Here are some alternatives to Audius that are also interesting:
 

@@ -94,6 +94,10 @@ export default {
 			</li>
 		</ul>
 	</p>
+	<p>
+		Please install the <a href="https://chrome.google.com/webstore/detail/ekpajajepcojhnjmlibfbjmdjcafajoh" target="_blank">Audius extension</a> for this feature.
+	</p>
+
 </div>
 </template>
 

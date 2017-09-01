@@ -74,6 +74,9 @@ export default {
 							overwrite channel
 						</label>
 					</div>
+					<p>
+						Please install the <a href="https://chrome.google.com/webstore/detail/ekpajajepcojhnjmlibfbjmdjcafajoh" target="_blank">Audius extension</a> for this feature.
+					</p>
 				</p>
 			</div>
 			<div v-if="pendingImportURL.type === 'room'">

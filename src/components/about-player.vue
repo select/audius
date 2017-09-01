@@ -68,6 +68,34 @@ export default {
 			<dd>Queue selected song</dd>
 		</dl>
 	</p> -->
+	<h2>Extension</h2>
+	<p>
+		<a href="https://chrome.google.com/webstore/detail/ekpajajepcojhnjmlibfbjmdjcafajoh" target="_blank">Install the audius extension</a> to search  external webpages.
+	</p>
+	<h2>Share your Music with Matrix</h2>
+	<p>
+		<a href="https://matrix.org/" target="_blank">Matrix</a> is a chat network that Audius uses to share songs.
+	</p>
+	<p>
+		Join a room and drag and drop to add new music.
+	</p>
+	<div class="about-player__community-btns">
+		<a class="button btn--blue" href="?import=!zKinTrtpQEyHfnIbnI:matrix.org&type=room&title=Random">Random</a>
+		<a class="button btn--blue" href="?import=!VTIhlnDdHsxZFZQNFh:matrix.org&type=room&title=Rock">Rock</a>
+	</div>
+
+	<p class="smaller">
+		… more rooms are coming soon. The name loads on refresh.
+	</p>
+	<p>
+		Create your own rooms and share them with your friends.
+		<!-- Get a user name to create private channels. -->
+	</p>
+	<div class="about-player__community-btns">
+		<a class="button btn--gray-ghost" href="https://riot.im/app/" target="_blank">Use Riot</a>
+	</div>
+	or <a href="https://matrix.org/docs/projects/try-matrix-now.html#clients" target="_blank">any other client</a>.
+
 	<h2>Community</h2>
 	<p>
 		If you have questions or feedback, join the chat on gitter or create an issue on github.<br>
@@ -98,6 +126,14 @@ export default {
 	</p> -->
 	<h2>Change log</h2>
 	<p>
+		<b>2.0.6</b><br>
+		<ul>
+			<li> Extension for searching external websites for content.</li>
+			<li> Share playlists, matrix rooms, web channels with one click link.</li>
+			<li> Add your own web channels with URL patterns (needs extension).</li>
+			<li> Matrix chat pagination working. </li>
+			<li> Share media in matrix room with drag and drop.</li>
+		</ul>
 		<b>2.0.5</b><br>
 		<ul>
 			<li> Bug fix release: YouTube skip, YouTube URLs in search, mobile version, d&d search results, history for all played items.</li>
@@ -219,10 +255,13 @@ export default {
 	</p> -->
 	<h2 id="motivation">Motivation</h2>
 	<p>
-		You are writing another music player, seriously? That's what I thought a lot when creating this, but you know ...
+		The extension (currently revived) should have been the actual player since the original idea was to create a Chrome/FireFox extension with a media player for <i>web.whatsapp.com</i>. After struggeling alot with <a href="https://stackoverflow.com/questions/40309872/youtube-video-in-chrome-extension-content-script" target="_blank">getting the YouTube player to run in an extension content script</a> the plan completely failed when the <a href="https://content-security-policy.com/" target="_blank">content security policy</a> did not allow the embdding of youtube videos. Even though it should be possible to overwrite the header fields for the content security policy of web.whatsapp.com I could not get it to work (it worked on every page <a href="https://stackoverflow.com/questions/40322156/chrome-extension-can-not-get-header-with-onheadersreceived" target="_blank">except web.whatsapp.com</a>). That meant no YouTube player, no music. The only way out of this mess was to create an extension with a a content script (grabs links) that communicates with a background script (relays found links) that in turn communicates with the a main player (this web app, that plays the songs). But this also meant that I had to write an extension and a web app. Well what the heck, I was still using Streamus but over the time less and less worked so I needed a replacement anyway. I tried <a href="https://www.tomahawk-player.org/" target="_blank">tomahawk</a> and it seemed quite promising, but I just could not get it to work with dragged in or paste in <a href="https://github.com/tomahawk-player/tomahawk-resolvers/issues/126">youtube links</a>. Also the search was quite slow and did not show many results. This kind of left me no other option but to write Audius.
 	</p>
 	<p>
-		The extension (currently discontinued) should have been the actual player since the original idea was to create a Chrome/FireFox extension with a media player for <i>web.whatsapp.com</i>. After struggeling alot with <a href="https://stackoverflow.com/questions/40309872/youtube-video-in-chrome-extension-content-script" target="_blank">getting the YouTube player to run in an extension content script</a> the plan completely failed when the <a href="https://content-security-policy.com/" target="_blank">content security policy</a> did not allow the embdding of youtube videos. Even though it should be possible to overwrite the header fields for the content security policy of web.whatsapp.com I could not get it to work (it worked on every page <a href="https://stackoverflow.com/questions/40322156/chrome-extension-can-not-get-header-with-onheadersreceived" target="_blank">except web.whatsapp.com</a>). That meant no YouTube player, no music. The only way out of this mess was to create an extension with a a content script (grabs links) that communicates with a background script (relays found links) that in turn communicates with the a main player (this web app, that plays the songs). But this also meant that I had to write an extension and a web app. Well what the heck, I was still using Streamus but over the time less and less worked so I needed a replacement anyway. I tried <a href="https://www.tomahawk-player.org/" target="_blank">tomahawk</a> and it seemed quite promising, but I just could not get it to work with dragged in or paste in <a href="https://github.com/tomahawk-player/tomahawk-resolvers/issues/126">youtube links</a>. Also the search was quite slow and did not show many results. This kind of left me no other option but to write Audius.
+		In the summer before I started with Audius, I created a chrome app (oh stupid me, 2 weeks before Google announced the death of Chrome apps I release the first version) for watching funny videos from popular sites like Imgur and 9gag. <a href="https://github.com/select/boomnext/" target="_blank">Boom, next video!</a> was the realization of an idea I played around for a long time but never fully realized. Then the nice 5by app was created, which had everything I really wanted. A continous stream of fresh and fun content with no user interaction necessary, just like TV, start it and turn you brain off. But 5by did not survive long and I forgot about it, until last summer and I kind of recreated it. It was fun, it was absolutely addicting.
+	</p>
+	<p>
+		As Audius evolved I tried out new technologies, one of them the Matrix chat network. Matrix is similar to email (multiple federated servers) and offers open and encryped real time data and chat message transfer. This was a fun opportunity to create a new medium for the music chat rooms that I am part of. Music chat rooms are the best way to break out of filter bubbles from services that use algorithms, they allow you to discover new music your friends and strangers curate for you.
 	</p>
 	<p>
 		Here are some alternatives to Audius that are also interesting:
@@ -243,7 +282,7 @@ export default {
 			<li><span style="text-decoration:line-through;">Redux</span> Vuex</li>
 			<li>Icomoon</li>
 			<li>Google material icons</li>
-			<li>Webpack + Babel + Plugins</li>
+			<li>Webpack + Plugins</li>
 			<li>LivingStyleGuide</li>
 			<li><a href="https://rubaxa.github.io/Sortable/">SortableJS</a>; vuedraggable</li>
 			<li><a target="_blank" href="http://myjson.com/">Myjson.com</a></li>
@@ -261,6 +300,8 @@ export default {
 
 .wmp-about
 	padding: $grid-space
+	.smaller
+		font-size: .8rem
 	ul
 		padding: 0
 		list-style: none
@@ -294,8 +335,9 @@ export default {
 	display: flex
 	justify-content: center
 	align-items: center
-	button
+	> *
 		margin-right: $grid-space
+
 </style>
 
 
