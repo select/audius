@@ -164,10 +164,11 @@ export const mutations = {
 		state.search.isSearching = false;
 		state.search.results = results.map(v => {
 			const tracks = parseYoutubeDescription(v);
+			const durationYt = v.contentDetails ? v.contentDetails.duration : undefined;
 			return Object.assign({}, videoBaseObject, {
 				title: v.snippet.title,
-				duration: duration(v.contentDetails.duration),
-				durationS: time2s(duration(v.contentDetails.duration)),
+				duration: duration(durationYt),
+				durationS: time2s(duration(durationYt)),
 				isPlaying: false,
 				id: v.id,
 				deleted: false,

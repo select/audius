@@ -52,7 +52,7 @@ const trimBRegex = /[-\W\d]*$/;
 /* eslint-disable no-param-reassign */
 export function parseYoutubeDescription(v) {
 	const description = v.snippet.description;
-	const durationYt = v.contentDetails.duration;
+	const durationYt = v.contentDetails ? v.contentDetails.duration : undefined;
 	const id = v.id;
 
 	const descriptionLines = description.split('\n');
@@ -71,7 +71,7 @@ export function parseYoutubeDescription(v) {
 				start: (h * 3600) + (m * 60) + s,
 				title,
 				fullTitle: line,
-				durationAlbum: time2s(duration(v.contentDetails.duration)),
+				durationAlbum: time2s(duration(durationYt)),
 				type: 'youtube',
 				isTrack: true,
 				trackId: idx + 1,
@@ -96,10 +96,11 @@ export function getYouTubeInfo(ids, YOUTUBE_API_KEY) {
 		ajax(url, data => {
 			resolve(data.items.map(v => {
 				const tracks = parseYoutubeDescription(v);
+				const durationYt = v.contentDetails ? v.contentDetails.duration : undefined;
 				return Object.assign({}, videoBaseObject, {
 					title: v.snippet.title,
-					duration: duration(v.contentDetails.duration),
-					durationS: time2s(duration(v.contentDetails.duration)),
+					duration: duration(durationYt),
+					durationS: time2s(duration(durationYt)),
 					isPlaying: false,
 					id: v.id,
 					deleted: false,

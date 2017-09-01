@@ -42,6 +42,7 @@ export function time2s(duration) {
 
 
 export function duration(durationString) {
+	if (!durationString) return {};
 	const durationMatch = durationString.match(/PT(\d+H)?(\d+M)?(\d+S)?/);
 	return {
 		h: parseInt(durationMatch[1], 10) || 0,
