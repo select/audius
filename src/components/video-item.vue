@@ -1,5 +1,5 @@
 <script>
-import { mapMutations, mapState } from 'vuex';
+import { mapMutations, mapState, mapActions } from 'vuex';
 
 export default {
 	name: 'video-item',
@@ -15,7 +15,7 @@ export default {
 		expiryDate: Date,
 		isWebScraper: Boolean,
 	},
-	computed: mapState(['isMobile']),
+	computed: mapState(['isMobile', 'currentMatrixRoom']),
 	data() {
 		return {
 			copyActive: false,
@@ -23,9 +23,18 @@ export default {
 		};
 	},
 	methods: {
-		...mapMutations(['pause', 'play', 'queue', 'error', 'removeTags', 'queueRemoveIndex', 'removeVideo']),
+		...mapMutations(['pause',
+			'play',
+			'queue',
+			'error',
+			'removeTags',
+			'queueRemoveIndex',
+			'removeVideo',
+			'queuePlayIndex',
+		]),
+		...mapActions(['matrixSend']),
 		_play() {
-			if (this.isQueue) this.$store.commit('queuePlayIndex', this.queueIndex);
+			if (this.isQueue) this.queuePlayIndex(this.queueIndex);
 			else this.play({ media: this.video });
 		},
 		remove() {
@@ -38,7 +47,11 @@ export default {
 			}
 		},
 		addToPlaylist() {
-			this.$store.commit('addSearchResult', this.video);
+			if (this.currentMatrixRoom) {
+				this.matrixSend({ media: this.video, roomId: this.currentMatrixRoom });
+			} else {
+				this.$store.commit('addSearchResult', this.video);
+			}
 			this.$emit('addToPlaylist', this.video.id);
 		},
 		youtubeLink() {
