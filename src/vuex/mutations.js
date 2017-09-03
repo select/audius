@@ -8,24 +8,20 @@ import {
 	getMediaEntity,
 } from './getCurrentPlayList';
 
-const matrixRoomTemplate = {
+const matrixRoomTemplate = () => JSON.parse(JSON.stringify({
 	name: '',
 	playList: [],
 	playedMedia: {},
 	archive: [],
-};
+}));
 
 /* eslint-disable no-param-reassign */
 function playMedia(state, media) {
-	let store;
 	if (state.currentMatrixRoom) {
-		store = state.matrixRooms[state.currentMatrixRoom];
-	} else if (state.currentWebScraper) {
-		store = state.webScrapers[state.currentWebScraper];
-	}
-	if (store) {
-		store.playedMedia[media.id] = new Date();
+		state.matrixRooms[state.currentMatrixRoom].playedMedia[media.id] = new Date();
 		state.matrixRooms = Object.assign({}, state.matrixRooms);
+	} else if (state.currentWebScraper) {
+		state.webScrapers[state.currentWebScraper].playedMedia[media.id] = new Date();
 		state.webScrapers = Object.assign({}, state.webScrapers);
 	}
 	Object.assign(state, {
@@ -514,7 +510,7 @@ export const mutations = {
 				state.matrixRoomsOrdered.unshift(roomId);
 			}
 			if (!(roomId in state.matrixRooms)) {
-				state.matrixRooms[roomId] = Object.assign({}, matrixRoomTemplate, { name: room.name });
+				state.matrixRooms[roomId] = Object.assign({}, matrixRoomTemplate(), { name: room.name });
 			} else if (
 				state.matrixRooms[roomId].name !== room.name && !room.name.includes(':matrix.org')
 			) {
@@ -543,7 +539,7 @@ export const mutations = {
 	},
 	updateMatrixRoom(state, { roomId, values }) {
 		if (!state.matrixRooms[roomId]) {
-			state.matrixRooms[roomId] = Object.assign({}, matrixRoomTemplate, { name: roomId });
+			state.matrixRooms[roomId] = Object.assign({}, matrixRoomTemplate(), { name: roomId });
 		}
 		if (!state.matrixRoomsOrdered.includes(roomId)) {
 			state.matrixRoomsOrdered.unshift(roomId);
