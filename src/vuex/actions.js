@@ -1,6 +1,8 @@
 import {
 	searchYoutube,
 	isYouTubeVideoRegEx,
+	youTubePlaylistRexEx,
+	getPlayList,
 	debounce,
 	importPlayListFromString,
 	ajaxPostJSON,
@@ -71,6 +73,15 @@ export const actions = {
 			searchYoutubeDebounced(state.youtubeApiKey, query, result => {
 				commit('searchYoutubeSuccess', result);
 			});
+			if (youTubePlaylistRexEx.test(query)) {
+				getPlayList(state.youtubeApiKey, query).then(result => {
+					commit('searchYoutubeSuccess', result);
+				});
+			}
+		} else if (youTubePlaylistRexEx.test(query)) {
+			getPlayList(state.youtubeApiKey, query).then(result => {
+				commit('searchYoutubeSuccess', result);
+			});
 		} else if (/^https?:\/\//.test(query)) {
 			console.warn('Please install the audius extension');
 			webScraperDebounced(new CustomEvent('audiusExtension', {
@@ -103,11 +114,19 @@ export const actions = {
 			}
 		});
 	},
-	importURL({ commit }, { url, name }) {
-		ajax(url, data => {
-			commit('importPlayList', { data, tagName: name });
-			commit('setPendingImportURL', null);
-		});
+	importURL({ state, commit }, { url, name }) {
+		if (youTubePlaylistRexEx.test(url)) {
+			getPlayList(state.youtubeApiKey, url).then(data => {
+				const entities = data.reduce((acc, media) => Object.assign(acc, { [media.id]: media }), {});
+				const playList = data.map(({ id }) => id);
+				commit('importPlayList', { data: { playList, entities }, tagName: name });
+			});
+		} else {
+			ajax(url, data => {
+				commit('importPlayList', { data, tagName: name });
+				commit('setPendingImportURL', null);
+			});
+		}
 	},
 	exportToURL({ commit, getters }) {
 		const data = getters.currentExportData;
@@ -141,26 +160,24 @@ export const actions = {
 				.then(rooms => commit('setMatrixLoggedIn', rooms));
 		});
 	},
-	matrixSend({ state }, { itemId, roomId }) {
+	matrixSend({ state }, { itemId, roomId, media }) {
 		import(/* webpackChunkName: "matrix-client" */ '../utils/matrixClient').then(mc => {
 			matrixClient = mc.matrixClient;
-			matrixClient.sendEvent(roomId, getMediaEntity(state, itemId));
+			matrixClient.sendEvent(roomId, media || getMediaEntity(state, itemId));
 		});
 	},
 	matrixPaginate({ state }) {
 		matrixClient.paginate(state.currentMatrixRoom);
 	},
-	joinMatrixRoom({ commit }, roomIdOrAlias) {
-		console.log("roomIdOrAlias", roomIdOrAlias);
-
-		matrixClient.joinRoom(roomIdOrAlias).then(room => {
-			room.name = roomIdOrAlias;
+	joinMatrixRoom({ commit }, { id, name }) {
+		matrixClient.joinRoom(id).then(room => {
+			room.name = name || id;
 			commit('setMatrixLoggedIn', [room]);
 
 			commit('selectMediaSource', { type: 'radio', id: room.roomId });
-			commit('setLeftMenuTab', 'radio')
+			commit('setLeftMenuTab', 'radio');
 		}).catch(error => {
-			commit('error', `${error}`);
+			commit('error', `Could not join room: ${error}`);
 		});
 	},
 	leaveMatrixRoom({ commit }, roomIdOrAlias) {

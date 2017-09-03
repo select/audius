@@ -33,7 +33,7 @@ export default {
 			this.importName = event.target.value;
 		},
 		importRoom() {
-			this.joinMatrixRoom(this.pendingImportURL.url);
+			this.joinMatrixRoom({ id: this.pendingImportURL.url, name: this.pendingImportURL.name });
 			this.close();
 		},
 		importChannel() {
@@ -80,30 +80,30 @@ export default {
 				</p>
 			</div>
 			<div v-if="pendingImportURL.type === 'room'">
-				<p>
-					<h3>Join room</h3>
-					<div v-if="!matrixEnabled">
+				<h3>Join room</h3>
+					<p v-if="!matrixEnabled">
 							<button
 								@click="setMatrixEnabled"
 								class="button btn--blue">
 								enable Matrix
 							</button>
-					</div>
-					<div v-if="!matrixLoggedIn && matrixEnabled">
+					</p>
+					<p v-if="!matrixLoggedIn && matrixEnabled">
 							<button
 								@click="initMatrix"
 								class="button btn--blue">
 								connect Matrix
 							</button>
-					</div>
-					<div class="import-modal__row">
-						<div>{{pendingImportURL.name}}</div>
-						<button
-							v-bind:class="{disabled: !(matrixEnabled && matrixLoggedIn)}"
-							class="button btn--blue"
-							@click="importRoom">Join</button>
-					</div>
-				</p>
+					</p>
+					<p>
+						<div class="import-modal__row">
+							<div>{{pendingImportURL.name}}</div>
+							<button
+								v-bind:class="{disabled: !(matrixEnabled && matrixLoggedIn)}"
+								class="button btn--blue"
+								@click="importRoom">Join</button>
+						</div>
+					</p>
 			</div>
 			<div v-if="pendingImportURL.type != 'channel' && pendingImportURL.type != 'room'">
 				<p>

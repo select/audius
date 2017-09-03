@@ -2,10 +2,27 @@ import { ajax } from './ajax';
 import { time2s, s2time, duration } from './timeConverter';
 import { videoBaseObject } from '../vuex/video';
 
-export const isYouTubeVideoRegEx = /http(?:s?):\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-_]*)(&(amp;)?‌​[\w?‌​=]*)?/;
+export const isYouTubeVideoRegEx = /.*youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-_]*)(&(amp;)?‌​[\w?‌​=]*)?/;
+export const youTubePlaylistRexEx = /.*youtu(?:be\.com\/|\.be\/).*list=([\w\-_]*)/;
 
 const youtubeExtract1g = /youtu.be\/([\w-]+)/g;
 const youtubeExtract2g = /youtube.com\/watch\?v=([\w-]+)/g;
+
+function refineYouTubeData(videoData) {
+	const snippet = videoData.snippet || {};
+	const tracks = parseYoutubeDescription(videoData);
+	const durationYt = videoData.contentDetails ? videoData.contentDetails.duration : undefined;
+	return Object.assign({}, videoBaseObject, {
+		title: snippet.title,
+		duration: duration(durationYt),
+		durationS: time2s(duration(durationYt)),
+		isPlaying: false,
+		id: videoData.id,
+		deleted: false,
+		type: 'youtube',
+		tracks: tracks.length ? tracks : undefined,
+	});
+}
 
 export function findYouTubeIdsText(text) {
 	const hits = [];
@@ -21,6 +38,29 @@ export function findYouTubeIdsText(text) {
 
 export function getYtContentDetailURL(YOUTUBE_API_KEY, ids, withSnippet) {
 	return `https://www.googleapis.com/youtube/v3/videos?part=contentDetails${withSnippet ? ',snippet' : ''}&id=${ids}&key=${YOUTUBE_API_KEY}`;
+}
+
+export function getPlayList(YOUTUBE_API_KEY, playListUrl) {
+	return new Promise((resolve, reject) => {
+
+		const playListId = youTubePlaylistRexEx.exec(playListUrl)[1];
+		const url = `https://www.googleapis.com/youtube/v3/playlistItems?part=contentDetails&type=video&maxResults=50&playlistId=${playListId}&key=${YOUTUBE_API_KEY}`;
+		ajax(url, searchData => {
+			ajax(
+				getYtContentDetailURL(
+					YOUTUBE_API_KEY,
+					searchData.items.map(item => item.contentDetails.videoId).join(','),
+					true
+				),
+				data => {
+					const items = searchData.items
+						.map((item, idx) => refineYouTubeData(Object.assign({}, item, data.items[idx])));
+					resolve(items);
+				}
+			);
+			console.log("getPlayList", searchData);
+		});
+	});
 }
 
 export function searchYoutube(YOUTUBE_API_KEY, query, callback) {
@@ -51,7 +91,8 @@ const trimBRegex = /[-\W\d]*$/;
 
 /* eslint-disable no-param-reassign */
 export function parseYoutubeDescription(v) {
-	const description = v.snippet.description;
+	const snippet = v.snippet || {};
+	const description = snippet.description || '';
 	const durationYt = v.contentDetails ? v.contentDetails.duration : undefined;
 	const id = v.id;
 
@@ -65,7 +106,7 @@ export function parseYoutubeDescription(v) {
 			const m = parseInt(mt, 10);
 			const s = parseInt(st, 10);
 			// Clean up the title from spaces minus and time
-			const title = `${line.replace(trimFRegex, '').replace(trimBRegex, '')} - ${v.snippet.title}`;
+			const title = `${line.replace(trimFRegex, '').replace(trimBRegex, '')} - ${snippet.title}`;
 			return Object.assign({}, videoBaseObject, {
 				id,
 				start: (h * 3600) + (m * 60) + s,
@@ -94,20 +135,7 @@ export function getYouTubeInfo(ids, YOUTUBE_API_KEY) {
 	return new Promise(resolve => {
 		const url = `https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails&id=${ids.join(',')}&key=${YOUTUBE_API_KEY}`;
 		ajax(url, data => {
-			resolve(data.items.map(v => {
-				const tracks = parseYoutubeDescription(v);
-				const durationYt = v.contentDetails ? v.contentDetails.duration : undefined;
-				return Object.assign({}, videoBaseObject, {
-					title: v.snippet.title,
-					duration: duration(durationYt),
-					durationS: time2s(duration(durationYt)),
-					isPlaying: false,
-					id: v.id,
-					deleted: false,
-					type: 'youtube',
-					tracks: tracks.length ? tracks : undefined,
-				});
-			}));
+			resolve(data.items.map(v => refineYouTubeData(v)));
 		});
 	});
 }
