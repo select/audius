@@ -42,13 +42,17 @@ export default {
 			'dropMoveItem',
 			'setShowWatched',
 		]),
-		...mapActions(['importURL', 'matrixPaginate', 'runWebScraper']),
+		...mapActions(['importURL', 'matrixPaginate', 'runWebScraper', 'matrixSend']),
 		addMusic() {
 			this.importURL({ url: starterPlaylist });
 		},
 		dropAdd(event) { // Element is dropped into the list from another list
 			const itemId = event.item.dataset.id;
-			this.dropMoveItem({ itemId, to: this.currentPlayList });
+			if (this.currentMatrixRoom) {
+				this.matrixSend({ itemId, roomId: this.currentMatrixRoom });
+			} else {
+				this.dropMoveItem({ itemId, to: this.currentPlayList });
+			}
 		},
 		clear(close) {
 			if (!this.filterQuery) this.toggleJump(false);
@@ -91,7 +95,6 @@ export default {
 			'filteredPlayListLength',
 			'filteredPlayList',
 			'tagNames',
-			'currentName',
 		]),
 		...mapState([
 			'currentMedia',
@@ -126,6 +129,10 @@ export default {
 		},
 		showWelcome() {
 			return !(this.showImport || this.showExport || this.showJump || this.filteredPlayListLength);
+		},
+		currentSourceId() {
+			const names = ['currentPlayList', 'currentMatrixRoom', 'currentWebScraper'];
+			return this[names.find(n => !!this[n])];
 		},
 	},
 };
@@ -179,17 +186,18 @@ export default {
 			>
 
 			<div
-				v-if="(currentWebScraper || currentMatrixRoom) && !showWatched[currentName]"
-				@click="setShowWatched({ id: currentName, toggleState: true })"
+				v-if="(currentWebScraper || currentMatrixRoom) && !showWatched[currentSourceId]"
+				@click="setShowWatched({ id: currentSourceId, toggleState: true })"
 				class="play-list__load-more"> show watched items </div>
 			<div
-				v-if="(currentWebScraper || currentMatrixRoom) && showWatched[currentName]"
-				@click="setShowWatched({ id: currentName, toggleState: false })"
+				v-if="(currentWebScraper || currentMatrixRoom) && showWatched[currentSourceId]"
+				@click="setShowWatched({ id: currentSourceId, toggleState: false })"
 				class="play-list__load-more"> hide watched items </div>
 			<draggable
 				class="media-list"
 				element="ul"
 				v-model="_entities"
+				@add="dropAdd"
 				:options="{
 					animation: 150,
 					scrollSpeed: 20,
@@ -228,7 +236,7 @@ export default {
 				{{filteredPlayListLength}} Songs
 			</li>
 			<li
-				v-if="!!currentPlayList"
+				v-if="currentPlayList !== null"
 				v-bind:class="{ active: showImport }"
 				@click="toggleImport()">
 				Import
