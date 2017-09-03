@@ -47,11 +47,11 @@ export default {
 
 			try {
 				document.execCommand('copy');
-				if (!name) this.copyURLActive = url;
+				if (!name) this.copyURLActive = url || true;
 				else this.copyActive = url;
 				setTimeout(() => {
-					if (!name) this.copyURLActive = null;
-					else this.copyActive = null;
+					this.copyURLActive = null;
+					this.copyActive = null;
 				}, 800);
 			} catch (err) {
 				console.warn('execCommand Error', err);
@@ -72,10 +72,13 @@ export default {
 				title="[Esc] Close"
 				v-on:click="$emit('toggleExport', false)"></span>
 		</div>
-		<div v-if="currentMatrixRoom">
+		<div v-if="currentMatrixRoom" class="play-list__export-room">
 			<button
-				class="button btn--blue"
-				@click="copyToClip('room')">copy</button>
+				class="button btn--blue play-list__export-copy-room"
+				v-bind:class="{ active: copyURLActive }"
+				@click="copyToClip('room')">
+					copy
+				</button>
 				<br>
 				Click and paste to share this room.
 		</div>
@@ -151,6 +154,12 @@ export default {
 				color: $color-white
 		.wmp-icon-copy
 			color: $color-aluminium
+.play-list__export-copy-room.active
+	background: $color-larioja
+	border-color: $color-larioja
+.play-list__export-room
+	padding-top: #{2 * $grid-space}
+	text-align: center
 .play-list__full
 	flex: 1
 	align-items: flex-start
