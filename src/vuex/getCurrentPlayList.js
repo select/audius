@@ -1,4 +1,8 @@
 export function getMediaEntity(state, mediaId) {
+	if (state.search.results) {
+		const media = state.search.results.find(item => item.id === mediaId);
+		if (media) return media;
+	}
 	if (state.currentWebScraper || state.currentMatrixRoom) {
 		const store = state.currentWebScraper
 			? state.webScrapers[state.currentWebScraper]
