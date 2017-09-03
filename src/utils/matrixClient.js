@@ -41,7 +41,7 @@ export const matrixClient = {
 			});
 
 			this.client.setGuest(true);
-			this.client.startClient({ initialSyncLimit: 100 });
+			this.client.startClient({ initialSyncLimit: 20 });
 		});
 	},
 	logout() {
