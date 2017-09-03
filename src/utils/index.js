@@ -7,7 +7,9 @@ export {
 	isYouTubeVideoRegEx,
 	parseYoutubeDescription,
 	findYouTubeIdsText,
-	getYouTubeInfo
+	getYouTubeInfo,
+	youTubePlaylistRexEx,
+	getPlayList
 } from './youtube';
 export { isElementInViewport } from './isElementInViewport';
 export { indexDB } from './indexDB2';
