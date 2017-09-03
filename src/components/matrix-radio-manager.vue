@@ -11,7 +11,7 @@ export default {
 		...mapActions(['joinMatrixRoom', 'leaveMatrixRoom', 'matrixSend']),
 		addMatrixRoom() {
 			const el = document.querySelector('.matrix-radio__input input');
-			this.joinMatrixRoom(el.value);
+			this.joinMatrixRoom({ id: el.value });
 			el.value = '';
 		},
 		dropAdd(event, roomId) { // Element is dropped into the list from another list
@@ -51,6 +51,7 @@ export default {
 		}">
 		<draggable
 			v-for="id in _matrixRoomsOrdered"
+			:key="id"
 			class="play-list-manager__tag-drop-zone"
 			element="li"
 			@add="dropAdd($event, id)"
