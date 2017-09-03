@@ -26,7 +26,7 @@ const presistMutation = {
 	deletePlayList: ['tagsOrdered', 'tags', 'currentPlayList'],
 	toggleShuffle: ['shuffle'],
 	setExportURL: ['exportURLs'],
-	play: ['webScrapers'],
+	play: ['webScrapers', 'matrixRooms'],
 	nextVideo: ['webScrapers'],
 	movePlayListMedia: ['playList', 'tags', 'entities'],
 	moveTagsOrdered: ['tagsOrdered'],
