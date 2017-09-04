@@ -114,6 +114,8 @@ export default {
 				background: $color-white
 				.play-list-manager__drag-handle
 					border-left: 1vw solid $color-pictonblue
+				input
+					font-weight: bold
 
 			&:hover:not(.spacer)
 				border-color: $color-pictonblue
