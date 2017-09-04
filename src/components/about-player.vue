@@ -72,7 +72,7 @@ export default {
 	<p>
 		<a href="https://chrome.google.com/webstore/detail/ekpajajepcojhnjmlibfbjmdjcafajoh" target="_blank">Install the audius extension</a> to search  external webpages.
 	</p>
-	<h2 id="matrix">Share your Music with Matrix</h2>
+	<h2 id="matrix">Share your music with Matrix</h2>
 	<p>
 		<a href="https://matrix.org/" target="_blank">Matrix</a> is a chat network that allows you to share songs with Audius.
 	</p>
@@ -86,7 +86,7 @@ export default {
 	</div>
 
 	<p class="smaller">
-		… more rooms are coming soon. The name loads on refresh. You can drop songs on the room name in the <a @click="toggleLeftMenu">matrix tab <span class="wmp-icon-queue_music"title="Toggle playlists"></span></a>!
+		… more rooms are coming soon. You can drop songs on the room name in the <a @click="toggleLeftMenu">matrix tab <span class="wmp-icon-queue_music"title="Toggle playlists"></span></a>!
 	</p>
 	<p>
 		<b>Create your own rooms</b> and share them with your friends.
@@ -96,7 +96,7 @@ export default {
 		<a class="button btn--gray-ghost" href="https://riot.im/app/" target="_blank">Use Riot</a>
 	</div>
 	<p>
-		or <a href="https://matrix.org/docs/projects/try-matrix-now.html#clients" target="_blank">any other client</a> to create a room. Set the access rights and history to <i>Anyone</i> for a public room. Private rooms need usernames. Login with your username in the <a @click="setShowSettings">settings</a>.
+		or <a href="https://matrix.org/docs/projects/try-matrix-now.html#clients" target="_blank">any other client</a> to create a room. For a public room set the access rights and history to <i>Anyone</i>. Private rooms need usernames. Login with your username in the <a @click="setShowSettings">settings</a>.
 	</p>
 
 	<h2>Community</h2>
@@ -136,6 +136,7 @@ export default {
 			<li> Add your own web channels with URL patterns (needs extension).</li>
 			<li> Matrix pagination working. </li>
 			<li> Share media in <a href="#matrix">matrix room</a> with drag and drop.</li>
+			<li> Import YouTube playlists (import FROM WEB / Search)</li>
 		</ul>
 		<b>2.0.5</b><br>
 		<ul>
