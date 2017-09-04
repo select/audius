@@ -8,7 +8,7 @@
  * @param {number} wait number of milliseconds to wait
  * @return {function}      debounced function
  */
-export function debounceImmediate(func, wait) {
+export function debounceImmediate(func, wait = 500) {
 	// we need to save these in the closure
 	let timeout;
 	let args;
@@ -50,7 +50,7 @@ export function debounceImmediate(func, wait) {
 	};
 }
 
-export function debounce(func, wait) {
+export function debounce(func, wait = 500) {
 	// we need to save these in the closure
 	let timeout;
 	let args;

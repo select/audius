@@ -3,10 +3,19 @@ import Vue from 'vue';
 import { mapGetters, mapMutations, mapState, mapActions } from 'vuex';
 import draggable from 'vuedraggable';
 
-import { starterPlaylist } from '../utils';
+import { starterPlaylist, debounce } from '../utils';
 import VideoItem from './video-item.vue';
 import PlayListExport from './play-list-export.vue';
 import PlayListImport from './play-list-import.vue';
+
+function isElementInViewport(el) {
+	if (!el) return false;
+	const rect = el.getBoundingClientRect();
+	return (
+		(rect.top + 300) >= 0 &&
+		(rect.bottom - 300) <= (window.innerHeight || document.documentElement.clientHeight) /* or $(window).height() */
+	);
+}
 
 export default {
 	components: {
@@ -26,6 +35,15 @@ export default {
 			}),
 		];
 	},
+	mounted() {
+		this.checkElementVisible();
+		this.$el.querySelector('.play-list__body').addEventListener('scroll', debounce(() => {
+			this.checkElementVisible();
+		}, 200));
+	},
+	updated() {
+		this.checkElementVisible();
+	},
 	beforeDestroy() {
 		this.subscriptions.forEach((unsub) => { unsub(); });
 	},
@@ -43,6 +61,12 @@ export default {
 			'setShowWatched',
 		]),
 		...mapActions(['importURL', 'matrixPaginate', 'runWebScraper', 'matrixSend']),
+		checkElementVisible() {
+			/* eslint-disable no-param-reassign */
+			this.$refs.playListEls.forEach((ve) => {
+				if (!ve.isVisible) ve.isVisible = isElementInViewport(ve.$el);
+			});
+		},
 		addMusic() {
 			this.importURL({ url: starterPlaylist });
 		},
@@ -210,6 +234,7 @@ export default {
 				}">
 				<video-item
 					v-for="(media, index) in _entities"
+					ref="playListEls"
 					:key="index"
 					:video="media"
 					:isPlayList="!!currentPlayList"
