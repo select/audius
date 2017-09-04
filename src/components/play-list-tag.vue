@@ -35,7 +35,11 @@ export default {
 		<draggable
 			class="play-list-manager__tag-drop-zone"
 			@add="dropAdd"
-			:options="{ sort: false, group: { name: 'lists' } }">
+			:options="{
+				sort: false,
+				handle: '.no-handle',
+				group: { name: 'lists' }
+			}">
 			<div class="play-list-manager__tag-body">
 				<div v-show="currentPlayList != tagName">{{tagName}}</div>
 				<div v-show="currentPlayList == tagName">
