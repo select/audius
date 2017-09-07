@@ -52,10 +52,10 @@ export default {
 			<li
 				v-if="matrixEnabled"
 				v-on:click="setLeftMenuTab('radio');setMainRightTab('');;initMatrix()"
-				v-bind:class="{ active: leftMenuTab == 'radio' }">Radio</li>
+				v-bind:class="{ active: leftMenuTab == 'radio' }">Matrix</li>
 			<li
 				v-on:click="setLeftMenuTab('tv');setMainRightTab('');"
-				v-bind:class="{ active: leftMenuTab == 'tv' }">TV</li>
+				v-bind:class="{ active: leftMenuTab == 'tv' }">Web</li>
 			<li
 				v-on:click="setMainRightTab('queue');setLeftMenuTab('');"
 				v-bind:class="{ active: mainRightTab == 'queue' }">Queue</li>
