@@ -16,6 +16,11 @@ export default {
 	methods: {
 		...mapMutations(['toggleLeftMenu', 'setLeftMenuTab']),
 		...mapActions(['initMatrix']),
+		resizeWidth(event) {
+			const ww = (window.innerWidth || document.documentElement.clientWidth);
+			const pos = Math.round((event.clientX / ww) * 100);
+			if (pos > 5) this.$el.style.width = `${pos}vw`;
+		},
 	},
 	computed: {
 		...mapState(['showLeftMenu', 'leftMenuTab', 'matrixEnabled']),
@@ -27,7 +32,7 @@ export default {
 <div
 	class="left-menu"
 	v-bind:class="{ active: showLeftMenu }">
-	<div class="nav-handle" title="Playlists" @click="toggleLeftMenu">
+	<div class="nav-handle" title="Playlists" @click="toggleLeftMenu()">
 		<div class="nav-handle__tab"></div>
 		<span class="wmp-icon-queue_music"></span>
 	</div>
@@ -48,12 +53,18 @@ export default {
 		<matrix-radio-manager v-if="leftMenuTab == 'radio'"></matrix-radio-manager>
 		<web-scraper-manager v-if="leftMenuTab == 'tv'"></web-scraper-manager>
 	</div>
+	<div
+		class="left-menu__drag-handle"
+		draggable="true"
+		@drag="resizeWidth"
+		></div>
 </div>
 </template>
 
 <style lang="sass?indentedSyntax">
 @import '../sass/vars'
 @import '../sass/color'
+
 
 .left-menu
 	position: relative
@@ -75,6 +86,14 @@ export default {
 	&::-webkit-scrollbar-track
 		background: $color-aluminium-dark
 
+.left-menu__drag-handle
+	width: $grid-space/2
+	height: 100%
+	position: absolute
+	top: 0
+	right: -$grid-space/4
+	background: transparent
+	cursor: ew-resize
 
 
 .nav-handle
