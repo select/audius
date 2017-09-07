@@ -131,11 +131,6 @@ export default {
 			height: $grid-space
 
 
-.play-list-manager__drag-handle
-	width: #{2*$grid-space}
-	height: 100%
-	&:not(.play-list-manager--default)
-		cursor: move
 
 .play-list-manager__menu
 	display: none
