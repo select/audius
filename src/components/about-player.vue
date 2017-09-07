@@ -68,10 +68,6 @@ export default {
 			<dd>Queue selected song</dd>
 		</dl>
 	</p> -->
-	<h2 id="extension">Extension</h2>
-	<p>
-		<a href="https://chrome.google.com/webstore/detail/ekpajajepcojhnjmlibfbjmdjcafajoh" target="_blank">Install the audius extension</a> to search  external webpages.
-	</p>
 	<h2 id="matrix">Share your music with Matrix</h2>
 	<p>
 		<a href="https://matrix.org/" target="_blank">Matrix</a> is a chat network that allows you to share songs with Audius.
@@ -86,7 +82,7 @@ export default {
 	</div>
 
 	<p class="smaller">
-		… more rooms are coming soon. You can drop songs on the room name in the <a @click="toggleLeftMenu">matrix tab <span class="wmp-icon-queue_music"title="Toggle playlists"></span></a>!
+		… more rooms are coming soon. You can drop songs on the room name in the <a @click="toggleLeftMenu(true)">matrix tab <span class="wmp-icon-queue_music"title="Toggle playlists"></span></a>!
 	</p>
 	<p>
 		<b>Create your own rooms</b> and share them with your friends.
@@ -96,7 +92,11 @@ export default {
 		<a class="button btn--gray-ghost" href="https://riot.im/app/" target="_blank">Use Riot</a>
 	</div>
 	<p>
-		or <a href="https://matrix.org/docs/projects/try-matrix-now.html#clients" target="_blank">any other client</a> to create a room. For a public room set the access rights and history to <i>Anyone</i>. Private rooms need usernames. Login with your username in the <a @click="setShowSettings">settings</a>.
+		… or <a href="https://matrix.org/docs/projects/try-matrix-now.html#clients" target="_blank">any other client</a> to create a room. For a public room set the access rights and history to <i>Anyone</i>. Private rooms are easier to manage with a username. Create a proper user with e.g. Riot and login with your username in the <a @click="setShowSettings">settings</a>.
+	</p>
+	<h2 id="extension">Extension and web channels</h2>
+	<p>
+		<a href="https://chrome.google.com/webstore/detail/ekpajajepcojhnjmlibfbjmdjcafajoh" target="_blank">Install the audius extension</a> to search  external webpages. It's also required when you create or import <a @click="toggleLeftMenu(true)">web channels <span class="wmp-icon-queue_music"title="Toggle playlists"></span></a>. Web channels are still in development, currently they allow you to search on your favorite website for sounds and videos.
 	</p>
 
 	<h2>Community</h2>
@@ -109,8 +109,8 @@ export default {
 			<a class="button btn--blue" href="https://github.com/select/audius/issues" target="_blank">Create issue</a>
 		</div>
 	</p>
-	<p>
-		* You must allow 3rd party cookies for the chat to work (default for almost everybody) or chat in a new window.
+	<p class="smaller">
+		* You must allow 3rd party cookies for the chat to work (if you have not idea what that means it will work for you) or chat in a new window.
 	</p>
 	<!-- <h2>Extension</h2>
 	<p class="about-player__community-btns">
@@ -136,7 +136,7 @@ export default {
 			<li> Add your own web channels with URL patterns (needs extension).</li>
 			<li> Matrix pagination working. </li>
 			<li> Share media in <a href="#matrix">matrix room</a> with drag and drop.</li>
-			<li> Import YouTube playlists (import FROM WEB / Search)</li>
+			<li> Import YouTube playlists (import FROM WEB / Search) max 50 songs currently.</li>
 		</ul>
 		<b>2.0.5</b><br>
 		<ul>
@@ -307,8 +307,6 @@ export default {
 	[class^="wmp-icon-"]
 		height: .5rem
 		width: 1.5rem
-	.smaller
-		font-size: .8rem
 	a
 		cursor: pointer
 		text-decoration: underline
