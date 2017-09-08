@@ -67,7 +67,7 @@ export default {
 			<div class="play-list-manager__menu">
 				<span
 					class="wmp-icon-close"
-					title="Delte playlist"
+					title="Leave room"
 					@click.stop="leaveMatrixRoom(id)"></span>
 			</div>
 		</draggable>
@@ -79,8 +79,11 @@ export default {
 			<input
 				v-on:keyup.enter="addMatrixRoom"
 				type="text"
-				placeholder="... join room">
-			<span class="wmp-icon-add" @click="addMatrixRoom"></span>
+				placeholder="... room ">
+			<span
+				class="wmp-icon-add"
+				title="Join room"
+				@click="addMatrixRoom"></span>
 		</li>
 	</ul>
 </div>
