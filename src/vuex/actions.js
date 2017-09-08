@@ -70,11 +70,11 @@ export const actions = {
 			// debounce((...args) => searchYoutube(...args), 500)
 			searchYoutube(state.youtubeApiKey, query).then(result => {
 				commit('searchYoutubeSuccess', { result, id: query });
-			});
+			}).catch(error => { commit('error', error); });
 			if (youTubePlaylistRexEx.test(query)) {
 				getPlayList(state.youtubeApiKey, query).then(result => {
 					commit('searchYoutubeSuccess', { result, isPlayList: true, id: query });
-				});
+				}).catch(error => { commit('error', error); });
 			}
 		} else if (youTubePlaylistRexEx.test(query)) {
 			getPlayList(state.youtubeApiKey, query).then(result => {
@@ -123,14 +123,14 @@ export const actions = {
 			ajax(url).then(data => {
 				commit('importPlayList', { data, tagName: name });
 				commit('setPendingImportURL', null);
-			});
+			}).catch(error => { commit('error', error); });
 		}
 	},
 	exportToURL({ commit, getters }) {
 		const data = getters.currentExportData;
 		ajaxPostJSON('https://api.myjson.com/bins', JSON.stringify(data), res => {
 			commit('setExportURL', JSON.parse(res).uri);
-		});
+		}).catch(error => { commit('error', error); });
 	},
 	initMatrix({ commit, state, dispatch }) {
 		import(/* webpackChunkName: "matrix-client" */ '../utils/matrixClient').then(mc => {

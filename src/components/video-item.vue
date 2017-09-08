@@ -92,7 +92,7 @@ export default {
 			tmpEl.parentNode.removeChild(tmpEl);
 		},
 		_backgroundImage() {
-			if (!this.isVisible && !(this.isQueue || this.isSearchResult)) return '';
+			if (!this.isVisible && this.isPlayList) return '';
 			if ((this.video.type === 'youtube') && !this.video.hasError) {
 				return `url(https://i.ytimg.com/vi/${this.video.youtubeId || this.video.id}/default.jpg)`;
 			} else if (this.video.thumbUrl) {

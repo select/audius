@@ -26,8 +26,7 @@ export default {
 <div class="web-app" id="audius-website">
 	<div v-if="!isMobile" class="web-app__desktop">
 		<web-header></web-header>
-		<main
-			class="box">
+		<main class="box">
 			<left-menu></left-menu>
 			<play-list></play-list>
 			<main-right></main-right>
