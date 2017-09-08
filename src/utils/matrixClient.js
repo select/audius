@@ -4,14 +4,12 @@ export const matrixClient = {
 	client: null,
 	firstEvent: {},
 	paginate(roomId) {
-		console.log('paginate....');
 		const room = this.client.getRoom(roomId);
 		const tls = room.getTimelineSets()[0];
 		// this._timelineSet.getLiveTimeline()
-		this.client
+		return this.client
 			.getEventTimeline(tls, this.firstEvent[roomId])
-			.then(et => this.client.paginateEventTimeline(et, { backwards: true }))
-			.then(data => console.log('paginatio success ', data));
+			.then(et => this.client.paginateEventTimeline(et, { backwards: true }));
 	},
 	login(credentials, dispatch) {
 		return new Promise((resolve, reject) => {
