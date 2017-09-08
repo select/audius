@@ -39,7 +39,7 @@ export default {
 					class="play-list-manager__menu">
 					<span
 						class="wmp-icon-mode_edit"
-						title="TV Settings"
+						title="Edit channel"
 						@click.stop="openWebScraperSettings(id)"></span>
 					<span
 						class="wmp-icon-close"
@@ -52,7 +52,10 @@ export default {
 					v-on:keyup.enter="_addWebScraper"
 					type="text"
 					placeholder="... new channel">
-				<span class="wmp-icon-add" @click="_addWebScraper"></span>
+				<span
+					class="wmp-icon-add"
+					title="Create channel"
+					@click="_addWebScraper"></span>
 			</li>
 		</ul>
 	</div>
