@@ -3,7 +3,6 @@ import {
 	isYouTubeVideoRegEx,
 	youTubePlaylistRexEx,
 	getPlayList,
-	debounce,
 	importPlayListFromString,
 	ajaxPostJSON,
 	ajax,
@@ -12,13 +11,11 @@ import {
 	webScraper,
 	getMediaDuration,
 	s2time,
-	hashCode
+	hashCode,
 } from '../utils';
 import { videoBaseObject } from './video';
 import { getCurrentPlayListEntities, getMediaEntity } from './getCurrentPlayList';
 // the matrix client will be lazy loaded since it's not need on startup
-const searchYoutubeDebounced = debounce((...args) => searchYoutube(...args), 500);
-const webScraperDebounced = debounce((...args) => window.dispatchEvent(...args), 500);
 
 // This must be avialable in the whole module since it's lazy loaded.
 // Do not delete;
@@ -70,21 +67,22 @@ export const actions = {
 				.then(durationS => refineWebSearchResult({ url: query, durationS, type: 'video' }))
 				.then(media => commit('webMediaSearchSuccess', { mediaList: [media], id: query }));
 		} else if (isYouTubeVideoRegEx.test(query)) {
-			searchYoutubeDebounced(state.youtubeApiKey, query, result => {
-				commit('searchYoutubeSuccess', result);
+			// debounce((...args) => searchYoutube(...args), 500)
+			searchYoutube(state.youtubeApiKey, query).then(result => {
+				commit('searchYoutubeSuccess', { result, id: query });
 			});
 			if (youTubePlaylistRexEx.test(query)) {
 				getPlayList(state.youtubeApiKey, query).then(result => {
-					commit('searchYoutubeSuccess', result);
+					commit('searchYoutubeSuccess', { result, isPlayList: true, id: query });
 				});
 			}
 		} else if (youTubePlaylistRexEx.test(query)) {
 			getPlayList(state.youtubeApiKey, query).then(result => {
-				commit('searchYoutubeSuccess', result);
+				commit('searchYoutubeSuccess', { result, isPlayList: true, id: query });
 			});
 		} else if (/^https?:\/\//.test(query)) {
 			console.warn('Please install the audius extension');
-			webScraperDebounced(new CustomEvent('audiusExtension', {
+			window.dispatchEvent(new CustomEvent('audiusExtension', {
 				detail: {
 					audius: true,
 					wsAction: 'scanUrl',
@@ -99,8 +97,8 @@ export const actions = {
 				},
 			}));
 		} else if (query.length > 1) {
-			searchYoutubeDebounced(state.youtubeApiKey, query, result => {
-				commit('searchYoutubeSuccess', result);
+			searchYoutube(state.youtubeApiKey, query).then(result => {
+				commit('searchYoutubeSuccess', { result, id: query });
 			});
 		}
 	},
@@ -122,7 +120,7 @@ export const actions = {
 				commit('importPlayList', { data: { playList, entities }, tagName: name });
 			});
 		} else {
-			ajax(url, data => {
+			ajax(url).then(data => {
 				commit('importPlayList', { data, tagName: name });
 				commit('setPendingImportURL', null);
 			});
@@ -210,7 +208,7 @@ export const actions = {
 			return;
 		}
 
-		const index = new Set([...room.playList.map((v) => v.id), ...room.archive]);
+		const index = new Set([...room.playList.map(v => v.id), ...room.archive]);
 		if (typeof message === 'object') {
 			if (!index.has(message.id)) addMatrixMessage(state, commit, roomId, [message]);
 			console.log(`[Matrix-Media] %c${message.title}`, 'color: #2DA7EF;');
@@ -224,17 +222,16 @@ export const actions = {
 
 		if (ids.length) {
 			// get info for all new unknown ids
-			getYouTubeInfo(ids, state.youtubeApiKey)
-				.then(results => {
-					addMatrixMessage(state, commit, roomId, results);
-				});
+			getYouTubeInfo(ids, state.youtubeApiKey).then(results => {
+				addMatrixMessage(state, commit, roomId, results);
+			});
 		}
 	},
 	webScraperUpdateSuccess({ state, commit, dispatch }, { id, mediaList }) {
 		const ws = state.webScrapers[id];
 		const pl = ws ? ws.playList : [];
 		const archive = ws && ws.archive ? ws.archive : [];
-		const index = new Set([...pl.map((v) => v.id), ...archive]);
+		const index = new Set([...pl.map(v => v.id), ...archive]);
 		const newVideos = mediaList.filter(v => !index.has(v.id));
 		const playList = [...pl, ...newVideos];
 		while (playList.length > 3000) {
@@ -264,10 +261,15 @@ export const actions = {
 			return;
 		}
 		const ws = state.webScrapers[id];
-		const index = state.webScrapersIndex[id] || 0;
-		if (ws.settings) {
+		const index = state.paginationIndex[id] || 0;
+		if (id === 'Imgur') {
+			commit('setPaginationIndex', { id, index: index + 1 });
+			webScraper.getVideosFromIndex(state.paginationIndex[id]).then(mediaList => {
+				dispatch('webScraperUpdateSuccess', { id, mediaList });
+			});
+		} else {
 			let requestIndex = index;
-			if (index >= (ws.settings.numPages - 1)) {
+			if (index >= ws.settings.numPages - 1) {
 				commit('error', 'Checked all URLs in channel, try again next time.');
 			} else if (!ws.settings.urls) {
 				commit('error', 'Channel URLs missing');
@@ -283,27 +285,24 @@ export const actions = {
 					requestIndex -= url.numPages;
 					return true;
 				});
-				commit('setWebScraperIndex', { id, index: index + 1 });
-				window.dispatchEvent(new CustomEvent('audiusExtension', {
-					detail: {
-						audius: true,
-						wsAction: 'scanUrl',
-						url: webScraper.patternToUrls(requestUrl)[requestIndex],
-						youtubeApiKey: state.youtubeApiKey,
-						response: {
+				commit('setPaginationIndex', { id, index: index + 1 });
+				window.dispatchEvent(
+					new CustomEvent('audiusExtension', {
+						detail: {
 							audius: true,
-							vuex: 'dispatch',
-							type: 'webScraperUpdateSuccess',
-							data: { id },
+							wsAction: 'scanUrl',
+							url: webScraper.patternToUrls(requestUrl)[requestIndex],
+							youtubeApiKey: state.youtubeApiKey,
+							response: {
+								audius: true,
+								vuex: 'dispatch',
+								type: 'webScraperUpdateSuccess',
+								data: { id },
+							},
 						},
-					},
-				}));
+					})
+				);
 			}
-		} else if (id === 'Imgur') {
-			commit('setWebScraperIndex', { id, index: index + 1 });
-			webScraper.getVideosFromIndex(state.webScrapersIndex[id]).then(mediaList => {
-				dispatch('webScraperUpdateSuccess', { id, mediaList });
-			});
 		}
 	},
 

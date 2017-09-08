@@ -1,8 +1,9 @@
 <script>
 import Vue from 'vue';
 import { mapGetters, mapMutations, mapState, mapActions } from 'vuex';
+import { store } from '../vuex/store';
 
-import { isElementInViewport } from '../utils';
+import { isElementInViewport, debounce } from '../utils';
 
 export default {
 	created() {
@@ -42,10 +43,8 @@ export default {
 			'playPause',
 			'setStartStopMarker',
 		]),
-		...mapActions(['search', 'nextVideo']),
-		searchInput(event) {
-			this.search(event.target.value);
-		},
+		...mapActions(['nextVideo']),
+		searchInput: debounce(function(event) { store.dispatch('search', event.target.value); }, 500),
 		stopPropagation(event) {
 			if (this.website.showSearch) event.stopPropagation();
 		},
@@ -152,7 +151,7 @@ export default {
 					class="au-header__search-input-group"
 					@click="toggleSearch()"
 					v-bind:class="{ active: website.showSearch }">
-					<span class="wmp-icon-search" title="[f] Search on YouTube"></span>
+					<span class="wmp-icon-search" title="[f] Search YouTube or URL"></span>
 					<input
 						type="text"
 						class="au-header__search-input"
@@ -165,11 +164,11 @@ export default {
 				</div>
 				<span
 					class="wmp-icon-queue_music"
-					title="Toggle playlists"
-					@click="toggleLeftMenu"></span>
+					title="Toggle playlist / matrix / web"
+					@click="toggleLeftMenu()"></span>
 				<span
 					class="wmp-icon-more_vert"
-					title="Show settings"
+					title="Settings"
 					@click="setShowSettings"></span>
 			</div>
 		</div>
@@ -239,16 +238,16 @@ export default {
 			<div
 				draggable="true"
 				title="drag start limit"
-				v-on:dragstart="onDragStart"
-				v-on:drag="moveLimit($event, 'start')"
-				v-on:dragend="dropLimit($event, 'start')"
+				@dragstart="onDragStart"
+				@drag="moveLimit($event, 'start')"
+				@dragend="dropLimit($event, 'start')"
 				class="au-header__progress-limit-start"></div>
 			<div
 				draggable="true"
 				title="drag stop limit"
-				v-on:dragstart="onDragStart"
-				v-on:drag="moveLimit($event, 'stop')"
-				v-on:dragend="dropLimit($event, 'stop')"
+				@dragstart="onDragStart"
+				@drag="moveLimit($event, 'stop')"
+				@dragend="dropLimit($event, 'stop')"
 				class="au-header__progress-limit-stop"></div>
 		</div>
 	</header>

@@ -8,7 +8,7 @@ export const youTubePlaylistRexEx = /.*youtu(?:be\.com\/|\.be\/).*list=([\w\-_]*
 const youtubeExtract1g = /youtu.be\/([\w-]+)/g;
 const youtubeExtract2g = /youtube.com\/watch\?v=([\w-]+)/g;
 
-function refineYouTubeData(videoData) {
+function normalizeYouTubeData(videoData) {
 	const snippet = videoData.snippet || {};
 	const tracks = parseYoutubeDescription(videoData);
 	const durationYt = videoData.contentDetails ? videoData.contentDetails.duration : undefined;
@@ -37,52 +37,57 @@ export function findYouTubeIdsText(text) {
 }
 
 export function getYtContentDetailURL(YOUTUBE_API_KEY, ids, withSnippet) {
-	return `https://www.googleapis.com/youtube/v3/videos?part=contentDetails${withSnippet ? ',snippet' : ''}&id=${ids}&key=${YOUTUBE_API_KEY}`;
+	return `https://www.googleapis.com/youtube/v3/videos?part=contentDetails${withSnippet
+		? ',snippet'
+		: ''}&id=${ids}&key=${YOUTUBE_API_KEY}`;
 }
 
 export function getPlayList(YOUTUBE_API_KEY, playListUrl) {
-	return new Promise((resolve, reject) => {
-
-		const playListId = youTubePlaylistRexEx.exec(playListUrl)[1];
-		const url = `https://www.googleapis.com/youtube/v3/playlistItems?part=contentDetails&type=video&maxResults=50&playlistId=${playListId}&key=${YOUTUBE_API_KEY}`;
-		ajax(url, searchData => {
-			ajax(
+	const playListId = youTubePlaylistRexEx.exec(playListUrl)[1];
+	const url = `https://www.googleapis.com/youtube/v3/playlistItems?part=contentDetails&type=video&maxResults=50&playlistId=${playListId}&key=${YOUTUBE_API_KEY}`;
+	let searchData;
+	return ajax(url)
+		.then(sd => {
+			searchData = sd;
+			return ajax(
 				getYtContentDetailURL(
 					YOUTUBE_API_KEY,
 					searchData.items.map(item => item.contentDetails.videoId).join(','),
 					true
-				),
-				data => {
-					const items = searchData.items
-						.map((item, idx) => refineYouTubeData(Object.assign({}, item, data.items[idx])));
-					resolve(items);
-				}
+				)
 			);
-			console.log("getPlayList", searchData);
-		});
-	});
+		})
+		.then(data =>
+			searchData.items.map((item, idx) =>
+				normalizeYouTubeData(Object.assign({}, item, data.items[idx]))
+			)
+		);
 }
 
-export function searchYoutube(YOUTUBE_API_KEY, query, callback) {
+export function searchYoutube(YOUTUBE_API_KEY, query) {
 	if (isYouTubeVideoRegEx.test(query)) {
-		ajax(getYtContentDetailURL(YOUTUBE_API_KEY, isYouTubeVideoRegEx.exec(query)[1], true), data => {
-			callback(data.items);
-		});
-	} else {
-		const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=20&q=${query}&key=${YOUTUBE_API_KEY}`;
-		ajax(url, searchData => {
-			ajax(
+		return ajax(
+			getYtContentDetailURL(YOUTUBE_API_KEY, isYouTubeVideoRegEx.exec(query)[1], true)
+		).then(data => data.items.map(v => normalizeYouTubeData(v)));
+	}
+	const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=20&q=${query}&key=${YOUTUBE_API_KEY}`;
+	let searchData;
+	return ajax(url)
+		.then(sd => {
+			searchData = sd;
+			return ajax(
 				getYtContentDetailURL(
 					YOUTUBE_API_KEY,
 					searchData.items.map(item => item.id.videoId).join(','),
 					true
-				),
-				data => {
-					callback(searchData.items.map((item, idx) => Object.assign({}, item, data.items[idx])));
-				}
+				)
 			);
-		});
-	}
+		})
+		.then(data =>
+			searchData.items.map((item, idx) =>
+				normalizeYouTubeData(Object.assign({}, item, data.items[idx]))
+			)
+		);
 }
 
 const timeRegex = /((\d+):)?(\d+):(\d{1,2})/;
@@ -109,7 +114,7 @@ export function parseYoutubeDescription(v) {
 			const title = `${line.replace(trimFRegex, '').replace(trimBRegex, '')} - ${snippet.title}`;
 			return Object.assign({}, videoBaseObject, {
 				id,
-				start: (h * 3600) + (m * 60) + s,
+				start: h * 3600 + m * 60 + s,
 				title,
 				fullTitle: line,
 				durationAlbum: time2s(duration(durationYt)),
@@ -118,12 +123,14 @@ export function parseYoutubeDescription(v) {
 				trackId: idx + 1,
 				youtubeId: id,
 			});
-		}).map((song, idx, thisArray) => {
+		})
+		.map((song, idx, thisArray) => {
 			// Add end times of each song from start of song after and end time of the media
-			if (idx === (thisArray.length - 1)) song.stop = time2s(duration(durationYt));
+			if (idx === thisArray.length - 1) song.stop = time2s(duration(durationYt));
 			else song.stop = thisArray[idx + 1].start;
 			return song;
-		}).map(song => {
+		})
+		.map(song => {
 			// Calculate duration of each song.
 			song.durationS = song.stop - song.start;
 			song.duration = s2time(song.durationS);
@@ -133,9 +140,11 @@ export function parseYoutubeDescription(v) {
 
 export function getYouTubeInfo(ids, YOUTUBE_API_KEY) {
 	return new Promise(resolve => {
-		const url = `https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails&id=${ids.join(',')}&key=${YOUTUBE_API_KEY}`;
+		const url = `https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails&id=${ids.join(
+			','
+		)}&key=${YOUTUBE_API_KEY}`;
 		ajax(url, data => {
-			resolve(data.items.map(v => refineYouTubeData(v)));
+			resolve(data.items.map(v => normalizeYouTubeData(v)));
 		});
 	});
 }
@@ -174,5 +183,3 @@ export function getYouTubeInfo(ids, YOUTUBE_API_KEY) {
 // 			}),
 // 	];
 // }
-
-

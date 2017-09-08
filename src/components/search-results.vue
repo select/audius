@@ -1,6 +1,6 @@
 <script>
 import Vue from 'vue';
-import { mapState } from 'vuex';
+import { mapState, mapActions } from 'vuex';
 import draggable from 'vuedraggable';
 import VideoItem from './video-item.vue';
 import { isElementInViewport } from '../utils';
@@ -13,6 +13,7 @@ export default {
 	},
 	computed: mapState(['search', 'currentMedia', 'isPlaying']),
 	methods: {
+		...mapActions(['importURL']),
 		addToPlaylist(id) {
 			Vue.nextTick(() => {
 				const els = document.querySelectorAll(`[data-id="${id}"]`);
@@ -43,6 +44,20 @@ export default {
 			revertClone: true,
 		}
 	}">
+	<li v-if="search.isPlayList">
+		<div class="media-list__main">
+			<div class="wmp-icon-album media-list__thumbnail search-results__playlist"></div>
+			<div class="media-list__body">
+				Playlist: {{search.results.length}} songs
+			</div>
+			<div class="media-list__controls">
+				<span
+					class="wmp-icon-add"
+					@click="importURL({ url: search.id });"
+					title="Import playlist"></span>
+			</div>
+		</div>
+	</li>
 	<video-item
 		v-for="media in search.results"
 		v-on:addToPlaylist="addToPlaylist"
@@ -52,3 +67,10 @@ export default {
 		:video="media"></video-item>
 </draggable>
 </template>
+
+<style lang="sass?indentedSyntax">
+@import '../sass/vars'
+@import '../sass/color'
+.search-results__playlist
+	font-size: 2.2rem
+</style>

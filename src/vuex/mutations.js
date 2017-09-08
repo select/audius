@@ -148,30 +148,13 @@ export const mutations = {
 	recoverState(state, recoveredState) {
 		state = Object.assign(state, recoveredState);
 		if (state.currentPlayList === null) state.currentPlayList = '';
-
-		// fix strange states, delete me when done
-		state.webScrapers = state.webScrapersOrdered.reduce((acc, id) => {
-			if (!state.webScrapers[id].archive) state.webScrapers[id].archive = [];
-			return Object.assign(acc, { [id]: state.webScrapers[id] });
-		}, {});
 	},
-	searchYoutubeSuccess(state, results) {
+	searchYoutubeSuccess(state, { result, isPlayList, id }) {
+		state.search.id = id;
 		state.mainRightTab = 'search';
 		state.search.isSearching = false;
-		state.search.results = results.map(v => {
-			const tracks = parseYoutubeDescription(v);
-			const durationYt = v.contentDetails ? v.contentDetails.duration : undefined;
-			return Object.assign({}, videoBaseObject, {
-				title: v.snippet.title,
-				duration: duration(durationYt),
-				durationS: time2s(duration(durationYt)),
-				isPlaying: false,
-				id: v.id,
-				deleted: false,
-				type: 'youtube',
-				tracks: tracks.length ? tracks : undefined,
-			});
-		});
+		state.search.isPlayList = isPlayList;
+		state.search.results = result;
 	},
 	webMediaSearchSuccess(state, { mediaList = [], id = null }) {
 		console.log('webMediaSearchSuccess', id, mediaList);
@@ -223,8 +206,8 @@ export const mutations = {
 		state.showExport = toggleState !== undefined ? toggleState : !state.showExport;
 		if (state.showExport) state.showImport = false;
 	},
-	toggleLeftMenu(state) {
-		state.showLeftMenu = !state.showLeftMenu;
+	toggleLeftMenu(state, toggleState) {
+		state.showLeftMenu = toggleState !== undefined ? toggleState : !state.showLeftMenu;
 	},
 	setIsMobile(state, toggleState) {
 		if (state.isMobile !== toggleState) {
