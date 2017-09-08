@@ -584,9 +584,9 @@ export const mutations = {
 		state.showWatched[id] = toggleState;
 		state.showWatched = Object.assign({}, state.showWatched);
 	},
-	setWebScraperIndex(state, { id, index }) {
-		state.webScrapersIndex[id] = index;
-		state.webScrapersIndex = Object.assign({}, state.webScrapersIndex);
+	setPaginationIndex(state, { id, index }) {
+		state.paginationIndex[id] = index;
+		state.paginationIndex = Object.assign({}, state.paginationIndex);
 	},
 	updateWebScraper(state, { id, values }) {
 		state.webScrapers[id] = Object.assign({}, state.webScrapers[id], values);

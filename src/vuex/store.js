@@ -64,7 +64,7 @@ export const store = new Vuex.Store({
 		matrixRoomsOrdered: [],
 		webScrapers: { Imgur: { playList: [], playedMedia: {}, archive: [] } },
 		webScrapersOrdered: ['Imgur'],
-		webScrapersIndex: {},
+		paginationIndex: {},
 		showWatched: {},
 		sessionHistoryPos: -1,
 		sessionHistory: [],

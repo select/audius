@@ -166,19 +166,32 @@ export const actions = {
 			matrixClient.sendEvent(roomId, media || getMediaEntity(state, itemId));
 		});
 	},
-	matrixPaginate({ state }) {
-		matrixClient.paginate(state.currentMatrixRoom);
+	matrixPaginate({ state, commit }, id) {
+		// const id = state.currentMatrixRoom;
+		matrixClient.paginate(state.currentMatrixRoom).then(res => {
+			if (res) {
+				commit('setPaginationIndex', {
+					id,
+					index: (state.paginationIndex[id] || 0) + 1,
+				});
+			} else {
+				commit('error', 'You reached the last page of this room.');
+			}
+		});
 	},
 	joinMatrixRoom({ commit }, { id, name }) {
-		matrixClient.joinRoom(id).then(room => {
-			room.name = name || id;
-			commit('setMatrixLoggedIn', [room]);
+		matrixClient
+			.joinRoom(id)
+			.then(room => {
+				room.name = name || id;
+				commit('setMatrixLoggedIn', [room]);
 
-			commit('selectMediaSource', { type: 'radio', id: room.roomId });
-			commit('setLeftMenuTab', 'radio');
-		}).catch(error => {
-			commit('error', `Could not join room: ${error}`);
-		});
+				commit('selectMediaSource', { type: 'radio', id: room.roomId });
+				commit('setLeftMenuTab', 'radio');
+			})
+			.catch(error => {
+				commit('error', `Could not join room: ${error}`);
+			});
 	},
 	leaveMatrixRoom({ commit }, roomIdOrAlias) {
 		matrixClient.leaveRoom(roomIdOrAlias).then(() => commit('deleteMatrixRoom', roomIdOrAlias));
@@ -190,7 +203,6 @@ export const actions = {
 		commit('matrixLogout');
 	},
 	parseMatrixMessage({ state, commit }, { roomId, message }) {
-
 		const room = state.matrixRooms[roomId];
 		if (!(roomId in state.matrixRooms)) {
 			commit('error', `could not find matrix room ${roomId}`);

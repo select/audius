@@ -135,7 +135,7 @@ export default {
 			'currentMatrixRoom',
 			'currentWebScraper',
 			'webScrapers',
-			'webScrapersIndex',
+			'paginationIndex',
 			'matrixRooms',
 			'showWatched',
 		]),
@@ -244,14 +244,13 @@ export default {
 					:isPlaying="isPlaying && (currentMedia.id == media.id)"></video-item>
 			</draggable>
 			<div
-				v-show="!(showImport || showExport || (leftMenuTab == 'radio' && !currentMatrixRoom))"
 				v-if="currentWebScraper"
 				@click="runWebScraper(currentWebScraper)"
-				class="play-list__load-more"> … load more (Page {{webScrapersIndex[currentWebScraper] || 0}}) </div>
+				class="play-list__load-more"> … load more (Page {{paginationIndex[currentWebScraper] || 0}}) </div>
 			<div
-				v-if="leftMenuTab == 'radio' && !(showImport || showExport)"
-				@click="matrixPaginate"
-				class="play-list__load-more"> … load more </div>
+				v-if="currentMatrixRoom"
+				@click="matrixPaginate(currentMatrixRoom)"
+				class="play-list__load-more"> … load more (Page {{paginationIndex[currentMatrixRoom] || 0}}) </div>
 		</div>
 
 	</div>
