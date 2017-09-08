@@ -9,7 +9,6 @@ import { store } from '../vuex/store';
 import { migrate } from '../utils/indexDB.migrate';
 import './keyshorts';
 
-
 function isMobile() {
 	const w = window;
 	const d = document;
@@ -17,26 +16,52 @@ function isMobile() {
 	const g = d.getElementsByTagName('body')[0];
 	const x = w.innerWidth || e.clientWidth || g.clientWidth;
 	const y = w.innerHeight || e.clientHeight || g.clientHeight;
-	// console.log(x + ' × ' + y);
-	return (x < (y * 0.6));
+	return x < y * 0.75;
+}
+
+const startConditions = { started: false };
+function start(options) {
+	Object.assign(startConditions, options);
+	if (
+		((startConditions.recoverdState && startConditions.contentLoaded) || startConditions.timeout) &&
+		!startConditions.started
+	) {
+		startConditions.started = true;
+		new Vue({
+			el: '#app',
+			render: h => h(WebApp),
+			store,
+		});
+	}
 }
 
 indexDB
 	.init()
 	.then(() => indexDB.recoverState())
-	.then((state) => {
+	.then(state => {
 		store.commit('recoverState', state);
-		migrate();
+		// migrate();
 
-		window.addEventListener('resize', () => {
-			store.commit('setIsMobile', isMobile());
-		}, true);
+		store.commit('setIsMobile', isMobile());
+		[('resize', 'orientationchange')].forEach(eventName => {
+			window.addEventListener(
+				eventName,
+				() => {
+					store.commit('setIsMobile', isMobile());
+				},
+				true
+			);
+		});
 
-		window.addEventListener('audius', (event) => {
-			if (event.detail && event.detail.vuex) {
-				store[event.detail.vuex](event.detail.type, event.detail.data);
-			}
-		}, false);
+		window.addEventListener(
+			'audius',
+			event => {
+				if (event.detail && event.detail.vuex) {
+					store[event.detail.vuex](event.detail.type, event.detail.data);
+				}
+			},
+			false
+		);
 
 		const url = getParameterByName('import');
 		if (url) {
@@ -48,16 +73,19 @@ indexDB
 		}
 		cleanWindowLocation();
 
-		new Vue({
-			el: '#app',
-			render: h => h(WebApp),
-			store,
-		});
+		start({ recoverdState: true });
 	})
 	.catch(error => {
 		store.commit('error', { error, sticky: true });
 	});
 
+document.addEventListener('DOMContentLoaded', () => {
+	start({ contentLoaded: true });
+});
+
+setTimeout(() => {
+	start({ timeout: true });
+}, 2000);
 
 // if ('serviceWorker' in navigator && process.env.NODE_ENV === 'production') {
 // 	navigator.serviceWorker
@@ -66,4 +94,3 @@ indexDB
 // 			console.log('Service Worker Registered');
 // 		});
 // }
-
