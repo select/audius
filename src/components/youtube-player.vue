@@ -95,12 +95,16 @@ export default {
 				},
 			});
 		};
-		injectScript('https://www.youtube.com/iframe_api');
+		injectScript('https://www.youtube.com/iframe_api')
+			.catch((error) => {
+				this.error(error)
+			});
 	},
 	computed: mapState(['currentMedia', 'mute', 'skipToTime', 'isPlaying']),
 	methods: {
 		...mapMutations(['play', 'pause', 'setCurrentTime', 'videoError', 'error']),
 		...mapActions(['nextVideo']),
+
 		onPlayerError(event) {
 			this.videoError(event.data);
 			this.error(`YouTube could not play the video. Error Code ${event.data}`);

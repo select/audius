@@ -3,14 +3,7 @@ import { mapState, mapMutations, mapActions } from 'vuex';
 import { injectScript } from '../utils';
 
 export default {
-	data() {
-		return {
-			player: undefined,
-			timeInterval: undefined,
-		};
-	},
 	created() {
-		this.lastTrackId = null;
 		this.subscriptions = [
 			this.$store.watch(state => state.currentMedia, () => {
 				// if video changed, set new video in player
@@ -57,7 +50,7 @@ export default {
 		this.subscriptions.forEach((unsubscribe) => { unsubscribe(); });
 	},
 	mounted() {
-		injectScript('https://player.vimeo.com/api/player.js', () => {
+		injectScript('https://player.vimeo.com/api/player.js').then(() => {
 			this.player = new window.Vimeo.Player(document.querySelector('.vimeo-player'));
 			this.player.on('play', () => {
 				this.timeInterval = setInterval(() => {
@@ -69,6 +62,8 @@ export default {
 				this.clearInterval();
 				this.nextVideo();
 			});
+		}).catch((error) => {
+			this.error(error)
 		});
 	},
 	computed: mapState(['currentMedia', 'mute', 'skipToTime', 'isPlaying']),
