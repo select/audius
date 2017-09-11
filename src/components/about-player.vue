@@ -129,6 +129,12 @@ export default {
 	</p> -->
 	<h2>Change log</h2>
 	<p>
+		<b>2.0.7</b><br>
+		<ul>
+			<li> Vimeo video player integrated.</li>
+			<li> Better support for YouTube playlists: import from search results.</li>
+			<li> Fixed queue sorting.</li>
+		</ul>
 		<b>2.0.6</b><br>
 		<ul>
 			<li> <a href="#extension">Extension</a> for searching external websites for content.</li>
