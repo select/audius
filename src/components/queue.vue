@@ -1,5 +1,7 @@
 <script>
+import { mapMutations, mapState } from 'vuex';
 import draggable from 'vuedraggable';
+
 import VideoItem from './video-item.vue';
 
 export default {
@@ -8,20 +10,44 @@ export default {
 		draggable,
 	},
 	computed: {
+		...mapState(['queue']),
 		_queue: {
 			get() {
-				return this.$store.state.queue;
+				return this.queue;
 			},
 			set(value) {
-				this.$store.commit('moveQueue', value);
+				this.moveQueue(value.filter(id => !!id));
 			},
 		},
+	},
+	methods: {
+		...mapMutations(['dropMoveItemQueue', 'moveQueue']),
 	},
 };
 </script>
 
 <template>
 <div class="queue">
+	<draggable
+		v-if="!_queue.length"
+		class="media-list"
+		element="ul"
+		v-model="_queue"
+		:options="{
+			animation: 150,
+			scrollSpeed: 20,
+			handle: '.media-list__thumbnail',
+			sort: false,
+			group: {
+				name: 'lists',
+				pull: 'clone',
+				revertClone: true,
+			}
+		}">
+		<li class="queue__hint">
+			... queue with <span class="wmp-icon-queue2"></span> or drag and drop
+		</li>
+	</draggable>
 	<draggable
 		class="media-list"
 		element="ul"
@@ -30,15 +56,13 @@ export default {
 			animation: 150,
 			scrollSpeed: 20,
 			handle: '.media-list__thumbnail',
+			sort: true,
 			group: {
 				name: 'lists',
 				pull: 'clone',
 				revertClone: true,
 			}
 		}">
-		<li v-if="!_queue.length" class="queue__hint">
-			... queue with <span class="wmp-icon-queue2"></span> or drag and drop
-		</li>
 		<video-item
 			v-for="(media, index) in _queue"
 			:isQueue="true"
