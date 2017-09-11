@@ -11,6 +11,7 @@ export {
 	youTubePlaylistRexEx,
 	getPlayList
 } from './youtube';
+export { isVimeoVideoRegEx, searchVimeo } from './vimeo';
 export { isElementInViewport } from './isElementInViewport';
 export { indexDB } from './indexDB2';
 export { importPlayListFromString } from './importPlayListFromString';

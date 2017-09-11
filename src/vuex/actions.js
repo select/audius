@@ -2,6 +2,8 @@ import {
 	searchYoutube,
 	isYouTubeVideoRegEx,
 	youTubePlaylistRexEx,
+	isVimeoVideoRegEx,
+	searchVimeo,
 	getPlayList,
 	importPlayListFromString,
 	ajaxPostJSON,
@@ -58,6 +60,7 @@ function addMatrixMessage(state, commit, roomId, results) {
 /* eslint-disable no-param-reassign */
 export const actions = {
 	search({ commit, state }, query) {
+		query = query.trim();
 		if (audioRegEx.test(query)) {
 			getMediaDuration(query, 'video')
 				.then(durationS => refineWebSearchResult({ url: query, durationS, type: 'audio' }))
@@ -66,6 +69,10 @@ export const actions = {
 			getMediaDuration(query, 'video')
 				.then(durationS => refineWebSearchResult({ url: query, durationS, type: 'video' }))
 				.then(media => commit('webMediaSearchSuccess', { mediaList: [media], id: query }));
+		} else if (isVimeoVideoRegEx.test(query)){
+			searchVimeo(query).then(result => {
+				commit('searchYoutubeSuccess', { result, id: query });
+			});
 		} else if (isYouTubeVideoRegEx.test(query)) {
 			// debounce((...args) => searchYoutube(...args), 500)
 			searchYoutube(state.youtubeApiKey, query).then(result => {

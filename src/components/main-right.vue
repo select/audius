@@ -3,6 +3,7 @@ import { mapMutations, mapState } from 'vuex';
 import AboutPlayer from './about-player.vue';
 import Queue from './queue.vue';
 import YoutubePlayer from './youtube-player.vue';
+import VimeoPlayer from './vimeo-player.vue';
 import WebMediaPlayer from './web-media-player.vue';
 
 const Settings = () => import(/* webpackChunkName: "settings" */'./settings.vue');
@@ -17,6 +18,7 @@ export default {
 		Queue,
 		Settings,
 		YoutubePlayer,
+		VimeoPlayer,
 		WebMediaPlayer,
 		WebScraperSettings,
 	},
@@ -76,10 +78,17 @@ export default {
 			v-on:click="setMainRightTab('')"
 			v-if="mainRightTab"
 			class="main-right__player-full-btn wmp-icon-unfold_more"></span>
-		<div class="main-right__yt-player" v-bind:class="{'main-right--hide-yt-player': currentMedia.type !== 'youtube'}">
+		<div
+			class="main-right__yt-player"
+			v-bind:class="{'main-right--hide-yt-player': currentMedia.type !== 'youtube'}">
 			<youtube-player></youtube-player>
 		</div>
-		<web-media-player v-show="currentMedia.type !== 'youtube'"></web-media-player>
+		<div
+			class="main-right__yt-player"
+			v-bind:class="{'main-right--hide-yt-player': currentMedia.type !== 'vimeo'}">
+			<vimeo-player></vimeo-player>
+		</div>
+		<web-media-player v-show="!['youtube', 'vimeo'].includes(currentMedia.type)"></web-media-player>
 	</div>
 </div>
 </template>
