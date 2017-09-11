@@ -13,7 +13,7 @@ import {
 	webScraper,
 	getMediaDuration,
 	s2time,
-	hashCode,
+	hashCode
 } from '../utils';
 import { videoBaseObject } from './video';
 import { getCurrentPlayListEntities, getMediaEntity } from './getCurrentPlayList';
@@ -234,7 +234,7 @@ export const actions = {
 			});
 		}
 	},
-	webScraperUpdateSuccess({ state, commit, dispatch }, { id, mediaList }) {
+	webScraperUpdateSuccess({ state, commit }, { id, mediaList }) {
 		const ws = state.webScrapers[id];
 		const pl = ws ? ws.playList : [];
 		const archive = ws && ws.archive ? ws.archive : [];
@@ -247,11 +247,6 @@ export const actions = {
 		}
 		if (newVideos.length) {
 			commit('updateWebScraper', { id, values: { playList, archive } });
-		} else {
-			// Only scrape websites every 2 seconds.
-			setTimeout(() => {
-				dispatch('runWebScraper', id);
-			}, 2000);
 		}
 	},
 	initWebScraper({ state, commit, dispatch }, id) {
@@ -314,10 +309,10 @@ export const actions = {
 	},
 
 	nextVideo({ state, commit, dispatch }) {
-		if (state.leftMenuTab === 'tv' && state.currentWebScraper) {
+		if (state.currentWebScraper) {
 			const cp = getCurrentPlayListEntities(state);
 			const idx = cp.findIndex(m => m.id === state.currentMedia.id);
-			if (idx >= cp.length - 4) {
+			if (idx >= cp.length - 6) {
 				dispatch('runWebScraper', state.currentWebScraper);
 			}
 		}
