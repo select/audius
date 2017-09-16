@@ -3,23 +3,34 @@ import { mapMutations, mapState, mapActions } from 'vuex';
 
 import PlayListManager from './play-list-manager.vue';
 
-const MatrixRadioManager = () => import(/* webpackChunkName: "matrix-radio-manager" */'./matrix-radio-manager.vue');
+const MatrixRoomManager = () => import(/* webpackChunkName: "matrix-room-manager" */'./matrix-room-manager.vue');
 const WebScraperManager = () => import(/* webpackChunkName: "web-scraper-manager" */'./web-scraper-manager.vue');
 
 
 export default {
 	components: {
 		PlayListManager,
-		MatrixRadioManager,
+		MatrixRoomManager,
 		WebScraperManager,
+	},
+	mounted() {
+		document.addEventListener('mouseup', (event) => {
+			this.resize = false;
+		});
+		const ww = (window.innerWidth || document.documentElement.clientWidth);
+		document.addEventListener('mousemove', (event) => {
+			if (this.resize) {
+				const pos = Math.round((event.clientX / ww) * 100);
+				if (pos > 5) this.$el.style.width = `${pos}vw`;
+			}
+		});
 	},
 	methods: {
 		...mapMutations(['toggleLeftMenu', 'setLeftMenuTab']),
 		...mapActions(['initMatrix']),
-		resizeWidth(event) {
-			const ww = (window.innerWidth || document.documentElement.clientWidth);
-			const pos = Math.round((event.clientX / ww) * 100);
-			if (pos > 5) this.$el.style.width = `${pos}vw`;
+		resizeStart(event) {
+			event.preventDefault();
+			this.resize = true;
 		},
 	},
 	computed: {
@@ -50,13 +61,12 @@ export default {
 	</ul>
 	<div class="left-menu__wrapper">
 		<play-list-manager v-show="leftMenuTab == 'playList'"></play-list-manager>
-		<matrix-radio-manager v-if="leftMenuTab == 'radio'"></matrix-radio-manager>
+		<matrix-room-manager v-if="leftMenuTab == 'radio'"></matrix-room-manager>
 		<web-scraper-manager v-if="leftMenuTab == 'tv'"></web-scraper-manager>
 	</div>
 	<div
 		class="left-menu__drag-handle"
-		draggable="true"
-		@drag="resizeWidth"
+		@mousedown="resizeStart"
 		></div>
 </div>
 </template>
@@ -94,6 +104,7 @@ export default {
 	right: -$grid-space/4
 	background: transparent
 	cursor: ew-resize
+	user-select: none
 
 
 .nav-handle
@@ -122,6 +133,7 @@ export default {
 	transform: rotate(90deg) perspective(2em) rotateX(30deg)
 	background: $color-aluminium
 	border-bottom: 0
+
 .left-menu__tag-name-input
 	height: $touch-size-extratiny
 </style>
