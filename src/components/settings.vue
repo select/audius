@@ -4,10 +4,10 @@ import { mapGetters, mapMutations, mapState, mapActions } from 'vuex';
 export default {
 	computed: {
 		...mapGetters(['youtubeApiKeyUI']),
-		...mapState(['matrixLoggedIn', 'matrix', 'matrixEnabled']),
+		...mapState(['matrixLoggedIn', 'matrix', 'matrixEnabled', 'reloadScript']),
 	},
 	methods: {
-		...mapMutations(['setYoutubeApiKey', 'matrixRemoveAccount', 'matrixLogout', 'setMatrixEnabled']),
+		...mapMutations(['setYoutubeApiKey', 'matrixRemoveAccount', 'matrixLogout', 'setMatrixEnabled', 'setReloadScript']),
 		...mapActions(['loginMatrixWithPassword']),
 		matrixLogin() {
 			const usernameEl = document.querySelector('#username');
@@ -22,11 +22,25 @@ export default {
 
 <template>
 <div class="settings">
+
 	<h1>Settings</h1>
 	<p>
 		YouTube API key
 		<input type="text" placeholder="39 digit API key" v-bind:value="youtubeApiKeyUI" @input="setYoutubeApiKey($event.target.value)">
 	</p>
+	<p class="smaller">Create your key in the <a href="https://console.developers.google.com/">Google Developers Console</a></p>
+	<!-- <h3>Scripts</h3>
+	<div class="settings__btn-group">
+		<button
+			v-for="script in (Object.entries(reloadScript))"
+			@click="setReloadScript(script[0])"
+			class="button btn--blue">
+			{{script[0]}} {{script[1]}}
+		</button>
+	</div>
+	<p class="smaller">
+		Press to reload player
+	</p> -->
 	<h3>Matrix.org account</h3>
 	<div class="settings__buttons" @click="setMatrixEnabled">
 			<div v-if="matrixEnabled" class="button">disable Matrix radio</div>
@@ -83,4 +97,10 @@ export default {
 		display: inline-flex
 		align-items: center
 		justify-content: center
+.settings__btn-group
+	display: flex
+	justify-content: center
+	align-items: center
+	> *
+		margin-right: $grid-space
 </style>

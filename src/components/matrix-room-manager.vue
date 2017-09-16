@@ -2,16 +2,25 @@
 import { mapMutations, mapState, mapActions } from 'vuex';
 import draggable from 'vuedraggable';
 
+import CreateRoomModal from './create-room-modal.vue';
+
 export default {
 	components: {
 		draggable,
+		CreateRoomModal,
+	},
+	data() {
+		return {
+			showConfirmDelte: false,
+		};
 	},
 	methods: {
-		...mapMutations(['selectMediaSource', 'movematrixRoomsOrdered']),
+		...mapMutations(['selectMediaSource', 'movematrixRoomsOrdered', 'setShowMediumSettings', 'toggleMatrixRoomModal']),
 		...mapActions(['joinMatrixRoom', 'leaveMatrixRoom', 'matrixSend']),
 		addMatrixRoom() {
-			const el = document.querySelector('.matrix-radio__input input');
-			this.joinMatrixRoom({ id: el.value });
+			const el = document.querySelector('.matrix-room input');
+			if (!el.value) this.toggleMatrixRoomModal();
+			else this.joinMatrixRoom({ id: el.value });
 			el.value = '';
 		},
 		dropAdd(event, roomId) { // Element is dropped into the list from another list
@@ -39,9 +48,10 @@ export default {
 </script>
 
 <template>
-<div class="matrix-radio play-list-manager__wrapper">
+<div class="matrix-room play-list-manager__wrapper">
+	<create-room-modal></create-room-modal>
 	<draggable
-		class="matrix-radio__tags"
+		class="matrix-room__tags"
 		v-model="_matrixRoomsOrdered"
 		element="ul"
 		:options="{
@@ -55,37 +65,55 @@ export default {
 			class="play-list-manager__tag-drop-zone"
 			element="li"
 			@add="dropAdd($event, id)"
-			:options="{ sort: false, group: { name: 'lists' } }"
+			:options="{
+				sort: false,
+				handle: '.no-handle',
+				group: { name: 'lists' }
+			}"
 			v-bind:class="{ active: currentMatrixRoom == id }">
 			<div class="play-list-manager__drag-handle"></div>
 			<div
 				class="play-list-manager__tag-body"
 				@click="selectMediaSource({ type: 'radio', id: id })">
-				{{matrixRooms[id].name}}
+				<div>
+					{{matrixRooms[id].name}}
+				</div>
 				<div>{{matrixRooms[id].playList.length - Object.keys(matrixRooms[id].playedMedia).length}} New {{numWatched(id)}} Watched </div>
 			</div>
 			<div class="play-list-manager__menu">
 				<span
+					class="wmp-icon-mode_edit"
+					title="Edit room"
+					@click.stop="setShowMediumSettings({ medium: 'matrix', id })"></span>
+				<span
 					class="wmp-icon-close"
 					title="Leave room"
-					@click.stop="leaveMatrixRoom(id)"></span>
+					@click="showConfirmDelte = id"></span>
 			</div>
 		</draggable>
 	</draggable>
 
-	<ul class="matrix-radio__tags">
-
-		<li class="play-list-manager__input matrix-radio__input">
+	<ul class="matrix-room__tags">
+		<li class="play-list-manager__input">
 			<input
 				v-on:keyup.enter="addMatrixRoom"
 				type="text"
-				placeholder="... room ">
+				placeholder="... room id or click">
 			<span
 				class="wmp-icon-add"
-				title="Join room"
+				title="Create / Join room"
 				@click="addMatrixRoom"></span>
 		</li>
 	</ul>
+	<div class="modal" v-if="showConfirmDelte" @click="showConfirmDelte = false">
+		<div class="modal__body" @click.stop>
+			Are you sure you want to leave the room?
+			<div class="modal__btn-group">
+				<button class="button" @click="showConfirmDelte = false">Cancel</button>
+				<button class="button btn btn--blue" @click.stop="leaveMatrixRoom(showConfirmDelte);showConfirmDelte = false;">Leave</button>
+			</div>
+		</div>
+	</div>
 </div>
 </template>
 
@@ -93,56 +121,13 @@ export default {
 @import '../sass/vars'
 @import '../sass/color'
 
-// .matrix-radio
-// 	flex: 1
-// 	overflow-y: auto
-// 	&::-webkit-scrollbar-thumb
-// 	  background: $color-athensgrey
-// 	&::-webkit-scrollbar-track
-// 		background: $color-aluminium-dark
-// 	ul
-// 		padding: 0
-// 		list-style: none
-// 		margin: 0
-// 		li
-// 			display: flex
-// 			height: $touch-size-medium
-// 			margin: $grid-space
-// 			border-radius: $border-radius
-// 			align-items: center
-// 			background: $color-athensgrey
-// 			color: $color-palesky
-// 			cursor: pointer
-// 			&.active
-// 				font-weight: bold
-// 				background: $color-white
-
-// 			&:hover:not(.spacer)
-// 				border-color: $color-pictonblue
-// 				color: $color-pictonblue
-// 				background: $color-white
-// 				.matrix-radio__menu
-// 					display: block
-// 				input
-// 					color: $color-pictonblue
-
-// 		.spacer
-// 			background: transparent
-// 			height: $grid-space
-
-.matrix-radio__tag-body
+.matrix-room__tag-body
 	flex: 1
 	text-overflow: ellipsis
 	white-space: nowrap
 	overflow: hidden
 
-// .matrix-radio__drag-handle
-// 	width: #{2*$grid-space}
-// 	height: 100%
-// 	&:not(.matrix-radio--default)
-// 		cursor: move
-
-.matrix-radio__menu
+.matrix-room__menu
 	display: none
 
 </style>

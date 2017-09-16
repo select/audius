@@ -62,6 +62,7 @@ export const store = new Vuex.Store({
 		tagsOrdered: [],
 		matrixRooms: {},
 		matrixRoomsOrdered: [],
+		createMatrixRoomModal: false,
 		webScrapers: { Imgur: { playList: [], playedMedia: {}, archive: [] } },
 		webScrapersOrdered: ['Imgur'],
 		paginationIndex: {},
@@ -92,7 +93,10 @@ export const store = new Vuex.Store({
 		showLeftMenu: false,
 		leftMenuTab: 'playList',
 		showSettings: false,
-		showWebScraperSettings: false,
+		showMediumSettings: {
+			webscraper: false,
+			matrix: false,
+		},
 		mainRightTab: 'about',
 		isMobile: false,
 		website: {
@@ -113,6 +117,10 @@ export const store = new Vuex.Store({
 				userId: '',
 				deviceId: '',
 			},
+		},
+		reloadScript: {
+			vimeo: 1,
+			youtube: 1,
 		},
 	},
 	plugins: [

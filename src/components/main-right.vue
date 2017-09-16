@@ -9,6 +9,7 @@ import WebMediaPlayer from './web-media-player.vue';
 const Settings = () => import(/* webpackChunkName: "settings" */'./settings.vue');
 const SearchResults = () => import(/* webpackChunkName: "search-results" */'./search-results.vue');
 const WebScraperSettings = () => import(/* webpackChunkName: "web-scraper-settings" */'./web-scraper-settings.vue');
+const MatrixRoomSettings = () => import(/* webpackChunkName: "matrix-room-settings" */'./matrix-settings.vue');
 
 export default {
 	name: 'main-right',
@@ -21,17 +22,37 @@ export default {
 		VimeoPlayer,
 		WebMediaPlayer,
 		WebScraperSettings,
+		MatrixRoomSettings,
 	},
 	computed: mapState([
 		'website',
 		'mainRightTab',
 		'search',
 		'showSettings',
-		'showWebScraperSettings',
+		'showMediumSettings',
 		'currentMedia',
 		'currentWebScraper',
+		'currentMatrixRoom',
 	]),
-	methods: mapMutations(['setMainRightTab']),
+	mounted() {
+		document.addEventListener('mouseup', () => {
+			this.resize = false;
+		});
+		const br = this.$el.getBoundingClientRect();
+		document.addEventListener('mousemove', (event) => {
+			if (this.resize) {
+				const pos = 100 - Math.round(((event.clientY - br.top) / br.height) * 100);
+				if (pos > 10) this.$el.querySelector('.main-right__player').style.height = `${pos}%`;
+			}
+		});
+	},
+	methods: {
+		...mapMutations(['setMainRightTab']),
+		resizeStart(event) {
+			event.preventDefault();
+			this.resize = true;
+		},
+	},
 };
 </script>
 
@@ -39,26 +60,30 @@ export default {
 <div class="main-right">
 	<ul class="tabs">
 		<li
-			v-on:click="setMainRightTab('queue')"
+			@click="setMainRightTab('queue')"
 			v-bind:class="{ active: mainRightTab == 'queue' }">Queue</li>
 		<li
 			v-if="search.results.length"
-			v-on:click="setMainRightTab('search')"
+			@click="setMainRightTab('search')"
 			v-bind:class="{ active: mainRightTab == 'search' }">Search</li>
 		<li
-			v-on:click="setMainRightTab('about')"
+			@click="setMainRightTab('about')"
 			v-bind:class="{ active: mainRightTab == 'about' }">About</li>
 		<li
 			v-if="website.showChat"
-			v-on:click="setMainRightTab('chat')"
+			@click="setMainRightTab('chat')"
 			v-bind:class="{ active: mainRightTab == 'chat' }">Chat</li>
 		<li
-			v-if="showWebScraperSettings && currentWebScraper"
-			v-on:click="setMainRightTab('webScraperSettings')"
-			v-bind:class="{ active: mainRightTab == 'webScraperSettings' }">TV Settings</li>
+			v-if="showMediumSettings.tv && currentWebScraper"
+			@click="setMainRightTab('webScraperSettings')"
+			v-bind:class="{ active: mainRightTab == 'webScraperSettings' }">Channel Settings</li>
+		<li
+			v-if="showMediumSettings.matrix && currentMatrixRoom"
+			@click="setMainRightTab('matrixRoomSettings')"
+			v-bind:class="{ active: mainRightTab == 'matrixRoomSettings' }">Room Settings</li>
 		<li
 			v-if="showSettings"
-			v-on:click="setMainRightTab('settings')"
+			@click="setMainRightTab('settings')"
 			v-bind:class="{ active: mainRightTab == 'settings' }">Settings</li>
 	</ul>
 	<div class="main-right__content" v-show="mainRightTab">
@@ -66,16 +91,20 @@ export default {
 		<search-results v-if="mainRightTab == 'search'"></search-results>
 		<queue v-show="mainRightTab == 'queue'"></queue>
 		<div class="audius-chat" v-show="mainRightTab == 'chat'"> </div>
-		<web-scraper-settings v-if="mainRightTab == 'webScraperSettings'"></web-scraper-settings>
+		<web-scraper-settings v-if="mainRightTab == 'webScraperSettings' && currentWebScraper"></web-scraper-settings>
+		<matrix-room-settings v-if="mainRightTab == 'matrixRoomSettings' && currentMatrixRoom"></matrix-room-settings>
 		<settings v-if="mainRightTab == 'settings'"></settings>
 	</div>
+	<div
+		class="main-right__drag-handle"
+		@mousedown="resizeStart"></div>
 	<div
 		class="main-right__player"
 		v-bind:class="{
 			full: !mainRightTab,
 		}">
 		<span
-			v-on:click="setMainRightTab('')"
+			@click="setMainRightTab('')"
 			v-if="mainRightTab"
 			class="main-right__player-full-btn wmp-icon-unfold_more"></span>
 		<div
@@ -102,17 +131,22 @@ export default {
 	flex-direction: column
 	height: 100%
 .main-right__content
-	flex: 2
+	flex: 1
 	overflow-y: auto
 
 .main-right__player
-	flex: 1
+	height: 33%
 	overflow: hidden
 	border-top: 1px solid $color-aluminium
 	position: relative
 	background: $color-catskillwhite
-	&.full .video-player
-		height: 100%
+	&.full
+		// I use important here since the height can be set by
+		// the user with drag and drop resize which sets the element
+		// height inline
+		height: 100%!important
+		.video-player
+			height: 100%
 .main-right__yt-player
 	height: 100%
 	&.main-right--hide-yt-player
@@ -131,5 +165,11 @@ span.main-right__player-full-btn
 	iframe
 		width: 100%
 		height: 100%
+
+.main-right__drag-handle
+	height: $grid-space/2
+	width: 100%
+	background: transparent
+	cursor: ns-resize
 
 </style>

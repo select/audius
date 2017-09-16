@@ -3,7 +3,7 @@ import { mapActions, mapMutations, mapState } from 'vuex';
 
 export default {
 	methods: {
-		...mapMutations(['selectMediaSource', 'openWebScraperSettings', 'addWebScraper', 'deleteWebScraper']),
+		...mapMutations(['selectMediaSource', 'setShowMediumSettings', 'addWebScraper', 'deleteWebScraper']),
 		...mapActions(['initWebScraper']),
 		_addWebScraper() {
 			const el = document.querySelector('.ws-manager__input input');
@@ -31,7 +31,7 @@ export default {
 				v-bind:class="{ active: currentWebScraper === id }">
 				<div class="play-list-manager__drag-handle"></div>
 				<div class="play-list-manager__tag-body">
-					{{id}}
+					<div> {{id}} </div>
 					<div v-if="webScrapers[id] && webScrapers[id].playList">{{webScrapers[id].playList.length - Object.keys(webScrapers[id].playedMedia).length}} New {{numWatched(id)}} Watched </div>
 				</div>
 				<div
@@ -40,7 +40,7 @@ export default {
 					<span
 						class="wmp-icon-mode_edit"
 						title="Edit channel"
-						@click.stop="openWebScraperSettings(id)"></span>
+						@click.stop="setShowMediumSettings({ medium: 'tv', id })"></span>
 					<span
 						class="wmp-icon-close"
 						title="Delte channel"

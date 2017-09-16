@@ -70,7 +70,7 @@ export default {
 			window.getSelection().removeAllRanges();
 			const tmpEl = document.createElement('div');
 			if (this.video.type !== 'youtube') {
-				tmpEl.innerHTML = `${this.video.title} ${this.video.url}`;
+				tmpEl.innerHTML = `${this.video.title} ${this.video.href}`;
 			} else {
 				tmpEl.innerHTML = `${this.video.title} ${this.youtubeLink()}`;
 			}

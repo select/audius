@@ -42,17 +42,17 @@
 			display: inline-flex
 			align-items: center
 			box-sizing: border-box
-			height: $touch-size-small
-			min-width: $touch-size-small
+			height: $touch-size-tiny
+			min-width: $touch-size-tiny
 			padding-right: $grid-space
 			cursor: pointer
 			&:before
 				content: ' '
 				font-family: 'shoutr'
 				font-size: 1rem
-				width: $touch-size-tiny
-				height: $touch-size-tiny
-				line-height: $touch-size-tiny
+				width: $touch-size-extratiny
+				height: $touch-size-extratiny
+				line-height: $touch-size-extratiny
 				margin-right: $grid-space
 				transition: $transition-time
 				color: $color-white
@@ -71,7 +71,9 @@
 		&:disabled:checked +label:before
 			background-color: $color-aluminium
 
-input
-	height: $touch-size-small
-	font-size: 1rem
-	padding: 0 $grid-space
+	input
+		height: $touch-size-small
+		font-size: 1rem
+		padding: 0 $grid-space
+		&[disabled="disabled"]
+			background-color: $color-athensgrey

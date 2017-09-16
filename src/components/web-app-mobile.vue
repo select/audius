@@ -14,7 +14,7 @@ import PlayListManager from './play-list-manager.vue';
 
 const Settings = () => import(/* webpackChunkName: "settings" */'./settings.vue');
 const SearchResults = () => import(/* webpackChunkName: "search-results" */'./search-results.vue');
-const MatrixRadioManager = () => import(/* webpackChunkName: "matrix-radio-manager" */'./matrix-radio-manager.vue');
+const MatrixRoomManager = () => import(/* webpackChunkName: "matrix-room-manager" */'./matrix-room-manager.vue');
 const WebScraperManager = () => import(/* webpackChunkName: "web-scraper-manager" */'./web-scraper-manager.vue');
 
 
@@ -29,7 +29,7 @@ export default {
 		Queue,
 		Settings,
 		PlayListManager,
-		MatrixRadioManager,
+		MatrixRoomManager,
 		WebScraperManager,
 	},
 	computed: mapState(['currentMedia', 'search', 'website', 'leftMenuTab', 'matrixEnabled', 'mainRightTab']),
@@ -82,7 +82,7 @@ export default {
 			<div class="audius-chat" v-show="mainRightTab == 'chat'"> </div>
 			<settings v-if="mainRightTab == 'settings'"></settings>
 			<play-list-manager v-show="leftMenuTab == 'playList'"></play-list-manager>
-			<matrix-radio-manager v-if="leftMenuTab == 'radio'"></matrix-radio-manager>
+			<matrix-room-manager v-if="leftMenuTab == 'radio'"></matrix-room-manager>
 			<web-scraper-manager v-if="leftMenuTab == 'tv'"></web-scraper-manager>
 		</div>
 		<div class="web-app-mobile__players">

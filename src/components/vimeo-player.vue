@@ -8,7 +8,6 @@ export default {
 			this.$store.watch(state => state.currentMedia, () => {
 				// if video changed, set new video in player
 				if (this.currentMedia.type === 'vimeo') {
-					console.log('loadddd vieoooo')
 					this.player.loadVideo(this.currentMedia.id)
 						.then((id) => {
 							if (this.currentMedia.start) this.player.setCurrentTime(this.currentMedia.start);
@@ -18,6 +17,7 @@ export default {
 						});
 				} else if (this.player) {
 					this.player.pause();
+					this.player.unload().then();
 				}
 			}),
 
@@ -44,27 +44,16 @@ export default {
 					this.player.pause();
 				}
 			}),
+			this.$store.watch(state => state.reloadScript.vimeo, () => {
+				this.initPlayer();
+			}),
 		];
 	},
 	beforeDestroy() {
 		this.subscriptions.forEach((unsubscribe) => { unsubscribe(); });
 	},
 	mounted() {
-		injectScript('https://player.vimeo.com/api/player.js').then(() => {
-			this.player = new window.Vimeo.Player(document.querySelector('.vimeo-player'));
-			this.player.on('play', () => {
-				this.timeInterval = setInterval(() => {
-					this.player.getCurrentTime().then(s => { this.setCurrentTime(s); });
-				}, 1000);
-			});
-			this.player.on('pause', () => { this.clearInterval(); });
-			this.player.on('ended', () => {
-				this.clearInterval();
-				this.nextVideo();
-			});
-		}).catch((error) => {
-			this.error(error)
-		});
+		this.initPlayer();
 	},
 	computed: mapState(['currentMedia', 'mute', 'skipToTime', 'isPlaying']),
 	methods: {
@@ -73,6 +62,25 @@ export default {
 		clearInterval() {
 			clearInterval(this.timeInterval);
 			this.timeInterval = null;
+		},
+		initPlayer() {
+			if (!this.player) {
+				injectScript('https://player.vimeo.com/api/player.js').then(() => {
+					this.player = new window.Vimeo.Player(document.querySelector('.vimeo-player'));
+					this.player.on('play', () => {
+						this.timeInterval = setInterval(() => {
+							this.player.getCurrentTime().then(s => { this.setCurrentTime(s); });
+						}, 1000);
+					});
+					this.player.on('pause', () => { this.clearInterval(); });
+					this.player.on('ended', () => {
+						this.clearInterval();
+						this.nextVideo();
+					});
+				}).catch((error) => {
+					this.error(error)
+				});
+			}
 		},
 	},
 };

@@ -24,7 +24,6 @@ export default {
 						},
 					},
 				});
-				// this.moveTagsOrdered(value);
 			},
 		},
 	},
@@ -55,46 +54,42 @@ export default {
 
 <template>
 <div class="settings ws-settings">
-	<p>
-		<input
-			@input="renameWebScraper({oldName: currentWebScraper, newName: $event.target.value})"
-			class="ws-settings__name"
-			type="text"
-			placeholder="... name"
-			v-bind:value="this.currentWebScraper">
-	</p>
-	<p>
-		URLS
-		<draggable
-			v-model="_urls"
-			element="ul"
-			:options="{
-				animation: 150,
-				scrollSpeed: 20,
-			}">
-			<li v-for="url in _urls">
-				<div>
-					{{url.url}}
-				</div>
-				<div>
-					({{url.numPages}} Page{{url.numPages > 1 ? 's' : ''}})
-				</div>
-				<div class="ws-settings__url-menu">
-					<span
-						title="Delte URL"
-						@click="removeUrl(url.url)"
-						class="wmp-icon-close"></span>
-				</div>
-			</li>
-		</draggable>
-		<ul>
-			<li>
-				<input class="ws-settings__input" type="text" placeholder="http://www.example.com/page/[1-100]">
-				<span class="wmp-icon-add" @click="_addUrlPattern"></span>
-			</li>
-		</ul>
-	</p>
-	<p>
+	<input
+		@input="renameWebScraper({oldName: currentWebScraper, newName: $event.target.value})"
+		class="ws-settings__name"
+		type="text"
+		placeholder="... name"
+		v-bind:value="this.currentWebScraper">
+	<h3>URLS</h3>
+	<draggable
+		v-model="_urls"
+		element="ul"
+		:options="{
+			animation: 150,
+			scrollSpeed: 20,
+		}">
+		<li v-for="url in _urls">
+			<div>
+				{{url.url}}
+			</div>
+			<div>
+				({{url.numPages}} Page{{url.numPages > 1 ? 's' : ''}})
+			</div>
+			<div class="ws-settings__url-menu">
+				<span
+					title="Delte URL"
+					@click="removeUrl(url.url)"
+					class="wmp-icon-close"></span>
+			</div>
+		</li>
+	</draggable>
+	<ul>
+		<li>
+			<input class="ws-settings__input" type="text" placeholder="http://www.example.com/page/[1-100]">
+			<span class="wmp-icon-add" @click="_addUrlPattern"></span>
+		</li>
+	</ul>
+	<p class="smaller">
 		Please install the <a href="https://chrome.google.com/webstore/detail/ekpajajepcojhnjmlibfbjmdjcafajoh" target="_blank">Audius extension</a> for this feature.
 	</p>
 
@@ -108,10 +103,11 @@ export default {
 .ws-settings
 	overflow: hidden
 	width: 100%
+	padding: $grid-space 0
 	input
 		background: transparent
-		border: 0
 		padding: 0
+		border: 0
 		flex: 1
 		&::-webkit-input-placeholder
 			color: $color-aluminium
@@ -119,8 +115,17 @@ export default {
 			color: $color-aluminium
 		&::-moz-placeholder
 			color: $color-aluminium
+	.ws-settings__name
+		font-size: 1.5rem
+		height: $touch-size-huge
+		width: 100%
+		padding: 0 $grid-space
+
+	p, h3
+		padding: 0 $grid-space
 	ul
 		padding: 0
+		margin: 0
 		li
 			display: flex
 			align-items: center
@@ -139,7 +144,4 @@ export default {
 .ws-settings__url-menu
 	display: none
 	cursor: pointer
-.ws-settings__name
-	font-size: 1.5rem
-	height: $touch-size-huge
 </style>

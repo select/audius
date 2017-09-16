@@ -20,17 +20,17 @@ export const matrixClient = {
 				timelineSupport: true,
 			});
 
-			this.client.on('Room.timeline', (event, room, toStartOfTimeline) => {
+			this.client.on('Room.timeline', (event) => {
 				const message = event.event.content.body;
 				const roomId = event.event.room_id;
 				if (!(roomId in this.firstEvent)) this.firstEvent[roomId] = event.event.event_id;
-				if (event.event.type === 'audiusMedia') dispatch('parseMatrixMessage', { roomId, message: event.event.content });
+				if (event.event.type === 'audiusMedia') dispatch('parseMatrixMessage', { roomId, eventId: event.event.eventId, message: event.event.content });
 				else if (message) dispatch('parseMatrixMessage', { roomId, message });
 			});
 
 			this.client.on('sync', (syncState, prevState, data) => {
 				if (syncState === 'ERROR') {
-					reject();
+					dispatch('error', 'Could not connect to matrix server');
 				} else if (syncState === 'SYNCING') {
 					// update UI to remove any "Connection Lost" message
 				} else if (syncState === 'PREPARED') {
@@ -46,24 +46,38 @@ export const matrixClient = {
 		this.client.logout();
 	},
 	joinRoom(roomIdOrAlias) {
-		return new Promise(resolve => {
-			this.client.joinRoom(roomIdOrAlias).then((room) => {
-				resolve(room);
-			});
-		});
+		return this.client.joinRoom(roomIdOrAlias);
 	},
 	leaveRoom(roomIdOrAlias) {
-		return new Promise(resolve => {
-			this.client.leave(roomIdOrAlias).done(() => {
-				resolve(this.client.getRooms());
-			});
-		});
+		return this.client.leave(roomIdOrAlias);
 	},
 	sendEvent(roomId, media) {
-		this.client.sendEvent(roomId, 'audiusMedia', media);
+		return this.client.sendEvent(roomId, 'audiusMedia', media);
+	},
+	redactEvent(roomId, eventId) {
+		return this.client.redactEvent(roomId, eventId);
 	},
 	sendMessage(roomId, media) {
-		this.client.sendTextMessage(roomId, JSON.stringify(media));
+		return this.client.sendTextMessage(roomId, JSON.stringify(media));
+	},
+	setRoomName(roomId, name) {
+		return this.client.setRoomName(roomId, name);
+	},
+	setRoomVisibility(roomId, setPublic = true) {
+		return this.client.setRoomDirectoryVisibility(roomId, setPublic ? 'public' : 'private');
+	},
+	creatRoom(options) {
+		const opt = {
+			room_alias_name: 'blaa-audius',
+			visibility: 'public', // 'private'
+			invite: [
+				'bllakd:matrix.org',
+				'user1:matrix.org',
+			],
+			name: 'Blaaa [Audius]',
+			topic: 'Join this room with https://audius.rockdapus.org',
+		};
+		return this.client.creatRoom(opt);
 	},
 	getCredentialsWithPassword(username, password) {
 		return new Promise(resolve => {

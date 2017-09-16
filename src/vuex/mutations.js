@@ -1,19 +1,21 @@
-import { duration, time2s, parseYoutubeDescription, webScraper } from '../utils';
+import { webScraper } from '../utils';
 import { youtubeApiKey } from '../utils/config';
-import { videoBaseObject } from './video';
 import {
 	getCurrentPlayListEntities,
 	getCurrentPlayList,
 	getCurrentName,
-	getMediaEntity,
+	getMediaEntity
 } from './getCurrentPlayList';
 
-const matrixRoomTemplate = () => JSON.parse(JSON.stringify({
-	name: '',
-	playList: [],
-	playedMedia: {},
-	archive: [],
-}));
+const matrixRoomTemplate = () =>
+	JSON.parse(
+		JSON.stringify({
+			name: '',
+			playList: [],
+			playedMedia: {},
+			archive: [],
+		})
+	);
 
 /* eslint-disable no-param-reassign */
 function playMedia(state, media) {
@@ -33,11 +35,11 @@ function playMedia(state, media) {
 }
 
 function selectMediaSource(state, { type, id }) {
-	if (type === 'tv') {
+	if (type === 'tv' || type === 'webscraper') {
 		state.currentPlayList = null;
 		state.currentMatrixRoom = null;
 		state.currentWebScraper = id;
-	} else if (type === 'radio') {
+	} else if (type === 'radio' || type === 'matrix') {
 		state.currentWebScraper = null;
 		state.currentPlayList = null;
 		state.currentMatrixRoom = id;
@@ -187,10 +189,15 @@ export const mutations = {
 		state.showSettings = true;
 		state.mainRightTab = 'settings';
 	},
-	openWebScraperSettings(state, name) {
-		state.showWebScraperSettings = true;
-		state.mainRightTab = 'webScraperSettings';
-		selectMediaSource(state, { type: 'tv', id: name });
+	setShowMediumSettings(state, { medium, id }) {
+		state.showMediumSettings[medium] = true;
+		if (medium === 'tv') {
+			state.mainRightTab = 'webScraperSettings';
+			selectMediaSource(state, { type: medium, id });
+		} else if (medium === 'matrix') {
+			state.mainRightTab = 'matrixRoomSettings';
+			selectMediaSource(state, { type: medium, id });
+		}
 	},
 	toggleJump(state, toggleState) {
 		state.showJump = toggleState !== undefined ? toggleState : !state.showJump;
@@ -312,8 +319,11 @@ export const mutations = {
 	dropMoveItem(state, { itemId, to }) {
 		if (state.leftMenuTab === 'playList') {
 			const media = getMediaEntity(state, itemId);
-			if (media) state.entities[media.id] = media; // Dropped item comes from a web scraper / matrix room.
-			else addMissingMediaToEntities(state, [itemId]);	// Dropped item comes from the search results.
+			if (media) {
+				state.entities[media.id] = media; // Dropped item comes from a web scraper / matrix room.
+			} else {
+				addMissingMediaToEntities(state, [itemId]); // Dropped item comes from the search results.
+			}
 
 			if (to) {
 				if (!state.tags[to].includes(itemId)) {
@@ -486,20 +496,29 @@ export const mutations = {
 		state.matrix.credentials = credentials;
 	},
 	setMatrixLoggedIn(state, rooms) {
+		console.log("rooms", rooms);
 		state.matrixLoggedIn = true;
 		rooms.forEach(room => {
 			const roomId = room.roomId;
+			state.matrixRooms[roomId].members = Object
+				.entries(room.currentState.members)
+				.map(([id, member]) => ({ id, powerLevel: member.powerLevel }));
 			if (!state.matrixRoomsOrdered.includes(roomId)) {
 				state.matrixRoomsOrdered.unshift(roomId);
 			}
 			if (!(roomId in state.matrixRooms)) {
 				state.matrixRooms[roomId] = Object.assign({}, matrixRoomTemplate(), { name: room.name });
 			} else if (
-				state.matrixRooms[roomId].name !== room.name && !room.name.includes(':matrix.org')
+				state.matrixRooms[roomId].name !== room.name &&
+				!room.name.includes(':matrix.org')
 			) {
 				state.matrixRooms[roomId].name = room.name;
 			}
 		});
+	},
+	toggleMatrixRoomModal(state, toggleState) {
+		state.createMatrixRoomModal =
+			toggleState !== undefined ? toggleState : !state.createMatrixRoomModal;
 	},
 	matrixRemoveAccount(state) {
 		state.matrix = {
@@ -577,5 +596,10 @@ export const mutations = {
 	},
 	renameWebScraper(state, { newName, oldName }) {
 		rename(state, 'webScrapers', newName, oldName);
+	},
+
+	setReloadScript(state, id) {
+		// upp the reload count so the component detects the change
+		state.reloadScript[id]++;
 	},
 };
