@@ -21,6 +21,7 @@ export default {
 			copyActive: false,
 			showSongs: false,
 			isVisible: false,
+			showConfirmDelte: false,
 		};
 	},
 	methods: {
@@ -171,7 +172,7 @@ export default {
 				<span
 					class="wmp-icon-close"
 					v-if="!(isExtension || isSearchResult || isWebScraper)"
-					@click="remove"
+					@click="showConfirmDelte = true"
 					title="Remove"></span>
 
 				<span
@@ -194,6 +195,15 @@ export default {
 				:isSearchResult="isSearchResult"
 				:isPlaying="false"></video-item>
 		</ul>
+		<div class="modal" v-if="showConfirmDelte" @click="showConfirmDelte = false">
+			<div class="modal__body" @click.stop>
+				Are you sure you want to remove this song?
+				<div class="modal__btn-group">
+					<button class="button" @click="showConfirmDelte = false">Cancel</button>
+					<button class="button btn btn--blue" @click.stop="remove();showConfirmDelte = false;">Remove</button>
+				</div>
+			</div>
+		</div>
 	</li>
 </template>
 
