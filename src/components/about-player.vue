@@ -134,6 +134,8 @@ export default {
 			<li> Vimeo video player integrated.</li>
 			<li> Better support for YouTube playlists: import from search results.</li>
 			<li> Fixed queue sorting.</li>
+			<li> Resize left menu, video player with drag.</li>
+			<li> Show confirm delet popups.</li>
 		</ul>
 		<b>2.0.6</b><br>
 		<ul>
