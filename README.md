@@ -3,14 +3,16 @@
 Audius is the ultimate streaming music player.
 
 - Create playlist, no login required, stored in the indexDB in your browser.
-- Share your playlists as hyperlinks and as files.
+- Share your playlists as hyperlinks, files and in Matrix rooms.
 - Queue songs, play history.
 - Organize playlists with drag and drop.
-- Supports: YouTube/.mp3/.oga/.wav/.mp4/.webm/.ogg URLs.
+- Supports: YouTube/Vimeo/.mp3/.oga/.wav/.mp4/.webm/.ogg URLs.
 - Runs "offline" - a pure HTML5 app that can run without a server.
 - Plays Imgur "Most Viral" as video stream.
+- Create your own web channels with the build in web scraper.
 - Set start end times of media items (e.g. to cut of trailing silence)
 - Split YouTube full albums into seperate songs.
+- Connect to the Matrix network and create rooms to share and discover music with your friends.
 
 ## Extension
 
@@ -23,18 +25,25 @@ Join a room and drag and drop to add new music.
 
  - [Random](https://audius.rockdapus.org/?import=!zKinTrtpQEyHfnIbnI:matrix.org&type=room&title=Random)
  - [Rock](https://audius.rockdapus.org/?import=!VTIhlnDdHsxZFZQNFh:matrix.org&type=room&title=Rock)
+ - [Electronic](https://audius.rockdapus.org/?import=!sgKmJzakMmEdSCgKCE:matrix.org&type=room&title=Electronic)
 
-Create your own rooms and share them with your friends.
-With the [Riot web client](https://riot.im/app/) or [any other client](https://matrix.org/docs/projects/try-matrix-now.html#clients)
+Create your own rooms with the [Riot web client](https://riot.im/app/) or [any other client](https://matrix.org/docs/projects/try-matrix-now.html#clients) and share them with your friends.
 
 ## Community
 
 If you have questions or feedback, join the chat on gitter or create an issue on github.
 
-- [Join the chat](gitter.im/audius-player/Lobby)
+- [Join the chat](https://gitter.im/audius-player/Lobby)
 - [Create an issue](https://github.com/select/audius/issues)
 
 ## Change log
+
+**2.0.7**
+*	Vimeo video player integrated.
+*	Better support for YouTube playlists: import from search results.
+*	Fixed queue sorting.
+*	Resize left menu, video player with drag.
+*	Show confirm delete popups.
 
 **2.0.6**
 *	Extension for searching external websites for content.
