@@ -183,7 +183,7 @@ export const mutations = {
 	},
 	showTabChat(state) {
 		state.website.showChat = true;
-		state.mainRightTab = 'search';
+		state.mainRightTab = 'chat';
 	},
 	setShowSettings(state) {
 		state.showSettings = true;

@@ -6,10 +6,10 @@ import { injectScript } from '../utils';
 export default {
 	name: 'about-player',
 	methods: {
-		...mapMutations(['showChat', 'setShowSettings', 'toggleLeftMenu']),
+		...mapMutations(['showTabChat', 'setShowSettings', 'toggleLeftMenu']),
 		openGitter() {
 			if (!this.gitter) {
-				this.showChat();
+				this.showTabChat();
 				Vue.nextTick(() => {
 					// config
 					((window.gitter = {}).chat = {}).options = {
@@ -135,7 +135,7 @@ export default {
 			<li> Better support for YouTube playlists: import from search results.</li>
 			<li> Fixed queue sorting.</li>
 			<li> Resize left menu, video player with drag.</li>
-			<li> Show confirm delet popups.</li>
+			<li> Show confirm delete popups.</li>
 		</ul>
 		<b>2.0.6</b><br>
 		<ul>
