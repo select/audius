@@ -237,10 +237,10 @@ export default {
 					ref="playListEls"
 					:key="index"
 					:video="media"
-					:isPlayList="!!currentPlayList"
+					:isPlayList="currentPlayList !== null"
 					:isSelected="jumpCursor === media.id"
 					:expiryDate="_expiryDate(media.id)"
-					:isWebScraper="!!(currentWebScraper || currentMatrixRoom)"
+					:isWebScraper="!!(currentWebScraper)"
 					:isPlaying="isPlaying && (currentMedia.id == media.id)"></video-item>
 			</draggable>
 			<div

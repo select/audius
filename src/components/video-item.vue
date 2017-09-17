@@ -8,14 +8,13 @@ export default {
 		isPlaying: Boolean,
 		isQueue: Boolean,
 		queueIndex: Number,
-		isExtension: Boolean,
 		isSelected: Boolean,
 		isPlayList: Boolean,
 		isSearchResult: Boolean,
 		expiryDate: Date,
 		isWebScraper: Boolean,
 	},
-	computed: mapState(['isMobile', 'currentMatrixRoom']),
+	computed: mapState(['isMobile', 'currentMatrixRoom', 'matrixRooms']),
 	data() {
 		return {
 			copyActive: false,
@@ -171,7 +170,7 @@ export default {
 				</a>
 				<span
 					class="wmp-icon-close"
-					v-if="!(isExtension || isSearchResult || isWebScraper)"
+					v-if="isPlayList || (currentMatrixRoom && matrixRooms[currentMatrixRoom].isAdmin)"
 					@click="showConfirmDelte = true"
 					title="Remove"></span>
 
