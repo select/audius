@@ -498,17 +498,30 @@ export const mutations = {
 	setMatrixLoggedIn(state, rooms) {
 		console.log("rooms", rooms);
 		state.matrixLoggedIn = true;
+		const userId = state.matrix.credentials.userId;
 		rooms.forEach(room => {
 			const roomId = room.roomId;
+
+			// Create room if not known yet.
+			if (!(roomId in state.matrixRooms)) {
+				state.matrixRooms[roomId] = Object.assign({}, matrixRoomTemplate(), { name: room.name });
+			}
+
+			// Set members of the room.
 			state.matrixRooms[roomId].members = Object
 				.entries(room.currentState.members)
 				.map(([id, member]) => ({ id, powerLevel: member.powerLevel }));
+
+			// Set flag indicating if current user is admin.
+			const myuser = room.currentState.members[userId] || {};
+			state.matrixRooms[roomId].isAdmin = myuser.powerLevel >= 100;
+
+			// Add to ordered rooms list if not on the list yet.
 			if (!state.matrixRoomsOrdered.includes(roomId)) {
 				state.matrixRoomsOrdered.unshift(roomId);
 			}
-			if (!(roomId in state.matrixRooms)) {
-				state.matrixRooms[roomId] = Object.assign({}, matrixRoomTemplate(), { name: room.name });
-			} else if (
+			// Set room name if it changed and is not a matrix id.
+			if (
 				state.matrixRooms[roomId].name !== room.name &&
 				!room.name.includes(':matrix.org')
 			) {

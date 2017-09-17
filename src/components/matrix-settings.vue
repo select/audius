@@ -20,10 +20,6 @@ export default {
 		myId() {
 			return this.matrix.credentials.userId;
 		},
-		isAdmin() {
-			const myuser = this.room.members.find(({ id }) => this.myId === id);
-			return myuser.powerLevel >= 100;
-		},
 	},
 	methods: {
 		...mapActions(['renameMatrixRoom']),
@@ -38,9 +34,9 @@ export default {
 		@input="renameMatrixRoom({oldName: room.name, newName: $event.target.value})"
 		type="text"
 		placeholder="... name"
-		v-bind:disabled="!isAdmin"
+		v-bind:disabled="!room.isAdmin"
 		v-bind:value="room.name">
-	<div class="smaller row" v-if="!isAdmin"><b>You are not an admin</b> so you can not edit this room.</div>
+	<div class="smaller row" v-if="!room.isAdmin"><b>You are not an admin</b>, you can not edit this room.</div>
 	<h3>Members</h3>
 	<h4>Admin</h4>
 	<div class="row">
@@ -63,21 +59,21 @@ export default {
 	<h3>Options</h3>
 	<div class="row">
 		<div>
-			<input v-bind:disabled="!isAdmin" type="checkbox" id="private-room"><label for="private-room"></label>
+			<input v-bind:disabled="!room.isAdmin" type="checkbox" id="private-room"><label for="private-room"></label>
 			Hidden
 			<span class="smaller">Not publicly listed</span>
 		</div>
 		<div>
-			<input v-bind:disabled="!isAdmin" type="checkbox" id="private-room"><label for="private-room"></label>
+			<input v-bind:disabled="!room.isAdmin" type="checkbox" id="private-room"><label for="private-room"></label>
 			Private
 			<span class="smaller">New users need to be approved</span>
 		</div>
 		<div>
-			<input v-bind:disabled="!isAdmin" type="checkbox" id="human-read"><label for="human-read"></label>
+			<input v-bind:disabled="!room.isAdmin" type="checkbox" id="human-read"><label for="human-read"></label>
 			Post human readable links
 		</div>
 		<div>
-			<input v-bind:disabled="!isAdmin" type="checkbox" id="can-post"><label for="can-post"></label>
+			<input v-bind:disabled="!room.isAdmin" type="checkbox" id="can-post"><label for="can-post"></label>
 			Restricted posting
 			<span class="smaller">Only 50+ power users are allowed to post</span>
 		</div>
