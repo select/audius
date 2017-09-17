@@ -94,6 +94,7 @@ export default {
 								class="button btn--blue">
 								connect Matrix
 							</button>
+							<br>
 							<span class="smaller">This might take a bit. Please be patient.</span>
 					</p>
 					<p>

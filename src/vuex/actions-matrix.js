@@ -35,12 +35,12 @@ export const actionsMatrix = {
 					.then(credentials => commit('setMatrixCredentials', credentials))
 					.then(() => matrixClient.login(state.matrix.credentials, dispatch))
 					.then(rooms => commit('setMatrixLoggedIn', rooms))
-					.catch(error => commit('error', error));
+					.catch(error => commit('error', `Login failed. ${error}`));
 			} else if (!state.matrixLoggedIn) {
 				matrixClient
 					.login(state.matrix.credentials, dispatch)
 					.then(rooms => commit('setMatrixLoggedIn', rooms))
-					.catch(error => commit('error', error));
+					.catch(error => commit('error', `Login failed. ${error}`));
 			}
 		});
 	},
@@ -52,7 +52,7 @@ export const actionsMatrix = {
 				.then(credentials => commit('setMatrixCredentials', credentials))
 				.then(() => matrixClient.login(state.matrix.credentials, dispatch))
 				.then(rooms => commit('setMatrixLoggedIn', rooms))
-				.catch(error => commit('error', error));
+				.catch(error => commit('error', `${error}`));
 		});
 	},
 	matrixSend({ state, commit }, { itemId, roomId, media }) {
@@ -104,7 +104,7 @@ export const actionsMatrix = {
 	parseMatrixMessage({ state, commit }, { roomId, message }) {
 		const room = state.matrixRooms[roomId];
 		if (!(roomId in state.matrixRooms)) {
-			commit('error', `could not find matrix room ${roomId}`);
+			commit('error', `Could not find matrix room ${roomId}`);
 			commit('updateMatrixRoom', { roomId });
 			return;
 		}
