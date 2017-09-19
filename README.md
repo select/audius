@@ -14,6 +14,13 @@ Audius is the ultimate streaming music player.
 - Split YouTube full albums into seperate songs.
 - Connect to the Matrix network and create rooms to share and discover music with your friends.
 
+## Community
+
+If you have questions or feedback, join the chat on matrix or create an issue on github.
+
+- [Join the chat](https://riot.im/app/#/room/#audius:matrix.org)
+- [Create an issue](https://github.com/select/audius/issues)
+
 ## Extension
 
 Install the [audius extension](https://chrome.google.com/webstore/detail/ekpajajepcojhnjmlibfbjmdjcafajoh) to search  external webpages.
@@ -29,12 +36,6 @@ Join a room and drag and drop to add new music.
 
 Create your own rooms with the [Riot web client](https://riot.im/app/) or [any other client](https://matrix.org/docs/projects/try-matrix-now.html#clients) and share them with your friends.
 
-## Community
-
-If you have questions or feedback, join the chat on gitter or create an issue on github.
-
-- [Join the chat](https://gitter.im/audius-player/Lobby)
-- [Create an issue](https://github.com/select/audius/issues)
 
 ## Change log
 
@@ -43,7 +44,8 @@ If you have questions or feedback, join the chat on gitter or create an issue on
 *	Better support for YouTube playlists: import from search results.
 *	Fixed queue sorting.
 *	Resize left menu, video player with drag.
-*	Show confirm delete popups.
+*	Show confirm remove popups.
+*	Replace gitter chat with links to matrix.
 
 **2.0.6**
 *	Extension for searching external websites for content.

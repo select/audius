@@ -1,28 +1,10 @@
 <script>
-import Vue from 'vue';
 import { mapMutations } from 'vuex';
-import { injectScript } from '../utils';
 
 export default {
 	name: 'about-player',
 	methods: {
-		...mapMutations(['showTabChat', 'setShowSettings', 'toggleLeftMenu']),
-		openGitter() {
-			if (!this.gitter) {
-				this.showTabChat();
-				Vue.nextTick(() => {
-					// config
-					((window.gitter = {}).chat = {}).options = {
-						room: 'audius-player/Lobby',
-						activationElement: '.gitter-chat',
-						targetElement: '.audius-chat',
-						preload: true,
-					};
-					// load script
-					injectScript('https://sidecar.gitter.im/dist/sidecar.v1.js');
-				});
-			}
-		},
+		...mapMutations(['setShowSettings', 'toggleLeftMenu']),
 	},
 };
 </script>
@@ -68,6 +50,17 @@ export default {
 			<dd>Queue selected song</dd>
 		</dl>
 	</p> -->
+	<h2>Community</h2>
+	<p>
+		If you have questions or feedback, join the chat on matrix (#audius:matrix.org) or create an issue on github.<br>
+		<div class="about-player__community-btns">
+			<a
+				class="button btn--blue gitter-chat"
+				href="https://riot.im/app/#/room/#audius:matrix.org"
+				target="_blank">Join chat</a>
+			<a class="button btn--blue" href="https://github.com/select/audius/issues" target="_blank">Create issue</a>
+		</div>
+	</p>
 	<h2 id="matrix">Share your music with Matrix</h2>
 	<p>
 		<a href="https://matrix.org/" target="_blank">Matrix</a> is a chat network that allows you to share songs with Audius.
@@ -92,41 +85,12 @@ export default {
 		<a class="button btn--gray-ghost" href="https://riot.im/app/" target="_blank">Use Riot</a>
 	</div>
 	<p>
-		… or <a href="https://matrix.org/docs/projects/try-matrix-now.html#clients" target="_blank">any other client</a> to create a room. For a public room set the access rights and history to <i>Anyone</i>. Private rooms are easier to manage with a username. Create a proper user with e.g. Riot and login with your username in the <a @click="setShowSettings">settings</a>.
+		… or <a href="https://matrix.org/docs/projects/try-matrix-now.html#clients" target="_blank">any other client</a> to create a room. For a public room set the access rights and history to <i>Anyone</i>. Private rooms are easier to manage with a username. Create a user with Riot and login with your username in the Audius <a @click="setShowSettings">settings</a>.
 	</p>
 	<h2 id="extension">Extension and web channels</h2>
 	<p>
 		<a href="https://chrome.google.com/webstore/detail/ekpajajepcojhnjmlibfbjmdjcafajoh" target="_blank">Install the audius extension</a> to search  external webpages. It's also required when you create or import <a @click="toggleLeftMenu(true)">web channels <span class="wmp-icon-queue_music"title="Toggle playlists"></span></a>. Web channels are still in development, currently they allow you to search on your favorite website for sounds and videos.
 	</p>
-
-	<h2>Community</h2>
-	<p>
-		If you have questions or feedback, join the chat on gitter or create an issue on github.<br>
-		<div class="about-player__community-btns">
-			<button
-				class="button btn--blue gitter-chat"
-				v-on:click="openGitter">Join chat</button>
-			<a class="button btn--blue" href="https://github.com/select/audius/issues" target="_blank">Create issue</a>
-		</div>
-	</p>
-	<p class="smaller">
-		* You must allow 3rd party cookies for the chat to work (if you have not idea what that means it will work for you) or chat in a new window.
-	</p>
-	<!-- <h2>Extension</h2>
-	<p class="about-player__community-btns">
-		<a class="button btn--blue" href="https://chrome.google.com/webstore/detail/audius/ekpajajepcojhnjmlibfbjmdjcafajoh" target="_blank">Audius Extension</a>
-	</p>
-	<p>
-		The Audius extension allows you to collect and play music from any website.
-		It will automatically collect all links for you so you can add them to your playlist.
-		The songs will be played on this site (<a href="#motivation">background here</a>).
-	</p>
-	<p>
-		If you like to get fresh music that you like create a "Music" chat group on WhatsApp or Slack with your friends and use the extension!
-	</p>
-	<p>
-		The extension is mostly working but not quite ready for prime time. Don't give up and report a bug.
-	</p> -->
 	<h2>Change log</h2>
 	<p>
 		<b>2.0.7</b><br>
@@ -135,7 +99,8 @@ export default {
 			<li> Better support for YouTube playlists: import from search results.</li>
 			<li> Fixed queue sorting.</li>
 			<li> Resize left menu, video player with drag.</li>
-			<li> Show confirm delete popups.</li>
+			<li> Show confirm remove popups.</li>
+			<li> Replace gitter chat with links to matrix.</li>
 		</ul>
 		<b>2.0.6</b><br>
 		<ul>

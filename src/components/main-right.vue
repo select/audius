@@ -70,10 +70,6 @@ export default {
 			@click="setMainRightTab('about')"
 			v-bind:class="{ active: mainRightTab == 'about' }">About</li>
 		<li
-			v-if="website.showChat"
-			@click="setMainRightTab('chat')"
-			v-bind:class="{ active: mainRightTab == 'chat' }">Chat</li>
-		<li
 			v-if="showMediumSettings.tv && currentWebScraper"
 			@click="setMainRightTab('webScraperSettings')"
 			v-bind:class="{ active: mainRightTab == 'webScraperSettings' }">Channel Settings</li>
@@ -90,7 +86,6 @@ export default {
 		<about-player v-show="mainRightTab == 'about'"></about-player>
 		<search-results v-if="mainRightTab == 'search'"></search-results>
 		<queue v-show="mainRightTab == 'queue'"></queue>
-		<div class="audius-chat" v-show="mainRightTab == 'chat'"> </div>
 		<web-scraper-settings v-if="mainRightTab == 'webScraperSettings' && currentWebScraper"></web-scraper-settings>
 		<matrix-room-settings v-if="mainRightTab == 'matrixRoomSettings' && currentMatrixRoom"></matrix-room-settings>
 		<settings v-if="mainRightTab == 'settings'"></settings>
@@ -158,13 +153,6 @@ span.main-right__player-full-btn
 	cursor: pointer
 	color: $color-white
 	z-index: 1
-.audius-chat
-	position: relative
-	height: 100%
-	overflow: hidden
-	iframe
-		width: 100%
-		height: 100%
 
 .main-right__drag-handle
 	height: $grid-space/2

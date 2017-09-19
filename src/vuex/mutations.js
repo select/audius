@@ -181,10 +181,6 @@ export const mutations = {
 	setLeftMenuTab(state, id) {
 		state.leftMenuTab = id;
 	},
-	showTabChat(state) {
-		state.website.showChat = true;
-		state.mainRightTab = 'chat';
-	},
 	setShowSettings(state) {
 		state.showSettings = true;
 		state.mainRightTab = 'settings';
