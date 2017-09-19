@@ -34,7 +34,7 @@ export default {
 		},
 	},
 	computed: {
-		...mapState(['matrixRooms', 'currentMatrixRoom', 'matrixRoomsOrdered', 'matrixRooms']),
+		...mapState(['matrixRooms', 'currentMatrixRoom', 'matrixRoomsOrdered', 'matrixRooms', 'matrixLoggedIn']),
 		_matrixRoomsOrdered: {
 			get() {
 				return this.matrixRoomsOrdered;
@@ -94,15 +94,20 @@ export default {
 	</draggable>
 
 	<ul class="matrix-room__tags">
-		<li class="play-list-manager__input">
+		<li
+			class="play-list-manager__input"
+			v-if="matrixLoggedIn">
 			<input
 				v-on:keyup.enter="addMatrixRoom"
 				type="text"
-				placeholder="... room id or click">
+				placeholder="… room id or click">
 			<span
 				class="wmp-icon-add"
 				title="Create / Join room"
 				@click="addMatrixRoom"></span>
+		</li>
+		<li v-if="!matrixLoggedIn">
+			&nbsp; … connecting to matrix
 		</li>
 	</ul>
 	<div class="modal" v-if="showConfirmDelte" @click="showConfirmDelte = false">

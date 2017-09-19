@@ -1,0 +1,29 @@
+.input-list
+	padding: 0
+	margin: 0
+	list-style: none
+	li
+		display: flex
+		align-items: center
+		height: $touch-size-medium
+		justify-content: space-between
+		padding: 0 $grid-space
+		&:hover .input-list__menu
+			display: block
+		>div:first-child
+			flex: 1
+			word-break: break-all
+	li:nth-child(even)
+		background: $color-catskillwhite
+	li:hover
+		background: $color-athensgrey
+	.wmp-icon-add
+		color: $color-aluminium
+		cursor: pointer
+	input
+		flex: 1
+		background: transparent
+		border: none
+.input-list__menu
+	display: none
+	cursor: pointer

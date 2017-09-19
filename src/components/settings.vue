@@ -26,9 +26,15 @@ export default {
 	<h1>Settings</h1>
 	<p>
 		YouTube API key
-		<input type="text" placeholder="39 digit API key" v-bind:value="youtubeApiKeyUI" @input="setYoutubeApiKey($event.target.value)">
+		<input
+			type="text"
+			class="input--border"
+			placeholder="… 39 digit API key"
+			v-bind:value="youtubeApiKeyUI"
+			@input="setYoutubeApiKey($event.target.value)">
+		<br>
+		<span class="smaller">Create your own key in the <a href="https://console.developers.google.com/" target="_blank">Google Developers Console</a></span>
 	</p>
-	<p class="smaller">Create your key in the <a href="https://console.developers.google.com/">Google Developers Console</a></p>
 	<!-- <h3>Scripts</h3>
 	<div class="settings__btn-group">
 		<button
@@ -59,11 +65,11 @@ export default {
 			<table>
 				<tr>
 					<td>Username</td>
-					<td><input type="text" id="username"></td>
+					<td><input class="input--border" type="text" id="username"></td>
 				</tr>
 				<tr>
 					<td>Password</td>
-					<td><input type="password" id="password"></td>
+					<td><input class="input--border" type="password" id="password"></td>
 				</tr>
 				<tr>
 					<td></td>
@@ -103,4 +109,5 @@ export default {
 	align-items: center
 	> *
 		margin-right: $grid-space
+
 </style>

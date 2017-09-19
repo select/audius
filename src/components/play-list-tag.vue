@@ -9,6 +9,11 @@ export default {
 	props: [
 		'index',
 	],
+	data() {
+		return {
+			showConfirmDelte: false,
+		};
+	},
 	methods: {
 		...mapMutations(['selectMediaSource', 'deletePlayList', 'renamePlayList', 'dropMoveItem']),
 		dropAdd(event) { // Element is dropped into the list from another list
@@ -57,7 +62,16 @@ export default {
 			<span
 				class="wmp-icon-close"
 				title="Delte playlist"
-				@click.stop="deletePlayList(tagName)"></span>
+				@click="showConfirmDelte = tagName"></span>
+		</div>
+		<div class="modal" v-if="showConfirmDelte" @click="showConfirmDelte = false">
+			<div class="modal__body" @click.stop>
+				Are you sure you want to remove this playlist?
+				<div class="modal__btn-group">
+					<button class="button" @click="showConfirmDelte = false">Cancel</button>
+					<button class="button btn btn--blue" @click.stop="deletePlayList(tagName);showConfirmDelte = false;">Remove</button>
+				</div>
+			</div>
 		</div>
 	</li>
 </template>
@@ -95,11 +109,9 @@ li ~ .play-list-manager__tag-body
 			font-size: 0.7em
 	input
 		font-size: 1rem
-		border: 0
 		color: $color-palesky
-		padding: 0
 
-.play-list-manager__tag-name-input
+.play-list-manager__tags .play-list-manager__tag-name-input
 	height: $touch-size-extratiny
 </style>
 

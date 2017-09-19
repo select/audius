@@ -30,7 +30,7 @@ export default {
 	methods: {
 		...mapMutations(['updateWebScraper', 'addUrlPattern', 'renameWebScraper']),
 		_addUrlPattern() {
-			const el = this.$el.querySelector('.ws-settings__input');
+			const el = this.$el.querySelector('.ws-settings .input-list__input');
 			this.addUrlPattern({
 				id: this.currentWebScraper,
 				urlPattern: el.value,
@@ -64,6 +64,7 @@ export default {
 	<draggable
 		v-model="_urls"
 		element="ul"
+		class="input-list"
 		:options="{
 			animation: 150,
 			scrollSpeed: 20,
@@ -75,7 +76,7 @@ export default {
 			<div>
 				({{url.numPages}} Page{{url.numPages > 1 ? 's' : ''}})
 			</div>
-			<div class="ws-settings__url-menu">
+			<div class="input-list__menu">
 				<span
 					title="Delte URL"
 					@click="removeUrl(url.url)"
@@ -83,9 +84,9 @@ export default {
 			</div>
 		</li>
 	</draggable>
-	<ul>
+	<ul class="input-list">
 		<li>
-			<input class="ws-settings__input" type="text" placeholder="http://www.example.com/page/[1-100]">
+			<input class="input-list__input" type="text" placeholder="… http://www.example.com/page/[1-100]">
 			<span class="wmp-icon-add" @click="_addUrlPattern"></span>
 		</li>
 	</ul>
@@ -106,8 +107,6 @@ export default {
 	padding: $grid-space 0
 	input
 		background: transparent
-		padding: 0
-		border: 0
 		flex: 1
 		&::-webkit-input-placeholder
 			color: $color-aluminium
@@ -120,28 +119,7 @@ export default {
 		height: $touch-size-huge
 		width: 100%
 		padding: 0 $grid-space
-
 	p, h3
 		padding: 0 $grid-space
-	ul
-		padding: 0
-		margin: 0
-		li
-			display: flex
-			align-items: center
-			height: $touch-size-medium
-			justify-content: space-between
-			padding: 0 $grid-space
-			&:hover .ws-settings__url-menu
-				display: block
-			>div:first-child
-				flex: 1
-				word-break: break-all
-		li:nth-child(even)
-			background: $color-catskillwhite
-		li:hover
-			background: $color-athensgrey
-.ws-settings__url-menu
-	display: none
-	cursor: pointer
+
 </style>

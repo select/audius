@@ -131,7 +131,7 @@ export default {
 	top: 0.1em
 	left: 0.2em
 	transform: rotate(90deg) perspective(2em) rotateX(30deg)
-	background: $color-aluminium
+	background: $color-aluminium-dark
 	border-bottom: 0
 
 .left-menu__tag-name-input

@@ -2,6 +2,11 @@
 import { mapActions, mapMutations, mapState } from 'vuex';
 
 export default {
+	data() {
+		return {
+			showConfirmDelte: false,
+		};
+	},
 	methods: {
 		...mapMutations(['selectMediaSource', 'setShowMediumSettings', 'addWebScraper', 'deleteWebScraper']),
 		...mapActions(['initWebScraper']),
@@ -44,7 +49,7 @@ export default {
 					<span
 						class="wmp-icon-close"
 						title="Delte channel"
-						@click.stop="deleteWebScraper(id)"></span>
+						@click.stop="showConfirmDelte = id"></span>
 				</div>
 			</li>
 			<li class="play-list-manager__input ws-manager__input">
@@ -58,6 +63,15 @@ export default {
 					@click="_addWebScraper"></span>
 			</li>
 		</ul>
+		<div class="modal" v-if="showConfirmDelte" @click="showConfirmDelte = false">
+			<div class="modal__body" @click.stop>
+				Are you sure you want to delete this channel?
+				<div class="modal__btn-group">
+					<button class="button" @click="showConfirmDelte = false">Cancel</button>
+					<button class="button btn btn--blue" @click.stop="deleteWebScraper(showConfirmDelte);showConfirmDelte = false;">Remove</button>
+				</div>
+			</div>
+		</div>
 	</div>
 </template>
 

@@ -110,8 +110,9 @@ export default {
 			color: $color-palesky
 			cursor: pointer
 			&.active
-				font-weight: bold
 				background: $color-white
+				.play-list-manager__tag-body
+					font-weight: bold
 				.play-list-manager__drag-handle
 					border-left: 1vw solid $color-pictonblue
 				input
@@ -119,8 +120,10 @@ export default {
 
 			&:hover:not(.spacer)
 				border-color: $color-pictonblue
-				color: $color-pictonblue
 				background: $color-white
+				.play-list-manager__tag-body,
+				.play-list-manager__menu
+					color: $color-pictonblue
 				.play-list-manager__menu
 					display: block
 				input
@@ -143,7 +146,6 @@ export default {
 	input
 		background: transparent
 		box-sizing: border-box
-		border: 0
 		border-radius: $border-radius
 		height: 100%
 		width: 100%

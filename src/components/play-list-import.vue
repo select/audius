@@ -60,7 +60,11 @@ export default {
 				title="[Esc] Close"
 				v-on:click="exit"></span>
 		</div>
-		<input type="file" id="import-playlist" v-on:change="importPlayListHandler" title="Import playlist from file">
+		<input
+			type="file"
+			id="import-playlist"
+			v-on:change="importPlayListHandler"
+			title="Import playlist from file">
 		<label for="import-playlist" class="button btn--blue">from file</label>
 		<button
 			class="button btn--blue"
@@ -69,9 +73,9 @@ export default {
 		<div class="play-list__import-url" v-show="importURLinput">
 			<span class="smaller">Import Audius and YouTube playlists</span>
 			<input
-				class="play-list__import-url-input"
+				class="play-list__import-url-input input--border"
 				type="text"
-				placeholder="https://api.myjson.com/bins/122zfl">
+				placeholder="… https://api.myjson.com/bins/122zfl">
 			<button class="button btn--blue" v-on:click="_importURL">load</button>
 		</div>
 		<button

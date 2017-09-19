@@ -48,6 +48,7 @@ export default {
 @import '../sass/icon'
 @import '../sass/modal'
 @import '../sass/tabs'
+@import '../sass/global'
 
 @import '../sass/media-list'
 

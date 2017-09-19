@@ -60,7 +60,7 @@ export default {
 						<input
 							class="import-modal__name-input"
 							type="text"
-							placeholder="... name"
+							placeholder="… name"
 							@input="setImportName"
 							v-bind:value="importName">
 						<button
@@ -111,7 +111,7 @@ export default {
 				<p>
 					Create new playlist
 					<div class="import-modal__row">
-						<input class="import-modal__name-input" type="text" placeholder="... name" v-bind:value="pendingImportURL.name">
+						<input class="import-modal__name-input" type="text" placeholder="… name" v-bind:value="pendingImportURL.name">
 						<button class="button btn--blue" @click="importPlayList">Create</button>
 					</div>
 				</p>

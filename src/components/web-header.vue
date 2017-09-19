@@ -318,7 +318,6 @@ header
 		color: $color-pictonblue
 		background: transparent
 		font-size: 1em
-		border: 0
 		width: 8em
 		&::-webkit-input-placeholder
 			color: $color-white
