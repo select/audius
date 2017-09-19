@@ -37,6 +37,7 @@ export default {
 	mounted() {
 		document.addEventListener('mouseup', () => {
 			this.resize = false;
+			this.resizeWidth = false;
 		});
 		const br = this.$el.getBoundingClientRect();
 		document.addEventListener('mousemove', (event) => {
@@ -44,13 +45,21 @@ export default {
 				const pos = 100 - Math.round(((event.clientY - br.top) / br.height) * 100);
 				if (pos > 10) this.$el.querySelector('.main-right__player').style.height = `${pos}%`;
 			}
+			if (this.resizeWidth) {
+				const bb = document.querySelector('.web-app__main').getBoundingClientRect();
+
+				const pos = 100 - Math.round(((event.clientX - bb.left) / bb.width) * 100);
+				if (pos > 10) this.$el.style.width = `${pos}%`;
+			}
 		});
 	},
 	methods: {
 		...mapMutations(['setMainRightTab']),
-		resizeStart(event) {
-			event.preventDefault();
+		resizeStart() {
 			this.resize = true;
+		},
+		resizeWidthStart() {
+			this.resizeWidth = true;
 		},
 	},
 };
@@ -58,6 +67,9 @@ export default {
 
 <template>
 <div class="main-right">
+	<div
+		class="main-right__width-handle"
+		@mousedown="resizeWidthStart"></div>
 	<ul class="tabs">
 		<li
 			@click="setMainRightTab('queue')"
@@ -121,10 +133,22 @@ export default {
 @import '../sass/vars'
 @import '../sass/color'
 
+
 .main-right
 	display: flex
 	flex-direction: column
 	height: 100%
+	width: 50%
+	position: relative
+.main-right__width-handle
+	position: absolute
+	top: 0
+	left: 0
+	height: 100%
+	background: transparent
+	width: $grid-space/2
+	z-index: 99
+	cursor: ew-resize
 .main-right__content
 	flex: 1
 	overflow-y: auto

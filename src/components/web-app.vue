@@ -28,8 +28,10 @@ export default {
 		<web-header></web-header>
 		<main class="box">
 			<left-menu></left-menu>
-			<play-list></play-list>
-			<main-right></main-right>
+			<div class="web-app__main">
+				<play-list></play-list>
+				<main-right></main-right>
+			</div>
 		</main>
 	</div>
 
@@ -86,6 +88,7 @@ body
 		overflow-x: auto
 
 
+
 #app
 	position: absolute
 	top: 0
@@ -104,15 +107,19 @@ body
 	overflow: hidden
 	display: flex
 	flex-direction: column
+
 main.box
 	flex: 1
 	display: flex
 	height: 100%
 	overflow: hidden
-	> div:not(:first-child)
-		flex: 2
+.web-app__main
+	flex: 1
+	display: flex
+	overflow: hidden
+	>div
 		overflow: hidden
-		&:not(:last-child)
+		&:first-child
+			flex: 1
 			border-right: 1px solid $color-aluminium
-
 </style>
