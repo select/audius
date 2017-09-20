@@ -45,7 +45,7 @@ Create your own rooms with the [Riot web client](https://riot.im/app/) or [any o
 *	Fixed queue sorting.
 *	Resize left menu, video player with drag.
 *	Show confirm remove popups.
-*	Replace gitter chat with links to matrix.
+*	Replace gitter chat with links to audius matrix room.
 
 **2.0.6**
 *	Extension for searching external websites for content.
