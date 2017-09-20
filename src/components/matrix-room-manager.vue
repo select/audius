@@ -15,12 +15,16 @@ export default {
 		};
 	},
 	methods: {
-		...mapMutations(['selectMediaSource', 'movematrixRoomsOrdered', 'setShowMediumSettings', 'toggleMatrixRoomModal']),
+		...mapMutations(['selectMediaSource', 'movematrixRoomsOrdered', 'setShowMediumSettings', 'toggleMatrixRoomModal', 'error']),
 		...mapActions(['joinMatrixRoom', 'leaveMatrixRoom', 'matrixSend']),
 		addMatrixRoom() {
 			const el = document.querySelector('.matrix-room input');
-			if (!el.value) this.toggleMatrixRoomModal();
-			else this.joinMatrixRoom({ id: el.value });
+			if (!el.value) {
+				// this.toggleMatrixRoomModal();
+				this.error('Please enter a room id.');
+			} else {
+				this.joinMatrixRoom({ id: el.value });
+			}
 			el.value = '';
 		},
 		dropAdd(event, roomId) { // Element is dropped into the list from another list
@@ -106,10 +110,10 @@ export default {
 				title="Create / Join room"
 				@click="addMatrixRoom"></span>
 		</li>
-		<li v-if="!matrixLoggedIn">
-			&nbsp; … connecting to matrix
-		</li>
 	</ul>
+	<div v-if="!matrixLoggedIn" class="matrix-room__logging-in">
+		&nbsp; … connecting to matrix
+	</div>
 	<div class="modal" v-if="showConfirmDelte" @click="showConfirmDelte = false">
 		<div class="modal__body" @click.stop>
 			Are you sure you want to leave the room?
@@ -134,6 +138,12 @@ export default {
 
 .matrix-room__menu
 	display: none
+
+.matrix-room__logging-in
+	width: 100%
+	text-align: center
+	margin-top: $touch-size-medium
+	color: $color-catskillwhite
 
 </style>
 
