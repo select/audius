@@ -14,6 +14,8 @@ Audius is the ultimate streaming music player.
 - Split YouTube full albums into seperate songs.
 - Connect to the Matrix network and create rooms to share and discover music with your friends.
 
+<img src="https://audius.rockdapus.org/img/audius.screenshot.1280x800.png" />
+
 ## Community
 
 If you have questions or feedback, join the chat on matrix or create an issue on github.
@@ -42,10 +44,11 @@ Create your own rooms with the [Riot web client](https://riot.im/app/) or [any o
 **2.0.7**
 *	Vimeo video player integrated.
 *	Better support for YouTube playlists: import from search results.
-*	Fixed queue sorting.
 *	Resize left menu, video player with drag.
 *	Show confirm remove popups.
-*	Replace gitter chat with links to audius matrix room.
+*	More error checks and error messages.
+*	Replace gitter support chat with links to Audius matrix room.
+*	Fixed queue sorting.
 
 **2.0.6**
 *	Extension for searching external websites for content.
@@ -106,6 +109,7 @@ Why use the web version then?
 
 1.  A click on "reload page" will pull the latests updates.
 2.  I recognized that using this app from a local file blocks a lot of videos on YouTube (e.g. all Vevo videos) :(
+3.  IndexDB, the browser database, does not work with file:// URLs, therefore Audius can not store your playlists etc. permanently.
 
 
 ## Development
