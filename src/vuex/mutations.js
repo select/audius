@@ -503,14 +503,16 @@ export const mutations = {
 				state.matrixRooms[roomId] = Object.assign({}, matrixRoomTemplate(), { name: room.name });
 			}
 
-			// Set members of the room.
-			state.matrixRooms[roomId].members = Object
-				.entries(room.currentState.members)
-				.map(([id, member]) => ({ id, powerLevel: member.powerLevel }));
+			if (room.currentState) {
+				// Set members of the room.
+				state.matrixRooms[roomId].members = Object
+					.entries(room.currentState.members)
+					.map(([id, member]) => ({ id, powerLevel: member.powerLevel }));
 
-			// Set flag indicating if current user is admin.
-			const myuser = room.currentState.members[userId] || {};
-			state.matrixRooms[roomId].isAdmin = myuser.powerLevel >= 100;
+				// Set flag indicating if current user is admin.
+				const myuser = room.currentState.members[userId] || {};
+				state.matrixRooms[roomId].isAdmin = myuser.powerLevel >= 100;
+			}
 
 			// Add to ordered rooms list if not on the list yet.
 			if (!state.matrixRoomsOrdered.includes(roomId)) {

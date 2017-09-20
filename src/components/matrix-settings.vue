@@ -1,6 +1,8 @@
 <script>
 import { mapGetters, mapMutations, mapState, mapActions } from 'vuex';
 
+import { debounce } from '../utils';
+
 export default {
 	computed: {
 		...mapGetters(['youtubeApiKeyUI']),
@@ -22,8 +24,12 @@ export default {
 		},
 	},
 	methods: {
-		...mapActions(['renameMatrixRoom']),
+		...mapActions(['setRoomName', 'updateRoomOptions']),
 		...mapMutations(['updateWebScraper', 'addUrlPattern', 'renameWebScraper']),
+		_setRoomName: debounce(function(id, name) { this.setRoomName({ id, name }); }, 1000),
+		_inviteUser() {
+			// TODO
+		}
 	},
 };
 </script>
@@ -31,9 +37,10 @@ export default {
 <template>
 <div class="settings matrix-settings">
 	<input
-		@input="renameMatrixRoom({oldName: room.name, newName: $event.target.value})"
+		@input="_setRoomName(currentMatrixRoom, $event.target.value)"
 		type="text"
-		placeholder="... name"
+		class="matrix-settings__name"
+		placeholder="… name"
 		v-bind:disabled="!room.isAdmin"
 		v-bind:value="room.name">
 	<div class="smaller row" v-if="!room.isAdmin"><b>You are not an admin</b>, you can not edit this room.</div>
@@ -56,24 +63,50 @@ export default {
 			{{member.id}}
 		</div>
 	</div>
+	<h4>Invite</h4>
+	<ul class="input-list">
+		<li v-for="userId in []">
+			{{userId}}
+		</li>
+		<li>
+			<input class="input-list__input" type="text" placeholder="… @user-name:matrix.org">
+			<span class="wmp-icon-add" @click="_inviteUser"></span>
+		</li>
+	</ul>
 	<h3>Options</h3>
 	<div class="row">
 		<div>
-			<input v-bind:disabled="!room.isAdmin" type="checkbox" id="private-room"><label for="private-room"></label>
+			<input
+				type="checkbox"
+				v-bind:disabled="!room.isAdmin"
+				@change="updateRoomOptions({id: currentMatrixRoom, hidden: $event.target.checked})"
+				id="hidden-room"><label for="hidden-room"></label>
 			Hidden
 			<span class="smaller">Not publicly listed</span>
 		</div>
 		<div>
-			<input v-bind:disabled="!room.isAdmin" type="checkbox" id="private-room"><label for="private-room"></label>
+			<input
+				type="checkbox"
+				v-bind:disabled="!room.isAdmin"
+				@change="updateRoomOptions({id: currentMatrixRoom, private: $event.target.checked})"
+				id="private-room"><label for="private-room"></label>
 			Private
 			<span class="smaller">New users need to be approved</span>
 		</div>
 		<div>
-			<input v-bind:disabled="!room.isAdmin" type="checkbox" id="human-read"><label for="human-read"></label>
+			<input
+				v-bind:disabled="!room.isAdmin"
+				type="checkbox"
+				@change="updateRoomOptions({id: currentMatrixRoom, humanReadablePosts: $event.target.checked})"
+				id="human-read"><label for="human-read"></label>
 			Post human readable links
 		</div>
 		<div>
-			<input v-bind:disabled="!room.isAdmin" type="checkbox" id="can-post"><label for="can-post"></label>
+			<input
+				v-bind:disabled="!room.isAdmin"
+				type="checkbox"
+				@change="updateRoomOptions({id: currentMatrixRoom, restrictPosting: $event.target.checked})"
+				id="restrict-post"><label for="restrict-post"></label>
 			Restricted posting
 			<span class="smaller">Only 50+ power users are allowed to post</span>
 		</div>
@@ -86,13 +119,12 @@ export default {
 @import '../sass/color'
 .settings.matrix-settings
 	overflow: hidden
-	.row, h3, h4, input
+	.row, h3, h4, .matrix-settings__name
 		padding: 0 $grid-space
-	input[type="text"]
+	.matrix-settings__name
 		font-size: 1.5rem
 		height: $touch-size-huge
 		width: 100%
-		border: 0
 		margin-bottom: $grid-space
 .matrix-settings__me
 	color: $color-pictonblue

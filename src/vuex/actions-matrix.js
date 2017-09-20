@@ -25,6 +25,7 @@ function addMatrixMessage(state, commit, roomId, results) {
 	});
 }
 
+/* eslint-disable no-param-reassign */
 export const actionsMatrix = {
 	initMatrix({ commit, state, dispatch }) {
 		import(/* webpackChunkName: "matrix-client" */ '../utils/matrixClient').then(mc => {
@@ -33,12 +34,12 @@ export const actionsMatrix = {
 				matrixClient
 					.getCredentials()
 					.then(credentials => commit('setMatrixCredentials', credentials))
-					.then(() => matrixClient.login(state.matrix.credentials, dispatch))
+					.then(() => matrixClient.login(state.matrix.credentials, dispatch, commit))
 					.then(rooms => commit('setMatrixLoggedIn', rooms))
 					.catch(error => commit('error', `Login failed. ${error}`));
 			} else if (!state.matrixLoggedIn) {
 				matrixClient
-					.login(state.matrix.credentials, dispatch)
+					.login(state.matrix.credentials, dispatch, commit)
 					.then(rooms => commit('setMatrixLoggedIn', rooms))
 					.catch(error => commit('error', `Login failed. ${error}`));
 			}
@@ -89,6 +90,23 @@ export const actionsMatrix = {
 			.catch(error => {
 				commit('error', `Could not join room: ${error}`);
 			});
+	},
+	setRoomName({ commit }, { id, name }) {
+		matrixClient
+			.setRoomName(id, name)
+			.then(() => commit('setMatrixLoggedIn', [{ roomId: id, name }]))
+			.catch((error) => commit('error', `Could not rename matrix room: ${error}`));
+	},
+	updateRoomOptions({ commit }, options) {
+		if (options.hidden !== undefined) {
+			// matrixClient TODO
+		}
+		if (options.private !== undefined) {
+			matrixClient
+				.setRoomVisibility(options.id, options.private)
+				.then(() => commit('updateMatrixRoom', options))
+				.catch((error) => commit('error', `Could not set room private. ${error}`));
+		}
 	},
 	leaveMatrixRoom({ commit }, roomIdOrAlias) {
 		matrixClient.leaveRoom(roomIdOrAlias)

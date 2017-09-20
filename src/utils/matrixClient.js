@@ -3,6 +3,7 @@ import Matrix from 'matrix-js-sdk';
 export const matrixClient = {
 	client: null,
 	firstEvent: {},
+	syncFailCount: 0,
 	paginate(roomId) {
 		const room = this.client.getRoom(roomId);
 		const tls = room.getTimelineSets()[0];
@@ -11,8 +12,8 @@ export const matrixClient = {
 			.getEventTimeline(tls, this.firstEvent[roomId])
 			.then(et => this.client.paginateEventTimeline(et, { backwards: true }));
 	},
-	login(credentials, dispatch) {
-		return new Promise((resolve, reject) => {
+	login(credentials, dispatch, commit) {
+		return new Promise((resolve) => {
 			this.client = Matrix.createClient({
 				...credentials,
 				baseUrl: 'https://matrix.org',
@@ -28,11 +29,18 @@ export const matrixClient = {
 				else if (message) dispatch('parseMatrixMessage', { roomId, message });
 			});
 
-			this.client.on('sync', (syncState, prevState, data) => {
+			this.client.on('sync', (syncState) => {
 				if (syncState === 'ERROR') {
-					dispatch('error', 'Could not connect to matrix server');
+					if (this.syncFailCount >= 5) {
+						commit('error', 'Could not connect to matrix more than 5 time. Disconnecting.');
+						this.logout(); // FIXME does not stop the login
+					} else {
+						commit('error', `Could not connect to matrix server. ${this.syncFailCount ? 'Attempt ' + this.syncFailCount : ''}`);
+						this.syncFailCount++;
+					}
 				} else if (syncState === 'SYNCING') {
 					// update UI to remove any "Connection Lost" message
+					this.syncFailCount = 0;
 				} else if (syncState === 'PREPARED') {
 					resolve(this.client.getRooms());
 				}
