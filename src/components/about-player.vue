@@ -50,7 +50,7 @@ export default {
 			<dd>Queue selected song</dd>
 		</dl>
 	</p> -->
-	<h2>Community</h2>
+	<h2 id="community">Community</h2>
 	<p>
 		If you have questions or feedback, join the chat on matrix (#audius:matrix.org) or create an issue on github.<br>
 		<div class="about-player__community-btns">
@@ -100,7 +100,7 @@ export default {
 			<li> Fixed queue sorting.</li>
 			<li> Resize left menu, video player with drag.</li>
 			<li> Show confirm remove popups.</li>
-			<li> Replace gitter chat with links to matrix.</li>
+			<li> Replace gitter support chat with links to <a href="#community">matrix room</a>.</li>
 		</ul>
 		<b>2.0.6</b><br>
 		<ul>
