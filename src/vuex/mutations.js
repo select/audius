@@ -289,9 +289,15 @@ export const mutations = {
 	renamePlayList(state, { newName, oldName }) {
 		rename(state, 'tags', newName, oldName);
 	},
-	removeVideo(state, video) {
-		state.playList = state.playList.filter(id => id !== video.id);
-		if (video.id in state.entities) state.entities[video.id].deleted = true;
+	removeVideo(state, mediaIds) {
+		if (state.currentPlayList !== null) {
+			if (!state.currentPlayList) {
+				state.playList = state.playList.filter(id => !mediaIds.includes(id));
+			} else {
+				const tag = state.currentPlayList;
+				state.tags[tag] = state.tags[tag].filter(id => !mediaIds.includes(id));
+			}
+		}
 	},
 	addSearchResult(state, media) {
 		if (state.leftMenuTab === 'playList') {
@@ -435,12 +441,6 @@ export const mutations = {
 			];
 		} else state.tags[tag] = mediaIds;
 		selectMediaSource(state, { type: 'playList', id: tag });
-	},
-	removeTags(state, { mediaIds = [], tag }) {
-		tag = tag || state.currentPlayList;
-		if (tag && state.tags[tag]) {
-			state.tags[tag] = state.tags[tag].filter(id => !mediaIds.includes(id));
-		}
 	},
 	selectMediaSource,
 	deletePlayList(state, playListName) {

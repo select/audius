@@ -28,24 +28,24 @@ export default {
 			'play',
 			'queue',
 			'error',
-			'removeTags',
 			'queueRemoveIndex',
 			'removeVideo',
 			'queuePlayIndex',
 		]),
 		...mapActions(['matrixSend']),
+		setShowConfirmDelte() {
+			if (this.isQueue) {
+				this.queueRemoveIndex(this.queueIndex);
+			} else {
+				this.showConfirmDelte = true;
+			}
+		},
 		_play() {
 			if (this.isQueue) this.queuePlayIndex(this.queueIndex);
 			else this.play({ media: this.video });
 		},
 		remove() {
-			if (this.isPlayList) {
-				this.removeTags({ mediaIds: [this.video.id] });
-			} else if (this.isQueue) {
-				this.queueRemoveIndex(this.queueIndex);
-			} else {
-				this.removeVideo(this.video);
-			}
+			this.removeVideo([this.video.id]);
 		},
 		addToPlaylist() {
 			if (this.currentMatrixRoom) {
@@ -170,8 +170,8 @@ export default {
 				</a>
 				<span
 					class="wmp-icon-close"
-					v-if="isPlayList || (currentMatrixRoom && matrixRooms[currentMatrixRoom].isAdmin)"
-					@click="showConfirmDelte = true"
+					v-if="isPlayList || isQueue || (currentMatrixRoom && matrixRooms[currentMatrixRoom].isAdmin)"
+					@click="setShowConfirmDelte"
 					title="Remove"></span>
 
 				<span
