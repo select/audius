@@ -159,7 +159,6 @@ export const mutations = {
 		state.search.results = result;
 	},
 	webMediaSearchSuccess(state, { mediaList = [], id = null }) {
-		console.log('webMediaSearchSuccess', id, mediaList);
 		if (!mediaList.length) {
 			state.errorMessages = [...state.errorMessages, { error: 'No media found (҂⌣̀_⌣́)ᕤ' }];
 		} else {
@@ -492,7 +491,6 @@ export const mutations = {
 		state.matrix.credentials = credentials;
 	},
 	setMatrixLoggedIn(state, rooms) {
-		console.log("rooms", rooms);
 		state.matrixLoggedIn = true;
 		const userId = state.matrix.credentials.userId;
 		rooms.forEach(room => {
