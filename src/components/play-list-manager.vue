@@ -145,7 +145,6 @@ export default {
 	 color: $color-aluminium-dark
 	input
 		background: transparent
-		box-sizing: border-box
 		border-radius: $border-radius
 		height: 100%
 		width: 100%

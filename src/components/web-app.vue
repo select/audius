@@ -54,6 +54,9 @@ export default {
 
 @import '../sass/media-list'
 
+*
+	box-sizing: border-box
+
 body,
 html,
 	margin: 0
@@ -80,14 +83,6 @@ body
 
 	::-webkit-scrollbar-thumb
 		background: $color-aluminium-dark
-
-.box-1-1
-	display: flex
-	>div
-		flex: 1
-		overflow-x: auto
-
-
 
 #app
 	position: absolute

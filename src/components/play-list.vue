@@ -369,7 +369,6 @@ export default {
 			border: none
 			border-top: 1px solid $color-aluminium
 			height: $touch-size-small
-			box-sizing: border-box
 	span
 		height: $touch-size-small
 		width: $touch-size-medium
@@ -416,7 +415,6 @@ export default {
 		margin-bottom: #{2 * $grid-space}
 	input
 		height: $touch-size-small
-		box-sizing: border-box
 		&::-webkit-input-placeholder
 				color: $color-aluminium
 		&:-moz-placeholder
@@ -434,7 +432,6 @@ export default {
 #import-playlist
 	display: none
 	+ label
-		box-sizing: border-box
 		display: flex
 		justify-content: center
 		align-items: center

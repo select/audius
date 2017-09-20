@@ -30,12 +30,15 @@ export default {
 	<div
 		v-if="createMatrixRoomModal"
 		@click="close"
-		class="modal">
+		class="modal matrix-create">
 		<div class="modal__body" @click.stop>
 			<p>
 				<h3>Create matrix room</h3>
 				<div>
-					<input type="text" placeholder="Room name">
+					<input
+						type="text"
+						class="input--border"
+						placeholder="Room name">
 				</div>
 				<div class="spacer"></div>
 			</p>
@@ -69,12 +72,7 @@ export default {
 @import '../sass/vars'
 @import '../sass/color'
 
-// .import-modal__row
-// 	display: flex
-// 	flex-direction: row
-// 	align-items: center
-// 	> *:not(:last-child)
-// 		margin-right: $grid-space
-// .import-modal__last
-// 	text-align: right
+.matrix-create
+	input
+		width: 100%
 </style>

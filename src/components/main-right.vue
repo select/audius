@@ -140,15 +140,6 @@ export default {
 	height: 100%
 	width: 50%
 	position: relative
-.main-right__width-handle
-	position: absolute
-	top: 0
-	left: 0
-	height: 100%
-	background: transparent
-	width: $grid-space/2
-	z-index: 99
-	cursor: ew-resize
 .main-right__content
 	flex: 1
 	overflow-y: auto
@@ -177,6 +168,16 @@ span.main-right__player-full-btn
 	cursor: pointer
 	color: $color-white
 	z-index: 1
+
+.main-right__width-handle
+	position: absolute
+	top: 0
+	left: 0
+	height: 100%
+	background: transparent
+	width: $grid-space/2
+	z-index: 99
+	cursor: ew-resize
 
 .main-right__drag-handle
 	height: $grid-space/2
