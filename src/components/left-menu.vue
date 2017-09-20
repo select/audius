@@ -42,7 +42,7 @@ export default {
 <template>
 <div
 	class="left-menu"
-	v-bind:class="{ active: showLeftMenu }">
+	v-bind:class="{ hide: !showLeftMenu }">
 	<div class="nav-handle" title="Playlists" @click="toggleLeftMenu()">
 		<div class="nav-handle__tab"></div>
 		<span class="wmp-icon-queue_music"></span>
@@ -79,14 +79,15 @@ export default {
 .left-menu
 	position: relative
 	width: 25vw
-	margin-left: -24.5vw
+	margin-left: 0
 	transition: all $transition-time
 	background: $color-aluminium-dark
 	border-right: 1px solid $color-aluminium
 	display: flex
 	flex-direction: column
-	&.active
-		margin-left: 0
+	&.hide
+		margin-left: -24.5vw
+		width: 25vw!important
 
 .left-menu__wrapper
 	height: 100%
