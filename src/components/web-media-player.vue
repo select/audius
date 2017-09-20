@@ -23,6 +23,7 @@ export default {
 		};
 	},
 	created() {
+		this.failCount = 0;
 		this.audioPlayer.onended = () => {
 			clearInterval(this.timeInterval);
 			this.nextVideo();
@@ -100,6 +101,7 @@ export default {
 			const playPromise = player.play();
 			if (playPromise !== undefined) {
 				playPromise.then(() => {
+					this.failCount = 0;
 					if (!this.currentMedia.durationS) {
 						const durationS = Math.round(player.duration);
 						this.updateCurrentMedia({
@@ -110,6 +112,12 @@ export default {
 				}).catch((error) => {
 					this.videoError(error.message);
 					this.error(`The video could not be played: ${error.message}`);
+					if (this.failCount >= 3) {
+						this.error('More than 3 failed playback attempts. Stopping playback.');
+						this.pause();
+					} else {
+						this.failCount++;
+					}
 				});
 			}
 		},
