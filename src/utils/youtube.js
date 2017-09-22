@@ -16,9 +16,8 @@ function normalizeYouTubeData(videoData) {
 		title: snippet.title,
 		duration: duration(durationYt),
 		durationS: time2s(duration(durationYt)),
-		isPlaying: false,
 		id: videoData.id,
-		deleted: false,
+		youtubeId: videoData.id,
 		type: 'youtube',
 		tracks: tracks.length ? tracks : undefined,
 	});
@@ -113,7 +112,7 @@ export function parseYoutubeDescription(v) {
 			// Clean up the title from spaces minus and time
 			const title = `${line.replace(trimFRegex, '').replace(trimBRegex, '')} - ${snippet.title}`;
 			return Object.assign({}, videoBaseObject, {
-				id,
+				id: `${id}-track${idx + 1}`,
 				start: h * 3600 + m * 60 + s,
 				title,
 				fullTitle: line,

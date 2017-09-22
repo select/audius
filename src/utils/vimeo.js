@@ -9,9 +9,8 @@ export function getVimeoInfo(id) {
 		title: info[0].title,
 		duration: s2time(info[0].duration),
 		durationS: info[0].duration,
-		isPlaying: false,
 		id,
-		deleted: false,
+		vimeoId: id,
 		type: 'vimeo',
 		href: info[0].url,
 		thumbUrl: info[0].thumbnail_small,
@@ -20,7 +19,6 @@ export function getVimeoInfo(id) {
 
 export function searchVimeo(query) {
 	const id = isVimeoVideoRegEx.exec(query)[3];
-	console.log("vimeo", id);
 	return getVimeoInfo(id);
 }
 

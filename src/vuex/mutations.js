@@ -302,7 +302,6 @@ export const mutations = {
 		if (state.leftMenuTab === 'playList') {
 			if (media.trackId) {
 				media = Object.assign({}, media);
-				media.id += `-Track${media.trackId}`;
 				delete media.trackId;
 				delete media.isTrack;
 			}
