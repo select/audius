@@ -144,10 +144,18 @@ export default {
 				return this.filteredPlayList;
 			},
 			set(value) {
-				if (!this.showJump) {
+				if (!this.showJump && this.currentPlayList !== null) {
 					this.movePlayListMedia(
 						value.map(media => media.id)
 					);
+				}
+				if (this.currentMatrixRoom) {
+					const index = new Set(this.filteredPlayList.map(({ id }) => id));
+					value
+						.filter(({ id }) => !index.has(id))
+						.forEach(media => {
+							this.matrixSend({ media, roomId: this.currentMatrixRoom });
+						});
 				}
 			},
 		},
@@ -221,7 +229,6 @@ export default {
 				class="media-list"
 				element="ul"
 				v-model="_entities"
-				@add="dropAdd"
 				:options="{
 					animation: 150,
 					scrollSpeed: 20,
