@@ -97,10 +97,11 @@ export default {
 		<ul>
 			<li> Vimeo video player integrated.</li>
 			<li> Better support for YouTube playlists: import from search results.</li>
-			<li> Fixed queue sorting.</li>
-			<li> Resize left menu, video player with drag.</li>
+			<li> Resize left menu, video player, and playlist with drag.</li>
 			<li> Show confirm remove popups.</li>
-			<li> Replace gitter support chat with links to <a href="#community">matrix room</a>.</li>
+			<li> More error checks and error messages.</li>
+			<li> Replace gitter support chat with links to <a href="#community">Audius matrix room</a>.</li>
+			<li> Fixed queue sorting.</li>
 		</ul>
 		<b>2.0.6</b><br>
 		<ul>
@@ -174,6 +175,9 @@ export default {
 			</li>
 			<li>
 				I recognized that using this app from a local file blocks a lot of videos on YouTube (e.g. all Vevo videos) :(
+			</li>
+			<li>
+				IndexDB, the browser database, does not work with file:// URLs, therefore Audius can not store your playlists etc. permanently.
 			</li>
 		</ol>
 	</p>
