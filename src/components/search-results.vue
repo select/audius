@@ -31,41 +31,47 @@ export default {
 </script>
 
 <template>
-<draggable
-	class="media-list search-results"
-	v-model="search.results"
-	element="ul"
-	:options="{
-		sort: false,
-		handle: '.media-list__thumbnail',
-		group: {
-			name: 'lists',
-			pull: 'clone',
-			revertClone: true,
-		}
-	}">
-	<li v-if="search.isPlayList">
-		<div class="media-list__main">
-			<div class="wmp-icon-album media-list__thumbnail search-results__playlist"></div>
-			<div class="media-list__body">
-				Playlist: {{search.results.length}} songs
+<div>
+	<ul
+		class="media-list"
+		v-if="search.isPlayList">
+		<li>
+			<div class="media-list__main">
+				<div class="wmp-icon-album media-list__thumbnail search-results__playlist"></div>
+				<div class="media-list__body">
+					Playlist: {{search.results.length}} songs
+				</div>
+				<div class="media-list__controls">
+					<span
+						class="wmp-icon-add"
+						@click="importURL({ url: search.id });"
+						title="Import playlist"></span>
+				</div>
 			</div>
-			<div class="media-list__controls">
-				<span
-					class="wmp-icon-add"
-					@click="importURL({ url: search.id });"
-					title="Import playlist"></span>
-			</div>
-		</div>
-	</li>
-	<video-item
-		v-for="media in search.results"
-		v-on:addToPlaylist="addToPlaylist"
-		:isSearchResult="true"
-		:isPlaying="currentMedia.id == media.id && isPlaying"
-		:key="media.id+media.trackId"
-		:video="media"></video-item>
-</draggable>
+		</li>
+	</ul>
+	<draggable
+		class="media-list search-results"
+		v-model="search.results"
+		element="ul"
+		:options="{
+			sort: false,
+			handle: '.media-list__thumbnail',
+			group: {
+				name: 'lists',
+				pull: 'clone',
+				revertClone: true,
+			}
+		}">
+		<video-item
+			v-for="media in search.results"
+			v-on:addToPlaylist="addToPlaylist"
+			:isSearchResult="true"
+			:isPlaying="currentMedia.id == media.id && isPlaying"
+			:key="media.id+media.trackId"
+			:video="media"></video-item>
+	</draggable>
+</div>
 </template>
 
 <style lang="sass?indentedSyntax">
