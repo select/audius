@@ -74,18 +74,18 @@ export const matrixClient = {
 	setRoomVisibility(roomId, setPublic = true) {
 		return this.client.setRoomDirectoryVisibility(roomId, setPublic ? 'public' : 'private');
 	},
-	creatRoom(options) {
-		const opt = {
-			room_alias_name: 'blaa-audius',
-			visibility: 'public', // 'private'
-			invite: [
-				'bllakd:matrix.org',
-				'user1:matrix.org',
-			],
-			name: 'Blaaa [Audius]',
-			topic: 'Join this room with https://audius.rockdapus.org',
-		};
-		return this.client.creatRoom(opt);
+	createRoom(options) {
+		// const opt = Object.assign(){
+		// 	room_alias_name: 'blaa-audius',
+		// 	visibility: 'public', // 'private'
+		// 	invite: [
+		// 		'bllakd:matrix.org',
+		// 		'user1:matrix.org',
+		// 	],
+		// 	name: 'Blaaa [Audius]',
+		// 	topic: 'Join this room with https://audius.rockdapus.org',
+		// };
+		return this.client.createRoom(options);
 	},
 	getCredentialsWithPassword(username, password) {
 		return new Promise(resolve => {

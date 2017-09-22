@@ -83,12 +83,25 @@ export const actionsMatrix = {
 			.then(room => {
 				room.name = name || id;
 				commit('setMatrixLoggedIn', [room]);
-
 				commit('selectMediaSource', { type: 'radio', id: room.roomId });
 				commit('setLeftMenuTab', 'radio');
 			})
 			.catch(error => {
 				commit('error', `Could not join room: ${error}`);
+			});
+	},
+	createMatrixRoom({ commit }, options) {
+		console.log("options", options);
+		matrixClient.createRoom(options)
+			.then(room => {
+				room.name = options.name;
+				room.roomId = room.room_id;
+				commit('setMatrixLoggedIn', [room]);
+				commit('toggleMatrixRoomModal', false);
+				commit('selectMediaSource', { type: 'radio', id: room.room_id });
+				commit('setLeftMenuTab', 'radio');
+			}).catch(error => {
+				commit('error', `Could not create room. ${error}`);
 			});
 	},
 	setRoomName({ commit }, { id, name }) {

@@ -17,10 +17,13 @@
 			border-color: $color-pictonblue
 			background: $color-pictonblue
 			color: $color-white
-		&.disabled
-			pointer-events: none
+		&.disabled,
+		&[disabled="disabled"]
+			cursor: pointer
 			background-color: $color-aluminium
 			border: 1px solid $color-aluminium
+		&.disabled
+			pointer-events: none
 	a.button
 		display: flex
 		align-items: center

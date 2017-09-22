@@ -1,15 +1,12 @@
 <script>
 import { mapActions, mapState, mapGetters, mapMutations } from 'vuex';
+import { slugify } from '../utils/slugify';
 
 export default {
 	data() {
 		return {
-			importName: '',
-			overwriteChannel: false,
+			roomName: '',
 		};
-	},
-	mounted() {
-		this.importName = this.pendingImportURL ? this.pendingImportURL.name : '';
 	},
 	methods: {
 		...mapActions(['createMatrixRoom']),
@@ -17,11 +14,26 @@ export default {
 		close() {
 			this.toggleMatrixRoomModal(false);
 		},
-
+		_createMatrixRoom() {
+			const visibility = this.$el.querySelector('#hidden-room-m').checked ? 'privat' : 'public';
+			this.createMatrixRoom({
+				room_alias_name: this.slugName,
+				visibility,
+				name: `${this.roomName} [Audius]`,
+				topic: `Join this room at https://audius.rockdapus.org?import=#${this.slugName}:matrix.org&type=room&title=${encodeURIComponent(this.roomName)}`,
+			});
+		},
 	},
 	computed: {
 		...mapState(['createMatrixRoomModal']),
 		...mapGetters(['tagNames']),
+		slugName() {
+			if (this.roomName.length < 5) return '…';
+			const slug = slugify(this.roomName)
+				.slice(0, 20)
+				.replace(/-$/, '');
+			return `${slug}-audius`;
+		},
 	},
 };
 </script>
@@ -38,32 +50,27 @@ export default {
 					<input
 						type="text"
 						class="input--border"
+						v-model="roomName"
 						placeholder="Room name">
 				</div>
 				<div class="spacer"></div>
+				#{{slugName}}:matrix.org
 			</p>
 			<p>
 				<div>
-					<input type="checkbox" id="private-room"><label for="private-room"></label>
+					<input type="checkbox" id="hidden-room-m"><label for="hidden-room-m"></label>
 					Hidden
 					<span class="smaller">Not publicly listed</span>
 				</div>
-				<div>
-					<input type="checkbox" id="private-room"><label for="private-room"></label>
-					Private
-					<span class="smaller">New users need to be approved</span>
-				</div>
-				<div>
-					<input type="checkbox" id="can-post"><label for="can-post"></label>
-					Restrict posting
-					<span class="smaller">Only Jacks and higher are allowed to post</span>
-				</div>
 			</p>
-			<p>
+			<div class="modal__btn-group">
+				<button class="button" @click="close">Cancel</button>
 				<button
 					class="button btn--blue"
-					@click="createMatrixRoom">create</button>
-			</p>
+					v-bind:disabled="roomName.length < 5"
+					v-bind:title="roomName.length < 5 ? 'The room name must be at least 5 characters long' : ''"
+					@click="_createMatrixRoom">create</button>
+			</div>
 		</div>
 	</div>
 </template>
@@ -75,4 +82,5 @@ export default {
 .matrix-create
 	input
 		width: 100%
+		margin-bottom: $grid-space
 </style>
