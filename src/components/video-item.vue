@@ -1,5 +1,6 @@
 <script>
 import { mapMutations, mapState, mapActions } from 'vuex';
+import { getMediaLink, youtubeLink } from '../utils';
 
 export default {
 	name: 'video-item',
@@ -60,23 +61,12 @@ export default {
 			this.$emit('addToPlaylist', this.video.id);
 		},
 		youtubeLink() {
-			let link = `https://youtu.be/${this.video.id}`;
-			if (this.video.start || this.video.stop) link += '?';
-			if (this.video.start) link += `start=${this.video.start}`;
-			if (this.video.stop) {
-				if (this.video.start) link += '&';
-				link += `end=${this.video.stop}`;
-			}
-			return link;
+			return youtubeLink(this.video);
 		},
 		copyToClip() {
 			window.getSelection().removeAllRanges();
 			const tmpEl = document.createElement('div');
-			if (this.video.type !== 'youtube') {
-				tmpEl.innerHTML = `${this.video.title} ${this.video.href}`;
-			} else {
-				tmpEl.innerHTML = `${this.video.title} ${this.youtubeLink()}`;
-			}
+			tmpEl.innerHTML = getMediaLink(this.video);
 			document.body.appendChild(tmpEl);
 
 			const range = document.createRange();

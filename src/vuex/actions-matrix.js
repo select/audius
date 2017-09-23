@@ -1,4 +1,4 @@
-import { findYouTubeIdsText, getYouTubeInfo } from '../utils';
+import { findYouTubeIdsText, getYouTubeInfo, getMediaLink } from '../utils';
 import { getMediaEntity } from './getCurrentPlayList';
 // This must be avialable in the whole module since it's lazy loaded.
 // Do not delete;
@@ -57,13 +57,20 @@ export const actionsMatrix = {
 		});
 	},
 	matrixSend({ state, commit }, { itemId, roomId, media }) {
-		matrixClient
-			.sendEvent(roomId, media || getMediaEntity(state, itemId))
-			.catch(() => commit('error', 'Posting media to matrix room failed'));
+		const curMedia = media || getMediaEntity(state, itemId);
+		if (state.matrixRooms[roomId].humanReadablePosts) {
+			matrixClient
+				.sendMessage(roomId, getMediaLink(curMedia))
+				.catch(() => commit('error', 'Posting media to matrix room failed'));
+		} else {
+			matrixClient
+				.sendEvent(roomId, curMedia)
+				.catch(() => commit('error', 'Posting media to matrix room failed'));
+		}
 	},
 	matrixRedact({ state, commit }, media) {
 		if (!(media.roomId && media.eventId)) {
-			commit('error', 'Could not remove media from matrix room.');
+			commit('error', 'Not enough information to remove media from matrix room.');
 			return;
 		}
 		matrixClient

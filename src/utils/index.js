@@ -20,3 +20,4 @@ export { hashCode } from './hashCode';
 export { cleanWindowLocation, getParameterByName } from './windowLocationTools';
 export { webScraper } from './webScraper';
 export { getMediaDuration } from './getMediaDuration';
+export { youtubeLink, getMediaLink } from './mediaLink';
