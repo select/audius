@@ -43,6 +43,9 @@ Create your own rooms with the [Riot web client](https://riot.im/app/) or [any o
 
 **2.0.8**
 *	Import [Streamly](https://github.com/LNFWebsite/Streamly) playlist.
+*	Discover public Matrix rooms.
+*	Create Matrix rooms.
+*	Allow Admins to remove messages from rooms.
 
 **2.0.7**
 *	Vimeo video player integrated.
@@ -190,6 +193,7 @@ As Audius evolved I tried out new technologies, one of them the Matrix chat netw
 
 Here are some alternatives to Audius that are also interesting:
 
+*   [Streamly](https://lnfwebsite.github.io/Streamly)
 *   [StreamSquid](http://streamsquid.com/)
 *   [My Cloud Player](https://mycloudplayers.com)
 
@@ -203,9 +207,10 @@ Here are the tools I used to create Audius.
 
 *   VueJs
 *   <span style="text-decoration:line-through;">Redux</span> Vuex
-*   Icomoon
-*   Google material icons
-*   Webpack + Babel + Plugins
+*   Icomoon + Google material icons
+*   Webpack + Plugins
 *   LivingStyleGuide
 *   <span style="text-decoration:line-through;">[SortableJS](https://rubaxa.github.io/Sortable/)</span> vuedraggable
 *   [Myjson.com](http://myjson.com/)
+*   Matrix
+*   Imgur
