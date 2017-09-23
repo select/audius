@@ -96,7 +96,7 @@ export default {
 		<b>2.0.8</b><br>
 		<ul>
 			<li> Import <a href="https://github.com/LNFWebsite/Streamly" target="_blank">Streamly</a> playlist.</li>
-			<li> Make Matrix rooms easier to find.</li>
+			<li> Discover public Matrix rooms.</li>
 			<li> Create Matrix rooms.</li>
 			<li> Allow Admins to remove messages from rooms.</li>
 		</ul>
@@ -254,6 +254,7 @@ export default {
 	<p>
 		Here are some alternatives to Audius that are also interesting:
 		<ul>
+			<li><a href="https://lnfwebsite.github.io/Streamly" target="_blank">Streamly</a></li>
 			<li><a href="http://streamsquid.com/" target="_blank">StreamSquid</a></li>
 			<li><a href="https://mycloudplayers.com" target="_blank">My Cloud Player</a></li>
 		</ul>
@@ -268,12 +269,13 @@ export default {
 		<ul>
 			<li>VueJs</li>
 			<li><span style="text-decoration:line-through;">Redux</span> Vuex</li>
-			<li>Icomoon</li>
-			<li>Google material icons</li>
+			<li>Icomoon + Google material icons</li>
 			<li>Webpack + Plugins</li>
 			<li>LivingStyleGuide</li>
 			<li><a href="https://rubaxa.github.io/Sortable/">SortableJS</a>; vuedraggable</li>
 			<li><a target="_blank" href="http://myjson.com/">Myjson.com</a></li>
+			<li>Matrix</li>
+			<li>Imgur</li>
 		</ul>
 	</p>
 	<h2>Impressum</h2>

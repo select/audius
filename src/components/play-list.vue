@@ -44,9 +44,9 @@ export default {
 	updated() {
 		this.checkElementVisible();
 	},
-	beforeDestroy() {
-		this.subscriptions.forEach((unsub) => { unsub(); });
-	},
+	// beforeDestroy() {
+	// 	this.subscriptions.forEach((unsub) => { unsub(); });
+	// },
 	methods: {
 		...mapMutations([
 			'dropSearchResult',
@@ -59,13 +59,16 @@ export default {
 			'toggleJump',
 			'dropMoveItem',
 			'setShowWatched',
+			'setLeftMenuTab'
 		]),
 		...mapActions(['importURL', 'matrixPaginate', 'runWebScraper', 'matrixSend']),
 		checkElementVisible() {
 			/* eslint-disable no-param-reassign */
-			this.$refs.playListEls.forEach((ve) => {
-				if (!ve.isVisible) ve.isVisible = isElementInViewport(ve.$el);
-			});
+			if (this.$refs.playListEls) {
+				this.$refs.playListEls.forEach((ve) => {
+					if (!ve.isVisible) ve.isVisible = isElementInViewport(ve.$el);
+				});
+			}
 		},
 		addMusic() {
 			this.importURL({ url: starterPlaylist });
@@ -160,7 +163,12 @@ export default {
 			},
 		},
 		showWelcome() {
-			return !(this.showImport || this.showExport || this.showJump || this.filteredPlayListLength);
+			return !(
+				this.showImport
+				|| this.showExport
+				|| this.showJump
+				|| this.filteredPlayListLength
+				|| this.currentMatrixRoom);
 		},
 		currentSourceId() {
 			const names = ['currentPlayList', 'currentMatrixRoom', 'currentWebScraper'];
@@ -173,24 +181,43 @@ export default {
 <template>
 <div class="play-list">
 	<div class="play-list__body">
-		<h2 v-if="currentWebScraper && !_entities.length ">
-			There are currently no results from this channel, press below to load more.
-		</h2>
 		<draggable
-			element="h2"
-			v-show="showWelcome && leftMenuTab == 'playList'"
+			element="div"
+			class="play-list__greeting"
+			v-show="showWelcome && ['playList', 'radio'].includes(leftMenuTab)"
 			@add="dropAdd"
 			:options="{ sort: false, group: { name: 'lists' } }">
-			The playlist is empty <br>
 			(⊃｡•́‿•̀｡)⊃ <br>
 			<br>
-			<span @click="toggleSearch()">
-				<span class="wmp-icon-search" title="[f] Search on YouTube"></span> Search
-			</span>
-				and add some songs. Or click
+			<div>
+				The playlist is empty
+			</div>
+			<div>
+				Find music and videos you love <br>
 				<button
-					class="play-list__btn-add-music button btn--blue"
+					class="button btn--blue"
+					@click="toggleSearch()">
+					Search
+				</button>
+			</div>
+			<div>
+				Join a room and share your discoveries <br>
+				<button
+					@click="setLeftMenuTab('radio')"
+					class="button btn--blue">join room</button>
+			</div>
+			<div>
+				Watch funny videos from Imgur <br>
+				<button
+					@click="setLeftMenuTab('tv')"
+					class="button btn--blue">watch imgur</button>
+			</div>
+			<div>
+				Add some songs to you playlist <br>
+				<button
+					class="button btn--blue"
 					@click="addMusic">add music</button>
+			</div>
 		</draggable>
 
 		<play-list-import
@@ -250,6 +277,18 @@ export default {
 					:isWebScraper="!!(currentWebScraper)"
 					:isPlaying="isPlaying && (currentMedia.id == media.id)"></video-item>
 			</draggable>
+
+			<div
+				class="play-list__greeting"
+				v-if="currentMatrixRoom && !_entities.length ">
+				Nothing found. Click load more or add from search or playlists.
+			</div>
+			<div
+				class="play-list__greeting"
+				v-if="currentWebScraper && !_entities.length ">
+				Nothing found. Click load more.
+			</div>
+
 			<div
 				v-if="currentWebScraper"
 				@click="runWebScraper(currentWebScraper)"
@@ -308,22 +347,26 @@ export default {
 	display: flex
 	flex-direction: column
 	height: 100%
-	h2
-		font-weight: 100
-		width: 100%
-		text-align: center
-		line-height: 2rem
-		[class^='wmp-icon']
-			height: #{3 * $grid-space}
-			&:before
-				font-size: 1em
-		span
-			cursor: pointer
+.play-list__greeting
+	margin: #{2 * $grid-space} 0 #{2 * $grid-space} 0
+	width: 100%
+	text-align: center
+	line-height: 1.5rem
+	font-size: 1.2rem
+	[class^='wmp-icon']
+		height: #{3 * $grid-space}
+		&:before
+			font-size: 1em
+	span
+		cursor: pointer
+	>div
+		margin-top: #{3 * $grid-space}
+		> button.button
+			width: #{5 * $touch-size-medium}
+			margin-top: #{2 * $grid-space}
+			// padding: 0 #{5 * $grid-space}
+			height: $touch-size-medium
 
-	.button.play-list__btn-add-music
-		margin-top: #{6 * $grid-space}
-		padding: 0 #{5 * $grid-space}
-		height: $touch-size-large
 
 
 .play-list__body

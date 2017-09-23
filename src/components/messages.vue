@@ -12,7 +12,7 @@ export default {
 							el.querySelector(`[data-id="${idx}"]`).hidden = true;
 						});
 						kidx.push(...newIdxs);
-					}, 3000);
+					}, 5000);
 				})(
 					this.$el,
 					[...Array(this.errorMessages.length).keys()].filter(

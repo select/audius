@@ -32,6 +32,7 @@ const presistMutation = {
 	migrationSuccess: ['migration'],
 	removeVideo: ['playList', 'tags', 'entities'],
 	setMatrixCredentials: ['matrix'],
+	setPublicRooms: ['matrix'],
 	setMatrixEnabled: ['matrixEnabled'],
 	upgradeEntities: ['entities'],
 	setStartStopMarker: ['entities'],
@@ -61,7 +62,6 @@ export const store = new Vuex.Store({
 		tagsOrdered: [],
 		matrixRooms: {},
 		matrixRoomsOrdered: [],
-		createMatrixRoomModal: false,
 		webScrapers: { Imgur: { playList: [], playedMedia: {}, archive: [] } },
 		webScrapersOrdered: ['Imgur'],
 		paginationIndex: {},
@@ -107,6 +107,9 @@ export const store = new Vuex.Store({
 			isSearching: false,
 			results: [],
 		},
+		// Matrix
+		createMatrixRoomModal: false,
+		showMatrixRoomDirectory: false,
 		matrixEnabled: false,
 		matrixLoggedIn: false,
 		matrix: {
@@ -116,7 +119,9 @@ export const store = new Vuex.Store({
 				userId: '',
 				deviceId: '',
 			},
+			publicRooms: [],
 		},
+		// deprectaed try remove this
 		reloadScript: {
 			vimeo: 1,
 			youtube: 1,

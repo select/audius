@@ -10,14 +10,17 @@ export default {
 		room() {
 			return this.matrixRooms[this.currentMatrixRoom];
 		},
+		members() {
+			return this.room.members || [];
+		},
 		admin() {
-			return this.room.members.filter(({ powerLevel }) => powerLevel >= 100);
+			return this.members.filter(({ powerLevel }) => powerLevel >= 100);
 		},
 		speaker() {
-			return this.room.members.filter(({ powerLevel }) => powerLevel >= 50 && powerLevel < 100);
+			return this.members.filter(({ powerLevel }) => powerLevel >= 50 && powerLevel < 100);
 		},
 		listener() {
-			return this.room.members.filter(({ powerLevel }) => powerLevel < 50);
+			return this.members.filter(({ powerLevel }) => powerLevel < 50);
 		},
 		myId() {
 			return this.matrix.credentials.userId;
@@ -109,7 +112,7 @@ export default {
 			Restricted posting
 			<span class="smaller">Only 50+ power users are allowed to post</span>
 		</div> -->
-		<div v-if="!room.name.includes('Audius')">
+		<div v-if="room.alias && !room.alias.includes('audius')">
 			<input
 				type="checkbox"
 				v-bind:checked="room.humanReadablePosts"

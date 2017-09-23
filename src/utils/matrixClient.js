@@ -78,9 +78,10 @@ export const matrixClient = {
 		return this.client.setRoomTag(roomId, tagName);
 	},
 	createRoom(options) {
-		// const opt = Object.assign(){
+		// ```
+		// {
 		// 	room_alias_name: 'blaa-audius',
-		// 	visibility: 'public', // 'private'
+		// 	visibility: 'public', // or 'private'
 		// 	invite: [
 		// 		'bllakd:matrix.org',
 		// 		'user1:matrix.org',
@@ -88,7 +89,15 @@ export const matrixClient = {
 		// 	name: 'Blaaa [Audius]',
 		// 	topic: 'Join this room with https://audius.rockdapus.org',
 		// };
+		// ```
 		return this.client.createRoom(options);
+	},
+	listPublicRooms() {
+		return this.client.publicRooms({
+			filter: {
+				generic_search_term: 'audius',
+			},
+		});
 	},
 	getCredentialsWithPassword(username, password) {
 		return new Promise(resolve => {

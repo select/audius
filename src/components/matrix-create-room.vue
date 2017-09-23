@@ -49,8 +49,8 @@ export default {
 		@click="close"
 		class="modal matrix-create">
 		<div class="modal__body" @click.stop>
+			<h3>Create matrix room</h3>
 			<p>
-				<h3>Create matrix room</h3>
 				<div>
 					<input
 						type="text"

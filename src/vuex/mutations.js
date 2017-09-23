@@ -1,3 +1,4 @@
+import { mutationsMatrix } from './mutations-matrix';
 import { webScraper } from '../utils';
 import { youtubeApiKey } from '../utils/config';
 import {
@@ -6,16 +7,6 @@ import {
 	getCurrentName,
 	getMediaEntity
 } from './getCurrentPlayList';
-
-const matrixRoomTemplate = () =>
-	JSON.parse(
-		JSON.stringify({
-			name: '',
-			playList: [],
-			playedMedia: {},
-			archive: [],
-		})
-	);
 
 /* eslint-disable no-param-reassign */
 function playMedia(state, media) {
@@ -39,14 +30,17 @@ function selectMediaSource(state, { type, id }) {
 		state.currentPlayList = null;
 		state.currentMatrixRoom = null;
 		state.currentWebScraper = id;
+		state.leftMenuTab = 'tv';
 	} else if (type === 'radio' || type === 'matrix') {
 		state.currentWebScraper = null;
 		state.currentPlayList = null;
 		state.currentMatrixRoom = id;
+		state.leftMenuTab = 'radio';
 	} else if (type === 'playList') {
 		state.currentWebScraper = null;
 		state.currentMatrixRoom = null;
 		state.currentPlayList = id;
+		state.leftMenuTab = 'playList';
 	}
 	if (state.isMobile) {
 		state.leftMenuTab = '';
@@ -147,6 +141,7 @@ function play(state, mediaId, media) {
 
 /* eslint-disable no-param-reassign */
 export const mutations = {
+	...mutationsMatrix,
 	recoverState(state, recoveredState) {
 		state = Object.assign(state, recoveredState);
 		if (state.currentPlayList === null) state.currentPlayList = '';
@@ -179,6 +174,7 @@ export const mutations = {
 	},
 	setLeftMenuTab(state, id) {
 		state.leftMenuTab = id;
+		state.showLeftMenu = true;
 	},
 	setShowSettings(state) {
 		state.showSettings = true;
@@ -477,98 +473,6 @@ export const mutations = {
 	},
 	setPendingImportURL(state, data) {
 		state.pendingImportURL = data;
-	},
-
-	// Matrix Radio
-	// ---
-
-	setMatrixEnabled(state) {
-		state.matrixEnabled = !state.matrixEnabled;
-	},
-	setMatrixCredentials(state, credentials) {
-		state.matrix.hasCredentials = true;
-		state.matrix.credentials = credentials;
-	},
-	setMatrixLoggedIn(state, rooms) {
-		state.matrixLoggedIn = true;
-		const userId = state.matrix.credentials.userId;
-		rooms.forEach(room => {
-			const roomId = room.roomId;
-
-			// Create room if not known yet.
-			if (!(roomId in state.matrixRooms)) {
-				state.matrixRooms[roomId] = Object.assign({}, matrixRoomTemplate(), { name: room.name });
-			}
-
-			if (room.currentState) {
-				// Set members of the room.
-				state.matrixRooms[roomId].members = Object
-					.entries(room.currentState.members)
-					.map(([id, member]) => ({ id, powerLevel: member.powerLevel }));
-
-				// Set flag indicating if current user is admin.
-				const myuser = room.currentState.members[userId] || {};
-				state.matrixRooms[roomId].isAdmin = myuser.powerLevel >= 100;
-
-				try {
-					state.matrixRooms[roomId].alias = room.currentState.events['m.room.aliases']['matrix.org'].event.content.aliases[0];
-				} catch (e) {
-					console.warn('could not get alias, well it is bad code anyway');
-				}
-			}
-
-			// Add to ordered rooms list if not on the list yet.
-			if (!state.matrixRoomsOrdered.includes(roomId)) {
-				state.matrixRoomsOrdered.unshift(roomId);
-			}
-			// Set room name if it changed and is not a matrix id.
-			if (
-				state.matrixRooms[roomId].name !== room.name &&
-				!room.name.includes(':matrix.org')
-			) {
-				state.matrixRooms[roomId].name = room.name;
-			}
-		});
-	},
-	toggleMatrixRoomModal(state, toggleState) {
-		state.createMatrixRoomModal =
-			toggleState !== undefined ? toggleState : !state.createMatrixRoomModal;
-	},
-	matrixRemoveAccount(state) {
-		state.matrix = {
-			hasCredentials: false,
-			credentials: {
-				accessToken: '',
-				userId: '',
-				deviceId: '',
-			},
-		};
-	},
-	matrixLogout(state) {
-		state.matrixLoggedIn = false;
-		state.matrixRooms = {};
-		state.matrixRoomsOrdered = [];
-		state.currentMatrixRoom = '';
-	},
-	deleteMatrixRoom(state, roomId) {
-		state.matrixRoomsOrdered = state.matrixRoomsOrdered.filter(id => id !== roomId);
-	},
-	updateMatrixRoom(state, { roomId, values }) {
-		// Create room if it does not exist.
-		if (!state.matrixRooms[roomId]) {
-			state.matrixRooms[roomId] = Object.assign({}, matrixRoomTemplate(), { name: roomId });
-		}
-		// Add to room list if not on the list.
-		if (!state.matrixRoomsOrdered.includes(roomId)) {
-			state.matrixRoomsOrdered.unshift(roomId);
-		}
-		// Remove room from room list if it does not exist any more.
-		state.matrixRoomsOrdered = state.matrixRoomsOrdered.filter(id => id in state.matrixRooms);
-		// Assign values to room. This assumes that merging ect was done in the function
-		// that triggered this mutation.
-		state.matrixRooms[roomId] = Object.assign({}, state.matrixRooms[roomId], values);
-		// Update the reference so the UI redraws.
-		state.matrixRooms = Object.assign({}, state.matrixRooms);
 	},
 
 	// Web Scraper

@@ -2,12 +2,14 @@
 import { mapMutations, mapState, mapActions } from 'vuex';
 import draggable from 'vuedraggable';
 
-import CreateRoomModal from './create-room-modal.vue';
+import MatrixCreateRoom from './matrix-create-room.vue';
+import MatrixPublicRooms from './matrix-public-rooms.vue';
 
 export default {
 	components: {
 		draggable,
-		CreateRoomModal,
+		MatrixCreateRoom,
+		MatrixPublicRooms,
 	},
 	data() {
 		return {
@@ -20,7 +22,15 @@ export default {
 		}
 	},
 	methods: {
-		...mapMutations(['setMatrixEnabled', 'selectMediaSource', 'movematrixRoomsOrdered', 'setShowMediumSettings', 'toggleMatrixRoomModal', 'error']),
+		...mapMutations([
+			'setMatrixEnabled',
+			'selectMediaSource',
+			'movematrixRoomsOrdered',
+			'setShowMediumSettings',
+			'toggleMatrixRoomModal',
+			'toggleMatrixRoomDirectory',
+			'error',
+		]),
 		...mapActions(['joinMatrixRoom', 'leaveMatrixRoom', 'matrixSend', 'initMatrix']),
 		addMatrixRoom() {
 			const el = document.querySelector('.matrix-room input');
@@ -76,15 +86,12 @@ export default {
 		v-if="matrixLoggedIn && !matrixRoomsOrdered.length">
 		You did not join any rooms yet!
 		<br>
-		Here are some rooms for you.
-		<br><br>
-		<a class="button btn--blue" href="?import=!zKinTrtpQEyHfnIbnI:matrix.org&type=room&title=Random">Random</a>
-		<a class="button btn--blue" href="?import=!VTIhlnDdHsxZFZQNFh:matrix.org&type=room&title=Rock">Rock</a>
-		<a class="button btn--blue" href="?import=!sgKmJzakMmEdSCgKCE:matrix.org&type=room&title=Electronic">Electronic</a>
+		Open the <span @click="toggleMatrixRoomDirectory()">room directory</span> or
 		<br>
-		You can also create your own public / private rooms.
+		create your own room.
 	</div>
-	<create-room-modal></create-room-modal>
+	<matrix-create-room></matrix-create-room>
+	<matrix-public-rooms></matrix-public-rooms>
 	<draggable
 		class="matrix-room__tags"
 		v-model="_matrixRoomsOrdered"
@@ -140,6 +147,10 @@ export default {
 				class="wmp-icon-add"
 				title="Create / join room"
 				@click="addMatrixRoom"></span>
+			<span
+				class="wmp-icon-format_list_bulleted"
+				title="Room directory"
+				@click="toggleMatrixRoomDirectory()"></span>
 		</li>
 	</ul>
 	<div class="modal" v-if="showConfirmDelte" @click="showConfirmDelte = false">
@@ -176,11 +187,11 @@ export default {
 	color: $color-catskillwhite
 .play-list-manager__room-suggestions
 	color: $color-catskillwhite
-	display: flex
-	flex-wrap: wrap
 	margin: $grid-space
-	>*
-		margin-right: $grid-space
+	text-align: center
+	span
+		text-decoration: underline
+		cursor: pointer
 
 </style>
 

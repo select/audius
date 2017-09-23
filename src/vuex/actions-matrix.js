@@ -35,12 +35,18 @@ export const actionsMatrix = {
 					.getCredentials()
 					.then(credentials => commit('setMatrixCredentials', credentials))
 					.then(() => matrixClient.login(state.matrix.credentials, dispatch, commit))
-					.then(rooms => commit('setMatrixLoggedIn', rooms))
+					.then(rooms => {
+						commit('setMatrixLoggedIn', rooms);
+						dispatch('updatePublicRooms');
+					})
 					.catch(error => commit('error', `Login failed. ${error}`));
 			} else if (!state.matrixLoggedIn) {
 				matrixClient
 					.login(state.matrix.credentials, dispatch, commit)
-					.then(rooms => commit('setMatrixLoggedIn', rooms))
+					.then(rooms => {
+						commit('setMatrixLoggedIn', rooms);
+						dispatch('updatePublicRooms');
+					})
 					.catch(error => commit('error', `Login failed. ${error}`));
 			}
 		});
@@ -124,7 +130,10 @@ export const actionsMatrix = {
 				room.name = options.name;
 				room.roomId = room.room_id;
 				commit('setMatrixLoggedIn', [room]);
-				commit('updateMatrixRoom', { roomId: room.roomId, values: { isHidden: options.visibility === 'private' } });
+				commit('updateMatrixRoom', {
+					roomId: room.roomId,
+					values: { isHidden: options.visibility === 'private' },
+				});
 				commit('toggleMatrixRoomModal', false);
 				commit('selectMediaSource', { type: 'radio', id: room.room_id });
 				commit('setLeftMenuTab', 'radio');
@@ -147,12 +156,17 @@ export const actionsMatrix = {
 	},
 	updateRoomOptions({ commit }, options) {
 		if ('humanReadablePosts' in options) {
-			commit('updateMatrixRoom', { roomId: options.id, values: { humanReadablePosts: options.humanReadablePosts } });
+			commit('updateMatrixRoom', {
+				roomId: options.id,
+				values: { humanReadablePosts: options.humanReadablePosts },
+			});
 		}
 		if ('isHidden' in options) {
 			matrixClient
 				.setRoomVisibility(options.id, options.isHidden)
-				.then(() => commit('updateMatrixRoom', { roomId: options.id, values: { isHidden: options.isHidden } }))
+				.then(() =>
+					commit('updateMatrixRoom', { roomId: options.id, values: { isHidden: options.isHidden } })
+				)
 				.catch(error => commit('error', `Could not set room private. ${error}`));
 		}
 	},
@@ -161,6 +175,21 @@ export const actionsMatrix = {
 			.leaveRoom(roomIdOrAlias)
 			.then(() => commit('deleteMatrixRoom', roomIdOrAlias))
 			.catch(() => commit('error', 'Leaving matrix room failed'));
+	},
+	updatePublicRooms({ commit }) {
+		const blacklist = new Set(['!hUkskxfIMmwAQuZIjz:matrix.org']);
+		matrixClient
+			.listPublicRooms()
+			.then(res => {
+				const rooms = res.chunk.filter(({ room_id }) => !blacklist.has(room_id));
+				commit('setPublicRooms', rooms.map(room => ({
+					name: room.name.replace('[Audius]', ''),
+					id: room.room_id,
+					numberOfMembers: room.num_joined_members,
+					topic: room.topic,
+				})));
+			})
+			.catch(() => commit('error', 'Getting public matrix Rooms failed'));
 	},
 	matrixLogout({ commit }) {
 		// FIXIME this is async and could return a promis
