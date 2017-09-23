@@ -71,8 +71,11 @@ export const matrixClient = {
 	setRoomName(roomId, name) {
 		return this.client.setRoomName(roomId, name);
 	},
-	setRoomVisibility(roomId, setPublic = true) {
-		return this.client.setRoomDirectoryVisibility(roomId, setPublic ? 'public' : 'private');
+	setRoomVisibility(roomId, setPrivate = true) {
+		return this.client.setRoomDirectoryVisibility(roomId, setPrivate ? 'private' : 'public');
+	},
+	setRoomTag(roomId, tagName) {
+		return this.client.setRoomTag(roomId, tagName);
 	},
 	createRoom(options) {
 		// const opt = Object.assign(){

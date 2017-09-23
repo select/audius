@@ -124,6 +124,7 @@ export const actionsMatrix = {
 				room.name = options.name;
 				room.roomId = room.room_id;
 				commit('setMatrixLoggedIn', [room]);
+				commit('updateMatrixRoom', { roomId: room.roomId, values: { isHidden: options.visibility === 'private' } });
 				commit('toggleMatrixRoomModal', false);
 				commit('selectMediaSource', { type: 'radio', id: room.room_id });
 				commit('setLeftMenuTab', 'radio');
@@ -138,14 +139,20 @@ export const actionsMatrix = {
 			.then(() => commit('setMatrixLoggedIn', [{ roomId: id, name }]))
 			.catch(error => commit('error', `Could not rename matrix room: ${error}`));
 	},
+	setRoomTag({ commit }, { roomId, tagName }) {
+		matrixClient
+			.setRoomTag(roomId, tagName)
+			.then(() => console.log('room tag is set'))
+			.catch(error => commit('error', `Could not set tagName. ${error}`));
+	},
 	updateRoomOptions({ commit }, options) {
-		if (options.hidden !== undefined) {
-			// matrixClient TODO
+		if ('humanReadablePosts' in options) {
+			commit('updateMatrixRoom', { roomId: options.id, values: { humanReadablePosts: options.humanReadablePosts } });
 		}
-		if (options.private !== undefined) {
+		if ('isHidden' in options) {
 			matrixClient
-				.setRoomVisibility(options.id, options.private)
-				.then(() => commit('updateMatrixRoom', options))
+				.setRoomVisibility(options.id, options.isHidden)
+				.then(() => commit('updateMatrixRoom', { roomId: options.id, values: { isHidden: options.isHidden } }))
 				.catch(error => commit('error', `Could not set room private. ${error}`));
 		}
 	},

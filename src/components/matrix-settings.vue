@@ -1,5 +1,5 @@
 <script>
-import { mapGetters, mapMutations, mapState, mapActions } from 'vuex';
+import { mapGetters, mapState, mapActions } from 'vuex';
 
 import { debounce } from '../utils';
 
@@ -24,9 +24,10 @@ export default {
 		},
 	},
 	methods: {
-		...mapActions(['setRoomName', 'updateRoomOptions']),
-		...mapMutations(['updateWebScraper', 'addUrlPattern', 'renameWebScraper']),
-		_setRoomName: debounce(function(id, name) { this.setRoomName({ id, name }); }, 1000),
+		...mapActions(['setRoomName', 'updateRoomOptions', 'setRoomTag']),
+		_setRoomName: debounce(function debouncedSetName(id, name) {
+			this.setRoomName({ id, name });
+		}, 1000),
 		_inviteUser() {
 			// TODO
 		}
@@ -43,6 +44,11 @@ export default {
 		placeholder="… name"
 		v-bind:disabled="!room.isAdmin"
 		v-bind:value="room.name">
+	<div class="row">
+		<a v-bind:href="'https://matrix.to/#/'+room.alias" target="_blank">{{room.alias}}</a>
+
+	</div>
+	<div class="spacer"></div>
 	<div class="smaller row" v-if="!room.isAdmin"><b>You are not an admin</b>, you can not edit this room.</div>
 	<h3>Members</h3>
 	<h4>Admin</h4>
@@ -63,7 +69,7 @@ export default {
 			{{member.id}}
 		</div>
 	</div>
-	<h4>Invite</h4>
+	<!-- <h4>Invite</h4>
 	<ul class="input-list">
 		<li v-for="userId in []">
 			{{userId}}
@@ -72,19 +78,20 @@ export default {
 			<input class="input-list__input" type="text" placeholder="… @user-name:matrix.org">
 			<span class="wmp-icon-add" @click="_inviteUser"></span>
 		</li>
-	</ul>
+	</ul> -->
 	<h3>Options</h3>
 	<div class="row">
 		<div>
 			<input
 				type="checkbox"
 				v-bind:disabled="!room.isAdmin"
-				@change="updateRoomOptions({id: currentMatrixRoom, hidden: $event.target.checked})"
+				v-bind:checked="room.isHidden"
+				@change="updateRoomOptions({id: currentMatrixRoom, isHidden: $event.target.checked})"
 				id="hidden-room"><label for="hidden-room"></label>
 			Hidden
 			<span class="smaller">Not publicly listed</span>
 		</div>
-		<div>
+		<!-- <div>
 			<input
 				type="checkbox"
 				v-bind:disabled="!room.isAdmin"
@@ -97,18 +104,18 @@ export default {
 			<input
 				v-bind:disabled="!room.isAdmin"
 				type="checkbox"
-				@change="updateRoomOptions({id: currentMatrixRoom, humanReadablePosts: $event.target.checked})"
-				id="human-read"><label for="human-read"></label>
-			Post human readable links
-		</div>
-		<div>
-			<input
-				v-bind:disabled="!room.isAdmin"
-				type="checkbox"
 				@change="updateRoomOptions({id: currentMatrixRoom, restrictPosting: $event.target.checked})"
 				id="restrict-post"><label for="restrict-post"></label>
 			Restricted posting
 			<span class="smaller">Only 50+ power users are allowed to post</span>
+		</div> -->
+		<div v-if="!room.name.includes('Audius')">
+			<input
+				type="checkbox"
+				v-bind:checked="room.humanReadablePosts"
+				@change="updateRoomOptions({id: currentMatrixRoom, humanReadablePosts: $event.target.checked})"
+				id="human-read"><label for="human-read"></label>
+			Post human readable links
 		</div>
 	</div>
 </div>
@@ -126,6 +133,8 @@ export default {
 		height: $touch-size-huge
 		width: 100%
 		margin-bottom: $grid-space
+	.spacer
+		height: #{2 * $grid-space}
 .matrix-settings__me
 	color: $color-pictonblue
 </style>
