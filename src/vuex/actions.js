@@ -8,6 +8,7 @@ import {
 	searchVimeo,
 	getPlayList,
 	importPlayListFromString,
+	streamlyUrlRegEx,
 	ajaxPostJSON,
 	ajax,
 	getMediaDuration,
@@ -92,13 +93,9 @@ export const actions = {
 	},
 
 	importPlayListFromString({ commit }, importString) {
-		importPlayListFromString(importString).then((data, error) => {
-			if (error) {
-				commit('error', error);
-			} else {
-				commit('importPlayList', { data });
-			}
-		});
+		importPlayListFromString(importString)
+			.then((data) => commit('importPlayList', { data }))
+			.catch(error => commit('error', `Can not read playlist. ${error}`));
 	},
 	importURL({ state, commit }, { url, name }) {
 		if (youTubePlaylistRexEx.test(url)) {
@@ -107,6 +104,10 @@ export const actions = {
 				const playList = data.map(({ id }) => id);
 				commit('importPlayList', { data: { playList, entities }, tagName: name });
 			});
+		} else if (streamlyUrlRegEx.test(url)) {
+			importPlayListFromString(url)
+				.then((data) => commit('importPlayList', { data }))
+				.catch(error => commit('error', `Could not import streamly playlist. ${error}`));
 		} else {
 			ajax(url).then(data => {
 				commit('importPlayList', { data, tagName: name });

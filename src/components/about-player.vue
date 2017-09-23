@@ -93,6 +93,10 @@ export default {
 	</p>
 	<h2>Change log</h2>
 	<p>
+		<b>2.0.8</b><br>
+		<ul>
+			<li> Import <a href="https://github.com/LNFWebsite/Streamly" target="_blank">Streamly</a> playlist.</li>
+		</ul>
 		<b>2.0.7</b><br>
 		<ul>
 			<li> Vimeo video player integrated.</li>

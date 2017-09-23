@@ -1,6 +1,8 @@
 import { s2time } from './timeConverter';
 import { videoBaseObject } from '../vuex/video';
 
+export const streamlyUrlRegEx = /Streamly\/#/i;
+
 export function importPlayListFromString(dataString) {
 	return new Promise((resolve, reject) => {
 		let dataJSON;
@@ -12,6 +14,28 @@ export function importPlayListFromString(dataString) {
 			} catch (err) {
 				reject(err);
 				return;
+			}
+		} else if (streamlyUrlRegEx.test(dataString)) {
+			try {
+				const [, rawData] = dataString.split('#');
+				const streamlyPlaylist = JSON.parse(atob(rawData));
+				const playList = streamlyPlaylist
+					.slice(1, streamlyPlaylist.length - 1) // The first entry is the playlist name.
+					.map(([title, durationS, youtubeId]) => Object.assign({}, videoBaseObject, {
+						youtubeId,
+						id: youtubeId,
+						type: 'youtube',
+						title: decodeURIComponent(title),
+						duration: s2time(durationS),
+						durationS,
+					}));
+				resolve({
+					playList: playList.map(({ id }) => id),
+					entities: playList.reduce((acc, item) => Object.assign(acc, { [item.id]: item }), {}),
+				});
+				return;
+			} catch (e) {
+				reject(e);
 			}
 		} else if (dataString.indexOf('window.getAudiusPlaylist = function()') !== -1) {
 			eval(dataString);

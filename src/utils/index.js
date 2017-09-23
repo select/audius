@@ -14,7 +14,7 @@ export {
 export { isVimeoVideoRegEx, searchVimeo } from './vimeo';
 export { isElementInViewport } from './isElementInViewport';
 export { indexDB } from './indexDB2';
-export { importPlayListFromString } from './importPlayListFromString';
+export { importPlayListFromString, streamlyUrlRegEx } from './importPlayListFromString';
 export { starterPlaylist } from './config';
 export { hashCode } from './hashCode';
 export { cleanWindowLocation, getParameterByName } from './windowLocationTools';

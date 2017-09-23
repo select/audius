@@ -41,6 +41,9 @@ Create your own rooms with the [Riot web client](https://riot.im/app/) or [any o
 
 ## Change log
 
+**2.0.8**
+*	Import [Streamly](https://github.com/LNFWebsite/Streamly) playlist.
+
 **2.0.7**
 *	Vimeo video player integrated.
 *	Better support for YouTube playlists: import from search results.
