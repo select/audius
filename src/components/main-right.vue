@@ -176,7 +176,7 @@ span.main-right__player-full-btn
 	height: 100%
 	background: transparent
 	width: $grid-space/2
-	z-index: 99
+	z-index: 8
 	cursor: ew-resize
 
 .main-right__drag-handle
