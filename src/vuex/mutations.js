@@ -509,6 +509,12 @@ export const mutations = {
 				// Set flag indicating if current user is admin.
 				const myuser = room.currentState.members[userId] || {};
 				state.matrixRooms[roomId].isAdmin = myuser.powerLevel >= 100;
+
+				try {
+					state.matrixRooms[roomId].alias = room.currentState.events['m.room.aliases']['matrix.org'].event.content.aliases[0];
+				} catch (e) {
+					console.warn('could not get alias, well it is bad code anyway');
+				}
 			}
 
 			// Add to ordered rooms list if not on the list yet.
@@ -548,14 +554,20 @@ export const mutations = {
 		state.matrixRoomsOrdered = state.matrixRoomsOrdered.filter(id => id !== roomId);
 	},
 	updateMatrixRoom(state, { roomId, values }) {
+		// Create room if it does not exist.
 		if (!state.matrixRooms[roomId]) {
 			state.matrixRooms[roomId] = Object.assign({}, matrixRoomTemplate(), { name: roomId });
 		}
+		// Add to room list if not on the list.
 		if (!state.matrixRoomsOrdered.includes(roomId)) {
 			state.matrixRoomsOrdered.unshift(roomId);
 		}
+		// Remove room from room list if it does not exist any more.
 		state.matrixRoomsOrdered = state.matrixRoomsOrdered.filter(id => id in state.matrixRooms);
+		// Assign values to room. This assumes that merging ect was done in the function
+		// that triggered this mutation.
 		state.matrixRooms[roomId] = Object.assign({}, state.matrixRooms[roomId], values);
+		// Update the reference so the UI redraws.
 		state.matrixRooms = Object.assign({}, state.matrixRooms);
 	},
 
