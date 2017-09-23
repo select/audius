@@ -24,8 +24,9 @@ export default {
 		...mapActions(['joinMatrixRoom', 'leaveMatrixRoom', 'matrixSend', 'initMatrix']),
 		addMatrixRoom() {
 			const el = document.querySelector('.matrix-room input');
-			if (!el.value) {
-				this.toggleMatrixRoomModal();
+			const roomIdRegEx = /#[\w-]+:[\w-]+\.\w{2,}/;
+			if (!roomIdRegEx.test(el.value) ) {
+				this.toggleMatrixRoomModal(el.value || true);
 				// this.error('Please enter a room id.');
 			} else {
 				this.joinMatrixRoom({ id: el.value });
@@ -134,10 +135,10 @@ export default {
 			<input
 				v-on:keyup.enter="addMatrixRoom"
 				type="text"
-				placeholder="… room id or click">
+				placeholder="… room id or name">
 			<span
 				class="wmp-icon-add"
-				title="Create / Join room"
+				title="Create / join room"
 				@click="addMatrixRoom"></span>
 		</li>
 	</ul>

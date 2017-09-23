@@ -8,6 +8,11 @@ export default {
 			roomName: '',
 		};
 	},
+	created() {
+		this.$store.watch(state => state.createMatrixRoomModal, () => {
+			if (typeof this.createMatrixRoomModal === 'string') this.roomName = this.createMatrixRoomModal;
+		});
+	},
 	methods: {
 		...mapActions(['createMatrixRoom']),
 		...mapMutations(['toggleMatrixRoomModal']),
