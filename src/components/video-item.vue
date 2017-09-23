@@ -32,7 +32,7 @@ export default {
 			'removeVideo',
 			'queuePlayIndex',
 		]),
-		...mapActions(['matrixSend']),
+		...mapActions(['matrixSend', 'matrixRedact']),
 		setShowConfirmDelte() {
 			if (this.isQueue) {
 				this.queueRemoveIndex(this.queueIndex);
@@ -45,7 +45,11 @@ export default {
 			else this.play({ media: this.video });
 		},
 		remove() {
-			this.removeVideo([this.video.id]);
+			if (this.currentMatrixRoom) {
+				this.matrixRedact(this.video);
+			} else {
+				this.removeVideo([this.video.id]);
+			}
 		},
 		addToPlaylist() {
 			if (this.currentMatrixRoom) {

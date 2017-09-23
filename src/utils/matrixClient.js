@@ -25,7 +25,7 @@ export const matrixClient = {
 				const message = event.event.content.body;
 				const roomId = event.event.room_id;
 				if (!(roomId in this.firstEvent)) this.firstEvent[roomId] = event.event.event_id;
-				if (event.event.type === 'audiusMedia') dispatch('parseMatrixMessage', { roomId, eventId: event.event.eventId, message: event.event.content });
+				if (event.event.type === 'audiusMedia') dispatch('parseMatrixMessage', { roomId, eventId: event.event.event_id, message: event.event.content });
 				else if (message) dispatch('parseMatrixMessage', { roomId, message });
 			});
 
