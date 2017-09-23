@@ -96,6 +96,9 @@ export default {
 		<b>2.0.8</b><br>
 		<ul>
 			<li> Import <a href="https://github.com/LNFWebsite/Streamly" target="_blank">Streamly</a> playlist.</li>
+			<li> Make Matrix rooms easier to find.</li>
+			<li> Create Matrix rooms.</li>
+			<li> Allow Admins to remove messages from rooms.</li>
 		</ul>
 		<b>2.0.7</b><br>
 		<ul>

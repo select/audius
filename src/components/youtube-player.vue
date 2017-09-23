@@ -97,7 +97,7 @@ export default {
 		};
 		injectScript('https://www.youtube.com/iframe_api')
 			.catch((error) => {
-				this.error(error)
+				this.error(error);
 			});
 	},
 	computed: mapState(['currentMedia', 'mute', 'skipToTime', 'isPlaying']),
