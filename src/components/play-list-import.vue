@@ -71,7 +71,7 @@ export default {
 			v-show="!importURLinput"
 			v-on:click="showImportURL">from web</button>
 		<div class="play-list__import-url" v-show="importURLinput">
-			<span class="smaller">Import Audius and YouTube playlists</span>
+			<span class="smaller">Import Audius, YouTube, Streamly playlists</span>
 			<input
 				class="play-list__import-url-input input--border"
 				type="text"

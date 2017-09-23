@@ -432,6 +432,7 @@ export default {
 		// 	color: $color-aluminium
 	.play-list__import-url
 		display: flex
+		align-items: center
 		flex-direction: column
 	form span
 		font-size: 0.8rem
