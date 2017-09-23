@@ -14,14 +14,19 @@ export default {
 			showConfirmDelte: false,
 		};
 	},
+	created() {
+		if (this.matrixEnabled) {
+			this.initMatrix();
+		}
+	},
 	methods: {
-		...mapMutations(['selectMediaSource', 'movematrixRoomsOrdered', 'setShowMediumSettings', 'toggleMatrixRoomModal', 'error']),
-		...mapActions(['joinMatrixRoom', 'leaveMatrixRoom', 'matrixSend']),
+		...mapMutations(['setMatrixEnabled', 'selectMediaSource', 'movematrixRoomsOrdered', 'setShowMediumSettings', 'toggleMatrixRoomModal', 'error']),
+		...mapActions(['joinMatrixRoom', 'leaveMatrixRoom', 'matrixSend', 'initMatrix']),
 		addMatrixRoom() {
 			const el = document.querySelector('.matrix-room input');
 			if (!el.value) {
-				// this.toggleMatrixRoomModal();
-				this.error('Please enter a room id.');
+				this.toggleMatrixRoomModal();
+				// this.error('Please enter a room id.');
 			} else {
 				this.joinMatrixRoom({ id: el.value });
 			}
@@ -38,7 +43,7 @@ export default {
 		},
 	},
 	computed: {
-		...mapState(['matrixRooms', 'currentMatrixRoom', 'matrixRoomsOrdered', 'matrixRooms', 'matrixLoggedIn']),
+		...mapState(['matrixEnabled', 'matrixRooms', 'currentMatrixRoom', 'matrixRoomsOrdered', 'matrixRooms', 'matrixLoggedIn']),
 		_matrixRoomsOrdered: {
 			get() {
 				return this.matrixRoomsOrdered;
@@ -53,6 +58,31 @@ export default {
 
 <template>
 <div class="matrix-room play-list-manager__wrapper">
+	<div v-if="matrixEnabled && !matrixLoggedIn" class="matrix-room__logging-in">
+		&nbsp; … connecting to matrix
+	</div>
+	<div v-if="!matrixEnabled" class="play-list-manager__enable-matrix">
+		<a href="https://matrix.org/" target="_blank">Matrix</a> is a chat network that allows you to share music and videos with your friends. Press the button to create a guest user and join Matrix.
+		<br>
+		<br>
+		<button
+			class="button btn--blue"
+			@click="setMatrixEnabled();initMatrix();"
+			type="button">Enable Matrix</button>
+	</div>
+	<div
+		class="play-list-manager__room-suggestions"
+		v-if="matrixLoggedIn && !matrixRoomsOrdered.length">
+		You did not join any rooms yet!
+		<br>
+		Here are some rooms for you.
+		<br><br>
+		<a class="button btn--blue" href="?import=!zKinTrtpQEyHfnIbnI:matrix.org&type=room&title=Random">Random</a>
+		<a class="button btn--blue" href="?import=!VTIhlnDdHsxZFZQNFh:matrix.org&type=room&title=Rock">Rock</a>
+		<a class="button btn--blue" href="?import=!sgKmJzakMmEdSCgKCE:matrix.org&type=room&title=Electronic">Electronic</a>
+		<br>
+		You can also create your own public / private rooms.
+	</div>
 	<create-room-modal></create-room-modal>
 	<draggable
 		class="matrix-room__tags"
@@ -111,9 +141,6 @@ export default {
 				@click="addMatrixRoom"></span>
 		</li>
 	</ul>
-	<div v-if="!matrixLoggedIn" class="matrix-room__logging-in">
-		&nbsp; … connecting to matrix
-	</div>
 	<div class="modal" v-if="showConfirmDelte" @click="showConfirmDelte = false">
 		<div class="modal__body" @click.stop>
 			Are you sure you want to leave the room?
@@ -139,11 +166,20 @@ export default {
 .matrix-room__menu
 	display: none
 
-.matrix-room__logging-in
+.matrix-room__logging-in,
+.play-list-manager__enable-matrix
 	width: 100%
 	text-align: center
+	padding: 0 $grid-space
 	margin-top: $touch-size-medium
 	color: $color-catskillwhite
+.play-list-manager__room-suggestions
+	color: $color-catskillwhite
+	display: flex
+	flex-wrap: wrap
+	margin: $grid-space
+	>*
+		margin-right: $grid-space
 
 </style>
 

@@ -24,6 +24,7 @@ export default {
 <div class="settings">
 
 	<h1>Settings</h1>
+	<h3>YouTube</h3>
 	<p>
 		YouTube API key
 		<input
@@ -47,10 +48,10 @@ export default {
 	<p class="smaller">
 		Press to reload player
 	</p> -->
-	<h3>Matrix.org account</h3>
+	<h3>Matrix</h3>
 	<div class="settings__buttons" @click="setMatrixEnabled">
-			<div v-if="matrixEnabled" class="button">disable Matrix radio</div>
-			<div v-else class="button btn--blue">enable Matrix radio</div>
+			<div v-if="matrixEnabled" class="button">disable Matrix</div>
+			<div v-else class="button btn--blue">enable Matrix</div>
 	</div>
 	<div v-if="matrixEnabled">
 		<p v-if="matrixLoggedIn">

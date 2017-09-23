@@ -27,14 +27,13 @@ export default {
 	},
 	methods: {
 		...mapMutations(['toggleLeftMenu', 'setLeftMenuTab']),
-		...mapActions(['initMatrix']),
 		resizeStart(event) {
 			event.preventDefault();
 			this.resize = true;
 		},
 	},
 	computed: {
-		...mapState(['showLeftMenu', 'leftMenuTab', 'matrixEnabled']),
+		...mapState(['showLeftMenu', 'leftMenuTab']),
 	},
 };
 </script>
@@ -52,8 +51,7 @@ export default {
 			v-on:click="setLeftMenuTab('playList')"
 			v-bind:class="{ active: leftMenuTab == 'playList' }">Playlist</li>
 		<li
-			v-if="matrixEnabled"
-			v-on:click="setLeftMenuTab('radio');initMatrix()"
+			v-on:click="setLeftMenuTab('radio')"
 			v-bind:class="{ active: leftMenuTab == 'radio' }">Matrix</li>
 		<li
 			v-on:click="setLeftMenuTab('tv');"
