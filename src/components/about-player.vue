@@ -4,7 +4,7 @@ import { mapMutations } from 'vuex';
 export default {
 	name: 'about-player',
 	methods: {
-		...mapMutations(['setShowSettings', 'toggleLeftMenu']),
+		...mapMutations(['setShowSettings', 'toggleLeftMenu', 'setLeftMenuTab']),
 	},
 };
 </script>
@@ -66,30 +66,18 @@ export default {
 		<a href="https://matrix.org/" target="_blank">Matrix</a> is a chat network that allows you to share songs with Audius.
 	</p>
 	<p>
-		<b>Join a room</b> and drag and drop to add new music.
 	</p>
 	<div class="about-player__community-btns">
-		<a class="button btn--blue" href="?import=!zKinTrtpQEyHfnIbnI:matrix.org&type=room&title=Random">Random</a>
-		<a class="button btn--blue" href="?import=!VTIhlnDdHsxZFZQNFh:matrix.org&type=room&title=Rock">Rock</a>
-		<a class="button btn--blue" href="?import=!sgKmJzakMmEdSCgKCE:matrix.org&type=room&title=Electronic">Electronic</a>
+		<button class="button btn--blue" @click="setLeftMenuTab('radio')">Join a room</button>
 	</div>
-
-	<p class="smaller">
-		… more rooms are coming soon. You can drop songs on the room name in the <a @click="toggleLeftMenu(true)">matrix tab <span class="wmp-icon-queue_music"title="Toggle playlists"></span></a>!
-	</p>
 	<p>
+		You can drag and drop songs on the room names in the matrix tab or add search results!
 		<b>Create your own rooms</b> and share them with your friends.
-		<!-- Get a user name to create private channels. -->
-	</p>
-	<div class="about-player__community-btns">
-		<a class="button btn--gray-ghost" href="https://riot.im/app/" target="_blank">Use Riot</a>
-	</div>
-	<p>
-		… or <a href="https://matrix.org/docs/projects/try-matrix-now.html#clients" target="_blank">any other client</a> to create a room. For a public room set the access rights and history to <i>Anyone</i>. Private rooms are easier to manage with a username. Create a user with Riot and login with your username in the Audius <a @click="setShowSettings">settings</a>.
+		Already have an account from <a href="https://riot.im/app/" target="_blank">Riot</a> or <a href="https://matrix.org/docs/projects/try-matrix-now.html#clients" target="_blank">another client</a>? Login with your username in the Audius <a @click="setShowSettings">settings</a>.
 	</p>
 	<h2 id="extension">Extension and web channels</h2>
 	<p>
-		<a href="https://chrome.google.com/webstore/detail/ekpajajepcojhnjmlibfbjmdjcafajoh" target="_blank">Install the audius extension</a> to search  external webpages. It's also required when you create or import <a @click="toggleLeftMenu(true)">web channels <span class="wmp-icon-queue_music"title="Toggle playlists"></span></a>. Web channels are still in development, currently they allow you to search on your favorite website for sounds and videos.
+		<a href="https://chrome.google.com/webstore/detail/ekpajajepcojhnjmlibfbjmdjcafajoh" target="_blank">Install the audius extension</a> to search  external webpages. It's also required when you create or import <a @click="setLeftMenuTab('tv')">web channels <span class="wmp-icon-queue_music"title="Toggle playlists"></span></a>. Web channels are still in development, currently they allow you to search on your favorite website for sounds and videos.
 	</p>
 	<h2>Change log</h2>
 	<p>
@@ -98,7 +86,7 @@ export default {
 			<li> Import <a href="https://github.com/LNFWebsite/Streamly" target="_blank">Streamly</a> playlist.</li>
 			<li> Discover public Matrix rooms.</li>
 			<li> Create Matrix rooms.</li>
-			<li> Allow Admins to remove messages from rooms.</li>
+			<li> Allow admins to remove messages from rooms.</li>
 		</ul>
 		<b>2.0.7</b><br>
 		<ul>
