@@ -120,7 +120,10 @@ export default {
 				<div>
 					{{matrixRooms[id].name}}
 				</div>
-				<div>{{matrixRooms[id].playList.length - Object.keys(matrixRooms[id].playedMedia).length}} New {{numWatched(id)}} Watched </div>
+				<div>
+					{{matrixRooms[id].playList.length - Object.keys(matrixRooms[id].playedMedia).length}} New
+					{{numWatched(id)}} Watched
+				</div>
 			</div>
 			<div class="play-list-manager__menu">
 				<span
@@ -168,12 +171,6 @@ export default {
 <style lang="sass?indentedSyntax">
 @import '../sass/vars'
 @import '../sass/color'
-
-.matrix-room__tag-body
-	flex: 1
-	text-overflow: ellipsis
-	white-space: nowrap
-	overflow: hidden
 
 .matrix-room__menu
 	display: none

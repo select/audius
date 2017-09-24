@@ -168,6 +168,7 @@ export default {
 				|| this.showExport
 				|| this.showJump
 				|| this.filteredPlayListLength
+				|| this.currentWebScraper
 				|| this.currentMatrixRoom);
 		},
 		currentSourceId() {
@@ -184,7 +185,7 @@ export default {
 		<draggable
 			element="div"
 			class="play-list__greeting"
-			v-show="showWelcome && ['playList', 'radio'].includes(leftMenuTab)"
+			v-show="showWelcome"
 			@add="dropAdd"
 			:options="{ sort: false, group: { name: 'lists' } }">
 			(⊃｡•́‿•̀｡)⊃ <br>
@@ -213,7 +214,7 @@ export default {
 					class="button btn--blue">watch imgur</button>
 			</div>
 			<div>
-				Add some songs to you playlist <br>
+				Add some songs to your playlist <br>
 				<button
 					class="button btn--blue"
 					@click="addMusic">add music</button>
@@ -497,5 +498,41 @@ export default {
 	cursor: pointer
 	&:hover
 		background: $color-catskillwhite
+
+// tag
+.play-list-manager__tag-body
+	flex: 1
+	display: flex
+	flex-direction: column
+	overflow: hidden
+	> div
+		overflow: hidden
+		text-overflow: ellipsis
+		white-space: nowrap
+		&:last-child
+			font-size: 0.7em
+	input
+		font-size: 1rem
+		color: $color-palesky
+
+.play-list-manager__drag-handle
+	min-width: #{2*$grid-space}
+	height: 100%
+	&:not(.play-list-manager--default)
+		cursor: move
+
+.play-list-manager__menu
+	display: none
+
+li ~ .play-list-manager__tag-body
+	display: none
+
+.play-list-manager__tag-drop-zone
+	flex: 1
+	overflow: hidden
+
+
+.play-list-manager__tags .play-list-manager__tag-name-input
+	height: $touch-size-extratiny
 
 </style>

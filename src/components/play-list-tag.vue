@@ -55,7 +55,7 @@ export default {
 						@input="renamePlayList({oldName: tagName, newName: $event.target.value})"
 						placeholder="... playlist name">
 				</div>
-				<div>{{tags[tagName].length}} Songs</div>
+				<div>{{tags[tagName].length}} Songsss</div>
 			</div>
 		</draggable>
 		<div class="play-list-manager__menu">
@@ -80,39 +80,6 @@ export default {
 @import '../sass/vars'
 @import '../sass/color'
 
-.play-list-manager__drag-handle
-	min-width: #{2*$grid-space}
-	height: 100%
-	&:not(.play-list-manager--default)
-		cursor: move
-
-.play-list-manager__menu
-	display: none
-
-li ~ .play-list-manager__tag-body
-	display: none
-
-.play-list-manager__tag-drop-zone
-	flex: 1
-	overflow: hidden
-
-.play-list-manager__tag-body
-	flex: 1
-	display: flex
-	flex-direction: column
-	overflow: hidden
-	div
-		overflow: hidden
-		text-overflow: ellipsis
-		white-space: nowrap
-		&:last-child
-			font-size: 0.7em
-	input
-		font-size: 1rem
-		color: $color-palesky
-
-.play-list-manager__tags .play-list-manager__tag-name-input
-	height: $touch-size-extratiny
 </style>
 
 
