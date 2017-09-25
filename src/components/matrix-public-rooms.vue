@@ -33,7 +33,8 @@ export default {
 				<a
 					class="button btn--blue"
 					v-for="room in matrix.publicRooms"
-					href="?import=!sgKmJzakMmEdSCgKCE:matrix.org&type=room&title=Electronic">
+					v-bind:title="'['+room.numberOfMembers+' Members] '+room.topic"
+					v-bind:href="'?import='+room.id+'&type=room&title='+encodeURIComponent(room.name)">
 					{{room.name}}
 				</a>
 			</div>
