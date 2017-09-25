@@ -62,7 +62,7 @@ export default {
 							type="text"
 							placeholder="… name"
 							@input="setImportName"
-							v-bind:value="importName">
+							:value="importName">
 						<button
 							class="button btn--blue"
 							v-bind:class="{disabled: ((importName in webScrapers) && !overwriteChannel)}"
@@ -111,7 +111,7 @@ export default {
 				<p>
 					Create new playlist
 					<div class="import-modal__row">
-						<input class="import-modal__name-input" type="text" placeholder="… name" v-bind:value="pendingImportURL.name">
+						<input class="import-modal__name-input" type="text" placeholder="… name" :value="pendingImportURL.name">
 						<button class="button btn--blue" @click="importPlayList">Create</button>
 					</div>
 				</p>

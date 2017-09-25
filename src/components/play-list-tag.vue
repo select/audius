@@ -51,7 +51,7 @@ export default {
 					<input
 						class="play-list-manager__tag-name-input"
 						type="text"
-						v-bind:value="tagName"
+						:value="tagName"
 						@input="renamePlayList({oldName: tagName, newName: $event.target.value})"
 						placeholder="... playlist name">
 				</div>

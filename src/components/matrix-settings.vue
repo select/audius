@@ -46,14 +46,14 @@ export default {
 		class="matrix-settings__name"
 		placeholder="… name"
 		v-bind:disabled="!room.isAdmin"
-		v-bind:value="room.name">
+		:value="room.name">
 	<div class="row">
 		<a v-bind:href="'https://matrix.to/#/'+room.alias" target="_blank">{{room.alias}}</a>
 
 	</div>
 	<div class="spacer"></div>
 	<div class="smaller row" v-if="!room.isAdmin"><b>You are not an admin</b>, you can not edit this room.</div>
-	<h3>Members</h3>
+	<h3>{{room.members.length}} Members</h3>
 	<h4>Admin</h4>
 	<div class="row">
 		<div v-for="member in admin" v-bind:class="{'matrix-settings__me' : member.id === myId}">

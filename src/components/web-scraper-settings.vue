@@ -59,7 +59,7 @@ export default {
 		class="ws-settings__name"
 		type="text"
 		placeholder="... name"
-		v-bind:value="this.currentWebScraper">
+		:value="this.currentWebScraper">
 	<h3>URLS</h3>
 	<draggable
 		v-model="_urls"

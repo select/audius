@@ -31,7 +31,7 @@ export default {
 			type="text"
 			class="input--border"
 			placeholder="… 39 digit API key"
-			v-bind:value="youtubeApiKeyUI"
+			:value="youtubeApiKeyUI"
 			@input="setYoutubeApiKey($event.target.value)">
 		<br>
 		<span class="smaller">Create your own key in the <a href="https://console.developers.google.com/" target="_blank">Google Developers Console</a></span>
