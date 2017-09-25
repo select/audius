@@ -180,6 +180,10 @@ export const mutations = {
 		state.showSettings = true;
 		state.mainRightTab = 'settings';
 	},
+	setShowMediaEdit(state, toggleState) {
+		state.showMediaEdit = toggleState !== undefined ? toggleState : !state.showMediaEdit;
+		if (state.showMediaEdit) state.mainRightTab = 'mediaEdit';
+	},
 	setShowMediumSettings(state, { medium, id }) {
 		state.showMediumSettings[medium] = true;
 		if (medium === 'tv') {

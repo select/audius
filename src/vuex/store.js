@@ -81,6 +81,7 @@ export const store = new Vuex.Store({
 		youtubeApiKey,
 		showImport: false,
 		showExport: false,
+		showMediaEdit: null,
 		showJump: false,
 		jumpCursor: '',
 		exportURLs: [],

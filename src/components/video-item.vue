@@ -32,6 +32,7 @@ export default {
 			'queueRemoveIndex',
 			'removeVideo',
 			'queuePlayIndex',
+			'setShowMediaEdit',
 		]),
 		...mapActions(['matrixSend', 'matrixRedact']),
 		setShowConfirmDelte() {
@@ -162,6 +163,11 @@ export default {
 					target="_blank">
 					<span class="wmp-icon-link"></span>
 				</a>
+				<span
+					v-if="isPlayList"
+					class="wmp-icon-mode_edit"
+					title="Edit media"
+					@click="setShowMediaEdit(video.id)"></span>
 				<span
 					class="wmp-icon-close"
 					v-if="isPlayList || isQueue || (currentMatrixRoom && matrixRooms[currentMatrixRoom].isAdmin)"

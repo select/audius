@@ -10,6 +10,7 @@ const Settings = () => import(/* webpackChunkName: "settings" */'./settings.vue'
 const SearchResults = () => import(/* webpackChunkName: "search-results" */'./search-results.vue');
 const WebScraperSettings = () => import(/* webpackChunkName: "web-scraper-settings" */'./web-scraper-settings.vue');
 const MatrixRoomSettings = () => import(/* webpackChunkName: "matrix-room-settings" */'./matrix-settings.vue');
+const MediaEdit = () => import(/* webpackChunkName: "media-edit" */'./media-edit.vue');
 
 export default {
 	name: 'main-right',
@@ -23,6 +24,7 @@ export default {
 		WebMediaPlayer,
 		WebScraperSettings,
 		MatrixRoomSettings,
+		MediaEdit,
 	},
 	computed: mapState([
 		'website',
@@ -33,6 +35,7 @@ export default {
 		'currentMedia',
 		'currentWebScraper',
 		'currentMatrixRoom',
+		'showMediaEdit',
 	]),
 	mounted() {
 		document.addEventListener('mouseup', () => {
@@ -90,6 +93,10 @@ export default {
 			@click="setMainRightTab('matrixRoomSettings')"
 			v-bind:class="{ active: mainRightTab == 'matrixRoomSettings' }">Room Settings</li>
 		<li
+			v-if="showMediaEdit"
+			@click="setMainRightTab('mediaEdit')"
+			v-bind:class="{ active: mainRightTab == 'mediaEdit' }">Media Info</li>
+		<li
 			v-if="showSettings"
 			@click="setMainRightTab('settings')"
 			v-bind:class="{ active: mainRightTab == 'settings' }">Settings</li>
@@ -98,6 +105,7 @@ export default {
 		<about-player v-show="mainRightTab == 'about'"></about-player>
 		<search-results v-if="mainRightTab == 'search'"></search-results>
 		<queue v-show="mainRightTab == 'queue'"></queue>
+		<media-edit v-if="mainRightTab == 'mediaEdit'"></media-edit>
 		<web-scraper-settings v-if="mainRightTab == 'webScraperSettings' && currentWebScraper"></web-scraper-settings>
 		<matrix-room-settings v-if="mainRightTab == 'matrixRoomSettings' && currentMatrixRoom"></matrix-room-settings>
 		<settings v-if="mainRightTab == 'settings'"></settings>
