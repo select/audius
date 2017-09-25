@@ -1,5 +1,6 @@
 import { mutationsMatrix } from './mutations-matrix';
-import { webScraper } from '../utils';
+import { mutationsWebScraper } from './mutations-web-scraper';
+import { rename } from './mutations-rename';
 import { youtubeApiKey } from '../utils/config';
 import {
 	getCurrentPlayListEntities,
@@ -56,18 +57,6 @@ function addMissingMediaToEntities(state, playList) {
 		.forEach(media => {
 			state.entities[media.id] = media;
 		});
-}
-
-function rename(state, type, newName, oldName) {
-	if (state[type][newName]) return;
-	const itemsObject = Object.assign({}, state[type]);
-	itemsObject[newName] = itemsObject[oldName];
-	const itemsOrdered = [...state[`${type}Ordered`]];
-	itemsOrdered[itemsOrdered.indexOf(oldName)] = newName;
-	delete itemsObject[oldName];
-	state[type] = itemsObject;
-	state[`${type}Ordered`] = itemsOrdered;
-	state[type.includes('web') ? 'currentWebScraper' : 'currentPlayList'] = newName;
 }
 
 export function next(state) {
@@ -142,6 +131,7 @@ function play(state, mediaId, media) {
 /* eslint-disable no-param-reassign */
 export const mutations = {
 	...mutationsMatrix,
+	...mutationsWebScraper,
 	recoverState(state, recoveredState) {
 		state = Object.assign(state, recoveredState);
 		if (state.currentPlayList === null) state.currentPlayList = '';
@@ -477,57 +467,5 @@ export const mutations = {
 	},
 	setPendingImportURL(state, data) {
 		state.pendingImportURL = data;
-	},
-
-	// Web Scraper
-	// ---
-	addWebScraper(state, name) {
-		if (!name) {
-			let counter = 1;
-			name = `Channel ${counter}`;
-			while (name in state.webScrapers) {
-				name = `Channel ${counter++}`;
-			}
-		}
-
-		state.webScrapers[name] = { playList: [], playedMedia: {}, settings: {}, archive: [] };
-		if (!state.webScrapersOrdered.includes(name)) state.webScrapersOrdered.push(name);
-		state.currentWebScraper = name;
-	},
-	deleteWebScraper(state, id) {
-		delete state.webScrapers[id];
-		state.webScrapersOrdered = state.webScrapersOrdered.filter(n => n !== id);
-	},
-	addUrlPattern(state, { id, urlPattern }) {
-		const urls = state.webScrapers[id].settings.urls || [];
-		const { settings } = state.webScrapers[id];
-		if (!urls.some(p => p === urlPattern)) {
-			settings.urls = [
-				...urls,
-				{ url: urlPattern, numPages: webScraper.patternToUrls(urlPattern).length },
-			];
-			settings.numPages = settings.urls.reduce((acc, { numPages }) => acc + numPages, 0);
-		}
-		state.webScrapers = Object.assign({}, state.webScrapers);
-	},
-	setShowWatched(state, { id, toggleState }) {
-		state.showWatched[id] = toggleState;
-		state.showWatched = Object.assign({}, state.showWatched);
-	},
-	setPaginationIndex(state, { id, index }) {
-		state.paginationIndex[id] = index;
-		state.paginationIndex = Object.assign({}, state.paginationIndex);
-	},
-	updateWebScraper(state, { id, values }) {
-		state.webScrapers[id] = Object.assign({}, state.webScrapers[id], values);
-		state.webScrapers = Object.assign({}, state.webScrapers);
-	},
-	renameWebScraper(state, { newName, oldName }) {
-		rename(state, 'webScrapers', newName, oldName);
-	},
-
-	setReloadScript(state, id) {
-		// upp the reload count so the component detects the change
-		state.reloadScript[id]++;
 	},
 };
