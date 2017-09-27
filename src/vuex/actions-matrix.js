@@ -67,11 +67,11 @@ export const actionsMatrix = {
 		if (state.matrixRooms[roomId].humanReadablePosts) {
 			matrixClient
 				.sendMessage(roomId, getMediaLink(curMedia))
-				.catch(() => commit('error', 'Posting media to matrix room failed'));
+				.catch((error) => commit('error', `Posting message to matrix room failed. ${error}`));
 		} else {
 			matrixClient
 				.sendEvent(roomId, curMedia)
-				.catch(() => commit('error', 'Posting media to matrix room failed'));
+				.catch((error) => commit('error', `Posting media to matrix room failed. ${error}`));
 		}
 	},
 	matrixRedact({ state, commit }, media) {
