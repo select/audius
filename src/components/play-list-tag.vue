@@ -55,7 +55,7 @@ export default {
 						@input="renamePlayList({oldName: tagName, newName: $event.target.value})"
 						placeholder="... playlist name">
 				</div>
-				<div>{{tags[tagName].length}} Songsss</div>
+				<div>{{tags[tagName].length}} Songs</div>
 			</div>
 		</draggable>
 		<div class="play-list-manager__menu">

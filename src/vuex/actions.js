@@ -51,7 +51,7 @@ export const actions = {
 			getMediaDuration(query, 'video')
 				.then(durationS => refineWebSearchResult({ url: query, href: query, durationS, type: 'video' }))
 				.then(media => commit('webMediaSearchSuccess', { mediaList: [media], id: query }));
-		} else if (isVimeoVideoRegEx.test(query)){
+		} else if (isVimeoVideoRegEx.test(query)) {
 			searchVimeo(query).then(result => {
 				commit('searchYoutubeSuccess', { result, id: query });
 			});
