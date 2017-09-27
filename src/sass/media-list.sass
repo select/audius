@@ -18,9 +18,11 @@ ul.media-list
 		opacity: 1
 		> .media-list__main
 			background: $color-catskillwhite
-			.media-list__controls
-				display: flex
-				align-items: center
+	li:hover:not(.mobile),
+	li.selected
+		.media-list__controls
+			display: flex
+			align-items: center
 .media-list__main
 	position: relative
 	height: $touch-size-large
@@ -67,7 +69,11 @@ ul.media-list
 		text-overflow: ellipsis
 	.media-list__duration
 		color: $color-aluminium-dark
-
+.mobile
+	.media-list__controls
+		span
+			width: $touch-size-small
+			height: $touch-size-small
 .media-list__controls
 	display: none
 	> div
@@ -77,15 +83,6 @@ ul.media-list
 		transition: all $transition-time
 		&:hover
 			color: $color-pictonblue
-.media-list__more-controls
-	> div
-		display: none
-	&:hover,
-	&.active
-		> div
-			display: flex
-		> span
-			display: none
 .media-list__tracks
 	list-style: none
 	display: none

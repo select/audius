@@ -9,7 +9,6 @@ export default {
 		isPlaying: Boolean,
 		isQueue: Boolean,
 		queueIndex: Number,
-		isSelected: Boolean,
 		isPlayList: Boolean,
 		isSearchResult: Boolean,
 		expiryDate: Date,
@@ -22,6 +21,7 @@ export default {
 			showSongs: false,
 			isVisible: false,
 			showConfirmDelte: false,
+			selected: false,
 		};
 	},
 	methods: {
@@ -103,9 +103,10 @@ export default {
 	<li
 		v-bind:class="{
 			active: isPlaying,
+			selected: selected,
 			error: video.hasError,
-			selected: isSelected,
 			old: !!expiryDate,
+			mobile: isMobile,
 			}"
 		v-bind:title="expiryDate ? '🕑 hide in < 5min' : ''"
 		v-on:dblclick="_play"
@@ -181,6 +182,12 @@ export default {
 					title="Add to playlist"></span>
 
 			</div>
+			<div v-if="isMobile">
+				<span
+					class="wmp-icon-more_vert"
+					@click="selected = !selected"></span>
+			</div>
+
 		</div>
 		<ul
 			v-if="video.tracks && !isQueue"
