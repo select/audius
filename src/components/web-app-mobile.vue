@@ -48,10 +48,9 @@ export default {
 				v-bind:class="{ active: !(mainRightTab || leftMenuTab) }"><span class="wmp-icon-queue_music"></span></li>
 			<li
 				v-on:click="setLeftMenuTab('playList');setMainRightTab('');"
-				v-bind:class="{ active: leftMenuTab == 'playList' }">PlayList</li>
+				v-bind:class="{ active: leftMenuTab == 'playList' && mainRightTab != 'about' }">PlayList</li>
 			<li
-				v-if="matrixEnabled"
-				v-on:click="setLeftMenuTab('radio');setMainRightTab('');;initMatrix()"
+				v-on:click="setLeftMenuTab('radio');setMainRightTab('');"
 				v-bind:class="{ active: leftMenuTab == 'radio' }">Matrix</li>
 			<li
 				v-on:click="setLeftMenuTab('tv');setMainRightTab('');"
@@ -66,10 +65,6 @@ export default {
 			<li
 				v-on:click="setMainRightTab('about');setLeftMenuTab('');"
 				v-bind:class="{ active: mainRightTab == 'about' }">About</li>
-			<li
-				v-if="website.showChat"
-				v-on:click="setMainRightTab('chat');setLeftMenuTab('');"
-				v-bind:class="{ active: mainRightTab == 'chat' }">Chat</li>
 			<li
 				v-on:click="setMainRightTab('settings');setLeftMenuTab('');"
 				v-bind:class="{ active: mainRightTab == 'settings' }"><span class="wmp-icon-more_vert"></span></li>
@@ -103,6 +98,19 @@ export default {
 	flex: 1
 	display: flex
 	flex-direction: column
+	.tabs
+		overflow-x: auto
+		overflow-y: hidden
+		li
+			border-right: 1px solid $color-white
+			flex: none
+			padding: 0 $grid-space
+			&:first-child
+				flex: 1
+			[class^="wmp-icon"]
+				width: $touch-size-tiny
+	.matrix-room
+		color: $color-palesky
 	.au-header__control-bar
 		flex-direction: column
 	.au-header__current-song

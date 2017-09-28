@@ -175,15 +175,19 @@ export default {
 .matrix-room__menu
 	display: none
 
+.matrix-room
+	color: $color-catskillwhite
+	.modal__body
+		color: $color-palesky
+
+
 .matrix-room__logging-in,
 .play-list-manager__enable-matrix
 	width: 100%
 	text-align: center
 	padding: 0 $grid-space
 	margin-top: $touch-size-medium
-	color: $color-catskillwhite
 .play-list-manager__room-suggestions
-	color: $color-catskillwhite
 	margin: $grid-space
 	text-align: center
 	span
