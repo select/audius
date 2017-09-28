@@ -1,5 +1,5 @@
 import { s2time } from './timeConverter';
-import { videoBaseObject } from '../vuex/video';
+import { mediaBaseObject } from '../vuex/mediaBaseObject';
 
 export const streamlyUrlRegEx = /Streamly\/#/i;
 
@@ -21,7 +21,7 @@ export function importPlayListFromString(dataString) {
 				const streamlyPlaylist = JSON.parse(atob(rawData));
 				const playList = streamlyPlaylist
 					.slice(1, streamlyPlaylist.length - 1) // The first entry is the playlist name.
-					.map(([title, durationS, youtubeId]) => Object.assign({}, videoBaseObject, {
+					.map(([title, durationS, youtubeId]) => Object.assign({}, mediaBaseObject, {
 						youtubeId,
 						id: youtubeId,
 						type: 'youtube',
@@ -51,7 +51,7 @@ export function importPlayListFromString(dataString) {
 			const entities = {};
 			Object.keys(dataJSON.items).forEach(key => {
 				const itemData = dataJSON.items[key].song;
-				entities[itemData.id] = Object.assign({}, videoBaseObject, {
+				entities[itemData.id] = Object.assign({}, mediaBaseObject, {
 					id: itemData.id,
 					title: itemData.title,
 					duration: s2time(itemData.duration),

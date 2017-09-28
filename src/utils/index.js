@@ -6,12 +6,12 @@ export {
 	searchYoutube,
 	isYouTubeVideoRegEx,
 	parseYoutubeDescription,
-	findYouTubeIdsText,
 	getYouTubeInfo,
 	youTubePlaylistRexEx,
 	getPlayList
 } from './youtube';
-export { isVimeoVideoRegEx, searchVimeo } from './vimeo';
+export { findMediaText } from './findMediaLinks';
+export { findVimeoIdsText } from './vimeo';
 export { isElementInViewport } from './isElementInViewport';
 export { indexDB } from './indexDB2';
 export { importPlayListFromString, streamlyUrlRegEx } from './importPlayListFromString';

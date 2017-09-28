@@ -34,11 +34,11 @@ browser.runtime.onMessage.addListener(request => {
 				for (let i = 0; i < promises.length; i++) {
 					try {
 						const mediaList = await promises[i];
-						const data = Object.assign({}, request.response.data, { mediaList });
+						const data = Object.assign({}, request.responseTemplate.data, { mediaList });
 						tabs.forEach(tab => {
 							chrome.tabs.sendMessage(
 								tab.id,
-								Object.assign({}, request.response, { data }),
+								Object.assign({}, request.responseTemplate, { data }),
 								() => {} // response callback
 							);
 						});

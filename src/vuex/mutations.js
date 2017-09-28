@@ -136,19 +136,13 @@ export const mutations = {
 		state = Object.assign(state, recoveredState);
 		if (state.currentPlayList === null) state.currentPlayList = '';
 	},
-	searchYoutubeSuccess(state, { result, isPlayList, id }) {
-		state.search.id = id;
-		state.mainRightTab = 'search';
-		state.search.isSearching = false;
-		state.search.isPlayList = isPlayList;
-		state.search.results = result;
-	},
-	webMediaSearchSuccess(state, { mediaList = [], id = null }) {
+	searchSuccess(state, { mediaList = [], id = null, isPlayList }) {
 		if (!mediaList.length) {
 			state.errorMessages = [...state.errorMessages, { error: 'No media found (҂⌣̀_⌣́)ᕤ' }];
 		} else {
 			state.mainRightTab = 'search';
 		}
+		state.search.isPlayList = isPlayList;
 		if (state.search.id !== id) {
 			state.search.results = mediaList;
 			state.search.id = id;

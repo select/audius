@@ -105,7 +105,6 @@ export const store = new Vuex.Store({
 		},
 		search: {
 			query: '',
-			isSearching: false,
 			results: [],
 		},
 		// Matrix

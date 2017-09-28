@@ -1,4 +1,4 @@
-import { findYouTubeIdsText, getYouTubeInfo, getMediaLink } from '../utils';
+import { findMediaText, getMediaLink } from '../utils';
 import { getMediaEntity } from './getCurrentPlayList';
 // This must be avialable in the whole module since it's lazy loaded.
 // Do not delete;
@@ -198,6 +198,7 @@ export const actionsMatrix = {
 		commit('matrixLogout');
 	},
 	parseMatrixMessage({ state, commit }, { roomId, eventId, message }) {
+		// Get the room for the message.
 		const room = state.matrixRooms[roomId];
 		if (!(roomId in state.matrixRooms)) {
 			commit('error', `Could not find matrix room ${roomId}`);
@@ -205,23 +206,17 @@ export const actionsMatrix = {
 			return;
 		}
 
+		// Build an index of all known media items from this room.
 		const index = new Set([...room.playList.map(v => v.id), ...room.archive]);
-		if (typeof message === 'object') {
+		if (typeof message === 'object') { // message is a media object
 			if (!index.has(message.id)) addMatrixMessage(state, commit, roomId, eventId, [message]);
 			console.log(`[Matrix-Media] %c${message.title}`, 'color: #2DA7EF;');
 			return;
 		}
 		console.log(`[Matrix-Text] %c${message}`, 'color: #2DA7EF;');
 
-		const ids = findYouTubeIdsText(message)
-			.filter(id => id && !index.has(id)) // filter empty
-			.filter((item, pos, self) => self.indexOf(item) === pos); // filter dublicates
-
-		if (ids.length) {
-			// get info for all new unknown ids
-			getYouTubeInfo(ids, state.youtubeApiKey).then(results => {
-				addMatrixMessage(state, commit, roomId, eventId, results);
-			});
-		}
+		findMediaText(message, state.youtubeApiKey, index).then(mediaItems => {
+			addMatrixMessage(state, commit, roomId, eventId, mediaItems);
+		});
 	},
 };

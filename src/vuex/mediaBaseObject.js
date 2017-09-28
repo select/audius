@@ -1,4 +1,4 @@
-export const videoBaseObject = {
+export const mediaBaseObject = {
 	title: '',
 	duration: {},
 	durationS: 0,
