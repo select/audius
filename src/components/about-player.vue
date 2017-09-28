@@ -81,6 +81,11 @@ export default {
 	</p>
 	<h2>Change log</h2>
 	<p>
+		<b>2.0.9</b><br>
+		<ul>
+			<li> Improved mobile UI.</li>
+			<li> Improved media detection in search.</li>
+		</ul>
 		<b>2.0.8</b><br>
 		<ul>
 			<li> Import <a href="https://github.com/LNFWebsite/Streamly" target="_blank">Streamly</a> playlist.</li>

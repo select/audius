@@ -144,7 +144,7 @@ export default {
 		<div class="au-header__search">
 			<div>
 				<img class="au-header__logo" src="img/audius.logo.white.svg" alt="Audius - music player - logo">
-				<i>2.0.8</i>
+				<i>2.0.9</i>
 			</div>
 			<div class="au-header__search-controls">
 				<div
