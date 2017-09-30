@@ -111,7 +111,7 @@ export default {
 				<p>
 					Create new playlist
 					<div class="import-modal__row">
-						<input class="import-modal__name-input" type="text" placeholder="… name" :value="pendingImportURL.name">
+						<input class="import-modal__name-input input--border" type="text" placeholder="… name" :value="pendingImportURL.name">
 						<button class="button btn--blue" @click="importPlayList">Create</button>
 					</div>
 				</p>
