@@ -1,9 +1,8 @@
 // import '../utils/domObserver';
-
 const isRunningInAudiusApp = !!document.querySelector('#audius-website');
+
 // Listen to messages from background script
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    console.log("addListener request", request);
 	// if we are on a audius player page.
 	if (request.audius && isRunningInAudiusApp) {
 		window.dispatchEvent(
@@ -15,20 +14,20 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 	}
 });
 
-// if (isRunningInAudiusApp) {
-// 	setTimeout(() => {
-// 		window.dispatchEvent(
-// 			new CustomEvent('audius', {
-// 				detail: { vuex: 'dispatch', type: 'setExtensionAvilable', data: true },
-// 			})
-// 		);
-// 	}, 500);
-// }
+if (isRunningInAudiusApp) {
+	setTimeout(() => {
+		window.dispatchEvent(
+			new CustomEvent('audius', {
+				detail: { vuex: 'commit', type: 'setExtensionAvilable', data: true },
+			})
+		);
+	}, 500);
+}
 
 window.addEventListener(
 	'audiusExtension',
 	event => {
-		console.log('content relay request ', event.detail)
+		console.log('content message relay request ', event.detail)
 		chrome.runtime.sendMessage(event.detail, response => {});
 	},
 	false

@@ -121,11 +121,7 @@ export const store = new Vuex.Store({
 			},
 			publicRooms: [],
 		},
-		// deprectaed try remove this
-		reloadScript: {
-			vimeo: 1,
-			youtube: 1,
-		},
+		extensionAvilable: false,
 	},
 	plugins: [
 		vstore => {

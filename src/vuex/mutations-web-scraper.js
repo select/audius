@@ -49,9 +49,4 @@ export const mutationsWebScraper = {
 	renameWebScraper(state, { newName, oldName }) {
 		rename(state, 'webScrapers', newName, oldName);
 	},
-
-	setReloadScript(state, id) {
-		// upp the reload count so the component detects the change
-		state.reloadScript[id]++;
-	},
 };

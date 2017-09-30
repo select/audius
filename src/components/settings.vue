@@ -4,10 +4,20 @@ import { mapGetters, mapMutations, mapState, mapActions } from 'vuex';
 export default {
 	computed: {
 		...mapGetters(['youtubeApiKeyUI']),
-		...mapState(['matrixLoggedIn', 'matrix', 'matrixEnabled', 'reloadScript']),
+		...mapState([
+			'matrixLoggedIn',
+			'matrix',
+			'matrixEnabled',
+			'extensionAvilable',
+		]),
 	},
 	methods: {
-		...mapMutations(['setYoutubeApiKey', 'matrixRemoveAccount', 'matrixLogout', 'setMatrixEnabled', 'setReloadScript']),
+		...mapMutations([
+			'setYoutubeApiKey',
+			'matrixRemoveAccount',
+			'matrixLogout',
+			'setMatrixEnabled',
+		]),
 		...mapActions(['loginMatrixWithPassword']),
 		matrixLogin() {
 			const usernameEl = document.querySelector('#username');
@@ -24,6 +34,10 @@ export default {
 <div class="settings">
 
 	<h1>Settings</h1>
+	<h3>Extension</h3>
+	<p>
+		Then extension is <b v-if="extensionAvilable">installed</b><span v-else><b>not installed</b>. You can install it from the <a href="https://chrome.google.com/webstore/detail/ekpajajepcojhnjmlibfbjmdjcafajoh" target="_blank">Chrome web store</a>. If you just installed it please reload this page and this message will disappear</span>.
+	</p>
 	<h3>YouTube</h3>
 	<p>
 		YouTube API key
@@ -36,18 +50,6 @@ export default {
 		<br>
 		<span class="smaller">Create your own key in the <a href="https://console.developers.google.com/" target="_blank">Google Developers Console</a></span>
 	</p>
-	<!-- <h3>Scripts</h3>
-	<div class="settings__btn-group">
-		<button
-			v-for="script in (Object.entries(reloadScript))"
-			@click="setReloadScript(script[0])"
-			class="button btn--blue">
-			{{script[0]}} {{script[1]}}
-		</button>
-	</div>
-	<p class="smaller">
-		Press to reload player
-	</p> -->
 	<h3>Matrix</h3>
 	<div class="settings__buttons" @click="setMatrixEnabled">
 			<div v-if="matrixEnabled" class="button">disable Matrix</div>

@@ -26,7 +26,11 @@ export const actions = {
 			}
 
 			if (/^https?:\/\//.test(query)) {
-				console.warn('Please install the audius extension');
+				if (!state.extensionAvilable) {
+					commit('error', 'The audius extension is not installed. Please install it.');
+					commit('setShowSettings');
+					return;
+				}
 				window.dispatchEvent(
 					new CustomEvent('audiusExtension', {
 						detail: {

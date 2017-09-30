@@ -462,4 +462,7 @@ export const mutations = {
 	setPendingImportURL(state, data) {
 		state.pendingImportURL = data;
 	},
+	setExtensionAvilable(state, data) {
+		state.extensionAvilable = data;
+	},
 };

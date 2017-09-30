@@ -56,7 +56,13 @@ export const actionsWebScraper = {
 					requestIndex -= url.numPages;
 					return true;
 				});
+				if (!state.extensionAvilable) {
+					commit('error', 'The audius extension is not installed. Please install it.');
+					commit('setShowSettings');
+					return;
+				}
 				commit('setPaginationIndex', { id, index: index + 1 });
+
 				window.dispatchEvent(
 					new CustomEvent('audiusExtension', {
 						detail: {
