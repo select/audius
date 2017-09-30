@@ -22,16 +22,18 @@ export function ajax(url, callback, params) {
 	});
 }
 
-export function ajaxPostJSON(url, params, callback) {
-	const xmlhttp = new XMLHttpRequest();
-	xmlhttp.onreadystatechange = () => {
-		if (xmlhttp.readyState === 4) {
-			if (xmlhttp.status >= 200 && xmlhttp.status < 300) callback(xmlhttp.responseText);
-			else console.warn('error loading ' + url);
-		}
-	};
+export function ajaxPostJSON(url, params) {
+	return new Promise((resolve, reject) => {
+		const xmlhttp = new XMLHttpRequest();
+		xmlhttp.onreadystatechange = () => {
+			if (xmlhttp.readyState === 4) {
+				if (xmlhttp.status >= 200 && xmlhttp.status < 300) resolve(xmlhttp.responseText);
+				else reject(`Ajax error ${xmlhttp.status} posting data to ${url}`);
+			}
+		};
 
-	xmlhttp.open(params ? 'POST' : 'GET', url, true);
-	xmlhttp.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
-	xmlhttp.send(params);
+		xmlhttp.open(params ? 'POST' : 'GET', url, true);
+		xmlhttp.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
+		xmlhttp.send(params);
+	});
 }

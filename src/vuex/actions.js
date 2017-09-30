@@ -80,7 +80,7 @@ export const actions = {
 	},
 	exportToURL({ commit, getters }) {
 		const data = getters.currentExportData;
-		ajaxPostJSON('https://api.myjson.com/bins', JSON.stringify(data), res => {
+		ajaxPostJSON('https://api.myjson.com/bins', JSON.stringify(data)).then(res => {
 			commit('setExportURL', JSON.parse(res).uri);
 		}).catch(error => {
 			commit('error', error);
