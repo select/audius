@@ -32,7 +32,26 @@ export default {
 		MatrixRoomManager,
 		WebScraperManager,
 	},
-	computed: mapState(['currentMedia', 'search', 'website', 'leftMenuTab', 'matrixEnabled', 'mainRightTab']),
+	data() {
+		return { queueActive: false };
+	},
+	created() {
+		this.$store.watch(state => state.queueClickCount, () => {
+			this.queueActive = true;
+			setTimeout(() => {
+				this.queueActive = false;
+			}, 800);
+		});
+	},
+	computed: mapState([
+		'currentMedia',
+		'search',
+		'website',
+		'leftMenuTab',
+		'matrixEnabled',
+		'mainRightTab',
+		'queue',
+	]),
 	methods: {
 		...mapMutations(['setMainRightTab', 'setLeftMenuTab']),
 		...mapActions(['initMatrix']),
@@ -56,8 +75,10 @@ export default {
 				v-on:click="setLeftMenuTab('tv');setMainRightTab('');"
 				v-bind:class="{ active: leftMenuTab == 'tv' }">Web</li>
 			<li
-				v-on:click="setMainRightTab('queue');setLeftMenuTab('');"
-				v-bind:class="{ active: mainRightTab == 'queue' }">Queue</li>
+				@click="setMainRightTab('queue')"
+				v-bind:class="{ active: mainRightTab == 'queue' || queueActive }">
+				Queue <span v-if="queue.length">({{queue.length}})</span>
+			</li>
 			<li
 				v-if="search.results.length"
 				v-on:click="setMainRightTab('search');setLeftMenuTab('');"

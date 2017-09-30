@@ -36,8 +36,18 @@ export default {
 		'currentWebScraper',
 		'currentMatrixRoom',
 		'showMediaEdit',
+		'queue',
 	]),
+	data() {
+		return { queueActive: false };
+	},
 	mounted() {
+		this.$store.watch(state => state.queueClickCount, () => {
+			this.queueActive = true;
+			setTimeout(() => {
+				this.queueActive = false;
+			}, 800);
+		});
 		document.addEventListener('mouseup', () => {
 			this.resize = false;
 			this.resizeWidth = false;
@@ -76,7 +86,9 @@ export default {
 	<ul class="tabs">
 		<li
 			@click="setMainRightTab('queue')"
-			v-bind:class="{ active: mainRightTab == 'queue' }">Queue</li>
+			v-bind:class="{ active: mainRightTab == 'queue' || queueActive }">
+			Queue <span v-if="queue.length">({{queue.length}})</span>
+		</li>
 		<li
 			v-if="search.results.length"
 			@click="setMainRightTab('search')"

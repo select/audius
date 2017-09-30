@@ -69,6 +69,7 @@ export const store = new Vuex.Store({
 		sessionHistoryPos: -1,
 		sessionHistory: [],
 		queue: [],
+		queueClickCount: 0,
 		isPlaying: false,
 		shuffle: false,
 		repeat1: false,

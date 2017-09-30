@@ -370,7 +370,7 @@ export const mutations = {
 	},
 	queue(state, media) {
 		state.queue.push(media);
-		state.mainRightTab = 'queue';
+		state.queueClickCount++;
 	},
 	queuePlayIndex(state, index) {
 		const media = state.queue.splice(index, 1)[0];
