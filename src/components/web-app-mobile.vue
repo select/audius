@@ -131,8 +131,11 @@ export default {
 	.tabs
 		height: $touch-size-small
 	.media-list__main
-		height: inherit
+		height: #{6 * $grid-space}
+		overflow-y: hidden
 		padding: .5em 0
+	.media-list__duration
+		font-size: 0.6rem
 	.media-list__thumbnail
 		width: 2.2em
 		height: 2.2em
