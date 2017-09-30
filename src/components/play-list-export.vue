@@ -102,11 +102,11 @@ export default {
 							<div
 								class="play-list__full"
 								v-bind:class="{ active: copyActive == item.url }"
-								@click="copyToClip(item.type, item.url, item.name)"
+								@click="copyToClip(item.type, item.url, item.name || 'Default')"
 								title="Share with Audius">
 								<div>
 									<div class="play-list__date">
-										{{item.name}} {{item.type && !item.type.includes('play') ? `(${item.type})` : ''}} -  {{niceDate(item.date)}}
+										{{item.name || 'Default'}} {{item.type && !item.type.includes('play') ? `(${item.type})` : ''}} -  {{niceDate(item.date)}}
 									</div>
 									<b>{{item.url}}</b>
 								</div>
