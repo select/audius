@@ -35,7 +35,7 @@ export default {
 		addMatrixRoom() {
 			const el = document.querySelector('.matrix-room input');
 			const roomIdRegEx = /#[\w-]+:[\w-]+\.\w{2,}/;
-			if (!roomIdRegEx.test(el.value) ) {
+			if (!roomIdRegEx.test(el.value)) {
 				this.toggleMatrixRoomModal(el.value || true);
 				// this.error('Please enter a room id.');
 			} else {

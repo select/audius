@@ -44,9 +44,6 @@ export default {
 					this.player.pause();
 				}
 			}),
-			this.$store.watch(state => state.reloadScript.vimeo, () => {
-				this.initPlayer();
-			}),
 		];
 	},
 	beforeDestroy() {
