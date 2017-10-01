@@ -36,7 +36,7 @@ Join a room and drag and drop to add new music.
  - [Rock](https://audius.rockdapus.org/?import=!VTIhlnDdHsxZFZQNFh:matrix.org&type=room&title=Rock)
  - [Electronic](https://audius.rockdapus.org/?import=!sgKmJzakMmEdSCgKCE:matrix.org&type=room&title=Electronic)
 
-Create your own rooms with the [Riot web client](https://riot.im/app/) or [any other client](https://matrix.org/docs/projects/try-matrix-now.html#clients) and share them with your friends.
+Create your own rooms with Audius and share it with your friends.
 
 
 ## Change log
