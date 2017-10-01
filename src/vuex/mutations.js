@@ -283,7 +283,7 @@ export const mutations = {
 		}
 	},
 	addSearchResult(state, media) {
-		if (state.leftMenuTab === 'playList') {
+		if (state.currentPlayList !== null) {
 			if (media.trackId) {
 				media = Object.assign({}, media);
 				delete media.trackId;
