@@ -3,7 +3,7 @@ import Vue from 'vue';
 import { mapGetters, mapMutations, mapState, mapActions } from 'vuex';
 import draggable from 'vuedraggable';
 
-import { starterPlaylist, debounce } from '../utils';
+import { starterPlaylist, throttle } from '../utils';
 import VideoItem from './video-item.vue';
 import PlayListExport from './play-list-export.vue';
 import PlayListImport from './play-list-import.vue';
@@ -37,9 +37,9 @@ export default {
 	},
 	mounted() {
 		this.checkElementVisible();
-		this.$el.querySelector('.play-list__body').addEventListener('scroll', debounce(() => {
+		this.$el.querySelector('.play-list__body').addEventListener('scroll', throttle(() => {
 			this.checkElementVisible();
-		}, 100));
+		}, 500));
 	},
 	updated() {
 		this.checkElementVisible();

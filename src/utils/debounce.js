@@ -28,7 +28,7 @@ export function debounceImmediate(func, wait = 500) {
 		// this is where the magic happens
 		const later = () => {
 			// how long ago was the last call
-			const last = (new Date()) - timestamp;
+			const last = new Date() - timestamp;
 			// if the latest call was less that the wait period ago
 			// then we reset the timeout to wait for the difference
 			if (last < wait) {
@@ -66,7 +66,7 @@ export function debounce(func, wait = 500) {
 		// this is where the magic happens
 		const later = () => {
 			// how long ago was the last call
-			const last = (new Date()) - timestamp;
+			const last = new Date() - timestamp;
 
 			// if the latest call was less that the wait period ago
 			// then we reset the timeout to wait for the difference
@@ -87,4 +87,26 @@ export function debounce(func, wait = 500) {
 	};
 }
 
+// https://remysharp.com/2010/07/21/throttling-function-calls
+export function throttle(fn, threshhold, scope) {
+	threshhold || (threshhold = 250);
+	let last;
+	let deferTimer;
+	return function() {
+		const context = scope || this;
 
+		const now = +new Date();
+		const args = arguments;
+		if (last && now < last + threshhold) {
+			// hold on to it
+			clearTimeout(deferTimer);
+			deferTimer = setTimeout(function() {
+				last = now;
+				fn.apply(context, args);
+			}, threshhold);
+		} else {
+			last = now;
+			fn.apply(context, args);
+		}
+	};
+}
