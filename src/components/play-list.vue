@@ -191,7 +191,7 @@ export default {
 			class="play-list__greeting"
 			v-show="showWelcome"
 			@add="dropAdd"
-			:options="{ sort: false, group: { name: 'lists' } }">
+			:options="{ sort: false, handle: '.no-handle', group: { name: 'lists' } }">
 			(⊃｡•́‿•̀｡)⊃ <br>
 			<br>
 			<div>
