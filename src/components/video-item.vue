@@ -78,6 +78,7 @@ export default {
 				this.copyActive = true;
 				setTimeout(() => {
 					this.copyActive = false;
+					this.selected = false;
 				}, 800);
 			} catch (err) {
 				this.error(`Error copying to clipboard ${err}`);
@@ -109,7 +110,7 @@ export default {
 		v-bind:title="expiryDate ? '🕑 hide in < 5min' : ''"
 		v-on:dblclick="_play"
 		v-bind:data-id="video.id">
-		<div v-if="isVisible">
+		<div v-if="isVisible || !isPlayList">
 			<div class="media-list__main">
 				<span class="wmp-icon-album media-list__album-hint" v-if="video.tracks"></span>
 				<div class="media-list__thumbnail" v-bind:style="{ backgroundImage: _backgroundImage() }"></div>
@@ -122,19 +123,27 @@ export default {
 				</div>
 				<div class="media-list__controls">
 
-					<span class="wmp-icon-pause" v-if="isPlaying" @click="pause" title="Pause"></span>
-					<span class="wmp-icon-play" v-else @click="_play" title="Play"></span>
+					<span
+						class="wmp-icon-pause"
+						v-if="isPlaying"
+						@click="pause();selected = false"
+						title="Pause"></span>
+					<span
+						class="wmp-icon-play"
+						v-else
+						@click="_play();selected = false"
+						title="Play"></span>
 
 					<span
 						v-if="video.tracks && !isQueue"
-						@click="showSongs = !showSongs"
+						@click="showSongs = !showSongs;selected = false"
 						v-bind:class="{ active: showSongs }"
 						title="Toggle album tracks"
 						class="wmp-icon-album media-list__show-tracks"></span>
 
 					<span
 						class="wmp-icon-queue2 icon--small"
-						@click="queue(video)"
+						@click="queue(video);selected = false"
 						v-if="!isQueue"
 						title="Add to queue"></span>
 
@@ -167,17 +176,17 @@ export default {
 						v-if="isPlayList && false"
 						class="wmp-icon-mode_edit"
 						title="Edit media"
-						@click="setShowMediaEdit(video.id)"></span>
+						@click="setShowMediaEdit(video.id);selected = false"></span>
 					<span
 						class="wmp-icon-close"
 						v-if="isPlayList || isQueue || (currentMatrixRoom && matrixRooms[currentMatrixRoom].isAdmin)"
-						@click="setShowConfirmDelte"
+						@click="setShowConfirmDelte();selected = false"
 						title="Remove"></span>
 
 					<span
 						v-if="isSearchResult"
 						class="wmp-icon-add"
-						@click="addToPlaylist(video)"
+						@click="addToPlaylist(video);selected = false"
 						title="Add to playlist"></span>
 
 				</div>
