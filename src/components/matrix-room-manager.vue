@@ -70,7 +70,7 @@ export default {
 <template>
 <div class="matrix-room play-list-manager__wrapper">
 	<div v-if="matrixEnabled && !matrixLoggedIn" class="matrix-room__logging-in">
-		&nbsp; … connecting to matrix
+		&nbsp; … connecting to Matrix
 	</div>
 	<div v-if="!matrixEnabled" class="play-list-manager__enable-matrix">
 		<a href="https://matrix.org/" target="_blank">Matrix</a> is a chat network that allows you to share music and videos with your friends. Press the button to create a guest user and join Matrix.
