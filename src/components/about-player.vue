@@ -77,14 +77,20 @@ export default {
 	</p>
 	<h2 id="extension">Extension and web channels</h2>
 	<p>
-		<a href="https://chrome.google.com/webstore/detail/ekpajajepcojhnjmlibfbjmdjcafajoh" target="_blank">Install the audius extension</a> to search  external webpages. It's also required when you create or import <a @click="setLeftMenuTab('tv')">web channels <span class="wmp-icon-queue_music"title="Toggle playlists"></span></a>. Web channels are still in development, currently they allow you to search on your favorite website for sounds and videos.
+		<a href="https://chrome.google.com/webstore/detail/ekpajajepcojhnjmlibfbjmdjcafajoh" target="_blank">The audius extension</a> helps to search external webpages. It is required when you create or import <a @click="setLeftMenuTab('tv')">web channels <span class="wmp-icon-queue_music"title="Toggle playlists"></span></a>. Web channels are still in development, currently they allow you to search on your favorite website for sounds and videos.
 	</p>
 	<h2>Change log</h2>
 	<p>
+		<b>2.0.10</b><br>
+		<ul>
+			<li> … </li>
+		</ul>
 		<b>2.0.9</b><br>
 		<ul>
 			<li> Improved mobile UI.</li>
-			<li> Improved media detection in search.</li>
+			<li> Improved search media link detection.</li>
+			<li> Don't open queue on add just indicate new media added. Thanks <i>lazz</i>.</li>
+			<li> Show error when extension is needed.</li>
 		</ul>
 		<b>2.0.8</b><br>
 		<ul>

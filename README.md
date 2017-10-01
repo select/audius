@@ -25,7 +25,7 @@ If you have questions or feedback, join the chat on matrix or create an issue on
 
 ## Extension
 
-Install the [audius extension](https://chrome.google.com/webstore/detail/ekpajajepcojhnjmlibfbjmdjcafajoh) to search  external webpages.
+The [audius extension](https://chrome.google.com/webstore/detail/ekpajajepcojhnjmlibfbjmdjcafajoh) helps to search  external webpages.
 	
 ## Share your Music with Matrix
 [Matrix](https://matrix.org/) is a chat network that Audius uses to share songs.
@@ -40,6 +40,12 @@ Create your own rooms with the [Riot web client](https://riot.im/app/) or [any o
 
 
 ## Change log
+
+**2.0.8**
+*	Improved mobile UI.
+*	Improved search media link detection.
+*	Don't open queue on add just indicate new media added. Thanks *lazz*.
+*	Show error when extension is needed.
 
 **2.0.8**
 *	Import [Streamly](https://github.com/LNFWebsite/Streamly) playlist.
