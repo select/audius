@@ -66,7 +66,7 @@ export default {
 			/* eslint-disable no-param-reassign */
 			if (this.$refs.playListEls) {
 				this.$refs.playListEls.forEach((ve) => {
-					if (!ve.isVisible) ve.isVisible = isElementInViewport(ve.$el);
+					ve.isVisible = isElementInViewport(ve.$el);
 				});
 			}
 		},
