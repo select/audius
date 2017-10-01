@@ -39,7 +39,7 @@ export default {
 		this.checkElementVisible();
 		this.$el.querySelector('.play-list__body').addEventListener('scroll', debounce(() => {
 			this.checkElementVisible();
-		}, 200));
+		}, 100));
 	},
 	updated() {
 		this.checkElementVisible();

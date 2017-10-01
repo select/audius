@@ -59,7 +59,6 @@ export default {
 			} else {
 				this.$store.commit('addSearchResult', this.video);
 			}
-			this.$emit('addToPlaylist', this.video.id);
 		},
 		youtubeLink() {
 			return youtubeLink(this.video);
@@ -87,7 +86,6 @@ export default {
 			tmpEl.parentNode.removeChild(tmpEl);
 		},
 		_backgroundImage() {
-			if (!this.isVisible && this.isPlayList) return '';
 			if ((this.video.type === 'youtube') && !this.video.hasError) {
 				return `url(https://i.ytimg.com/vi/${this.video.youtubeId || this.video.id}/default.jpg)`;
 			} else if (this.video.thumbUrl) {
@@ -111,104 +109,116 @@ export default {
 		v-bind:title="expiryDate ? '🕑 hide in < 5min' : ''"
 		v-on:dblclick="_play"
 		v-bind:data-id="video.id">
-		<div class="media-list__main">
-			<span class="wmp-icon-album media-list__album-hint" v-if="video.tracks"></span>
-			<div class="media-list__thumbnail" v-bind:style="{ backgroundImage: _backgroundImage() }"></div>
-			<div
-				class="media-list__body">
-				<div class="media-list__name">{{video.title}}</div>
-				<div class="media-list__duration" v-if="video.duration">
-					<span v-if="video.duration.h">{{video.duration.h}}:</span>{{video.duration.m}}:{{video.duration.s}}
+		<div v-if="isVisible">
+			<div class="media-list__main">
+				<span class="wmp-icon-album media-list__album-hint" v-if="video.tracks"></span>
+				<div class="media-list__thumbnail" v-bind:style="{ backgroundImage: _backgroundImage() }"></div>
+				<div
+					class="media-list__body">
+					<div class="media-list__name">{{video.title}}</div>
+					<div class="media-list__duration" v-if="video.duration">
+						<span v-if="video.duration.h">{{video.duration.h}}:</span>{{video.duration.m}}:{{video.duration.s}}
+					</div>
+				</div>
+				<div class="media-list__controls">
+
+					<span class="wmp-icon-pause" v-if="isPlaying" @click="pause" title="Pause"></span>
+					<span class="wmp-icon-play" v-else @click="_play" title="Play"></span>
+
+					<span
+						v-if="video.tracks && !isQueue"
+						@click="showSongs = !showSongs"
+						v-bind:class="{ active: showSongs }"
+						title="Toggle album tracks"
+						class="wmp-icon-album media-list__show-tracks"></span>
+
+					<span
+						class="wmp-icon-queue2 icon--small"
+						@click="queue(video)"
+						v-if="!isQueue"
+						title="Add to queue"></span>
+
+					<span
+						class="wmp-icon-search"
+						v-if="video.error"
+						title="Search alternative"></span>
+
+					<span
+						class="copy wmp-icon-copy icon--small"
+						@click="copyToClip"
+						v-bind:class="{ active: copyActive }"
+						title="Copy name and URL"></span>
+
+					<a
+						v-if="video.type === 'youtube'"
+						v-bind:href="this.youtubeLink()"
+						title="Watch on YouTube"
+						target="_blank">
+						<span class="wmp-icon-youtube icon--small"></span>
+					</a>
+					<a
+						v-if="video.href"
+						v-bind:href="video.href"
+						title="Go to source"
+						target="_blank">
+						<span class="wmp-icon-link"></span>
+					</a>
+					<span
+						v-if="isPlayList && false"
+						class="wmp-icon-mode_edit"
+						title="Edit media"
+						@click="setShowMediaEdit(video.id)"></span>
+					<span
+						class="wmp-icon-close"
+						v-if="isPlayList || isQueue || (currentMatrixRoom && matrixRooms[currentMatrixRoom].isAdmin)"
+						@click="setShowConfirmDelte"
+						title="Remove"></span>
+
+					<span
+						v-if="isSearchResult"
+						class="wmp-icon-add"
+						@click="addToPlaylist(video)"
+						title="Add to playlist"></span>
+
+				</div>
+				<div v-if="isMobile">
+					<span
+						class="wmp-icon-more_vert"
+						@click="selected = !selected"></span>
+				</div>
+
+			</div>
+			<ul
+				v-if="video.tracks && !isQueue"
+				v-bind:class="{ active: showSongs }"
+				class="media-list__tracks">
+				<video-item
+					v-for="track in video.tracks"
+					:video="track"
+					:isPlayList="false"
+					:key="track.start"
+					:isSearchResult="isSearchResult"
+					:isPlaying="false"></video-item>
+			</ul>
+			<div class="modal" v-if="showConfirmDelte" @click="showConfirmDelte = false">
+				<div class="modal__body" @click.stop>
+					Are you sure you want to remove this song?
+					<div class="modal__btn-group">
+						<button class="button" @click="showConfirmDelte = false">Cancel</button>
+						<button class="button btn btn--blue" @click.stop="remove();showConfirmDelte = false;">Remove</button>
+					</div>
 				</div>
 			</div>
-			<div class="media-list__controls">
-
-				<span class="wmp-icon-pause" v-if="isPlaying" @click="pause" title="Pause"></span>
-				<span class="wmp-icon-play" v-else @click="_play" title="Play"></span>
-
-				<span
-					v-if="video.tracks && !isQueue"
-					@click="showSongs = !showSongs"
-					v-bind:class="{ active: showSongs }"
-					title="Toggle album tracks"
-					class="wmp-icon-album media-list__show-tracks"></span>
-
-				<span
-					class="wmp-icon-queue2 icon--small"
-					@click="queue(video)"
-					v-if="!isQueue"
-					title="Add to queue"></span>
-
-				<span
-					class="wmp-icon-search"
-					v-if="video.error"
-					title="Search alternative"></span>
-
-				<span
-					class="copy wmp-icon-copy icon--small"
-					@click="copyToClip"
-					v-bind:class="{ active: copyActive }"
-					title="Copy name and URL"></span>
-
-				<a
-					v-if="video.type === 'youtube'"
-					v-bind:href="this.youtubeLink()"
-					title="Watch on YouTube"
-					target="_blank">
-					<span class="wmp-icon-youtube icon--small"></span>
-				</a>
-				<a
-					v-if="video.href"
-					v-bind:href="video.href"
-					title="Go to source"
-					target="_blank">
-					<span class="wmp-icon-link"></span>
-				</a>
-				<span
-					v-if="isPlayList"
-					class="wmp-icon-mode_edit"
-					title="Edit media"
-					@click="setShowMediaEdit(video.id)"></span>
-				<span
-					class="wmp-icon-close"
-					v-if="isPlayList || isQueue || (currentMatrixRoom && matrixRooms[currentMatrixRoom].isAdmin)"
-					@click="setShowConfirmDelte"
-					title="Remove"></span>
-
-				<span
-					v-if="isSearchResult"
-					class="wmp-icon-add"
-					@click="addToPlaylist(video)"
-					title="Add to playlist"></span>
-
-			</div>
-			<div v-if="isMobile">
-				<span
-					class="wmp-icon-more_vert"
-					@click="selected = !selected"></span>
-			</div>
-
 		</div>
-		<ul
-			v-if="video.tracks && !isQueue"
-			v-bind:class="{ active: showSongs }"
-			class="media-list__tracks">
-			<video-item
-				v-for="track in video.tracks"
-				:video="track"
-				:isPlayList="false"
-				:key="track.start"
-				:isSearchResult="isSearchResult"
-				:isPlaying="false"></video-item>
-		</ul>
-		<div class="modal" v-if="showConfirmDelte" @click="showConfirmDelte = false">
-			<div class="modal__body" @click.stop>
-				Are you sure you want to remove this song?
-				<div class="modal__btn-group">
-					<button class="button" @click="showConfirmDelte = false">Cancel</button>
-					<button class="button btn btn--blue" @click.stop="remove();showConfirmDelte = false;">Remove</button>
+		<div v-else class="media-list__main">
+			<div class="media-list__thumbnail"></div>
+				<div
+					class="media-list__body">
+					<div class="media-list__name">…</div>
+					<div class="media-list__duration">
+						0:00
+					</div>
 				</div>
-			</div>
 		</div>
 	</li>
 </template>
@@ -229,5 +239,4 @@ export default {
 	color: $color-white
 .in-playlist
 	background: $color-athensgrey
-
 </style>
