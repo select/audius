@@ -10,6 +10,9 @@ export default {
 	},
 	mounted() {
 		this.importName = this.pendingImportURL ? this.pendingImportURL.name : '';
+		if (!this.matrixLoggedIn && this.matrixEnabled) {
+			this.initMatrix();
+		}
 	},
 	methods: {
 		...mapActions(['importURL', 'joinMatrixRoom', 'initMatrix']),
@@ -89,13 +92,7 @@ export default {
 							</button>
 					</p>
 					<p v-if="!matrixLoggedIn && matrixEnabled">
-							<button
-								@click="initMatrix"
-								class="button btn--blue">
-								connect Matrix
-							</button>
-							<br>
-							<span class="smaller">This might take a bit. Please be patient.</span>
+							… connecting to Matrix. Please be patient.
 					</p>
 					<p>
 						<div class="import-modal__row">
