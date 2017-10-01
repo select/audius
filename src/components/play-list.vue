@@ -3,7 +3,7 @@ import Vue from 'vue';
 import { mapGetters, mapMutations, mapState, mapActions } from 'vuex';
 import draggable from 'vuedraggable';
 
-import { starterPlaylist, throttle } from '../utils';
+import { starterPlaylist, throttle, debounce } from '../utils';
 import VideoItem from './video-item.vue';
 import PlayListExport from './play-list-export.vue';
 import PlayListImport from './play-list-import.vue';
@@ -40,6 +40,10 @@ export default {
 		this.$el.querySelector('.play-list__body').addEventListener('scroll', throttle(() => {
 			this.checkElementVisible();
 		}, 500));
+		// only hide on debounced
+		this.$el.querySelector('.play-list__body').addEventListener('scroll', debounce(() => {
+			this.checkElementVisible(true);
+		}, 100));
 	},
 	updated() {
 		this.checkElementVisible();
@@ -62,11 +66,11 @@ export default {
 			'setLeftMenuTab'
 		]),
 		...mapActions(['importURL', 'matrixPaginate', 'runWebScraper', 'matrixSend']),
-		checkElementVisible() {
+		checkElementVisible(hide) {
 			/* eslint-disable no-param-reassign */
 			if (this.$refs.playListEls) {
 				this.$refs.playListEls.forEach((ve) => {
-					ve.isVisible = isElementInViewport(ve.$el);
+					if (hide || !ve.isVisible) ve.isVisible = isElementInViewport(ve.$el);
 				});
 			}
 		},
