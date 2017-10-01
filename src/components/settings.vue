@@ -106,11 +106,5 @@ export default {
 		display: inline-flex
 		align-items: center
 		justify-content: center
-.settings__btn-group
-	display: flex
-	justify-content: center
-	align-items: center
-	> *
-		margin-right: $grid-space
 
 </style>

@@ -1,5 +1,11 @@
 .audius,
 .web-app
+	.button-group
+		display: flex
+		justify-content: center
+		align-items: center
+		> *
+			margin-right: $grid-space
 	.button
 		font-family: 'Nobile', sans-serif
 		font-size: 1em
@@ -13,14 +19,14 @@
 		transition: all $transition-time
 		outline: 0
 		cursor: pointer
-		&.btn--blue
-			border-color: $color-pictonblue
-			background: $color-pictonblue
-			color: $color-white
 		&.btn--blue-ghost
 			border-color: $color-pictonblue
 			background: transparent
 			color: $color-pictonblue
+		&.btn--blue
+			border-color: $color-pictonblue
+			background: $color-pictonblue
+			color: $color-white
 		&.disabled,
 		&[disabled="disabled"]
 			cursor: pointer
