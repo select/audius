@@ -2,7 +2,7 @@
 const isRunningInAudiusApp = !!document.querySelector('#audius-website');
 
 // Listen to messages from background script
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((request, sender) => {
 	// if we are on a audius player page.
 	if (request.audius && isRunningInAudiusApp) {
 		window.dispatchEvent(
@@ -10,7 +10,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 				detail: request,
 			})
 		);
-		// sendResponse(`Send custom event to Audius website app ${request.action.type}`);
 	}
 });
 
@@ -27,7 +26,7 @@ if (isRunningInAudiusApp) {
 window.addEventListener(
 	'audiusExtension',
 	event => {
-		console.log('content message relay request ', event.detail)
+		console.log('content message relay request ', event.detail);
 		chrome.runtime.sendMessage(event.detail, response => {});
 	},
 	false
