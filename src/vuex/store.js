@@ -79,6 +79,7 @@ export const store = new Vuex.Store({
 		currentTime: 0,
 		skipToTime: 0,
 		mute: false,
+		fullscreen: false,
 		youtubeApiKey,
 		showImport: false,
 		showExport: false,

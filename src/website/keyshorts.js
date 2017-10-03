@@ -20,6 +20,7 @@ document.addEventListener('keydown', (event) => {
 	}
 
 	if (event.key === 'Escape') {
+		if (state.fullscreen) store.commit('toggleFullscreen', false);
 		if (state.showImport) store.commit('toggleImport', false);
 		if (state.showExport) store.commit('toggleExport', false);
 		if (state.showJump) {

@@ -2,9 +2,7 @@
 import { mapMutations, mapState } from 'vuex';
 import AboutPlayer from './about-player.vue';
 import Queue from './queue.vue';
-import YoutubePlayer from './youtube-player.vue';
-import VimeoPlayer from './vimeo-player.vue';
-import WebMediaPlayer from './web-media-player.vue';
+import MediaPlayer from './media-player.vue';
 
 const Settings = () => import(/* webpackChunkName: "settings" */'./settings.vue');
 const SearchResults = () => import(/* webpackChunkName: "search-results" */'./search-results.vue');
@@ -19,9 +17,7 @@ export default {
 		SearchResults,
 		Queue,
 		Settings,
-		YoutubePlayer,
-		VimeoPlayer,
-		WebMediaPlayer,
+		MediaPlayer,
 		WebScraperSettings,
 		MatrixRoomSettings,
 		MediaEdit,
@@ -56,7 +52,7 @@ export default {
 		document.addEventListener('mousemove', (event) => {
 			if (this.resize) {
 				const pos = 100 - Math.round(((event.clientY - br.top) / br.height) * 100);
-				if (pos > 10) this.$el.querySelector('.main-right__player').style.height = `${pos}%`;
+				if (pos > 10) this.$el.querySelector('.media-player').style.height = `${pos}%`;
 			}
 			if (this.resizeWidth) {
 				const bb = document.querySelector('.web-app__main').getBoundingClientRect();
@@ -125,27 +121,7 @@ export default {
 	<div
 		class="main-right__drag-handle"
 		@mousedown="resizeStart"></div>
-	<div
-		class="main-right__player"
-		v-bind:class="{
-			full: !mainRightTab,
-		}">
-		<span
-			@click="setMainRightTab('')"
-			v-if="mainRightTab"
-			class="main-right__player-full-btn wmp-icon-unfold_more"></span>
-		<div
-			class="main-right__yt-player"
-			v-bind:class="{'main-right--hide-yt-player': currentMedia.type !== 'youtube'}">
-			<youtube-player></youtube-player>
-		</div>
-		<div
-			class="main-right__yt-player"
-			v-bind:class="{'main-right--hide-yt-player': currentMedia.type !== 'vimeo'}">
-			<vimeo-player></vimeo-player>
-		</div>
-		<web-media-player v-show="!['youtube', 'vimeo'].includes(currentMedia.type)"></web-media-player>
-	</div>
+	<media-player></media-player>
 </div>
 </template>
 
@@ -163,31 +139,6 @@ export default {
 .main-right__content
 	flex: 1
 	overflow-y: auto
-
-.main-right__player
-	height: 33%
-	overflow: hidden
-	border-top: 1px solid $color-aluminium
-	position: relative
-	background: $color-catskillwhite
-	&.full
-		// I use important here since the height can be set by
-		// the user with drag and drop resize which sets the element
-		// height inline
-		height: 100%!important
-		.video-player
-			height: 100%
-.main-right__yt-player
-	height: 100%
-	&.main-right--hide-yt-player
-		height: 1%
-span.main-right__player-full-btn
-	position: absolute
-	top: 0
-	right: 0
-	cursor: pointer
-	color: $color-white
-	z-index: 1
 
 .main-right__width-handle
 	position: absolute

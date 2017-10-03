@@ -89,6 +89,7 @@ export default {
 				height: '100%',
 				width: '100%',
 				videoId: initialVideos[Math.floor(Math.random() * initialVideos.length)],
+				playerVars: {controls: 0},
 				events: {
 					onStateChange: this.onPlayerStateChange,
 					onError: this.onPlayerError,

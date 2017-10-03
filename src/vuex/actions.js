@@ -1,5 +1,5 @@
 import { actionsMatrix } from './actions-matrix';
-import { actionsWebScraper } from './actioins-web-scraper';
+import { actionsWebScraper } from './actions-web-scraper';
 import {
 	searchYoutube,
 	youTubePlaylistRexEx,
@@ -12,6 +12,28 @@ import {
 } from '../utils';
 import { getCurrentPlayListEntities } from './getCurrentPlayList';
 // the matrix client will be lazy loaded since it's not need on startup
+
+// Find the right method, call on correct element
+function launchIntoFullscreen(element) {
+	if (element.requestFullscreen) {
+		element.requestFullscreen();
+	} else if (element.mozRequestFullScreen) {
+		element.mozRequestFullScreen();
+	} else if (element.webkitRequestFullscreen) {
+		element.webkitRequestFullscreen();
+	} else if (element.msRequestFullscreen) {
+		element.msRequestFullscreen();
+	}
+}
+function exitFullscreen() {
+	if (document.exitFullscreen) {
+		document.exitFullscreen();
+	} else if (document.mozCancelFullScreen) {
+		document.mozCancelFullScreen();
+	} else if (document.webkitExitFullscreen) {
+		document.webkitExitFullscreen();
+	}
+}
 
 /* eslint-disable no-param-reassign */
 export const actions = {
@@ -84,20 +106,34 @@ export const actions = {
 	},
 	exportToURL({ commit, getters }) {
 		const data = getters.currentExportData;
-		ajaxPostJSON('https://api.myjson.com/bins', JSON.stringify(data)).then(res => {
-			commit('setExportURL', JSON.parse(res).uri);
-		}).catch(error => {
-			commit('error', error);
-		});
+		ajaxPostJSON('https://api.myjson.com/bins', JSON.stringify(data))
+			.then(res => {
+				commit('setExportURL', JSON.parse(res).uri);
+			})
+			.catch(error => {
+				commit('error', error);
+			});
 	},
 	nextVideo({ state, commit, dispatch }) {
 		if (state.currentWebScraper) {
 			const cp = getCurrentPlayListEntities(state);
-			const idx = cp.findIndex(m => m.id === state.currentMedia.id);
-			if (idx >= cp.length - 6) {
+			if (cp.length < 7) {
 				dispatch('runWebScraper', state.currentWebScraper);
 			}
 		}
+		if (state.currentMatrixRoom) {
+			const cp = getCurrentPlayListEntities(state);
+			if (cp.length < 7) {
+				dispatch('matrixPaginate', state.currentMatrixRoom);
+			}
+		}
 		commit('nextVideo');
+	},
+	toggleFullscreen({ state, commit }, toggleState) {
+		commit('toggleFullscreen', toggleState);
+		// Launch fullscreen for browsers that support it!
+		if (state.fullscreen) launchIntoFullscreen(document.querySelector('.media-player')); // any individual element
+		// Cancel fullscreen for browsers that support it!
+		else exitFullscreen();
 	},
 };

@@ -128,7 +128,7 @@ export default {
 </script>
 
 <template>
-	<video class="video-player" src="" controls>
+	<video class="video-player" src="">
 		Sorry, your browser doesn't support embedded videos.
 	</video>
 </template>

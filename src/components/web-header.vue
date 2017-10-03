@@ -43,7 +43,10 @@ export default {
 			'playPause',
 			'setStartStopMarker',
 		]),
-		...mapActions(['nextVideo']),
+		...mapActions([
+			'nextVideo',
+			'toggleFullscreen',
+		]),
 		searchInput: debounce(function(event) { store.dispatch('search', event.target.value); }, 500),
 		stopPropagation(event) {
 			if (this.website.showSearch) event.stopPropagation();
@@ -114,8 +117,22 @@ export default {
 		},
 	},
 	computed: {
-		...mapGetters(['currentTimeObj', 'filteredPlayListLength', 'progressWidth', 'sessionHistoryHasPrev']),
-		...mapState(['currentTime', 'currentMedia', 'website', 'isPlaying', 'shuffle', 'mute', 'repeat1', 'repeatAll']),
+		...mapGetters([
+			'currentTimeObj',
+			'filteredPlayListLength',
+			'progressWidth',
+			'sessionHistoryHasPrev',
+		]),
+		...mapState([
+			'currentTime',
+			'currentMedia',
+			'website',
+			'isPlaying',
+			'shuffle',
+			'mute',
+			'repeat1',
+			'repeatAll',
+		]),
 	},
 	mounted() {
 		this.dragImg = document.createElement('img');
@@ -218,10 +235,17 @@ export default {
 							title="Repeat"></span>
 					</div>
 					<div class="au-header__mute"
+						title="Mute"
 						v-bind:disabled="currentMedia.type == 'audio'"
 						@click="toggleMute">
 						<span class="wmp-icon-volume_up" v-if="!mute"></span>
 						<span class="wmp-icon-volume_off" v-else></span>
+					</div>
+					<div>
+						<span
+							class="wmp-icon-fullscreen"
+							@click="toggleFullscreen()"
+							title="Fullscreen"></span>
 					</div>
 				</div>
 			</div>

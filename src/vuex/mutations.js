@@ -154,7 +154,7 @@ export const mutations = {
 		state.website.showSearch = toggleState !== undefined ? toggleState : !state.website.showSearch;
 	},
 	setMainRightTab(state, id) {
-		state.mainRightTab = id === state.mainRightTab ? '' : id;
+		state.mainRightTab = id;
 	},
 	setLeftMenuTab(state, id) {
 		state.leftMenuTab = id;
@@ -340,6 +340,9 @@ export const mutations = {
 	},
 	toggleMute(state) {
 		state.mute = !state.mute;
+	},
+	toggleFullscreen(state, toggleState) {
+		state.fullscreen = toggleState !== undefined ? toggleState : !state.fullscreen;
 	},
 	toggleRepeat(state) {
 		if (!(state.repeatAll || state.repeat1)) {
