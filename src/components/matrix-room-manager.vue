@@ -172,7 +172,7 @@ export default {
 			Are you sure you want to leave the room?
 			<div class="modal__btn-group">
 				<button class="button" @click="showConfirmDelte = false">Cancel</button>
-				<button class="button btn btn--blue" @click.stop="leaveMatrixRoom(showConfirmDelte);showConfirmDelte = false;">Leave</button>
+				<button class="button btn--blue" @click.stop="leaveMatrixRoom(showConfirmDelte);showConfirmDelte = false;">Leave</button>
 			</div>
 		</div>
 	</div>
