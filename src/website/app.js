@@ -6,7 +6,7 @@ import WebApp from '../components/web-app.vue';
 import { indexDB, cleanWindowLocation, getParameterByName } from '../utils';
 // import '../utils/websiteMessageManager';
 import { store } from '../vuex/store';
-import { migrate } from '../utils/indexDB.migrate';
+// import { migrate } from '../utils/indexDB.migrate';
 import './keyshorts';
 
 function isMobile() {
