@@ -83,7 +83,8 @@ export default {
 	<p>
 		<b>2.0.10</b><br>
 		<ul>
-			<li> … </li>
+			<li> Add full screen mode for continous full screen playback. Add controls for prev, next.</li>
+			<li> Change user interface to less technical language. Thanks <i>Caspar</i>. </li>
 		</ul>
 		<b>2.0.9</b><br>
 		<ul>
