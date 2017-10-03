@@ -170,7 +170,11 @@ export default {
 						v-bind:href="video.href"
 						title="Go to source"
 						target="_blank">
-						<span class="wmp-icon-link"></span>
+						<span
+							:class="{
+								'wmp-icon-link': video.type !== 'vimeo',
+								'wmp-icon-vimeo  icon--small': video.type === 'vimeo',
+							}"></span>
 					</a>
 					<span
 						v-if="isPlayList && false"

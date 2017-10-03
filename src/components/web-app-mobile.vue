@@ -4,8 +4,7 @@ import { mapState, mapMutations, mapActions } from 'vuex';
 import PlayList from './play-list.vue';
 import WebHeader from './web-header.vue';
 
-import YoutubePlayer from './youtube-player.vue';
-import WebMediaPlayer from './web-media-player.vue';
+import MediaPlayer from './media-player.vue';
 
 import AboutPlayer from './about-player.vue';
 import Queue from './queue.vue';
@@ -22,8 +21,7 @@ export default {
 	components: {
 		WebHeader,
 		PlayList,
-		YoutubePlayer,
-		WebMediaPlayer,
+		MediaPlayer,
 		AboutPlayer,
 		SearchResults,
 		Queue,
@@ -70,10 +68,10 @@ export default {
 				v-bind:class="{ active: leftMenuTab == 'playList' && mainRightTab != 'about' }">PlayList</li>
 			<li
 				v-on:click="setLeftMenuTab('radio');setMainRightTab('');"
-				v-bind:class="{ active: leftMenuTab == 'radio' }">Matrix</li>
+				v-bind:class="{ active: leftMenuTab == 'radio' }">Rooms</li>
 			<li
 				v-on:click="setLeftMenuTab('tv');setMainRightTab('');"
-				v-bind:class="{ active: leftMenuTab == 'tv' }">Web</li>
+				v-bind:class="{ active: leftMenuTab == 'tv' }">Channels</li>
 			<li
 				@click="setMainRightTab('queue')"
 				v-bind:class="{ active: mainRightTab == 'queue' || queueActive }">
@@ -101,12 +99,7 @@ export default {
 			<matrix-room-manager v-if="leftMenuTab == 'radio'"></matrix-room-manager>
 			<web-scraper-manager v-if="leftMenuTab == 'tv'"></web-scraper-manager>
 		</div>
-		<div class="web-app-mobile__players">
-			<div class="web-app-mobile__yt" v-bind:class="{'web-app-mobile--hide-yt': currentMedia.type !== 'youtube'}">
-				<youtube-player></youtube-player>
-			</div>
-			<web-media-player v-show="currentMedia.type !== 'youtube'"></web-media-player>
-		</div>
+		<media-player></media-player>
 		<web-header></web-header>
 </div>
 </template>

@@ -62,9 +62,9 @@ export default {
 			<span
 				class="wmp-icon-close"
 				title="Delte playlist"
-				@click="showConfirmDelte = tagName"></span>
+				@click.stop="showConfirmDelte = tagName"></span>
 		</div>
-		<div class="modal" v-if="showConfirmDelte" @click="showConfirmDelte = false">
+		<div class="modal" v-if="showConfirmDelte" @click.stop="showConfirmDelte = false">
 			<div class="modal__body" @click.stop>
 				Are you sure you want to remove this playlist?
 				<div class="modal__btn-group">

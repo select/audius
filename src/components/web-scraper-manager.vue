@@ -57,13 +57,15 @@ export default {
 					v-on:keyup.enter="_addWebScraper"
 					type="text"
 					placeholder="... new channel">
-				<span
-					class="wmp-icon-add"
-					title="Create channel"
-					@click="_addWebScraper"></span>
+				<div class="play-list-manager__create">
+					<span
+						class="wmp-icon-add"
+						title="Create channel"
+						@click.stop="_addWebScraper"></span>
+				</div>
 			</li>
 		</ul>
-		<div class="modal" v-if="showConfirmDelte" @click="showConfirmDelte = false">
+		<div class="modal" v-if="showConfirmDelte" @click.stop="showConfirmDelte = false">
 			<div class="modal__body" @click.stop>
 				Are you sure you want to delete this channel?
 				<div class="modal__btn-group">

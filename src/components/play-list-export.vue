@@ -9,8 +9,19 @@ export default {
 		};
 	},
 	computed: {
-		...mapState(['exportURLs', 'currentWebScraper', 'webScrapers', 'currentMatrixRoom', 'matrixRooms']),
-		...mapGetters(['currentName', 'currentExportData', 'exportTypeName']),
+		...mapState([
+			'exportURLs',
+			'currentWebScraper',
+			'webScrapers',
+			'currentMatrixRoom',
+			'matrixRooms',
+			'isMobile',
+		]),
+		...mapGetters([
+			'currentName',
+			'currentExportData',
+			'exportTypeName',
+		]),
 	},
 	methods: {
 		...mapActions(['exportToURL']),
@@ -33,12 +44,16 @@ export default {
 			const minutes = dateObject.getMinutes() < 10 ? `0${dateObject.getMinutes()}` : dateObject.getMinutes();
 			return `${dateObject.getFullYear()}-${dateObject.getMonth() + 1}-${dateObject.getDate()} ${dateObject.getHours()}:${minutes}`;
 		},
+		getLink(type, url, name) {
+			if (type === 'room') return `${window.location.href}?import=${this.currentMatrixRoom}&type=${this.exportTypeName}&title=${encodeURIComponent(this.matrixRooms[this.currentMatrixRoom].name)}`;
+			else if (['channel', 'playList', undefined].includes(type)) return `${window.location.href}?import=${url}&type=${type}&title=${encodeURIComponent(name)}`;
+			else if (type === 'url') return url;
+			return '';
+		},
 		copyToClip(type, url, name) {
 			window.getSelection().removeAllRanges();
 			const tmpEl = document.createElement('div');
-			if (type === 'room') tmpEl.innerHTML = `${window.location.href}?import=${this.currentMatrixRoom}&type=${this.exportTypeName}&title=${encodeURIComponent(this.matrixRooms[this.currentMatrixRoom].name)}`;
-			else if (['channel', 'playList', undefined].includes(type)) tmpEl.innerHTML = `${window.location.href}?import=${url}&type=${type}&title=${encodeURIComponent(name)}`;
-			else if (type === 'url') tmpEl.innerHTML = url;
+			tmpEl.innerHTML = this.getLink(type, url, name);
 			document.body.appendChild(tmpEl);
 
 			const range = document.createRange();
@@ -59,14 +74,20 @@ export default {
 			window.getSelection().removeAllRanges();
 			tmpEl.parentNode.removeChild(tmpEl);
 		},
+		twitterLink(item) {
+			return `https://twitter.com/intent/tweet?text=${item.name || 'Default'} (${item.type}) ${this.getLink(item.type, item.url, item.name)}`;
+		},
+		whatsAppLink(item) {
+			return `https://api.whatsapp.com/send?text=${item.name || 'Default'} (${item.type}) ${this.getLink(item.type, item.url, item.name)}`;
+		},
 	},
 };
 </script>
 
 <template>
-	<div class="play-list__import"  >
+	<div class="play-list__import play-list__export"  >
 		<div class="play-list__import-header">
-			<div> Export {{exportTypeName}} </div>
+			<div> Share {{exportTypeName}} </div>
 			<span
 				class="wmp-icon-close"
 				title="[Esc] Close"
@@ -77,18 +98,27 @@ export default {
 				class="button btn--blue play-list__export-copy-room"
 				v-bind:class="{ active: copyURLActive }"
 				@click="copyToClip('room')">
-					copy
+					copy link
 				</button>
-				<br>
-				Click and paste to share this room.
+			<a class="button btn--blue" :href="twitterLink({type: 'room', name: matrixRooms[this.currentMatrixRoom].name})" target="_blank">
+				<span class="wmp-icon-twitter"></span>
+				<div>twitter</div>
+			</a>
+			<a
+				class="button btn--blue"
+				v-if="isMobile"
+				:href="whatsAppLink({type: 'room', name: matrixRooms[this.currentMatrixRoom].name})"
+				target="_blank">
+				<span class="wmp-icon-whatsapp"></span>
+				<div>whatsapp</div>
+			</a>
 		</div>
 		<div v-else>
-			<button
-				class="button btn--blue"
-				v-on:click="exportFile">to file</button>
-			<button
-				class="button btn--blue"
-				v-on:click="exportToURL">to Web</button>
+			<div class="button-group">
+				<button
+					class="button btn--blue"
+					v-on:click="exportToURL">create link</button>
+			</div>
 			<div
 				class="play-list__export-list-wrapper"
 				v-if="exportURLs.length">
@@ -103,13 +133,29 @@ export default {
 								class="play-list__full"
 								v-bind:class="{ active: copyActive == item.url }"
 								@click="copyToClip(item.type, item.url, item.name || 'Default')"
-								title="Share with Audius">
-								<div>
-									<div class="play-list__date">
-										{{item.name || 'Default'}} {{item.type && !item.type.includes('play') ? `(${item.type})` : ''}} -  {{niceDate(item.date)}}
-									</div>
-									<b>{{item.url}}</b>
+								title="Copy link">
+								<div class="play-list__name">
+									<span>
+									{{item.name || 'Default'}} {{item.type && !item.type.includes('play') ? `(${item.type})` : ''}}
+									</span>
+									<span class="play-list__date">
+										{{niceDate(item.date)}}
+									</span>
 								</div>
+									<div class="play-list__url">{{item.url}}</div>
+							</div>
+							<div @click="copyToClip(item.type, item.url, item.name || 'Default')">
+								<span class="wmp-icon-link"></span>
+							</div>
+							<div v-if="isMobile">
+								<a :href="whatsAppLink(item)" target="_blank">
+									<span class="wmp-icon-whatsapp"></span>
+								</a>
+							</div>
+							<div>
+								<a :href="twitterLink(item)" target="_blank">
+									<span class="wmp-icon-twitter"></span>
+								</a>
 							</div>
 							<div
 								@click="copyToClip('url', item.url)"
@@ -120,6 +166,11 @@ export default {
 						</li>
 					</ul>
 				</p>
+			</div>
+			<div class="button-group">
+				<button
+					class="button btn--blue"
+					v-on:click="exportFile">save file</button>
 			</div>
 		</div>
 	</div>
@@ -152,18 +203,40 @@ export default {
 			&.active:hover
 				background: $color-larioja
 				color: $color-white
+		[class^="wmp-icon"]
+			color: $color-palesky
 		.wmp-icon-copy
-			color: $color-aluminium
+			font-size: .7rem
+.play-list__export
+	.button
+		text-align: center
+	a.button
+		position: relative
+		justify-content: center
+		align-items: center
+		span
+			left: $grid-space
+			position: absolute
 .play-list__export-copy-room.active
 	background: $color-larioja
 	border-color: $color-larioja
 .play-list__export-room
 	padding-top: #{2 * $grid-space}
-	text-align: center
-.play-list__full
+.play-list__full.play-list__full
 	flex: 1
 	align-items: flex-start
 	overflow: hidden
+	flex-direction: column
+	justify-content: center
+	div,span
+		white-space: nowrap
+.play-list__name
+	display: flex
+	justify-content: space-between
+	width: 100%
+.play-list__url
+	font-size: 0.7rem
+	color: $color-pictonblue
 .play-list__date
-	white-space: nowrap
+	font-size: .7rem
 </style>
