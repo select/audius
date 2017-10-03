@@ -47,8 +47,19 @@ To update the fonts go to https://icomoon.io/app/#/select import the `selection.
 ```
 <span class="wmp-icon-sort"></span>
 <span class="wmp-icon-zoom_out_map"></span>
-<span class="wmp-icon-label"></span>
-<span class="wmp-icon-label_outline"></span>
 <span class="wmp-icon-queue_music"></span>
 <span class="wmp-icon-mode_edit"></span>
+<span class="wmp-icon-fullscreen"></span>
+<span class="wmp-icon-fullscreen_exit"></span>
+<span class="wmp-icon-share"></span>
+<span class="wmp-icon-fullscreen"></span>
+<span class="wmp-icon-fullscreen_exit"></span>
+```
+
+```
+<span class="wmp-icon-vimeo"></span>
+<span class="wmp-icon-whatsapp"></span>
+<span class="wmp-icon-youtube"></span>
+<span class="wmp-icon-facebook"></span>
+<span class="wmp-icon-twitter"></span>
 ```

@@ -15,12 +15,24 @@ for(var e,l='article aside footer header nav section time picture'.split(' ');e=
 @charset "UTF-8";
 @import url("https://fonts.googleapis.com/css?family=Nobile");
 /* line 3, src/sass/_input.sass */
+.audius .button-group,
+.web-app .button-group {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+/* line 7, src/sass/_input.sass */
+.audius .button-group > *,
+.web-app .button-group > * {
+  margin-right: 0.45rem;
+}
+/* line 9, src/sass/_input.sass */
 .audius .button,
 .web-app .button {
   font-family: "Nobile", sans-serif;
   font-size: 1em;
-  padding: 0 1vmin;
-  height: 5vmin;
+  padding: 0 0.45rem;
+  height: 2.25rem;
   border: 1px solid #C8CCD5;
   color: #C8CCD5;
   background: transparent;
@@ -30,36 +42,128 @@ for(var e,l='article aside footer header nav section time picture'.split(' ');e=
   outline: 0;
   cursor: pointer;
 }
-/* line 16, src/sass/_input.sass */
+/* line 22, src/sass/_input.sass */
+.audius .button.btn--blue-ghost,
+.web-app .button.btn--blue-ghost {
+  border-color: #2DA7EF;
+  background: transparent;
+  color: #2DA7EF;
+}
+/* line 26, src/sass/_input.sass */
 .audius .button.btn--blue,
 .web-app .button.btn--blue {
   border-color: #2DA7EF;
   background: #2DA7EF;
   color: #fff;
 }
-/* line 20, src/sass/_input.sass */
+/* line 30, src/sass/_input.sass */
+.audius .button.disabled, .audius .button[disabled="disabled"],
+.web-app .button.disabled,
+.web-app .button[disabled="disabled"] {
+  cursor: pointer;
+  background-color: #C8CCD5;
+  border: 1px solid #C8CCD5;
+}
+/* line 35, src/sass/_input.sass */
+.audius .button.disabled,
+.web-app .button.disabled {
+  pointer-events: none;
+}
+/* line 37, src/sass/_input.sass */
+.audius .button [class^="wmp-icon"],
+.web-app .button [class^="wmp-icon"] {
+  width: 1.8rem;
+  height: 1.8rem;
+}
+/* line 40, src/sass/_input.sass */
 .audius a.button,
 .web-app a.button {
   display: flex;
   align-items: center;
   text-decoration: none;
 }
-/* line 24, src/sass/_input.sass */
+/* line 44, src/sass/_input.sass */
 .audius select,
 .web-app select {
   background: transparent;
   border: 1px solid #C8CCD5;
-  height: 5vmin;
+  height: 2.25rem;
   display: block;
   width: 100%;
   font-size: 1em;
 }
-
-/* line 32, src/sass/_input.sass */
-input {
-  height: 5vmin;
+/* line 51, src/sass/_input.sass */
+.audius [type='checkbox'],
+.web-app [type='checkbox'] {
+  display: none;
+}
+/* line 53, src/sass/_input.sass */
+.audius [type='checkbox'] + label,
+.web-app [type='checkbox'] + label {
+  margin-left: 0;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  height: 1.8rem;
+  min-width: 1.8rem;
+  padding-right: 0.45rem;
+  cursor: pointer;
+}
+/* line 64, src/sass/_input.sass */
+.audius [type='checkbox'] + label:before,
+.web-app [type='checkbox'] + label:before {
+  content: " ";
+  font-family: "shoutr";
   font-size: 1rem;
-  padding: 0 1vmin;
+  width: 1.35rem;
+  height: 1.35rem;
+  line-height: 1.35rem;
+  margin-right: 0.45rem;
+  transition: 250ms;
+  color: #fff;
+  border: 1px solid #2DA7EF;
+  border-radius: 2px;
+  background-color: #fff;
+}
+/* line 77, src/sass/_input.sass */
+.audius [type='checkbox']:checked + label:before,
+.web-app [type='checkbox']:checked + label:before {
+  background-color: #2DA7EF;
+  content: "";
+}
+/* line 82, src/sass/_input.sass */
+.audius [type='checkbox']:disabled + label,
+.web-app [type='checkbox']:disabled + label {
+  pointer-events: none;
+}
+/* line 84, src/sass/_input.sass */
+.audius [type='checkbox']:disabled + label:before,
+.web-app [type='checkbox']:disabled + label:before {
+  border-color: #C8CCD5;
+}
+/* line 86, src/sass/_input.sass */
+.audius [type='checkbox']:disabled:checked + label:before,
+.web-app [type='checkbox']:disabled:checked + label:before {
+  background-color: #C8CCD5;
+}
+/* line 89, src/sass/_input.sass */
+.audius input,
+.web-app input {
+  height: 2.25rem;
+  font-size: 1rem;
+  border: 0;
+  font-family: "Nobile", sans-serif;
+}
+/* line 94, src/sass/_input.sass */
+.audius input[disabled="disabled"],
+.web-app input[disabled="disabled"] {
+  background-color: #E2E4E9;
+}
+/* line 96, src/sass/_input.sass */
+.audius input.input--border,
+.web-app input.input--border {
+  border: 1px solid #C8CCD5;
+  padding: 0 0.45rem;
 }
 
 @font-face {
@@ -72,8 +176,8 @@ input {
 [class^="wmp-icon-"], [class*=" wmp-icon-"] {
   text-align: center;
   position: relative;
-  width: 7vmin;
-  height: 7vmin;
+  width: 3.15rem;
+  height: 3.15rem;
   display: inline-block;
 }
 /* line 17, src/sass/_icon.sass */
@@ -103,6 +207,46 @@ input {
 }
 
 /* line 42, src/sass/_icon.sass */
+.wmp-icon-vimeo:before {
+  content: "";
+}
+
+/* line 42, src/sass/_icon.sass */
+.wmp-icon-whatsapp:before {
+  content: "";
+}
+
+/* line 42, src/sass/_icon.sass */
+.wmp-icon-youtube:before {
+  content: "";
+}
+
+/* line 42, src/sass/_icon.sass */
+.wmp-icon-facebook:before {
+  content: "";
+}
+
+/* line 42, src/sass/_icon.sass */
+.wmp-icon-twitter:before {
+  content: "";
+}
+
+/* line 42, src/sass/_icon.sass */
+.wmp-icon-fullscreen:before {
+  content: "";
+}
+
+/* line 42, src/sass/_icon.sass */
+.wmp-icon-fullscreen_exit:before {
+  content: "";
+}
+
+/* line 42, src/sass/_icon.sass */
+.wmp-icon-share:before {
+  content: "";
+}
+
+/* line 42, src/sass/_icon.sass */
 .wmp-icon-album:before {
   content: "";
 }
@@ -115,16 +259,6 @@ input {
 /* line 42, src/sass/_icon.sass */
 .wmp-icon-zoom_out_map:before {
   content: "";
-}
-
-/* line 42, src/sass/_icon.sass */
-.wmp-icon-label:before {
-  content: "";
-}
-
-/* line 42, src/sass/_icon.sass */
-.wmp-icon-label_outline:before {
-  content: "";
 }
 
 /* line 42, src/sass/_icon.sass */
@@ -243,7 +377,7 @@ input {
 }
 
 /* line 42, src/sass/_icon.sass */
-.wmp-icon-local_offer2:before {
+.wmp-icon-local_offer22:before {
   content: "";
 }
 
@@ -260,11 +394,6 @@ input {
 /* line 42, src/sass/_icon.sass */
 .wmp-icon-cloud_upload:before {
   content: "";
-}
-
-/* line 42, src/sass/_icon.sass */
-.wmp-icon-youtube:before {
-  content: "";
 }
 
 /* line 53, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/_livingstyleguide.scss */
@@ -715,57 +844,47 @@ input {
 
 /* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
 .\$grid-space:after {
-  content: "1vmin";
+  content: "0.45rem";
 }
 
 /* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
 .\$touch-size-extratiny:after {
-  content: "3vmin";
+  content: "1.35rem";
 }
 
 /* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
 .\$touch-size-tiny:after {
-  content: "4vmin";
+  content: "1.8rem";
 }
 
 /* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
 .\$touch-size-small:after {
-  content: "5vmin";
+  content: "2.25rem";
 }
 
 /* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
 .\$touch-size-sm:after {
-  content: "5vmin";
+  content: "2.25rem";
 }
 
 /* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
 .\$touch-size-medium:after {
-  content: "7vmin";
+  content: "3.15rem";
 }
 
 /* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
 .\$touch-size-large:after {
-  content: "8vmin";
+  content: "3.6rem";
 }
 
 /* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
 .\$touch-size-huge:after {
-  content: "9vmin";
+  content: "4.05rem";
 }
 
 /* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
 .\$border-radius:after {
   content: "2px";
-}
-
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$scroll-bar-size:after {
-  content: "17px";
-}
-
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$font-size-normal:after {
-  content: "2vmin";
 }
 
 /* line 6, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
@@ -1066,12 +1185,12 @@ input {
 
 /* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
 .\$icon-uuid:after {
-  content: '"ff90ac23"';
+  content: '"7fb3cfe6"';
 }
 
 /* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
 .\$icon-map:after {
-  content: '(album: "", sort: "", zoom_out_map: "", label: "", label_outline: "", queue_music: "", mode_edit: "", format_list_bulleted: "", dehaze: "", reorder: "", more_vert: "", unfold_more: "", arrow_drop_down: "", arrow_drop_up: "", previous: "", play: "", pause: "", next: "", shuffle: "", repeat: "", repeat_one: "", volume_off: "", volume_up: "", search: "", close: "", add: "", queue2: "", copy: "", local_offer2: "", link: "", delete: "", cloud_upload: "", youtube: "")';
+  content: '(vimeo: "", whatsapp: "", youtube: "", facebook: "", twitter: "", fullscreen: "", fullscreen_exit: "", share: "", album: "", sort: "", zoom_out_map: "", queue_music: "", mode_edit: "", format_list_bulleted: "", dehaze: "", reorder: "", more_vert: "", unfold_more: "", arrow_drop_down: "", arrow_drop_up: "", previous: "", play: "", pause: "", next: "", shuffle: "", repeat: "", repeat_one: "", volume_off: "", volume_up: "", search: "", close: "", add: "", queue2: "", copy: "", local_offer22: "", link: "", delete: "", cloud_upload: "")';
 }
 
 /* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
@@ -1373,9 +1492,10 @@ input {
 <h2 class="livingstyleguide--headline" id="variables"><a class="livingstyleguide--anchor" href="#variables"></a>Variables</h2>
 <h3 class="livingstyleguide--sub-headline" id="time"><a class="livingstyleguide--anchor" href="#time"></a>Time</h3>
 <pre class="livingstyleguide--code-block"><code class="livingstyleguide--code">$transition-time: 250ms</code></pre><h3 class="livingstyleguide--sub-headline" id="space"><a class="livingstyleguide--anchor" href="#space"></a>Space</h3>
-<h4 class="livingstyleguide--sub-sub-headline" id="grid-base"><a class="livingstyleguide--anchor" href="#grid-base"></a>Grid base</h4>
+<h4 class="livingstyleguide--sub-sub-headline" id="base-font-size"><a class="livingstyleguide--anchor" href="#base-font-size"></a>Base Font Size</h4>
+<pre class="livingstyleguide--code-block"><code class="livingstyleguide--code">$base-font-size: 2.3vmin</code></pre><h4 class="livingstyleguide--sub-sub-headline" id="grid-base"><a class="livingstyleguide--anchor" href="#grid-base"></a>Grid base</h4>
 <p class="livingstyleguide--paragraph">This is the most important variable since all grid values are based on it</p>
-<pre class="livingstyleguide--code-block"><code class="livingstyleguide--code">$grid-space: 1vmin</code></pre><h4 class="livingstyleguide--sub-sub-headline" id="input-shadows"><a class="livingstyleguide--anchor" href="#input-shadows"></a>Input shadows</h4>
+<pre class="livingstyleguide--code-block"><code class="livingstyleguide--code">$grid-space: 0.45em</code></pre><h4 class="livingstyleguide--sub-sub-headline" id="input-shadows"><a class="livingstyleguide--anchor" href="#input-shadows"></a>Input shadows</h4>
 <p class="livingstyleguide--paragraph">Default shadow for buttons that need a shadow.</p>
 <pre class="livingstyleguide--code-block"><code class="livingstyleguide--code">+card(1)
 +card(2)
@@ -1402,8 +1522,7 @@ $touch-size-huge:      9*$grid-space</code></pre><h4 class="livingstyleguide--su
 <pre class="livingstyleguide--code-block"><code class="livingstyleguide--code">input
     width: 18em
     +placeholder
-        color: $color-pictonblue</code></pre><h4 class="livingstyleguide--sub-sub-headline" id="font-size"><a class="livingstyleguide--anchor" href="#font-size"></a>Font size</h4>
-<pre class="livingstyleguide--code-block"><code class="livingstyleguide--code">$font-size-normal: 2vmin</code></pre><h2 class="livingstyleguide--headline" id="colors"><a class="livingstyleguide--anchor" href="#colors"></a>Colors</h2>
+        color: $color-pictonblue</code></pre><h2 class="livingstyleguide--headline" id="colors"><a class="livingstyleguide--anchor" href="#colors"></a>Colors</h2>
 <ul class="livingstyleguide--color-swatches -lsg-4-columns">
 <li class="livingstyleguide--color-swatch $color-pictonblue">$color-pictonblue</li>
 
@@ -1556,17 +1675,34 @@ $touch-size-huge:      9*$grid-space</code></pre><h4 class="livingstyleguide--su
 <b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-volume_up"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b></code></pre><div class="livingstyleguide--example">
   <span class="wmp-icon-sort"></span>
 <span class="wmp-icon-zoom_out_map"></span>
-<span class="wmp-icon-label"></span>
-<span class="wmp-icon-label_outline"></span>
 <span class="wmp-icon-queue_music"></span>
 <span class="wmp-icon-mode_edit"></span>
+<span class="wmp-icon-fullscreen"></span>
+<span class="wmp-icon-fullscreen_exit"></span>
+<span class="wmp-icon-share"></span>
+<span class="wmp-icon-fullscreen"></span>
+<span class="wmp-icon-fullscreen_exit"></span>
 </div>
 <pre class="livingstyleguide--code-block"><code class="livingstyleguide--code"><b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-sort"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
 <b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-zoom_out_map"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-label"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-label_outline"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
 <b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-queue_music"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-mode_edit"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b></code></pre>
+<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-mode_edit"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
+<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-fullscreen"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
+<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-fullscreen_exit"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
+<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-share"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
+<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-fullscreen"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
+<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-fullscreen_exit"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b></code></pre><div class="livingstyleguide--example">
+  <span class="wmp-icon-vimeo"></span>
+<span class="wmp-icon-whatsapp"></span>
+<span class="wmp-icon-youtube"></span>
+<span class="wmp-icon-facebook"></span>
+<span class="wmp-icon-twitter"></span>
+</div>
+<pre class="livingstyleguide--code-block"><code class="livingstyleguide--code"><b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-vimeo"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
+<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-whatsapp"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
+<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-youtube"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
+<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-facebook"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
+<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-twitter"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b></code></pre>
 </div>
 <div class="livingstyleguide--footer"><a class="livingstyleguide--logo" href="http://livingstyleguide.org">Made with the LivingStyleGuide gem.</a></div>
 
