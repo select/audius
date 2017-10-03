@@ -2,6 +2,8 @@ import {
 	webScraper,
 } from '../utils';
 
+const webScraperInstances = {};
+
 export const actionsWebScraper = {
 	webScraperUpdateSuccess({ state, commit }, { id, mediaList }) {
 		const ws = state.webScrapers[id];
@@ -22,7 +24,15 @@ export const actionsWebScraper = {
 		if (id && !(id in state.webScrapers)) {
 			commit('addWebScraper', id);
 		}
-		if (!state.webScrapers[id].playList.length) {
+		const ws = state.webScrapers[id];
+		if (ws.settings && ws.settings.type === 'script' && !(id in webScraperInstances)) {
+			// https://developer.mozilla.org/en-US/docs/Mozilla/Tech/XPCOM/Language_Bindings/Components.utils.evalInSandbox
+			// Components.utils.evalInSandbox does not seem to be available in Chrome, is this a FireFox feature?
+			// But I can create a sandboxed script in an extension.
+			// https://developer.chrome.com/extensions/sandboxingEval
+			// webScraperInstances[id] =
+		}
+		if (!ws.playList.length) {
 			dispatch('runWebScraper', id);
 		}
 	},
@@ -38,7 +48,7 @@ export const actionsWebScraper = {
 			webScraper.getVideosFromIndex(state.paginationIndex[id]).then(mediaList => {
 				dispatch('webScraperUpdateSuccess', { id, mediaList });
 			});
-		} else {
+		} else if (state.webScrapers[id].settings.type === 'urls') {
 			let requestIndex = index;
 			if (index >= ws.settings.numPages - 1) {
 				commit('error', 'Checked all URLs in channel, try again next time.');

@@ -22,6 +22,25 @@ export function ajax(url, callback, params) {
 	});
 }
 
+export function ajax2(url, requestHeader) {
+	const promise = new Promise((resolve, reject) => {
+		const xhr = new XMLHttpRequest();
+		xhr.open('GET', url, true);
+		xhr.onload = function load() {
+			if (this.status >= 200 && this.status < 300) resolve(this.responseText);
+			else reject(`Ajax request for ${url} failed , because ${this.statusText}`);
+		};
+		if (requestHeader) {
+			xhr.setRequestHeader(...requestHeader);
+		}
+		xhr.onerror = (event) => {
+			reject(`Error requesting ${this.parserName}`);
+		};
+		xhr.send();
+	});
+	return promise;
+}
+
 export function ajaxPostJSON(url, params) {
 	return new Promise((resolve, reject) => {
 		const xmlhttp = new XMLHttpRequest();
