@@ -314,12 +314,15 @@ export default {
 				v-if="currentPlayList !== null"
 				v-bind:class="{ active: showImport }"
 				@click="toggleImport()">
-				Import
+				<span class="wmp-icon-add"></span> Add
 			</li>
 			<li
 				v-bind:class="{ active: showExport }"
 				@click="toggleExport()"
-				title="Export playlist">Export</li>
+				title="Share and save">
+				<span class="wmp-icon-share"></span>
+				Share
+			</li>
 		</ul>
 
 		<div

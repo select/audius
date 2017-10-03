@@ -79,15 +79,22 @@ export default {
 		<button
 			class="button btn--blue"
 			@click="setMatrixEnabled();initMatrix();"
-			type="button">Enable Matrix</button>
+			type="button">Join Matrix</button>
 	</div>
 	<div
 		class="play-list-manager__room-suggestions"
 		v-if="matrixLoggedIn && !matrixRoomsOrdered.length">
 		You did not join any rooms yet!
 		<br>
-		Open the <span @click="toggleMatrixRoomDirectory()">room directory</span> or
 		<br>
+		<button class="button btn--blue" @click="toggleMatrixRoomDirectory()">
+			<span class="wmp-icon-format_list_bulleted"></span>
+			rooms
+		</button>
+		<br>
+		<br>
+		Open the room list
+		or
 		create your own room.
 	</div>
 	<matrix-create-room></matrix-create-room>
@@ -133,7 +140,7 @@ export default {
 				<span
 					class="wmp-icon-close"
 					title="Leave room"
-					@click="showConfirmDelte = id"></span>
+					@click.stop="showConfirmDelte = id"></span>
 			</div>
 		</draggable>
 	</draggable>
@@ -146,14 +153,18 @@ export default {
 				v-on:keyup.enter="addMatrixRoom"
 				type="text"
 				placeholder="… room id or name">
-			<span
-				class="wmp-icon-add"
-				title="Create / join room"
-				@click="addMatrixRoom"></span>
-			<span
-				class="wmp-icon-format_list_bulleted"
-				title="Room directory"
-				@click="toggleMatrixRoomDirectory()"></span>
+			<div class="matrix-room__room-join-create">
+				<span
+					class="wmp-icon-add"
+					title="Create / join room"
+					@click="addMatrixRoom"></span>
+			</div>
+			<div class="matrix-room__room-list">
+				<span
+					class="wmp-icon-format_list_bulleted"
+					title="Room List"
+					@click="toggleMatrixRoomDirectory()"></span>
+			</div>
 		</li>
 	</ul>
 	<div class="modal" v-if="showConfirmDelte" @click="showConfirmDelte = false">
@@ -176,9 +187,21 @@ export default {
 	display: none
 
 .matrix-room
-	color: $color-catskillwhite
+	color: $color-white
 	.modal__body
 		color: $color-palesky
+
+.matrix-room__room-join-create:before,
+.matrix-room__room-list:before
+	position: absolute
+	transform: rotate(-53.4deg)
+	transform-origin: 5.8rem 3.5rem
+	font-size: 0.8rem
+	color: $color-athensgrey
+.matrix-room__room-list:before
+	content: 'ROOMS'
+.matrix-room__room-join-create:before
+	content: 'CREATE'
 
 
 .matrix-room__logging-in,
@@ -193,6 +216,12 @@ export default {
 	span
 		text-decoration: underline
 		cursor: pointer
+	> button.button
+		padding: 0 #{2 * $grid-space}
+		display: inline-flex
+		align-items: center
+		> span
+			margin-right: #{2 * $grid-space}
 
 </style>
 

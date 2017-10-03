@@ -28,7 +28,10 @@ export default {
 				<a class="button btn--blue" href="?import=!zKinTrtpQEyHfnIbnI:matrix.org&type=room&title=Random">Random</a>
 				<a class="button btn--blue" href="?import=!VTIhlnDdHsxZFZQNFh:matrix.org&type=room&title=Rock">Rock</a>
 				<a class="button btn--blue" href="?import=!sgKmJzakMmEdSCgKCE:matrix.org&type=room&title=Electronic">Electronic</a>
-				… press update rooms below, it might take a while. If you don't see new rooms join one of the above and reload.
+			</div>
+			<div v-if="!(matrix.publicRooms && matrix.publicRooms.length)">
+				<br>
+				… press below to update rooms, it might take a while.
 			</div>
 			<div class="matrix-public-rooms__buttons">
 				<a

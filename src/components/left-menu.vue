@@ -52,10 +52,10 @@ export default {
 			v-bind:class="{ active: leftMenuTab == 'playList' }">Playlist</li>
 		<li
 			v-on:click="setLeftMenuTab('radio')"
-			v-bind:class="{ active: leftMenuTab == 'radio' }">Matrix</li>
+			v-bind:class="{ active: leftMenuTab == 'radio' }">Rooms</li>
 		<li
 			v-on:click="setLeftMenuTab('tv');"
-			v-bind:class="{ active: leftMenuTab == 'tv' }">Web</li>
+			v-bind:class="{ active: leftMenuTab == 'tv' }">Channels</li>
 	</ul>
 	<div class="left-menu__wrapper">
 		<play-list-manager v-show="leftMenuTab == 'playList'"></play-list-manager>

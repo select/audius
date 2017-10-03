@@ -77,7 +77,9 @@ export default {
 					v-on:keyup.enter="addTags"
 					type="text"
 					placeholder="... new playlist">
-				<span class="wmp-icon-add" @click="addTags"></span>
+				<div class="play-list-manager__create">
+					<span class="wmp-icon-add" @click="addTags"></span>
+				</div>
 			</li>
 		</ul>
 	</div>
@@ -134,7 +136,6 @@ export default {
 			height: $grid-space
 
 
-
 .play-list-manager__menu
 	display: none
 
@@ -156,6 +157,14 @@ export default {
 			color: $color-aluminium-dark
 		&::-moz-placeholder
 			color: $color-aluminium-dark
+.play-list-manager__create:before
+	position: absolute
+	transform: rotate(-53.4deg)
+	transform-origin: 5.8rem 3.5rem
+	font-size: 0.8rem
+	color: $color-athensgrey
+	content: 'CREATE'
+
 </style>
 
 
