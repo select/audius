@@ -7,31 +7,6 @@ The current icomoon export is here: <a href="../icons/media-player.zip">media-pl
 
 To update the fonts go to https://icomoon.io/app/#/select import the `selection.json` file in the zip and generate the new font. Download the `media-player.zip` to `/src/icons` and run `npm run icons`.
 
-
-```
-<span class="wmp-icon-dehaze"></span>
-<span class="wmp-icon-reorder"></span>
-<span class="wmp-icon-format_list_bulleted"></span>
-<span class="wmp-icon-more_vert"></span>
-<span class="wmp-icon-unfold_more"></span>
-<span class="wmp-icon-arrow_drop_down"></span>
-<span class="wmp-icon-arrow_drop_up"></span>
-<span class="wmp-icon-search"></span>
-<span class="wmp-icon-local_offer2"></span>
-<span class="wmp-icon-link"></span>
-<span class="wmp-icon-delete"></span>
-<span class="wmp-icon-cloud_upload"></span>
-```
-
-```
-<span class="wmp-icon-album"></span>
-<span class="wmp-icon-add"></span>
-<span class="wmp-icon-queue2"></span>
-<span class="wmp-icon-copy"></span>
-<span class="wmp-icon-youtube"></span>
-<span class="wmp-icon-close"></span>
-```
-
 ```
 <span class="wmp-icon-previous"></span>
 <span class="wmp-icon-play"></span>
@@ -45,6 +20,28 @@ To update the fonts go to https://icomoon.io/app/#/select import the `selection.
 ```
 
 ```
+<span class="wmp-icon-album"></span>
+<span class="wmp-icon-add"></span>
+<span class="wmp-icon-queue2"></span>
+<span class="wmp-icon-copy"></span>
+<span class="wmp-icon-close"></span>
+```
+
+```
+<span class="wmp-icon-dehaze"></span>
+<span class="wmp-icon-reorder"></span>
+<span class="wmp-icon-format_list_bulleted"></span>
+<span class="wmp-icon-more_vert"></span>
+<span class="wmp-icon-unfold_more"></span>
+<span class="wmp-icon-arrow_drop_down"></span>
+<span class="wmp-icon-arrow_drop_up"></span>
+<span class="wmp-icon-search"></span>
+<span class="wmp-icon-link"></span>
+<span class="wmp-icon-delete"></span>
+<span class="wmp-icon-cloud_upload"></span>
+```
+
+```
 <span class="wmp-icon-sort"></span>
 <span class="wmp-icon-zoom_out_map"></span>
 <span class="wmp-icon-queue_music"></span>
@@ -52,8 +49,6 @@ To update the fonts go to https://icomoon.io/app/#/select import the `selection.
 <span class="wmp-icon-fullscreen"></span>
 <span class="wmp-icon-fullscreen_exit"></span>
 <span class="wmp-icon-share"></span>
-<span class="wmp-icon-fullscreen"></span>
-<span class="wmp-icon-fullscreen_exit"></span>
 ```
 
 ```

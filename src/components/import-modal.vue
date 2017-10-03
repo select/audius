@@ -124,7 +124,7 @@ export default {
 				</p>
 			</div>
 			<p class="import-modal__last">
-					<button class="button " @click="close">Cancel</button>
+					<button class="button" @click="close">Cancel</button>
 			</p>
 		</div>
 	</div>

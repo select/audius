@@ -1611,49 +1611,42 @@ $touch-size-huge:      9*$grid-space</code></pre><h4 class="livingstyleguide--su
 <li class="livingstyleguide--color-swatch -lsg-empty">-</li>
 
 </ul>
-<h2 class="livingstyleguide--headline" id="icons"><a class="livingstyleguide--anchor" href="#icons"></a>Icons</h2>
+<h2 class="livingstyleguide--headline" id="inputs"><a class="livingstyleguide--anchor" href="#inputs"></a>Inputs</h2>
+<div class="livingstyleguide--example">
+  <div class="audius">
+    <button class="button btn--blue">Join a room</button>
+    <button class="button btn--blue-ghost">Join a room</button>
+    <button class="button btn--blue disabled">Join a room</button>
+</div>
+</div>
+<pre class="livingstyleguide--code-block"><code class="livingstyleguide--code"><b>&lt;<em>div</em></b> <b>class</b>="audius"<b>&gt;</b>
+    <b>&lt;<em>button</em></b> <b>class</b>="button btn--blue"<b>&gt;</b>Join a room<b>&lt;/<em>button</em>&gt;</b>
+    <b>&lt;<em>button</em></b> <b>class</b>="button btn--blue-ghost"<b>&gt;</b>Join a room<b>&lt;/<em>button</em>&gt;</b>
+    <b>&lt;<em>button</em></b> <b>class</b>="button btn--blue disabled"<b>&gt;</b>Join a room<b>&lt;/<em>button</em>&gt;</b>
+<b>&lt;/<em>div</em>&gt;</b></code></pre><div class="livingstyleguide--example">
+  <div class="audius">
+    <input type="text" placeholder="… hello world">
+    <input type="text" placeholder="… hello world" class="input--border">
+    <br><br>
+    <select class="input--border">
+        <option value="">1</option>
+        <option value="">1</option>
+    </select>
+</div>
+</div>
+<pre class="livingstyleguide--code-block"><code class="livingstyleguide--code"><b>&lt;<em>div</em></b> <b>class</b>="audius"<b>&gt;</b>
+    <b>&lt;<em>input</em></b> <b>type</b>="text" <b>placeholder</b>="… hello world"<b>&gt;</b>
+    <b>&lt;<em>input</em></b> <b>type</b>="text" <b>placeholder</b>="… hello world" <b>class</b>="input--border"<b>&gt;</b>
+    <b>&lt;<em>br</em></b><b>&gt;</b><b>&lt;<em>br</em></b><b>&gt;</b>
+    <b>&lt;<em>select</em></b> <b>class</b>="input--border"<b>&gt;</b>
+        <b>&lt;<em>option</em></b> <b>value</b>=""<b>&gt;</b>1<b>&lt;/<em>option</em>&gt;</b>
+        <b>&lt;<em>option</em></b> <b>value</b>=""<b>&gt;</b>1<b>&lt;/<em>option</em>&gt;</b>
+    <b>&lt;/<em>select</em>&gt;</b>
+<b>&lt;/<em>div</em>&gt;</b></code></pre><h2 class="livingstyleguide--headline" id="icons"><a class="livingstyleguide--anchor" href="#icons"></a>Icons</h2>
 <p class="livingstyleguide--paragraph">All icons were generated with icomoon.</p>
 <p class="livingstyleguide--paragraph">The current icomoon export is here: <a href="../icons/media-player.zip">media-player.zip</a>. If you add new icons please overwrite this file and check it into the git.</p>
 <p class="livingstyleguide--paragraph">To update the fonts go to <a href="https://icomoon.io/app/#/select">https://icomoon.io/app/#/select</a> import the <code class="livingstyleguide--code-span livingstyleguide--code">selection.json</code> file in the zip and generate the new font. Download the <code class="livingstyleguide--code-span livingstyleguide--code">media-player.zip</code> to <code class="livingstyleguide--code-span livingstyleguide--code">/src/icons</code> and run <code class="livingstyleguide--code-span livingstyleguide--code">npm run icons</code>.</p>
 <div class="livingstyleguide--example">
-  <span class="wmp-icon-dehaze"></span>
-<span class="wmp-icon-reorder"></span>
-<span class="wmp-icon-format_list_bulleted"></span>
-<span class="wmp-icon-more_vert"></span>
-<span class="wmp-icon-unfold_more"></span>
-<span class="wmp-icon-arrow_drop_down"></span>
-<span class="wmp-icon-arrow_drop_up"></span>
-<span class="wmp-icon-search"></span>
-<span class="wmp-icon-local_offer2"></span>
-<span class="wmp-icon-link"></span>
-<span class="wmp-icon-delete"></span>
-<span class="wmp-icon-cloud_upload"></span>
-</div>
-<pre class="livingstyleguide--code-block"><code class="livingstyleguide--code"><b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-dehaze"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-reorder"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-format_list_bulleted"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-more_vert"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-unfold_more"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-arrow_drop_down"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-arrow_drop_up"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-search"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-local_offer2"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-link"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-delete"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-cloud_upload"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b></code></pre><div class="livingstyleguide--example">
-  <span class="wmp-icon-album"></span>
-<span class="wmp-icon-add"></span>
-<span class="wmp-icon-queue2"></span>
-<span class="wmp-icon-copy"></span>
-<span class="wmp-icon-youtube"></span>
-<span class="wmp-icon-close"></span>
-</div>
-<pre class="livingstyleguide--code-block"><code class="livingstyleguide--code"><b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-album"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-add"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-queue2"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-copy"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-youtube"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-close"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b></code></pre><div class="livingstyleguide--example">
   <span class="wmp-icon-previous"></span>
 <span class="wmp-icon-play"></span>
 <span class="wmp-icon-pause"></span>
@@ -1673,6 +1666,40 @@ $touch-size-huge:      9*$grid-space</code></pre><h4 class="livingstyleguide--su
 <b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-repeat_one"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
 <b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-volume_off"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
 <b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-volume_up"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b></code></pre><div class="livingstyleguide--example">
+  <span class="wmp-icon-album"></span>
+<span class="wmp-icon-add"></span>
+<span class="wmp-icon-queue2"></span>
+<span class="wmp-icon-copy"></span>
+<span class="wmp-icon-close"></span>
+</div>
+<pre class="livingstyleguide--code-block"><code class="livingstyleguide--code"><b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-album"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
+<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-add"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
+<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-queue2"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
+<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-copy"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
+<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-close"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b></code></pre><div class="livingstyleguide--example">
+  <span class="wmp-icon-dehaze"></span>
+<span class="wmp-icon-reorder"></span>
+<span class="wmp-icon-format_list_bulleted"></span>
+<span class="wmp-icon-more_vert"></span>
+<span class="wmp-icon-unfold_more"></span>
+<span class="wmp-icon-arrow_drop_down"></span>
+<span class="wmp-icon-arrow_drop_up"></span>
+<span class="wmp-icon-search"></span>
+<span class="wmp-icon-link"></span>
+<span class="wmp-icon-delete"></span>
+<span class="wmp-icon-cloud_upload"></span>
+</div>
+<pre class="livingstyleguide--code-block"><code class="livingstyleguide--code"><b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-dehaze"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
+<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-reorder"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
+<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-format_list_bulleted"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
+<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-more_vert"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
+<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-unfold_more"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
+<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-arrow_drop_down"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
+<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-arrow_drop_up"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
+<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-search"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
+<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-link"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
+<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-delete"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
+<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-cloud_upload"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b></code></pre><div class="livingstyleguide--example">
   <span class="wmp-icon-sort"></span>
 <span class="wmp-icon-zoom_out_map"></span>
 <span class="wmp-icon-queue_music"></span>
@@ -1680,8 +1707,6 @@ $touch-size-huge:      9*$grid-space</code></pre><h4 class="livingstyleguide--su
 <span class="wmp-icon-fullscreen"></span>
 <span class="wmp-icon-fullscreen_exit"></span>
 <span class="wmp-icon-share"></span>
-<span class="wmp-icon-fullscreen"></span>
-<span class="wmp-icon-fullscreen_exit"></span>
 </div>
 <pre class="livingstyleguide--code-block"><code class="livingstyleguide--code"><b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-sort"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
 <b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-zoom_out_map"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
@@ -1689,9 +1714,7 @@ $touch-size-huge:      9*$grid-space</code></pre><h4 class="livingstyleguide--su
 <b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-mode_edit"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
 <b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-fullscreen"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
 <b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-fullscreen_exit"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-share"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-fullscreen"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-fullscreen_exit"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b></code></pre><div class="livingstyleguide--example">
+<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-share"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b></code></pre><div class="livingstyleguide--example">
   <span class="wmp-icon-vimeo"></span>
 <span class="wmp-icon-whatsapp"></span>
 <span class="wmp-icon-youtube"></span>
