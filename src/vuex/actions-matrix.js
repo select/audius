@@ -64,6 +64,10 @@ export const actionsMatrix = {
 	},
 	matrixSend({ state, commit }, { itemId, roomId, media }) {
 		const curMedia = media || getMediaEntity(state, itemId);
+		if (state.matrixRooms[roomId].playList.some(({ id }) => id === curMedia.id) ) {
+			commit('error', 'The media item was already posted.');
+			return;
+		}
 		if (state.matrixRooms[roomId].humanReadablePosts) {
 			matrixClient
 				.sendMessage(roomId, getMediaLink(curMedia))
