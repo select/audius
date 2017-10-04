@@ -1,16 +1,30 @@
-import {
-	webScraper,
-} from '../utils';
+import { webScraper } from '../utils';
 
 const webScraperInstances = {};
 
+function extensionMessage(detail) {
+	window.dispatchEvent(
+		new CustomEvent('audiusExtension', {
+			detail,
+		})
+	);
+}
+
 export const actionsWebScraper = {
 	webScraperUpdateSuccess({ state, commit }, { id, mediaList }) {
+		if (!mediaList) {
+			commit('error', `Requesting ${id} did not return results.`);
+			return;
+		}
 		const ws = state.webScrapers[id];
 		const pl = ws ? ws.playList : [];
 		const archive = ws && ws.archive ? ws.archive : [];
 		const index = new Set([...pl.map(v => v.id), ...archive]);
 		const newVideos = mediaList.filter(v => !index.has(v.id));
+		if (!newVideos.length) {
+			commit('error', `No new videos found for ${id}. Try agin.`);
+			return;
+		}
 		const playList = [...pl, ...newVideos];
 		while (playList.length > 3000) {
 			const media = playList.shift();
@@ -45,10 +59,32 @@ export const actionsWebScraper = {
 		const index = state.paginationIndex[id] || 0;
 		if (id === 'Imgur') {
 			commit('setPaginationIndex', { id, index: index + 1 });
-			webScraper.getVideosFromIndex(state.paginationIndex[id]).then(mediaList => {
+			webScraper.getImgurMedia(state.paginationIndex[id]).then(mediaList => {
 				dispatch('webScraperUpdateSuccess', { id, mediaList });
 			});
-		} else if (state.webScrapers[id].settings.type === 'urls') {
+		} else if (ws.settings.type === 'script') {
+			commit('setPaginationIndex', { id, index: index + 1 });
+			if (state.webScrapersInitialized[id]) {
+				extensionMessage({
+					audius: true,
+					type: 'getNext',
+					id,
+				});
+			} else {
+				extensionMessage({
+					audius: true,
+					type: 'loadScript',
+					id,
+					code: ws.settings.script,
+					responseTemplate: {
+						audius: true,
+						vuex: 'commit',
+						type: 'initScraperSuccess',
+						data: id,
+					},
+				});
+			}
+		} else if (ws.settings.type === 'urls') {
 			let requestIndex = index;
 			if (index >= ws.settings.numPages - 1) {
 				commit('error', 'Checked all URLs in channel, try again next time.');
@@ -77,10 +113,10 @@ export const actionsWebScraper = {
 					new CustomEvent('audiusExtension', {
 						detail: {
 							audius: true,
-							wsAction: 'scanUrl',
+							type: 'scanUrl',
 							url: webScraper.patternToUrls(requestUrl)[requestIndex],
 							youtubeApiKey: state.youtubeApiKey,
-							response: {
+							responseTemplate: {
 								audius: true,
 								vuex: 'dispatch',
 								type: 'webScraperUpdateSuccess',
@@ -92,4 +128,4 @@ export const actionsWebScraper = {
 			}
 		}
 	},
-}
+};

@@ -1,4 +1,4 @@
-export function ajax(url, callback, params) {
+export function ajaxJSON(url, callback, params) {
 	return new Promise((resolve, reject) => {
 		const xmlhttp = new XMLHttpRequest();
 		xmlhttp.onreadystatechange = () => {
@@ -22,7 +22,7 @@ export function ajax(url, callback, params) {
 	});
 }
 
-export function ajax2(url, requestHeader) {
+export function ajaxRaw(url, requestHeader) {
 	const promise = new Promise((resolve, reject) => {
 		const xhr = new XMLHttpRequest();
 		xhr.open('GET', url, true);

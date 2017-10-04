@@ -1,4 +1,4 @@
-import { ajax } from './ajax';
+import { ajaxJSON } from './ajax';
 import { time2s, s2time, duration } from './timeConverter';
 import { mediaBaseObject } from '../vuex/mediaBaseObject';
 
@@ -93,10 +93,10 @@ export function getPlayList(YOUTUBE_API_KEY, playListUrl) {
 	const playListId = youTubePlaylistRexEx.exec(playListUrl)[1];
 	const url = `https://www.googleapis.com/youtube/v3/playlistItems?part=contentDetails&type=video&maxResults=50&playlistId=${playListId}&key=${YOUTUBE_API_KEY}`;
 	let searchData;
-	return ajax(url)
+	return ajaxJSON(url)
 		.then(sd => {
 			searchData = sd;
-			return ajax(
+			return ajaxJSON(
 				getYtContentDetailURL(
 					YOUTUBE_API_KEY,
 					searchData.items.map(item => item.contentDetails.videoId).join(','),
@@ -113,16 +113,16 @@ export function getPlayList(YOUTUBE_API_KEY, playListUrl) {
 
 export function searchYoutube(YOUTUBE_API_KEY, query) {
 	if (isYouTubeVideoRegEx.test(query)) {
-		return ajax(
+		return ajaxJSON(
 			getYtContentDetailURL(YOUTUBE_API_KEY, isYouTubeVideoRegEx.exec(query)[1], true)
 		).then(data => data.items.map(v => normalizeYouTubeData(v)));
 	}
 	const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=20&q=${query}&key=${YOUTUBE_API_KEY}`;
 	let searchData;
-	return ajax(url)
+	return ajaxJSON(url)
 		.then(sd => {
 			searchData = sd;
-			return ajax(
+			return ajaxJSON(
 				getYtContentDetailURL(
 					YOUTUBE_API_KEY,
 					searchData.items.map(item => item.id.videoId).join(','),
@@ -142,7 +142,7 @@ export function getYouTubeInfo(ids, YOUTUBE_API_KEY) {
 		const url = `https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails&id=${ids.join(
 			','
 		)}&key=${YOUTUBE_API_KEY}`;
-		ajax(url, data => {
+		ajaxJSON(url, data => {
 			resolve(data.items.map(v => normalizeYouTubeData(v)));
 		});
 	});

@@ -1,13 +1,11 @@
 /* eslint no-new: "off" */
 import Vue from 'vue';
 
-import WebApp from '../components/web-app.vue';
-
-import { indexDB, cleanWindowLocation, getParameterByName } from '../utils';
-// import '../utils/websiteMessageManager';
-import { store } from '../vuex/store';
 // import { migrate } from '../utils/indexDB.migrate';
+import { indexDB, cleanWindowLocation, getParameterByName } from '../utils';
+import { store } from '../vuex/store';
 import './keyshorts';
+import WebApp from '../components/web-app.vue';
 
 function isMobile() {
 	const w = window;
@@ -39,9 +37,12 @@ indexDB
 	.init()
 	.then(() => indexDB.recoverState())
 	.then(state => {
+
+		// Recover the last saved state from IndexDb
 		store.commit('recoverState', state);
 		// migrate();
 
+		// Detect if this a mobile device (before rendering the UI).
 		store.commit('setIsMobile', isMobile());
 		[('resize', 'orientationchange')].forEach(eventName => {
 			window.addEventListener(
@@ -53,9 +54,13 @@ indexDB
 			);
 		});
 
+		// Listen to events from the audius extension.
+		// The events contain vuex commands and the according data.
+		// We can therefore delay them directly to the vuex store.
 		window.addEventListener(
 			'audius',
 			event => {
+				// window.console.log('Received extension event ', event);
 				if (event.detail && event.detail.vuex) {
 					store[event.detail.vuex](event.detail.type, event.detail.data);
 				}
@@ -63,6 +68,9 @@ indexDB
 			false
 		);
 
+		// Detect if the URL contains the import parameter.
+		// If yes then add this to the store. This will trigger the import
+		// modal to render once rendering is triggered.
 		const url = getParameterByName('import');
 		if (url) {
 			store.commit('setPendingImportURL', {
@@ -71,6 +79,7 @@ indexDB
 				type: getParameterByName('type'),
 			});
 		}
+		// Remove all URL paramters from URL bar.
 		cleanWindowLocation();
 
 		start({ recoverdState: true });

@@ -1,5 +1,5 @@
 import { hashCode } from './hashCode';
-import { ajax2 } from './ajax';
+import { ajaxJSON, ajaxRaw } from './ajax';
 
 const range = (start, end) => Array(end - start + 1).fill().map((_, idx) => start + idx);
 const globbingRegEx = /\[(\d+)-(\d+)\]/;
@@ -7,12 +7,13 @@ const globbingRegEx = /\[(\d+)-(\d+)\]/;
 export const webScraper = {
 	baseURL: 'https://api.imgur.com/3/gallery/hot/viral/',
 	requestHeader: ['Authorization', 'Client-ID c35fbc04fe9ccda'],
-
-	getVideosFromIndex(currentPageIndex) {
-		return ajax2(
+	ajaxJSON,
+	ajaxRaw,
+	getImgurMedia(currentPageIndex) {
+		return ajaxJSON(
 			`${this.baseURL}${currentPageIndex}.json`,
 			this.requestHeader
-		).then(rawJsonIndex => JSON.parse(rawJsonIndex).data
+		).then(res => res.data
 			.filter(item => item.mp4)
 			.map(item => ({
 				id: `${hashCode(item.mp4)}`,

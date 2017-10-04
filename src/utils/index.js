@@ -1,4 +1,4 @@
-export { ajax, ajaxPostJSON } from './ajax';
+export { ajaxJSON, ajaxPostJSON } from './ajax';
 export { debounce, throttle } from './debounce';
 export { injectScript } from './injectScript';
 export { duration, s2time, time2s } from './timeConverter';

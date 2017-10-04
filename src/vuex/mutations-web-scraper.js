@@ -22,6 +22,10 @@ export const mutationsWebScraper = {
 		delete state.webScrapers[id];
 		state.webScrapersOrdered = state.webScrapersOrdered.filter(n => n !== id);
 	},
+	initScraperSuccess(state, id) {
+		console.log("id", id);
+		state.webScrapersInitialized[id] = true;
+	},
 	addUrlPattern(state, { id, urlPattern }) {
 		const urls = state.webScrapers[id].settings.urls || [];
 		const { settings } = state.webScrapers[id];

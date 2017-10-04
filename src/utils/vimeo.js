@@ -1,11 +1,11 @@
-import { ajax } from './ajax';
+import { ajaxJSON } from './ajax';
 import { s2time } from './timeConverter';
 
 // https://github.com/regexhq/vimeo-regex/blob/master/index.js
 const isVimeoVideoRegEx = /(http|https)?:\/\/(www\.)?vimeo.com\/(?:channels\/(?:\w+\/)?|groups\/([^\/]*)\/videos\/|)(\d+)(?:|\/\?)/g;
 
 export function getVimeoInfo(id) {
-	return ajax(`//vimeo.com/api/v2/video/${id}.json`).then(info => ({
+	return ajaxJSON(`//vimeo.com/api/v2/video/${id}.json`).then(info => ({
 		title: info[0].title,
 		duration: s2time(info[0].duration),
 		durationS: info[0].duration,

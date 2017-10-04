@@ -41,33 +41,36 @@ Create your own rooms with Audius and share it with your friends.
 
 ## Change log
 
-**2.0.8**
-*	Improved mobile UI.
-*	Improved search media link detection.
-*	Don't open queue on add just indicate new media added. Thanks *lazz*.
-*	Show error when extension is needed.
+**2.0.10**
+* …
+
+**2.0.9**
+* Improved mobile UI.
+* Improved search media link detection.
+* Don't open queue on add just indicate new media added. Thanks *lazz*.
+* Show error when extension is needed.
 
 **2.0.8**
-*	Import [Streamly](https://github.com/LNFWebsite/Streamly) playlist.
-*	Discover public Matrix rooms.
-*	Create Matrix rooms.
-*	Allow Admins to remove messages from rooms.
+* Import [Streamly](https://github.com/LNFWebsite/Streamly) playlist.
+* Discover public Matrix rooms.
+* Create Matrix rooms.
+* Allow Admins to remove messages from rooms.
 
 **2.0.7**
-*	Vimeo video player integrated.
-*	Better support for YouTube playlists: import from search results.
-*	Resize left menu, video player with drag.
-*	Show confirm remove popups.
-*	More error checks and error messages.
-*	Replace gitter support chat with links to Audius matrix room.
-*	Fixed queue sorting.
+* Vimeo video player integrated.
+* Better support for YouTube playlists: import from search results.
+* Resize left menu, video player with drag.
+* Show confirm remove popups.
+* More error checks and error messages.
+* Replace gitter support chat with links to Audius matrix room.
+* Fixed queue sorting.
 
 **2.0.6**
-*	Extension for searching external websites for content.
-*	Share playlists, matrix rooms, web channels with one click link.
-*	Add your own web channels with URL patterns (needs extension).
-*	Matrix chat pagination working.
-*	Share media in matrix room with drag and drop.
+* Extension for searching external websites for content.
+* Share playlists, matrix rooms, web channels with one click link.
+* Add your own web channels with URL patterns (needs extension).
+* Matrix chat pagination working.
+* Share media in matrix room with drag and drop.
 
 **2.0.5**
 *   Bug fix release: YouTube skip, YouTube URLs in search, mobile version, d&d search results, history for all played items.
@@ -107,9 +110,9 @@ Create your own rooms with Audius and share it with your friends.
 1.  At the top right, click _More_.
 2.  Click _More Tools_.
 3.  Add the app:
-    Windows users: Click _Add to taskbar_.
-    Linux users: Click _Add to desktop_.
-    Chromebook users: Click _Add to shelf_.
+		Windows users: Click _Add to taskbar_.
+		Linux users: Click _Add to desktop_.
+		Chromebook users: Click _Add to shelf_.
 
 **Chrome android:**
 Tap the menu button and tap _Add to homescreen_. The app is not yet optimized for mobile phones, it might work on tablets.
@@ -157,6 +160,72 @@ The chrome extension can be build with
 npm run build:extension
 ```
 
+### Media meta data object `MediaMetaData` 
+
+This is the internal media data JSON fromat of Audius.
+```
+{
+	id: 'ozD4h9HCHOY', // universal unique id
+	title: 'Human readable title',
+	duration: { h: 0, m: 58, s: '51' },
+	durationS: 3531, // duration in seconds
+	type: 'youtube', // available types: 'audio', 'video', 'vimeo'
+	href: 'https://example.com/items/funny-video', // link to external page; not required for youtube
+	thumbUrl: 'https://example.com/img/funny-video_100x75.jpg', // not req for yt
+	start: 0, // optional time in s
+	stop: 379, // optional time in s
+	youtubeId: 'ozD4h9HCHOY', // youtube only
+	vimeoId: '36579366', // vimeo only
+	tracks: [ // optional
+		{ // this is a full item with 
+			trackId: 1,
+			
+			title: 'Kanan neni - Rokia Traoré - Wanita',
+			duration: { d: 0, h: 0, m: 6, s: '19', ms: 0 },
+			durationS: 379,
+			id: 'ozD4h9HCHOY',
+			type: 'youtube',
+			start: 0,
+			fullTitle: '1. Kanan neni : 00:00\r',
+			durationAlbum: 3531,
+			isTrack: true,
+			youtubeId: 'ozD4h9HCHOY',
+			stop: 379,
+		},
+	],
+},
+```
+
+### Web scaper plugin
+
+A web scraper plugin is an object that implements
+- `getUrl()` returns `['ajaxJSON', String]`
+- `parse(data)` returns `[MediaMetaData]`
+
+The functions are evaled and executed in a sandbox in the Audius extension. 
+
+Example plugin
+```
+({
+	getUrl() {
+		return [
+			'ajaxJSON', // the only option so far
+			!this.lastIndex ? this.baseURL : `https://example.com/api/?viral=${this.lastKey}`,
+		];
+	},
+	parse(data) {
+		this.lastIndex = data.items[data.items.length - 1].id;
+		return data.items
+			.map(item => ({
+				id: `pr0gramm-${item.id}`,
+				// … complete the media data format described above here
+			}));
+	},
+	baseURL: 'https://example.com/api/?viral=1',
+	lastIndex: '',
+})
+
+```
 
 ## Legality, security, saftey, and privacy
 

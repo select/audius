@@ -57,7 +57,7 @@ export const actions = {
 					new CustomEvent('audiusExtension', {
 						detail: {
 							audius: true,
-							wsAction: 'scanUrl',
+							type: 'scanUrl',
 							url: query,
 							youtubeApiKey: state.youtubeApiKey,
 							responseTemplate: {

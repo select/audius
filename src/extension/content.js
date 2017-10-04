@@ -26,7 +26,7 @@ if (isRunningInAudiusApp) {
 window.addEventListener(
 	'audiusExtension',
 	event => {
-		console.log('content message relay request ', event.detail);
+		// window.console.log('content message relay request ', event.detail);
 		chrome.runtime.sendMessage(event.detail, response => {});
 	},
 	false

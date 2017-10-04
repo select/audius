@@ -3,7 +3,7 @@ import { getYouTubeInfo } from './youtube';
 import { webScraper as wsBase } from './webScraper';
 
 
-export const webScraper = {
+export const webScraper = Object.assign({}, wsBase, {
 	videos: [],
 	currentVideoIndex: -1,
 	baseURL: 'https://api.imgur.com/3/gallery/hot/viral/',
@@ -79,7 +79,8 @@ export const webScraper = {
 	},
 
 	_scanOneUrl({ url, youtubeApiKey }) {
-		return wsBase.ajax(url)
+		console.log("_scanOneUrl", url);
+		return this.ajaxRaw(url)
 			.then(rawHTML => this.findVideos(rawHTML, youtubeApiKey))
 			.then(mediaList =>
 				mediaList.map(media =>
@@ -100,9 +101,9 @@ export const webScraper = {
 	 */
 	scanUrl({ url, youtubeApiKey }) {
 		try {
-			return wsBase.patternToUrls(url).map(_url => this._scanOneUrl({ url: _url, youtubeApiKey }));
+			return this.patternToUrls(url).map(_url => this._scanOneUrl({ url: _url, youtubeApiKey }));
 		} catch (error) {
 			return [];
 		}
 	},
-};
+});
