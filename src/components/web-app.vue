@@ -4,9 +4,10 @@ import WebHeader from './web-header.vue';
 import MainRight from './main-right.vue';
 import PlayList from './play-list.vue';
 import LeftMenu from './left-menu.vue';
-import ImportModal from './import-modal.vue';
 import Messages from './messages.vue';
 import WebAppMobile from './web-app-mobile.vue';
+
+const ImportModal = () => import(/* webpackChunkName: "import-modal" */'./import-modal.vue');
 
 export default {
 	components: {
@@ -18,7 +19,7 @@ export default {
 		Messages,
 		WebAppMobile,
 	},
-	computed: mapState(['isMobile']),
+	computed: mapState(['isMobile', 'pendingImportURL']),
 };
 </script>
 
@@ -36,7 +37,7 @@ export default {
 	</div>
 
 	<web-app-mobile v-if="isMobile"></web-app-mobile>
-	<import-modal></import-modal>
+	<import-modal v-if="pendingImportURL"></import-modal>
 	<messages></messages>
 </div>
 </template>
