@@ -3,6 +3,7 @@ import { mapMutations, mapActions, mapState } from 'vuex';
 import YoutubePlayer from './youtube-player.vue';
 import VimeoPlayer from './vimeo-player.vue';
 import WebMediaPlayer from './web-media-player.vue';
+import ProgressBar from './progress-bar.vue';
 import { debounce } from '../utils';
 
 
@@ -12,6 +13,7 @@ export default {
 		YoutubePlayer,
 		VimeoPlayer,
 		WebMediaPlayer,
+		ProgressBar,
 	},
 	computed: mapState([
 		'currentMedia',
@@ -29,10 +31,15 @@ export default {
 		this.$el.addEventListener('mousemove', debounce(() => {
 			this.showControls = false;
 		}, 2000));
+		this.$store.watch(state => state.currentMedia, () => {
+			this.showControls = true;
+			setTimeout(() => { this.showControls = false; }, 2000);
+		});
 	},
 	methods: {
 		...mapMutations([
 			'previousVideo',
+			'playPause',
 		]),
 		...mapActions([
 			'toggleFullscreen',
@@ -45,17 +52,18 @@ export default {
 <template>
 	<div
 		class="media-player"
+		@click="playPause"
 		v-bind:class="{
 			fullscreen
 		}">
 		<div :class="{'media-player--hide': !showControls}">
-			<div class="media-player__prev" @click="previousVideo">‹</div>
-			<div class="media-player__next" @click="nextVideo">›</div>
+			<div class="media-player__prev" @click.stop="previousVideo">‹</div>
+			<div class="media-player__next" @click.stop="nextVideo">›</div>
 		</div>
 		<img
 			class="media-player__logo"
 			v-if="fullscreen"
-			@click="toggleFullscreen()"
+			@click.stop="toggleFullscreen()"
 			src="img/audius.logo.white.svg" alt="Audius - music player - logo">
 		<span
 			:class="{
@@ -63,9 +71,11 @@ export default {
 				'wmp-icon-fullscreen_exit': fullscreen,
 				'media-player--hide': !showControls,
 			}"
-			@click="toggleFullscreen()"
+			@click.stop="toggleFullscreen()"
 			title="Fullscreen"></span>
-		<div :class="{'media-player--hide': !showControls}" class="media-player__header">{{currentMedia.title}}</div>
+		<div
+			:class="{'media-player--hide': !showControls || currentMedia.type === 'youtube'}"
+			class="media-player__header">{{currentMedia.title}}</div>
 		<div
 			class="media-player__yt-player"
 			v-bind:class="{'media-player--hide-yt-player': currentMedia.type !== 'youtube'}">
@@ -77,6 +87,7 @@ export default {
 			<vimeo-player></vimeo-player>
 		</div>
 		<web-media-player v-show="!['youtube', 'vimeo'].includes(currentMedia.type)"></web-media-player>
+		<progress-bar></progress-bar>
 	</div>
 </template>
 
@@ -99,8 +110,8 @@ export default {
 		z-index: 1
 	[class^="wmp-icon-fullscreen"]
 		position: absolute
-		bottom: 0
-		right: 0
+		bottom: 1.5 * $grid-space
+		right: 1.5 * $grid-space
 		color: $color-white
 		z-index: 12
 		cursor: pointer
