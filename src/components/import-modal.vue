@@ -44,7 +44,13 @@ export default {
 		},
 	},
 	computed: {
-		...mapState(['pendingImportURL', 'webScrapers', 'matrixEnabled', 'matrixLoggedIn']),
+		...mapState([
+			'pendingImportURL',
+			'webScrapers',
+			'matrixEnabled',
+			'matrixLoggedIn',
+			'extensionAvilable',
+		]),
 		...mapGetters(['tagNames']),
 	},
 };
@@ -61,7 +67,7 @@ export default {
 					<h3>Import channel</h3>
 					<div class="import-modal__row">
 						<input
-							class="import-modal__name-input"
+							class="import-modal__name-input input--border"
 							type="text"
 							placeholder="… name"
 							@input="setImportName"
@@ -77,7 +83,7 @@ export default {
 							overwrite channel
 						</label>
 					</div>
-					<p>
+					<p v-if="!extensionAvilable">
 						Please install the <a href="https://chrome.google.com/webstore/detail/ekpajajepcojhnjmlibfbjmdjcafajoh" target="_blank">Audius extension</a> for this feature.
 					</p>
 				</p>

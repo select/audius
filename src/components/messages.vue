@@ -51,7 +51,7 @@ export default {
 	position: fixed
 	top: $grid-space
 	right: $grid-space
-	z-index: 14
+	z-index: 15
 	> div
 		margin-bottom: $grid-space
 .messages__message
