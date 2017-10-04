@@ -1,0 +1,72 @@
+a = {
+	AudiusDump: true,
+	playList: [
+		'vO4vti9JJ2Q',
+		'ozD4h9HCHOY',
+		'36579366',
+		'-273797533',
+		'-75193719',
+	],
+	entities: {
+		vO4vti9JJ2Q: {
+			title: 'NOSTALGIA Y DOS GARDENIAS Angel Canales',
+			duration: { h: 0, m: 8, s: '34' },
+			durationS: 514,
+			id: 'vO4vti9JJ2Q',
+			type: 'youtube',
+		},
+		ozD4h9HCHOY: {
+			title: 'Rokia Traoré - Wanita',
+			duration: { h: 0, m: 58, s: '51' },
+			durationS: 3531,
+			id: 'ozD4h9HCHOY',
+			type: 'youtube',
+			tracks: [
+				{
+					title: 'Kanan neni - Rokia Traoré - Wanita',
+					duration: { d: 0, h: 0, m: 6, s: '19', ms: 0 },
+					durationS: 379,
+					id: 'ozD4h9HCHOY',
+					type: 'youtube',
+					start: 0,
+					fullTitle: '1. Kanan neni : 00:00\r',
+					durationAlbum: 3531,
+					isTrack: true,
+					trackId: 1,
+					youtubeId: 'ozD4h9HCHOY',
+					stop: 379,
+				},
+			],
+		},
+		'36579366': {
+			title: 'Bret Victor - Inventing on Principle',
+			duration: { d: 0, h: 0, m: 54, s: '20', ms: 0 },
+			durationS: 3260,
+			id: '36579366',
+			type: 'vimeo',
+			href: 'https://vimeo.com/36579366',
+			thumbUrl: 'https://i.vimeocdn.com/video/251172173_100x75.jpg',
+		},
+		'-273797533': {
+			id: '-273797533',
+			href: 'http://i.imgur.com/qY80x2M.gif',
+			url: 'http://i.imgur.com/qY80x2M.mp4',
+			type: 'video',
+			title: 'Countdown to the weekend',
+			thumbUrl: 'http://i.imgur.com/qY80x2Ms.jpg',
+			duration: { d: 0, h: 0, m: 0, s: '12', ms: 0 },
+			durationS: 12,
+		},
+		 '-75193719': {
+      title: 'Tim_Berners-Lee_-_Today_%28flac_-sample_s16_-f_ogg%29.oga',
+      duration: { d: 0, h: 0, m: 0, s: '48', ms: 0 },
+      durationS: 48,
+      id: '-75193719',
+      type: 'audio',
+      url:
+        'https://upload.wikimedia.org/wikipedia/commons/1/16/Tim_Berners-Lee_-_Today_%28flac_-sample_s16_-f_ogg%29.oga',
+      href:
+        'https://upload.wikimedia.org/wikipedia/commons/1/16/Tim_Berners-Lee_-_Today_%28flac_-sample_s16_-f_ogg%29.oga',
+    },
+	},
+};
