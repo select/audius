@@ -97,7 +97,7 @@ export default {
 </script>
 
 <template lang="html">
-	<div class="au-header__progress" @click="skipToTime">
+	<div class="au-header__progress" @click.stop="skipToTime">
 
 		<div class="au-header__progress-inner">
 			<div
