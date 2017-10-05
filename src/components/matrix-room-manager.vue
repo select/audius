@@ -149,10 +149,12 @@ export default {
 		<li
 			class="play-list-manager__input"
 			v-if="matrixLoggedIn">
-			<input
-				v-on:keyup.enter="addMatrixRoom"
-				type="text"
-				placeholder="… room id or name">
+			<div class="play-list-manager__tag-body">
+				<input
+					v-on:keyup.enter="addMatrixRoom"
+					type="text"
+					placeholder="… room id or name">
+			</div>
 			<div class="matrix-room__room-join-create">
 				<span
 					class="wmp-icon-add"

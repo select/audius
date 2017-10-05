@@ -73,10 +73,12 @@ export default {
 		</draggable>
 		<ul class="play-list-manager__tags">
 			<li class="play-list-manager__input">
-				<input
-					v-on:keyup.enter="addTags"
-					type="text"
-					placeholder="... new playlist">
+				<div class="play-list-manager__tag-body">
+					<input
+						v-on:keyup.enter="addTags"
+						type="text"
+						placeholder="... new playlist">
+				</div>
 				<div class="play-list-manager__create">
 					<span class="wmp-icon-add" @click="addTags"></span>
 				</div>
@@ -140,15 +142,12 @@ export default {
 	display: none
 
 .play-list-manager__input
-	padding: 0
-	background: $color-athensgrey
 	span
 	 color: $color-aluminium-dark
 	input
 		background: transparent
 		border-radius: $border-radius
 		height: 100%
-		width: 100%
 		padding-left: #{2*$grid-space}
 		font-size: 1rem
 		&::-webkit-input-placeholder

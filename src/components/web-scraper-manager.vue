@@ -53,10 +53,12 @@ export default {
 				</div>
 			</li>
 			<li class="play-list-manager__input ws-manager__input">
-				<input
-					v-on:keyup.enter="_addWebScraper"
-					type="text"
-					placeholder="... new channel">
+				<div class="play-list-manager__tag-body">
+					<input
+						v-on:keyup.enter="_addWebScraper"
+						type="text"
+						placeholder="... new channel">
+				</div>
 				<div class="play-list-manager__create">
 					<span
 						class="wmp-icon-add"
