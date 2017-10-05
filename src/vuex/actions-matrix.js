@@ -219,8 +219,9 @@ export const actionsMatrix = {
 		}
 		console.log(`[Matrix-Text] %c${message}`, 'color: #2DA7EF;');
 
-		findMediaText(message, state.youtubeApiKey, index).then(mediaItems => {
-			addMatrixMessage(state, commit, roomId, eventId, mediaItems);
+		findMediaText(message, state.youtubeApiKey, index).then(({ mediaList }) => {
+			console.log("mediaItems",message, mediaList);
+			addMatrixMessage(state, commit, roomId, eventId, mediaList);
 		});
 	},
 };
