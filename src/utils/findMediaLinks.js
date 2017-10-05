@@ -41,7 +41,7 @@ export function findMediaText(text, youtubeApiKey, indexKnown = new Set()) {
 		.filter((item, pos, self) => self.indexOf(item) === pos); // filter dublicates
 	if (ytIds.length) {
 		// Get info for all new unknown ids.
-		promises.push(getYouTubeInfo(ytIds, youtubeApiKey));
+		promises.push(getYouTubeInfo({ ids: ytIds, youtubeApiKey }));
 	}
 
 	if (youTubePlaylistRexEx.test(text)) {

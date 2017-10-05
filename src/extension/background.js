@@ -2,6 +2,7 @@ import 'babel-polyfill';
 import { webScraper } from '../utils/webScraper.extension';
 
 const browser = chrome || window.browser;
+const logger = window.console.log;
 const sandbox = document.getElementById('sandboxFrame');
 
 // Get the tab where Audius is running.
@@ -41,26 +42,62 @@ function sendMessageToAudius(data) {
 	});
 }
 
-window.addEventListener('message', event => {
-	console.log('pluginSandbox event in background.js ', event.data);
-	if (event.data.ajaxJSON) {
-		webScraper.ajaxJSON(event.data.ajaxJSON).then(data => {
-			sandbox.contentWindow.postMessage({ type: 'parse', id: event.data.id, data }, '*');
+/* eslint-disable no-await-in-loop */
+window.addEventListener('message', async event => {
+	logger('## background event sandbox', event.data);
+	if (['ajaxJSON', 'ajaxRaw'].includes(event.data.type)) {
+		const urls = Array.isArray(event.data.data) ? event.data.data : [event.data.data];
+		const promises = urls.map(url => webScraper[event.data.type](url));
+		for (let i = 0; i < promises.length; i++) {
+			try {
+				const data = await promises[i];
+				sandbox.contentWindow.postMessage(
+					Object.assign(event.data.responseTemplate, { id: event.data.id, data }),
+					'*'
+				);
+				await delay(2000);
+			} catch (error) {
+				sendMessageToAudius({
+					audius: true,
+					vuex: 'commit',
+					type: 'error',
+					data: `${error}`,
+				});
+			}
+		}
+		// webScraper[event.data.type](event.data.data).then(data => {
+		// 	sandbox.contentWindow.postMessage(
+		// 		Object.assign(event.data.responseTemplate, { id: event.data.id, data }),
+		// 		'*'
+		// 	);
+		// });
+	} else if (['getYouTubeInfo', 'scanOneUrl'].includes(event.data.type)) {
+		webScraper[event.data.type](event.data).then(mediaList => {
+			sendMessageToAudius({
+				audius: true,
+				vuex: 'dispatch',
+				type: 'webScraperUpdateSuccess',
+				data: {
+					id: event.data.id,
+					mediaList,
+				},
+			});
 		});
+	} else if (event.data.audius) {
+		sendMessageToAudius(event.data);
 	}
-	if (event.data.handshakeSandbox) {
-		return;
-	}
-	sendMessageToAudius(event.data);
 });
 
 setTimeout(() => {
-	sandbox.contentWindow.postMessage({ handshakeSandbox: true }, '*');
+	sandbox.contentWindow.postMessage({ type: 'handshakeSandbox' }, '*');
 }, 500);
 
+/* eslint-disable no-await-in-loop */
+// I use await inside a loop to queue the requests.
+// One a request is finished, wait 2s and then start the next one
 browser.runtime.onMessage.addListener(async request => {
 	if (request.audius) {
-		console.log('AudiusExtension got message ', request);
+		logger('## background event webpage', request);
 		if (['loadScript', 'getNext'].includes(request.type)) {
 			sandbox.contentWindow.postMessage(request, '*');
 		} else if (request.type === 'scanUrl') {

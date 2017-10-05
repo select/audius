@@ -137,15 +137,11 @@ export function searchYoutube(YOUTUBE_API_KEY, query) {
 		);
 }
 
-export function getYouTubeInfo(ids, YOUTUBE_API_KEY) {
-	return new Promise(resolve => {
-		const url = `https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails&id=${ids.join(
-			','
-		)}&key=${YOUTUBE_API_KEY}`;
-		ajaxJSON(url, data => {
-			resolve(data.items.map(v => normalizeYouTubeData(v)));
-		});
-	});
+export function getYouTubeInfo({ ids, youtubeApiKey }) {
+	const url = `https://www.googleapis.com/youtube/v3/videos?part=contentDetails,snippet&id=${ids.join(
+		','
+	)}&key=${youtubeApiKey}`;
+	return ajaxJSON(url).then(data => data.items.map(v => normalizeYouTubeData(v)));
 }
 
 // const youtubeRegEx = /(youtube.com)|(youtu.be)/;

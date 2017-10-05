@@ -1,7 +1,5 @@
 import { webScraper } from '../utils';
 
-const webScraperInstances = {};
-
 function extensionMessage(detail) {
 	window.dispatchEvent(
 		new CustomEvent('audiusExtension', {
@@ -39,13 +37,6 @@ export const actionsWebScraper = {
 			commit('addWebScraper', id);
 		}
 		const ws = state.webScrapers[id];
-		if (ws.settings && ws.settings.type === 'script' && !(id in webScraperInstances)) {
-			// https://developer.mozilla.org/en-US/docs/Mozilla/Tech/XPCOM/Language_Bindings/Components.utils.evalInSandbox
-			// Components.utils.evalInSandbox does not seem to be available in Chrome, is this a FireFox feature?
-			// But I can create a sandboxed script in an extension.
-			// https://developer.chrome.com/extensions/sandboxingEval
-			// webScraperInstances[id] =
-		}
 		if (!ws.playList.length) {
 			dispatch('runWebScraper', id);
 		}
@@ -76,6 +67,7 @@ export const actionsWebScraper = {
 					type: 'loadScript',
 					id,
 					code: ws.settings.script,
+					youtubeApiKey: state.youtubeApiKey,
 					responseTemplate: {
 						audius: true,
 						vuex: 'commit',
@@ -108,23 +100,18 @@ export const actionsWebScraper = {
 					return;
 				}
 				commit('setPaginationIndex', { id, index: index + 1 });
-
-				window.dispatchEvent(
-					new CustomEvent('audiusExtension', {
-						detail: {
-							audius: true,
-							type: 'scanUrl',
-							url: webScraper.patternToUrls(requestUrl)[requestIndex],
-							youtubeApiKey: state.youtubeApiKey,
-							responseTemplate: {
-								audius: true,
-								vuex: 'dispatch',
-								type: 'webScraperUpdateSuccess',
-								data: { id },
-							},
-						},
-					})
-				);
+				extensionMessage({
+					audius: true,
+					type: 'scanUrl',
+					url: webScraper.patternToUrls(requestUrl)[requestIndex],
+					youtubeApiKey: state.youtubeApiKey,
+					responseTemplate: {
+						audius: true,
+						vuex: 'dispatch',
+						type: 'webScraperUpdateSuccess',
+						data: { id },
+					},
+				});
 			}
 		}
 	},

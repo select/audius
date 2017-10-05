@@ -1,39 +1,41 @@
-
 const logger = window.console.log;
 
 /* eslint-disable no-eval */
 const pluginSandbox = {
 	parsers: {},
-	currentParser: '',
-	ajaxJSON(url, id) {
-		this.message({ ajaxJSON: url, id });
-	},
+	youtubeApiKey: '',
 	init() {
 		window.addEventListener('message', event => {
-			logger('## sb event recieved', event.data);
-			if (!this.messageSource) {
-				if (event.data.handshakeSandbox) {
-					logger('## sb handshake complete');
-					this.messageSource = event.source;
-					this.messageOrigin = event.origin;
-					this.message({ handshakeSandbox: true });
-				}
-			}
-			if (event.data.type === 'loadScript') this.loadScript(event.data);
+			logger('## sandbox event', event.data);
+			if (event.data.type === 'handshakeSandbox') {
+				this.messageSource = event.source;
+				this.messageOrigin = event.origin;
+				// this.message({ type: 'handshakeSandbox' });
+			} else if (event.data.type === 'loadScript') this.loadScript(event.data);
 			else if (event.data.type === 'getNext') this.getNext(event.data.id);
-			else if (event.data.type === 'parse') {
+			else if (event.data.type in this.parsers[event.data.id]) {
+				let parseResult;
 				try {
+					parseResult = this.parsers[event.data.id][event.data.type](event.data.data);
+				} catch (error) {
+					this.message({ audius: true, vuex: 'commit', type: 'error', data: `Error parsing ${event.data.id}. ${error}` });
+				}
+				if (['getYouTubeInfo', 'scanOneUrl', 'ajaxRaw', 'ajaxJSON'].includes(parseResult.type)) {
+					this.message(Object.assign(parseResult, { id: event.data.id, youtubeApiKey: this.youtubeApiKey }));
+				} else if (parseResult.type === 'mediaList') {
 					this.message({
 						audius: true,
 						vuex: 'dispatch',
 						type: 'webScraperUpdateSuccess',
 						data: {
 							id: event.data.id,
-							mediaList: this.parsers[event.data.id].parse(event.data.data),
+							mediaList: parseResult.data,
 						},
 					});
-				} catch (error) {
-					this.message({ audius: true, vuex: 'commit', type: 'error', data: `Error parsing ${event.data.id}. ${error}` });
+				} else if (parseResult.type === 'noop') {
+					// Don't do anything, relax.
+				} else {
+					this.message({ audius: true, vuex: 'commit', type: 'error', data: `Unknown plugin command ${parseResult[0]}.` });
 				}
 			}
 		});
@@ -44,20 +46,20 @@ const pluginSandbox = {
 	},
 	getNext(id) {
 		try {
-			const [method, url] = this.parsers[id].getUrl();
-			this[method](url, id);
+			const result = this.parsers[id].getUrl();
+			this.message(Object.assign(result, { id })); // parser calls getJSON
 		} catch (error) {
 			this.message({ audius: true, vuex: 'commit', type: 'error', data: `Error getting next page. ${error}` });
 		}
 	},
 	loadScript(options) {
-		const { id, code } = options;
+		const { id, code, youtubeApiKey } = options;
 		if (this.parsers[id]) this.message({ audius: true, vuex: 'commit', type: 'error', data: `Script '${id}' is already loaded` });
 		try {
 			this.parsers[id] = eval(code);
-			const [method, url] = this.parsers[id].getUrl();
-			this[method](url, id);
-			this.message(options.responseTemplate);
+			if (options.responseTemplate) this.message(options.responseTemplate);
+			this.youtubeApiKey = youtubeApiKey;
+			this.getNext(id);
 		} catch (error) {
 			this.message({ audius: true, vuex: 'commit', type: 'error', data: `Error loading script. ${error}` });
 		}
