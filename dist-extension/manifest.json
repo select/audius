@@ -1,15 +1,19 @@
 {
 	"name": "Audius",
 	"description": "Audius - the ultimate streaming music player.",
-	"version": "2.0.9",
+	"version": "2.0.10",
 	"permissions": [
 		"tabs",
-		"activeTab"
+		"activeTab",
+		"notifications"
 	],
 	"background": {
-		"scripts": ["background.js"],
+		"page": "background.html",
 		"persistent": true
 	},
+	"sandbox": {
+    "pages": ["plugins-sandbox.html"]
+  },
 	"content_scripts": [
 		{
 			"matches": ["http://*/*", "https://*/*", "file://*/*", "*://*/*"],

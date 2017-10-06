@@ -1,7 +1,7 @@
 {
 	"name": "Audius",
 	"description": "Audius - the ultimate streaming music player.",
-	"version": "2.0.9",
+	"version": "2.0.10",
 	"permissions": [
 		"tabs",
 		"activeTab",
@@ -12,7 +12,7 @@
 		"persistent": true
 	},
 	"sandbox": {
-    "pages": ["plugins-sandbox.html", "plugins-sandbox.js"]
+    "pages": ["plugins-sandbox.html"]
   },
 	"content_scripts": [
 		{
