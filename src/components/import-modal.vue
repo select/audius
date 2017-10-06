@@ -16,7 +16,7 @@ export default {
 	},
 	methods: {
 		...mapActions(['importURL', 'joinMatrixRoom', 'initMatrix']),
-		...mapMutations(['setPendingImportURL', 'setMatrixEnabled']),
+		...mapMutations(['setPendingImportURL', 'setMatrixEnabled', 'error']),
 		close() {
 			this.setPendingImportURL(null);
 		},
@@ -40,7 +40,7 @@ export default {
 			this.close();
 		},
 		importChannel() {
-			console.warn('TODO');
+			this.error('Not implemented yet .·´¯`(>▂<)´¯`·.')
 		},
 	},
 	computed: {
