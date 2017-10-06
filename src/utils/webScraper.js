@@ -10,10 +10,10 @@ export const webScraper = {
 	ajaxJSON,
 	ajaxRaw,
 	getImgurMedia(currentPageIndex) {
-		return ajaxJSON(
+		return ajaxRaw(
 			`${this.baseURL}${currentPageIndex}.json`,
 			this.requestHeader
-		).then(res => res.data
+		).then(res => JSON.parse(res).data
 			.filter(item => item.mp4)
 			.map(item => ({
 				id: `${hashCode(item.mp4)}`,
@@ -21,7 +21,7 @@ export const webScraper = {
 				url: item.mp4,
 				type: 'video',
 				title: item.title,
-				thumbUrl: `http://i.imgur.com/${item.id}s.jpg`,
+				thumbUrl: `//i.imgur.com/${item.id}s.jpg`,
 			}))
 		);
 	},
