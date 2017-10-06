@@ -2,6 +2,9 @@
 import { mapGetters, mapMutations, mapState, mapActions } from 'vuex';
 
 export default {
+	data() {
+		return { showConfirmLoadBackup: false };
+	},
 	computed: {
 		...mapGetters(['youtubeApiKeyUI']),
 		...mapState([
@@ -17,10 +20,12 @@ export default {
 			'matrixRemoveAccount',
 			'matrixLogout',
 			'setMatrixEnabled',
+			'loadBackup',
+			'error',
 		]),
 		...mapActions([
 			'loginMatrixWithPassword',
-			'backup',
+			'saveBackup',
 		]),
 		matrixLogin() {
 			const usernameEl = this.$el.querySelector('#username');
@@ -28,6 +33,21 @@ export default {
 			this.loginMatrixWithPassword({ username: usernameEl.value, password: passwordEl.value });
 			this.$el.querySelector('#username').value = '';
 			this.$el.querySelector('#password').value = '';
+		},
+		_loadBackup(event) {
+			const files = event.target.files || event.dataTransfer.files;
+			Array.from(files).forEach((file) => {
+				const reader = new FileReader();
+				reader.onload = (event2) => {
+					try {
+						this.loadBackup(JSON.parse(event2.target.result));
+						this.showConfirmLoadBackup = false;
+					} catch (error) {
+						this.error(`Error loading backup. ${error}`);
+					}
+				};
+				reader.readAsText(file);
+			});
 		},
 	},
 };
@@ -39,8 +59,30 @@ export default {
 	<h1>Settings</h1>
 	<h3>Backup</h3>
 	<p>
-		<button class="button btn--blue" @click="backup">Download Bakckup</button>
+		<button
+			class="button btn--blue"
+			@click="saveBackup">Save backup</button>
+		<button
+			class="button btn--blue-ghost"
+			title="Load backup from file"
+			@click="showConfirmLoadBackup = true">Load backup</button>
 	</p>
+	<div class="modal" v-if="showConfirmLoadBackup" @click.stop="showConfirmLoadBackup = false">
+		<div class="modal__body" @click.stop>
+			Loading the backup will overwirte all current data!
+			<div class="modal__btn-group">
+				<button class="button" @click="showConfirmLoadBackup = false">Cancel</button>
+				<input
+					type="file"
+					id="settings-backup"
+					v-on:change="_loadBackup"
+					title="Load backup from file">
+				<label
+					for="settings-backup"
+					class="button btn--blue">Load backup</label>
+			</div>
+		</div>
+	</div>
 	<h3>Extension</h3>
 	<p>
 		Then extension is <b v-if="extensionAvilable">installed</b><span v-else><b>not installed</b>. You can install it from the <a href="https://chrome.google.com/webstore/detail/ekpajajepcojhnjmlibfbjmdjcafajoh" target="_blank">Chrome web store</a>. If you just installed it please reload this page and this message will disappear</span>.
@@ -115,5 +157,13 @@ export default {
 		display: inline-flex
 		align-items: center
 		justify-content: center
+
+#settings-backup
+	display: none
+	+ label
+		display: inline-flex
+		justify-content: center
+		align-items: center
+		cursor: pointer
 
 </style>

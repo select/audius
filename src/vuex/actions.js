@@ -136,27 +136,20 @@ export const actions = {
 			}
 		}
 	},
-	backup({ state, dispatch }) {
+	saveBackup({ state, dispatch }) {
 		const now = new Date();
 		const fileName = `Audius.${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}.backup`;
 		const data = {
-			fileName,
+			AudiusBackup: '2.0.10',
 			data: Array.from(
 				new Set(Object.values(presistMutation).reduce((acc, item) => [...acc, ...item], []))
 			).reduce((acc, key) => Object.assign(acc, { [key]: state[key] }), {}),
 		};
 		dispatch('exportToFile', { fileName, data });
 	},
+	// https://stackoverflow.com/a/46613898/1436151
 	exportToFile(store, { data, fileName }) {
-		const dataString = JSON.stringify(data, null, 2);
-		let n = dataString.length;
-		const u8arr = new Uint8Array(n);
-		while (n--) {
-			u8arr[n] = dataString.charCodeAt(n);
-		}
-		// Way too slow
-		// const u8arr = Uint8Array.from(Array.from(dataString).map(char => char.charCodeAt(0)));
-
+		const u8arr = new TextEncoder('utf-8').encode(JSON.stringify(data, null, 2));
 		const url = window.URL.createObjectURL(new Blob([u8arr], { type: 'application/json' }));
 		const element = document.createElement('a');
 		element.setAttribute('href', url);

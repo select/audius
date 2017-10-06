@@ -81,6 +81,10 @@ export default {
 	</p>
 	<h2>Change log</h2>
 	<p>
+		<b>2.0.11</b><br>
+		<ul>
+			<li> Backup complete audius app.</li>
+		</ul>
 		<b>2.0.10</b><br>
 		<ul>
 			<li> Add full screen mode for continous full screen playback. Add controls for prev, next, timeline.</li>

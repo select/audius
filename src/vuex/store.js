@@ -97,7 +97,9 @@ export const store = new Vuex.Store({
 	plugins: [
 		vstore => {
 			vstore.subscribe((mutation, state) => {
-				const presistStates = presistMutation[mutation.type];
+				const presistStates = mutation.type === 'loadBackup'
+					? new Set(Object.values(presistMutation).reduce((acc, item) => [...acc, ...item], []))
+					: presistMutation[mutation.type];
 				if (presistStates !== undefined) {
 					presistStates.forEach(stateName => {
 						indexDB.writeStore().put(state[stateName], stateName).onerror = event => {

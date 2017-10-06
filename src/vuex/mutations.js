@@ -136,6 +136,9 @@ export const mutations = {
 		state = Object.assign(state, recoveredState);
 		if (state.currentPlayList === null) state.currentPlayList = '';
 	},
+	loadBackup(state, backup) {
+		if (backup.AudiusBackup) state = Object.assign(state, backup.data);
+	},
 	searchSuccess(state, { mediaList = [], id = null, isPlayList }) {
 		if (!mediaList.length) {
 			state.errorMessages = [...state.errorMessages, { error: 'No media found (҂⌣̀_⌣́)ᕤ' }];
