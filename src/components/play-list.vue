@@ -192,10 +192,8 @@ export default {
 			v-show="showWelcome"
 			@add="dropAdd"
 			:options="{ sort: false, handle: '.no-handle', group: { name: 'lists' } }">
-			(⊃｡•́‿•̀｡)⊃ <br>
-			<br>
 			<div>
-				The playlist is empty
+				Your playlist is empty
 			</div>
 			<div>
 				Find music and videos you love <br>
