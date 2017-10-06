@@ -52,7 +52,7 @@ export const actionsWebScraper = {
 			commit('setPaginationIndex', { id, index: index + 1 });
 			webScraper.getImgurMedia(state.paginationIndex[id]).then(mediaList => {
 				dispatch('webScraperUpdateSuccess', { id, mediaList });
-			});
+			}).catch(error => commit('error', `Could not get Imgur. ${error}`));
 		} else if (ws.settings.type === 'script') {
 			commit('setPaginationIndex', { id, index: index + 1 });
 			if (state.webScrapersInitialized[id]) {
