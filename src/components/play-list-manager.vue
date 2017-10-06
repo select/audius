@@ -163,6 +163,7 @@ export default {
 	font-size: 0.8rem
 	color: $color-athensgrey
 	content: 'CREATE'
+	cursor: default
 
 </style>
 
