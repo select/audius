@@ -165,6 +165,14 @@ export const actionsMatrix = {
 				values: { humanReadablePosts: options.humanReadablePosts },
 			});
 		}
+		if ('allowGuests' in options) {
+			matrixClient
+				.setRoomAllowGuests(options.id, options.allowGuests)
+				.then(() =>
+					commit('updateMatrixRoom', { roomId: options.id, values: { allowGuests: options.allowGuests } })
+				)
+				.catch(error => commit('error', `Could not set allow guests to ${options.allowGuests}. ${error}`));
+		}
 		if ('isHidden' in options) {
 			matrixClient
 				.setRoomVisibility(options.id, options.isHidden)
@@ -211,17 +219,16 @@ export const actionsMatrix = {
 		}
 
 		// Build an index of all known media items from this room.
+		// This is used by `findMediaText` to minimize the number of requests.
 		const index = new Set([...room.playList.map(v => v.id), ...room.archive]);
 		if (typeof message === 'object') { // message is a media object
 			if (!index.has(message.id)) addMatrixMessage(state, commit, roomId, eventId, [message]);
 			console.log(`[Matrix-Media] %c${message.title}`, 'color: #2DA7EF;');
-			return;
+		} else {
+			console.log(`[Matrix-Text] %c${message}`, 'color: #2DA7EF;');
+			findMediaText(message, state.youtubeApiKey, index).then(({ mediaList }) => {
+				addMatrixMessage(state, commit, roomId, eventId, mediaList);
+			});
 		}
-		console.log(`[Matrix-Text] %c${message}`, 'color: #2DA7EF;');
-
-		findMediaText(message, state.youtubeApiKey, index).then(({ mediaList }) => {
-			console.log("mediaItems",message, mediaList);
-			addMatrixMessage(state, commit, roomId, eventId, mediaList);
-		});
 	},
 };

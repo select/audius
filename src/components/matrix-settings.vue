@@ -94,6 +94,15 @@ export default {
 			Hidden
 			<span class="smaller">Not publicly listed</span>
 		</div>
+		<div>
+			<input
+				type="checkbox"
+				v-bind:disabled="!room.isAdmin"
+				v-bind:checked="room.allowGuests"
+				@change="updateRoomOptions({id: currentMatrixRoom, allowGuests: $event.target.checked})"
+				id="allow-guests"><label for="allow-guests"></label>
+			Allow guests to join
+		</div>
 		<!-- <div>
 			<input
 				type="checkbox"

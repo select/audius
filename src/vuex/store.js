@@ -31,9 +31,6 @@ const presistMutation = {
 	moveTagsOrdered: ['tagsOrdered'],
 	migrationSuccess: ['migration'],
 	removeVideo: ['playList', 'tags', 'entities'],
-	setMatrixCredentials: ['matrix'],
-	setPublicRooms: ['matrix'],
-	setMatrixEnabled: ['matrixEnabled'],
 	upgradeEntities: ['entities'],
 	setStartStopMarker: ['entities'],
 	updateWebScraper: ['webScrapers'],
@@ -43,7 +40,12 @@ const presistMutation = {
 	addWebScraper: ['webScrapersOrdered', 'webScrapers'],
 	renameWebScraper: ['webScrapersOrdered', 'webScrapers'],
 	setIsMobile: ['isMobile'],
+	setMatrixCredentials: ['matrix'],
+	setPublicRooms: ['matrix'],
+	setMatrixEnabled: ['matrixEnabled'],
 	updateMatrixRoom: ['matrixRooms'],
+	matrixRemoveAccount: ['matrix'],
+	deleteMatrixRoom: ['matrixRoomsOrdered'],
 };
 
 export const store = new Vuex.Store({

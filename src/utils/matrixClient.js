@@ -68,6 +68,17 @@ export const matrixClient = {
 	sendMessage(roomId, media) {
 		return this.client.sendTextMessage(roomId, JSON.stringify(media));
 	},
+	setRoomAllowGuests(roomId, toggleState){
+		return this.client.sendStateEvent(roomId, 'm.room.guest_access', { guest_access: toggleState ? 'can_join' : 'forbidden' });
+	},
+	setRoomHistoryVisibility(roomId, state) {
+		// m.room.history_visibility
+		if (['invited', 'joined', 'shared', 'world_readable'].includes(state)) {
+			throw (`setRoomHistoryVisibility unknown state ${state}`);
+		}
+		return this.client.sendStateEvent(roomId, 'm.room.history_visibility', { history_visibility: state });
+
+	},
 	setRoomName(roomId, name) {
 		return this.client.setRoomName(roomId, name);
 	},
@@ -78,19 +89,28 @@ export const matrixClient = {
 		return this.client.setRoomTag(roomId, tagName);
 	},
 	createRoom(options) {
-		// ```
-		// {
-		// 	room_alias_name: 'blaa-audius',
-		// 	visibility: 'public', // or 'private'
-		// 	invite: [
-		// 		'bllakd:matrix.org',
-		// 		'user1:matrix.org',
-		// 	],
-		// 	name: 'Blaaa [Audius]',
-		// 	topic: 'Join this room with https://audius.rockdapus.org',
-		// };
-		// ```
-		return this.client.createRoom(options);
+		return this.client.createRoom(Object.assign(options, {
+			initial_state: [
+				{
+					type: 'm.room.guest_access',
+					state_key: '',
+					content: { guest_access: 'can_join' },
+				},
+				{
+					type: 'm.room.history_visibility',
+					state_key: '',
+					content: { history_visibility: 'world_readable' },
+				},
+			],
+			// room_alias_name: 'blaa-audius',
+			// visibility: 'public', // or 'private'
+			// invite: [
+			// 	'@bllakd:matrix.org',
+			// 	'@user1:matrix.org',
+			// ],
+			// name: 'Blaaa [Audius]',
+			// topic: 'Join this room with https://audius.rockdapus.org',
+		}));
 	},
 	listPublicRooms() {
 		return this.client.publicRooms({

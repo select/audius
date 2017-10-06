@@ -27,6 +27,7 @@ function delay(time) {
 }
 
 function sendMessageToAudius(data) {
+	logger('## background to webpage', data);
 	getAudiusTabs(tabs => {
 		if (!(tabs && tabs.length)) {
 			window.console.warn('Could not find audius tab');

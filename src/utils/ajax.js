@@ -34,7 +34,7 @@ export function ajaxRaw(url, requestHeader) {
 			xhr.setRequestHeader(...requestHeader);
 		}
 		xhr.onerror = (event) => {
-			reject(`Error requesting ${this.parserName}`);
+			reject(`Error requesting ${url}`);
 		};
 		xhr.send();
 	});
