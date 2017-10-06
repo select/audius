@@ -119,8 +119,6 @@ export default {
 @import '../sass/color'
 
 .matrix-create
-	.modal__body
-		max-width: 10 * $touch-size-medium
 	input
 		width: 100%
 		margin-bottom: $grid-space
