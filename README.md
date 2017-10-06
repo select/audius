@@ -182,11 +182,10 @@ This is the internal media data JSON fromat of Audius.
 	tracks: [ // optional
 		{ // this is a full item with 
 			trackId: 1,
-			
 			title: 'Kanan neni - Rokia Traoré - Wanita',
 			duration: { d: 0, h: 0, m: 6, s: '19', ms: 0 },
 			durationS: 379,
-			id: 'ozD4h9HCHOY',
+			id: 'Track1-ozD4h9HCHOY',
 			type: 'youtube',
 			start: 0,
 			fullTitle: '1. Kanan neni : 00:00\r',
