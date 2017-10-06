@@ -24,19 +24,12 @@ export default {
 		]),
 	},
 	methods: {
-		...mapActions(['exportToURL']),
+		...mapActions(['exportToURL', 'exportToFile']),
 		exportFile() {
-			const data = this.currentExportData;
-			const element = document.createElement('a');
-			element.setAttribute('href', `data:text/plain;charset=utf-8,${encodeURIComponent(JSON.stringify(data))}`);
-			element.setAttribute(
-				'download',
-				this.currentWebScraper ? `${this.currentWebScraper}.audius-channel` : this.currentName ? `${this.currentName}.audius-playlist` : 'default.audius-playlist'
-			);
-			element.style.display = 'none';
-			document.body.appendChild(element);
-			element.click();
-			document.body.removeChild(element);
+			this.exportToFile({
+				data: this.currentExportData,
+				fileName: this.currentWebScraper ? `${this.currentWebScraper}.audius-channel` : this.currentName ? `${this.currentName}.audius-playlist` : 'default.audius-playlist'
+			});
 		},
 		niceDate(date) {
 			if (!date) return date;

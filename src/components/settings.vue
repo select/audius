@@ -18,7 +18,10 @@ export default {
 			'matrixLogout',
 			'setMatrixEnabled',
 		]),
-		...mapActions(['loginMatrixWithPassword']),
+		...mapActions([
+			'loginMatrixWithPassword',
+			'backup',
+		]),
 		matrixLogin() {
 			const usernameEl = this.$el.querySelector('#username');
 			const passwordEl = this.$el.querySelector('#password');
@@ -34,6 +37,10 @@ export default {
 <div class="settings">
 
 	<h1>Settings</h1>
+	<h3>Backup</h3>
+	<p>
+		<button class="button btn--blue" @click="backup">Download Bakckup</button>
+	</p>
 	<h3>Extension</h3>
 	<p>
 		Then extension is <b v-if="extensionAvilable">installed</b><span v-else><b>not installed</b>. You can install it from the <a href="https://chrome.google.com/webstore/detail/ekpajajepcojhnjmlibfbjmdjcafajoh" target="_blank">Chrome web store</a>. If you just installed it please reload this page and this message will disappear</span>.

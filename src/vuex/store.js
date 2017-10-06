@@ -10,43 +10,9 @@ import { youtubeApiKey } from '../utils/config';
 import { getters } from './getters';
 import { actions } from './actions';
 import { mutations } from './mutations';
+import { presistMutation } from './presistMutation';
 
 Vue.use(Vuex);
-
-const presistMutation = {
-	addSearchResult: ['entities', 'playList', 'tags'],
-	dropSearchResult: ['entities', 'playList', 'tags'],
-	dropMoveItem: ['playList', 'tags', 'entities'],
-	importPlayList: ['entities', 'playList', 'tags', 'tagsOrdered'],
-	toggleLeftMenu: ['showLeftMenu'],
-	addTags: ['tagsOrdered', 'tags'],
-	selectMediaSource: ['currentPlayList'],
-	renamePlayList: ['tagsOrdered', 'tags', 'currentPlayList'],
-	deletePlayList: ['tagsOrdered', 'tags', 'currentPlayList'],
-	toggleShuffle: ['shuffle'],
-	setExportURL: ['exportURLs'],
-	play: ['webScrapers', 'matrixRooms'],
-	nextVideo: ['webScrapers'],
-	movePlayListMedia: ['playList', 'tags', 'entities'],
-	moveTagsOrdered: ['tagsOrdered'],
-	migrationSuccess: ['migration'],
-	removeVideo: ['playList', 'tags', 'entities'],
-	upgradeEntities: ['entities'],
-	setStartStopMarker: ['entities'],
-	updateWebScraper: ['webScrapers'],
-	addUrlPattern: ['webScrapers'],
-	videoError: ['entities'],
-	updateCurrentMedia: ['entities'],
-	addWebScraper: ['webScrapersOrdered', 'webScrapers'],
-	renameWebScraper: ['webScrapersOrdered', 'webScrapers'],
-	setIsMobile: ['isMobile'],
-	setMatrixCredentials: ['matrix'],
-	setPublicRooms: ['matrix'],
-	setMatrixEnabled: ['matrixEnabled'],
-	updateMatrixRoom: ['matrixRooms'],
-	matrixRemoveAccount: ['matrix'],
-	deleteMatrixRoom: ['matrixRoomsOrdered'],
-};
 
 export const store = new Vuex.Store({
 	actions,

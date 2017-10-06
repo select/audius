@@ -1,5 +1,6 @@
 import { actionsMatrix } from './actions-matrix';
 import { actionsWebScraper } from './actions-web-scraper';
+import { presistMutation } from './presistMutation';
 import {
 	searchYoutube,
 	youTubePlaylistRexEx,
@@ -13,27 +14,8 @@ import {
 import { getCurrentPlayListEntities } from './getCurrentPlayList';
 // the matrix client will be lazy loaded since it's not need on startup
 
-// Find the right method, call on correct element
-function launchIntoFullscreen(element) {
-	if (element.requestFullscreen) {
-		element.requestFullscreen();
-	} else if (element.mozRequestFullScreen) {
-		element.mozRequestFullScreen();
-	} else if (element.webkitRequestFullscreen) {
-		element.webkitRequestFullscreen();
-	} else if (element.msRequestFullscreen) {
-		element.msRequestFullscreen();
-	}
-}
-function exitFullscreen() {
-	if (document.exitFullscreen) {
-		document.exitFullscreen();
-	} else if (document.mozCancelFullScreen) {
-		document.mozCancelFullScreen();
-	} else if (document.webkitExitFullscreen) {
-		document.webkitExitFullscreen();
-	}
-}
+
+
 
 /* eslint-disable no-param-reassign */
 export const actions = {
@@ -132,8 +114,57 @@ export const actions = {
 	toggleFullscreen({ state, commit }, toggleState) {
 		commit('toggleFullscreen', toggleState);
 		// Launch fullscreen for browsers that support it!
-		if (state.fullscreen) launchIntoFullscreen(document.querySelector('.media-player')); // any individual element
-		// Cancel fullscreen for browsers that support it!
-		else exitFullscreen();
+		if (state.fullscreen) {
+			const element = document.querySelector('.media-player'); // any individual element
+			if (element.requestFullscreen) {
+				element.requestFullscreen();
+			} else if (element.mozRequestFullScreen) {
+				element.mozRequestFullScreen();
+			} else if (element.webkitRequestFullscreen) {
+				element.webkitRequestFullscreen();
+			} else if (element.msRequestFullscreen) {
+				element.msRequestFullscreen();
+			}
+		} else {
+			// Cancel fullscreen for browsers that support it!
+			if (document.exitFullscreen) {
+				document.exitFullscreen();
+			} else if (document.mozCancelFullScreen) {
+				document.mozCancelFullScreen();
+			} else if (document.webkitExitFullscreen) {
+				document.webkitExitFullscreen();
+			}
+		}
+	},
+	backup({ state, dispatch }) {
+		const now = new Date();
+		const fileName = `Audius.${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}.backup`;
+		const data = {
+			fileName,
+			data: Array.from(
+				new Set(Object.values(presistMutation).reduce((acc, item) => [...acc, ...item], []))
+			).reduce((acc, key) => Object.assign(acc, { [key]: state[key] }), {}),
+		};
+		dispatch('exportToFile', { fileName, data });
+	},
+	exportToFile(store, { data, fileName }) {
+		const dataString = JSON.stringify(data, null, 2);
+		let n = dataString.length;
+		const u8arr = new Uint8Array(n);
+		while (n--) {
+			u8arr[n] = dataString.charCodeAt(n);
+		}
+		// Way too slow
+		// const u8arr = Uint8Array.from(Array.from(dataString).map(char => char.charCodeAt(0)));
+
+		const url = window.URL.createObjectURL(new Blob([u8arr], { type: 'application/json' }));
+		const element = document.createElement('a');
+		element.setAttribute('href', url);
+		element.setAttribute('download', fileName);
+		element.style.display = 'none';
+		document.body.appendChild(element);
+		element.click();
+		document.body.removeChild(element);
 	},
 };
+
