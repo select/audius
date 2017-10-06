@@ -169,13 +169,13 @@ This is the internal media data JSON fromat of Audius.
 {
 	id: 'ozD4h9HCHOY', // universal unique id
 	title: 'Human readable title',
-	duration: { h: 0, m: 58, s: '51' },
-	durationS: 3531, // duration in seconds
+	duration: { h: 0, m: 58, s: '51' }, // optional if 'video' or 'audio'
+	durationS: 3531, // duration in seconds;  optional if 'video' or 'audio'
 	type: 'youtube', // available types: 'audio', 'video', 'vimeo'
 	href: 'https://example.com/items/funny-video', // link to external page; not required for youtube
 	thumbUrl: 'https://example.com/img/funny-video_100x75.jpg', // not req for yt
-	start: 0, // optional time in s
-	stop: 379, // optional time in s
+	start: 0, // optional time in seconds
+	stop: 379, // optional time in seconds
 	youtubeId: 'ozD4h9HCHOY', // youtube only
 	vimeoId: '36579366', // vimeo only
 	tracks: [ // optional
@@ -200,33 +200,71 @@ This is the internal media data JSON fromat of Audius.
 
 ### Web scaper plugin
 
-A web scraper plugin is an object that implements
-- `getUrl()` returns `['ajaxJSON', String]`
-- `parse(data)` returns `[MediaMetaData]`
-
+A web scraper plugin is an object with data and functions
 The functions are evaled and executed in a sandbox in the Audius extension. 
 
-Example plugin
+It must implement
+- `getUrl()` returns `{ type: '…', …data, responseTemplate: {type: '…'}}`
+- a fuction that processes the data retrived from the call that `getURL` triggers
+
+Available types:
+- `ajaxJSON`
+- `ajaxRaw`
+- `scanOneUrl`
+- `getYouTubeInfo`
+- `mediaList` 
+
+Example plugins
 ```
 ({
-	getUrl() {
-		return [
-			'ajaxJSON', // the only option so far
-			!this.lastIndex ? this.baseURL : `https://example.com/api/?viral=${this.lastKey}`,
-		];
+	pageIndex: 0,
+	stepSize: 5,
+	getUrl() { // return URL to request
+		this.pageIndex += this.stepSize;
+		return {
+			type: 'ajaxJSON',
+			data: `http://www.example.com/feeds/posts/summary?start-index=${this.pageIndex}&max-results=1&alt=json`,
+			responseTemplate: { type: 'parse' },
+		};
 	},
 	parse(data) {
-		this.lastIndex = data.items[data.items.length - 1].id;
-		return data.items
-			.map(item => ({
-				id: `pr0gramm-${item.id}`,
-				// … complete the media data format described above here
-			}));
+		const datetime = data.feed.entry[0].published.$t;
+		return {
+			type: 'scanOneUrl',
+			url: `http://www.example.com/search?updated-max=${encodeURIComponent(datetime.replace(/\.\d{3}-/, '-'))}&max-results=${this.stepSize}`,
+		};
 	},
-	baseURL: 'https://example.com/api/?viral=1',
-	lastIndex: '',
 })
+```
 
+```
+({
+	baseURL: 'https://example.com/api/',
+	lastKey: '',
+	getUrl() {
+		return {
+			type: 'ajaxJSON',
+			data: !this.lastKey
+				? this.baseURL
+				: `https://example.com/api/items/get?older=${this.lastKey}`,
+			responseTemplate: { type: 'parseResults' }, // call the parse function below with the results from ajaxJSON
+		};
+	},
+	parseResults(data) {
+		this.lastKey = data.items[data.items.length - 1].id;
+		return { // return list of MediaMetaData objects
+			type: 'mediaList',
+			data: data.items.filter(item => /\.mp4$/.test(item.image)).map(item => ({
+				id: `example-${item.id}`,
+				title: item.title,
+				type: 'video',
+				thumbUrl: `https://thumb.example.com/${item.id}.jpg`,
+				href: `https://example.com/top/${item.id}`,
+				url: `https://vid.example.com/${item.image}`,
+			})),
+		};
+	},
+});
 ```
 
 ## Legality, security, saftey, and privacy
