@@ -33,18 +33,20 @@ export const actionsMatrix = {
 			if (!state.matrix.hasCredentials) {
 				matrixClient
 					.getCredentials()
-					.then(credentials => commit('setMatrixCredentials', credentials))
-					.then(() => matrixClient.login(state.matrix.credentials, dispatch, commit))
+					.then(credentials => commit('setMatrixCredentials', { credentials, isGuest: true }))
+					.then(() =>
+						matrixClient.login(state.matrix.credentials, state.matrix.isGuest, dispatch, commit)
+					)
 					.then(rooms => {
-						commit('setMatrixLoggedIn', rooms);
+						commit('setMatrixLoggedIn', { rooms });
 						dispatch('updatePublicRooms');
 					})
 					.catch(error => commit('error', `Login failed. ${error}`));
 			} else if (!state.matrixLoggedIn) {
 				matrixClient
-					.login(state.matrix.credentials, dispatch, commit)
+					.login(state.matrix.credentials, state.matrix.isGuest, dispatch, commit)
 					.then(rooms => {
-						commit('setMatrixLoggedIn', rooms);
+						commit('setMatrixLoggedIn', { rooms });
 						dispatch('updatePublicRooms');
 					})
 					.catch(error => commit('error', `Login failed. ${error}`));
@@ -56,26 +58,28 @@ export const actionsMatrix = {
 			matrixClient = mc.matrixClient;
 			matrixClient
 				.getCredentialsWithPassword(username, password)
-				.then(credentials => commit('setMatrixCredentials', credentials))
-				.then(() => matrixClient.login(state.matrix.credentials, dispatch))
-				.then(rooms => commit('setMatrixLoggedIn', rooms))
+				.then(credentials => commit('setMatrixCredentials', { credentials, isGuest: false }))
+				.then(() =>
+					matrixClient.login(state.matrix.credentials, state.matrix.isGuest, dispatch, commit)
+				)
+				.then(rooms => commit('setMatrixLoggedIn', { rooms }))
 				.catch(error => commit('error', `${error}`));
 		});
 	},
 	matrixSend({ state, commit }, { itemId, roomId, media }) {
 		const curMedia = media || getMediaEntity(state, itemId);
-		if (state.matrixRooms[roomId].playList.some(({ id }) => id === curMedia.id) ) {
+		if (state.matrixRooms[roomId].playList.some(({ id }) => id === curMedia.id)) {
 			commit('error', 'The media item was already posted.');
 			return;
 		}
 		if (state.matrixRooms[roomId].humanReadablePosts) {
 			matrixClient
 				.sendMessage(roomId, getMediaLink(curMedia))
-				.catch((error) => commit('error', `Posting message to matrix room failed. ${error}`));
+				.catch(error => commit('error', `Posting message to matrix room failed. ${error}`));
 		} else {
 			matrixClient
 				.sendEvent(roomId, curMedia)
-				.catch((error) => commit('error', `Posting media to matrix room failed. ${error}`));
+				.catch(error => commit('error', `Posting media to matrix room failed. ${error}`));
 		}
 	},
 	matrixRedact({ state, commit }, media) {
@@ -118,7 +122,7 @@ export const actionsMatrix = {
 			.joinRoom(id)
 			.then(room => {
 				room.name = name || id;
-				commit('setMatrixLoggedIn', [room]);
+				commit('setMatrixLoggedIn', { rooms: [room] });
 				commit('selectMediaSource', { type: 'radio', id: room.roomId });
 				commit('setLeftMenuTab', 'radio');
 			})
@@ -127,13 +131,12 @@ export const actionsMatrix = {
 			});
 	},
 	createMatrixRoom({ commit }, options) {
-		console.log('options', options);
 		matrixClient
 			.createRoom(options)
 			.then(room => {
 				room.name = options.name;
 				room.roomId = room.room_id;
-				commit('setMatrixLoggedIn', [room]);
+				commit('setMatrixLoggedIn', { rooms: [room] });
 				commit('updateMatrixRoom', {
 					roomId: room.roomId,
 					values: { isHidden: options.visibility === 'private' },
@@ -149,7 +152,7 @@ export const actionsMatrix = {
 	setRoomName({ commit }, { id, name }) {
 		matrixClient
 			.setRoomName(id, name)
-			.then(() => commit('setMatrixLoggedIn', [{ roomId: id, name }]))
+			.then(() => commit('setMatrixLoggedIn', { rooms: [{ roomId: id, name }] }))
 			.catch(error => commit('error', `Could not rename matrix room: ${error}`));
 	},
 	setRoomTag({ commit }, { roomId, tagName }) {
@@ -169,9 +172,14 @@ export const actionsMatrix = {
 			matrixClient
 				.setRoomAllowGuests(options.id, options.allowGuests)
 				.then(() =>
-					commit('updateMatrixRoom', { roomId: options.id, values: { allowGuests: options.allowGuests } })
+					commit('updateMatrixRoom', {
+						roomId: options.id,
+						values: { allowGuests: options.allowGuests },
+					})
 				)
-				.catch(error => commit('error', `Could not set allow guests to ${options.allowGuests}. ${error}`));
+				.catch(error =>
+					commit('error', `Could not set allow guests to ${options.allowGuests}. ${error}`)
+				);
 		}
 		if ('isHidden' in options) {
 			matrixClient
@@ -194,12 +202,15 @@ export const actionsMatrix = {
 			.listPublicRooms()
 			.then(res => {
 				const rooms = res.chunk.filter(({ room_id }) => !blacklist.has(room_id));
-				commit('setPublicRooms', rooms.map(room => ({
-					name: room.name.replace('[Audius]', ''),
-					id: room.room_id,
-					numberOfMembers: room.num_joined_members,
-					topic: room.topic,
-				})));
+				commit(
+					'setPublicRooms',
+					rooms.map(room => ({
+						name: room.name.replace('[Audius]', ''),
+						id: room.room_id,
+						numberOfMembers: room.num_joined_members,
+						topic: room.topic,
+					}))
+				);
 			})
 			.catch(() => commit('error', 'Getting public matrix Rooms failed'));
 	},
@@ -221,11 +232,12 @@ export const actionsMatrix = {
 		// Build an index of all known media items from this room.
 		// This is used by `findMediaText` to minimize the number of requests.
 		const index = new Set([...room.playList.map(v => v.id), ...room.archive]);
-		if (typeof message === 'object') { // message is a media object
+		if (typeof message === 'object') {
+			// message is a media object
 			if (!index.has(message.id)) addMatrixMessage(state, commit, roomId, eventId, [message]);
-			console.log(`[Matrix-Media] %c${message.title}`, 'color: #2DA7EF;');
+			window.console.log(`[Matrix-Media] %c${message.title}`, 'color: #2DA7EF;');
 		} else {
-			console.log(`[Matrix-Text] %c${message}`, 'color: #2DA7EF;');
+			window.console.log(`[Matrix-Text] %c${message}`, 'color: #2DA7EF;');
 			findMediaText(message, state.youtubeApiKey, index).then(({ mediaList }) => {
 				addMatrixMessage(state, commit, roomId, eventId, mediaList);
 			});

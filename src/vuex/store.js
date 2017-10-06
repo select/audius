@@ -57,13 +57,10 @@ export const store = new Vuex.Store({
 		entities: {},
 		currentMedia: {},
 		currentPlayList: '',
-		currentMatrixRoom: null,
 		currentWebScraper: null,
 		playList: [],
 		tags: {},
 		tagsOrdered: [],
-		matrixRooms: {},
-		matrixRoomsOrdered: [],
 		webScrapers: { Imgur: { playList: [], playedMedia: {}, archive: [] } },
 		webScrapersOrdered: ['Imgur'],
 		webScrapersInitialized: {}, // e.g. `{'pr0gramm': true}`
@@ -113,6 +110,9 @@ export const store = new Vuex.Store({
 			results: [],
 		},
 		// Matrix
+		currentMatrixRoom: null,
+		matrixRooms: {},
+		matrixRoomsOrdered: [],
 		createMatrixRoomModal: false,
 		showMatrixRoomDirectory: false,
 		matrixEnabled: false,

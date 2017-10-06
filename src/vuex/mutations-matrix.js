@@ -15,20 +15,22 @@ export const mutationsMatrix = {
 	setMatrixEnabled(state) {
 		state.matrixEnabled = !state.matrixEnabled;
 	},
-	setPublicRooms(state, rooms){
+	setPublicRooms(state, rooms) {
 		state.matrix = Object.assign(
 			{},
 			state.matrix,
 			{ publicRooms: rooms }
 		);
 	},
-	setMatrixCredentials(state, credentials) {
+	setMatrixCredentials(state, { credentials, isGuest }) {
 		state.matrix.hasCredentials = true;
 		state.matrix.credentials = credentials;
+		state.matrix.isGuest = isGuest;
 	},
-	setMatrixLoggedIn(state, rooms) {
+	setMatrixLoggedIn(state, { rooms }) {
 		state.matrixLoggedIn = true;
 		const userId = state.matrix.credentials.userId;
+
 		rooms.forEach(room => {
 			const roomId = room.roomId;
 

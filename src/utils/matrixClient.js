@@ -12,12 +12,12 @@ export const matrixClient = {
 			.getEventTimeline(tls, this.firstEvent[roomId])
 			.then(et => this.client.paginateEventTimeline(et, { backwards: true }));
 	},
-	login(credentials, dispatch, commit) {
+	login(credentials, isGuest, dispatch, commit) {
 		return new Promise((resolve) => {
 			this.client = Matrix.createClient({
 				...credentials,
 				baseUrl: 'https://matrix.org',
-				// guest: true,
+				// guest: isGuest,
 				timelineSupport: true,
 			});
 
@@ -46,12 +46,15 @@ export const matrixClient = {
 				}
 			});
 
-			this.client.setGuest(true);
+			if (isGuest === undefined || isGuest) this.client.setGuest(true);
 			this.client.startClient({ initialSyncLimit: 20 });
 		});
 	},
 	logout() {
 		this.client.logout();
+	},
+	isGuest() {
+		return this.client.isGuest();
 	},
 	joinRoom(roomIdOrAlias) {
 		return this.client.joinRoom(roomIdOrAlias);
@@ -145,3 +148,5 @@ export const matrixClient = {
 		});
 	},
 };
+
+window.matrixClient = matrixClient;

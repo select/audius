@@ -14,7 +14,7 @@ export default {
 		});
 	},
 	methods: {
-		...mapActions(['createMatrixRoom']),
+		...mapActions(['createMatrixRoom', 'loginMatrixWithPassword']),
 		...mapMutations(['toggleMatrixRoomModal']),
 		close() {
 			this.toggleMatrixRoomModal(false);
@@ -28,9 +28,16 @@ export default {
 				topic: `Join this room at https://audius.rockdapus.org?import=#${this.slugName}:matrix.org&type=room&title=${encodeURIComponent(this.roomName)}`,
 			});
 		},
+		matrixLogin() {
+			const usernameEl = this.$el.querySelector('#username');
+			const passwordEl = this.$el.querySelector('#password');
+			this.loginMatrixWithPassword({ username: usernameEl.value, password: passwordEl.value });
+			this.$el.querySelector('#username').value = '';
+			this.$el.querySelector('#password').value = '';
+		},
 	},
 	computed: {
-		...mapState(['createMatrixRoomModal']),
+		...mapState(['createMatrixRoomModal', 'matrix']),
 		...mapGetters(['tagNames']),
 		slugName() {
 			if (this.roomName.length < 5) return '…';
@@ -49,32 +56,59 @@ export default {
 		@click="close"
 		class="modal matrix-create">
 		<div class="modal__body" @click.stop>
-			<h3>Create matrix room</h3>
-			<p>
-				<div>
-					<input
-						type="text"
-						class="input--border"
-						v-model="roomName"
-						placeholder="Room name">
+			<div v-if="matrix.isGuest !== false">
+				You are a guest user. Guest users are not allowed to create rooms. Create a full accound with
+					<a
+					href="https://riot.im/app/#/room/#audius:matrix.org"
+					target="_blank">Riot</a>
+					or <a href="https://matrix.org/docs/projects/try-matrix-now.html#clients" target="_blank">another client</a> and login below.
+				<p>
+					<table>
+						<tr>
+							<td>Username</td>
+							<td><input class="input--border" type="text" id="username"></td>
+						</tr>
+						<tr>
+							<td>Password</td>
+							<td><input class="input--border" type="password" id="password"></td>
+						</tr>
+						<tr>
+							<td></td>
+							<td style="text-align: right">
+								<button @click="matrixLogin" type="button" class="button btn--blue">Login</button>
+							</td>
+						</tr>
+					</table>
+				</p>
+			</div>
+			<div v-else>
+				<h3>Create matrix room</h3>
+				<p>
+					<div>
+						<input
+							type="text"
+							class="input--border"
+							v-model="roomName"
+							placeholder="Room name">
+					</div>
+					<div class="spacer"></div>
+					#{{slugName}}:matrix.org
+				</p>
+				<p>
+					<div>
+						<input type="checkbox" id="hidden-room-m"><label for="hidden-room-m"></label>
+						Hidden
+						<span class="smaller">Not publicly listed</span>
+					</div>
+				</p>
+				<div class="modal__btn-group">
+					<button class="button" @click="close">Cancel</button>
+					<button
+						class="button btn--blue"
+						v-bind:disabled="roomName.length < 5"
+						v-bind:title="roomName.length < 5 ? 'The room name must be at least 5 characters long' : ''"
+						@click="_createMatrixRoom">create</button>
 				</div>
-				<div class="spacer"></div>
-				#{{slugName}}:matrix.org
-			</p>
-			<p>
-				<div>
-					<input type="checkbox" id="hidden-room-m"><label for="hidden-room-m"></label>
-					Hidden
-					<span class="smaller">Not publicly listed</span>
-				</div>
-			</p>
-			<div class="modal__btn-group">
-				<button class="button" @click="close">Cancel</button>
-				<button
-					class="button btn--blue"
-					v-bind:disabled="roomName.length < 5"
-					v-bind:title="roomName.length < 5 ? 'The room name must be at least 5 characters long' : ''"
-					@click="_createMatrixRoom">create</button>
 			</div>
 		</div>
 	</div>
@@ -85,6 +119,8 @@ export default {
 @import '../sass/color'
 
 .matrix-create
+	.modal__body
+		max-width: 10 * $touch-size-medium
 	input
 		width: 100%
 		margin-bottom: $grid-space

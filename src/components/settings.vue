@@ -20,11 +20,11 @@ export default {
 		]),
 		...mapActions(['loginMatrixWithPassword']),
 		matrixLogin() {
-			const usernameEl = document.querySelector('#username');
-			const passwordEl = document.querySelector('#password');
+			const usernameEl = this.$el.querySelector('#username');
+			const passwordEl = this.$el.querySelector('#password');
 			this.loginMatrixWithPassword({ username: usernameEl.value, password: passwordEl.value });
-			document.querySelector('#username').value = '';
-			document.querySelector('#password').value = '';
+			this.$el.querySelector('#username').value = '';
+			this.$el.querySelector('#password').value = '';
 		},
 	},
 };
@@ -57,7 +57,9 @@ export default {
 	</div>
 	<div v-if="matrixEnabled">
 		<p v-if="matrixLoggedIn">
-				You are <b>connected</b> as {{matrix.credentials.userId}}. <br><br>
+				You are <b>connected</b> as {{matrix.credentials.userId}}.
+				<span v-if="matrix.isGuest !== false">You are a <b>guest</b> user.</span>
+				<br><br>
 				<button @click="matrixLogout" type="button" class="button btn--blue">Log out</button>
 				<button @click="matrixRemoveAccount" type="button" class="button btn--blue">Remove Account</button>
 		</p>
