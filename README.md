@@ -44,7 +44,8 @@ Create your own rooms with Audius and share it with your friends.
 **2.0.10**
 * Add full screen mode for continous full screen playback. Add controls for prev, next, timeline.
 * Custom channel scripts, executed in secure sandbox in extension.
-* Change user interface to less technical language. Thanks <i>Caspar</i>. 
+* Change user interface to less technical language. Thanks <i>Caspar</i>.
+* Improve matrix room creation and settings: guest access, history readability. Only full members can create rooms.
 
 **2.0.9**
 * Improved mobile UI.

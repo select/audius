@@ -85,7 +85,8 @@ export default {
 		<ul>
 			<li> Add full screen mode for continous full screen playback. Add controls for prev, next, timeline.</li>
 			<li> Custom channel scripts, executed in secure sandbox in extension.</li>
-			<li> Change user interface to less technical language. Thanks <i>Caspar</i>. </li>
+			<li> Change user interface to less technical language. Thanks <i>Caspar</i>.</li>
+			<li> Improve matrix room creation and settings: guest access, history readability. Only full members can create rooms.</li>
 		</ul>
 		<b>2.0.9</b><br>
 		<ul>
