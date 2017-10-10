@@ -148,5 +148,3 @@ export const matrixClient = {
 		});
 	},
 };
-
-window.matrixClient = matrixClient;

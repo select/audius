@@ -37,7 +37,6 @@ indexDB
 	.init()
 	.then(() => indexDB.recoverState())
 	.then(state => {
-
 		// Recover the last saved state from IndexDb
 		store.commit('recoverState', state);
 		// migrate();
