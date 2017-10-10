@@ -102,9 +102,9 @@ export const store = new Vuex.Store({
 					: presistMutation[mutation.type];
 				if (presistStates !== undefined) {
 					presistStates.forEach(stateName => {
-						indexDB.writeStore().put(state[stateName], stateName).onerror = event => {
-							vstore.commit('error', `DB Error ${event.target.error.name}`);
-						};
+						indexDB.writeStore(stateName, state[stateName])
+							.then()
+							.catch(error => vstore.commit('error', `IndexDB Error ${error}`));
 					});
 				}
 			});
