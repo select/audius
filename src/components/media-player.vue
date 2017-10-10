@@ -57,10 +57,11 @@ export default {
 			fullscreen
 		}">
 		<div :class="{'media-player--hide': !showControls}">
-			<div class="media-player__prev" @click.stop="previousVideo">‹</div>
-			<div class="media-player__next" @click.stop="nextVideo">›</div>
+			<div class="media-player__prev" title="Next" @click.stop="previousVideo">‹</div>
+			<div class="media-player__next" title="Previous" @click.stop="nextVideo">›</div>
 		</div>
 		<img
+			:class="{'media-player--hide': !showControls}"
 			class="media-player__logo"
 			v-if="fullscreen"
 			@click.stop="toggleFullscreen()"
@@ -154,9 +155,9 @@ span.media-player__full-btn
 	opacity: 1
 	position: absolute
 	z-index: 12
-	height: 80%
-	top: 10%
-	width: 2*$touch-size-medium
+	height: 60%
+	top: 20%
+	width: 12%
 	display: flex
 	justify-content: center
 	align-items: center
