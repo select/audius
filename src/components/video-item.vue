@@ -158,28 +158,9 @@ export default {
 						v-bind:class="{ active: copyActive }"
 						title="Copy name and URL"></span>
 
-					<a
-						v-if="video.type === 'youtube'"
-						v-bind:href="this.youtubeLink()"
-						title="Watch on YouTube"
-						target="_blank">
-						<span class="wmp-icon-youtube icon--small"></span>
-					</a>
-					<a
-						v-if="video.href"
-						v-bind:href="video.href"
-						title="Go to source"
-						target="_blank">
-						<span
-							:class="{
-								'wmp-icon-link': video.type !== 'vimeo',
-								'wmp-icon-vimeo  icon--small': video.type === 'vimeo',
-							}"></span>
-					</a>
 					<span
-						v-if="isPlayList && false"
-						class="wmp-icon-mode_edit"
-						title="Edit media"
+						class="wmp-icon-share"
+						title="Share"
 						@click="setShowMediaEdit(video.id);selected = false"></span>
 					<span
 						class="wmp-icon-close"
