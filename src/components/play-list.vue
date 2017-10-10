@@ -385,6 +385,9 @@ export default {
 	display: flex
 	font-size: 0.7rem
 	overflow: hidden
+	[class^="wmp-icon"]
+		height: $touch-size-tiny
+		width: $touch-size-small
 	ul
 		flex: 1
 		padding: 0
