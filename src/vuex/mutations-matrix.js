@@ -56,7 +56,7 @@ export const mutationsMatrix = {
 				}
 			}
 
-			// Add to ordered rooms list if not on the list yet.
+			// Add to room list if not on the list.
 			if (!state.matrixRoomsOrdered.includes(roomId)) {
 				state.matrixRoomsOrdered.unshift(roomId);
 			}
@@ -68,6 +68,13 @@ export const mutationsMatrix = {
 				state.matrixRooms[roomId].name = room.name;
 			}
 		});
+		// Remove room from room list if it does not exist any more.
+		// Do not do that if length is one, sice this function is also
+		// called when adding "one" new room
+		if (rooms.length > 1) {
+			const roomIndex = new Set(rooms.map(({ roomId }) => roomId));
+			state.matrixRoomsOrdered = state.matrixRoomsOrdered.filter(id => roomIndex.has(id));
+		}
 	},
 	toggleMatrixRoomModal(state, toggleState) {
 		state.createMatrixRoomModal =
@@ -101,12 +108,6 @@ export const mutationsMatrix = {
 		if (!state.matrixRooms[roomId]) {
 			state.matrixRooms[roomId] = Object.assign({}, matrixRoomTemplate(), { name: roomId });
 		}
-		// Add to room list if not on the list.
-		if (!state.matrixRoomsOrdered.includes(roomId)) {
-			state.matrixRoomsOrdered.unshift(roomId);
-		}
-		// Remove room from room list if it does not exist any more.
-		state.matrixRoomsOrdered = state.matrixRoomsOrdered.filter(id => id in state.matrixRooms);
 		// Assign values to room. This assumes that merging ect was done in the function
 		// that triggered this mutation.
 		state.matrixRooms[roomId] = Object.assign({}, state.matrixRooms[roomId], values);
