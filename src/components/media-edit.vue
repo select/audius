@@ -90,6 +90,9 @@ export default {
 		_setName: debounce(function debouncedSetName(name) {
 			this.patchMedia({ name });
 		}, 1000),
+		addMediaTo(sourceName, sourceId) {
+
+		},
 		youtubeLink() {
 			if (!this.media) return '';
 			return youtubeLink(this.media);
@@ -142,14 +145,14 @@ export default {
 		<button
 			class="button"
 			@click="_play()"
-			title="play">
+			title="Play">
 			<span class="wmp-icon-play"></span>
 		</button>
 		<button
 			class="button"
 			@click="copyToClip"
 			v-bind:class="{ active: copyActive }"
-			title="Copy name and URL">
+			title="Add to queue">
 			<span class="wmp-icon-queue2 icon--small"></span>
 		</button>
 		<button
@@ -190,6 +193,7 @@ export default {
 		<ul>
 			<li
 				v-for="id in removeFrom[src.api]"
+				@click="removeMediaFrom(src.api)"
 				:title="'Remove from '+src.label"
 				class="active">
 				<div> {{id}} </div>
@@ -199,6 +203,7 @@ export default {
 		<ul if="src.api in addTo">
 			<li
 				v-for="id in addTo[src.api]"
+				@click="addMediaTo(src.api)"
 				:title="'Add to '+src.label">
 				<div> {{id}} </div>
 				<span class="wmp-icon-add"></span>
