@@ -77,13 +77,15 @@ export default {
 	</p>
 	<h2 id="extension">Extension and web channels</h2>
 	<p>
-		<a href="https://chrome.google.com/webstore/detail/ekpajajepcojhnjmlibfbjmdjcafajoh" target="_blank">The audius extension</a> helps to search external webpages. It is required when you create or import <a @click="setLeftMenuTab('tv')">web channels <span class="wmp-icon-queue_music"title="Toggle playlists"></span></a>. Web channels are still in development, currently they allow you to search on your favorite website for sounds and videos.
+		<a href="https://chrome.google.com/webstore/detail/ekpajajepcojhnjmlibfbjmdjcafajoh" target="_blank">The Audius extension</a> helps to search external webpages. It is required when you create or import <a @click="setLeftMenuTab('tv')">web channels <span class="wmp-icon-queue_music"title="Toggle playlists"></span></a>. Web channels are still in development, currently they allow you to search on your favorite website for sounds and videos.
 	</p>
 	<h2>Change log</h2>
 	<p>
 		<b>2.0.11</b><br>
 		<ul>
-			<li> Backup complete audius app.</li>
+			<li> <a @click="setShowSettings">Backup and recover</a> your Audius data.</li>
+			<li> Share media with clicks in addition to drag and drop.</li>
+			<li> Improved Audius logo. Thanks <a href="http://buryat.me" target="_blank"><i>Buryat</i></a>.</li>
 		</ul>
 		<b>2.0.10</b><br>
 		<ul>
