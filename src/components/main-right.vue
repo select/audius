@@ -83,7 +83,7 @@ export default {
 		<li
 			@click="setMainRightTab('queue')"
 			v-bind:class="{ active: mainRightTab == 'queue' || queueActive }">
-			Queue <span v-if="queue.length">({{queue.length}})</span>
+			Queue&nbsp;<span v-if="queue.length">({{queue.length}})</span>
 		</li>
 		<li
 			v-if="search.results.length"
