@@ -305,7 +305,9 @@ export default {
 	</div>
 	<div class="play-list-footer">
 		<ul v-show="!showJump">
-			<li class="play-list-footer--info">
+			<li
+				class="play-list-footer--info"
+				@click="toggleImport(false); toggleExport(false)">
 				{{filteredPlayListLength}} Songs
 			</li>
 			<li
