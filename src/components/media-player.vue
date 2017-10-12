@@ -57,8 +57,8 @@ export default {
 			fullscreen
 		}">
 		<div :class="{'media-player--hide': !showControls}">
-			<div class="media-player__prev" title="Next" @click.stop="previousVideo">‹</div>
-			<div class="media-player__next" title="Previous" @click.stop="nextVideo">›</div>
+			<div class="media-player__prev" title="Previous" @click.stop="previousVideo">‹</div>
+			<div class="media-player__next" title="Next" @click.stop="nextVideo">›</div>
 		</div>
 		<img
 			:class="{'media-player--hide': !showControls}"
