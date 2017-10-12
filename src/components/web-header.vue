@@ -295,5 +295,5 @@ header
 	color: $color-athensgrey
 	&.active,
 	.active
-		color: $color-pictonblue
+		color: $color-black
 </style>
