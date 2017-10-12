@@ -1,8 +1,12 @@
 <script>
 import { mapActions, mapState, mapGetters, mapMutations } from 'vuex';
 import { slugify } from '../utils/slugify';
+import MatrixLogin from './matrix-login.vue';
 
 export default {
+	components: {
+		MatrixLogin,
+	},
 	data() {
 		return {
 			roomName: '',
@@ -14,7 +18,7 @@ export default {
 		});
 	},
 	methods: {
-		...mapActions(['createMatrixRoom', 'loginMatrixWithPassword']),
+		...mapActions(['createMatrixRoom']),
 		...mapMutations(['toggleMatrixRoomModal']),
 		close() {
 			this.toggleMatrixRoomModal(false);
@@ -63,22 +67,7 @@ export default {
 					target="_blank">Riot</a>
 					or <a href="https://matrix.org/docs/projects/try-matrix-now.html#clients" target="_blank">another client</a> and login below.
 				<p>
-					<table>
-						<tr>
-							<td>Username</td>
-							<td><input class="input--border" type="text" id="username"></td>
-						</tr>
-						<tr>
-							<td>Password</td>
-							<td><input class="input--border" type="password" id="password"></td>
-						</tr>
-						<tr>
-							<td></td>
-							<td style="text-align: right">
-								<button @click="matrixLogin" type="button" class="button btn--blue">Login</button>
-							</td>
-						</tr>
-					</table>
+					<matrix-login></matrix-login>
 				</p>
 			</div>
 			<div v-else>

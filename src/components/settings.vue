@@ -1,7 +1,11 @@
 <script>
 import { mapGetters, mapMutations, mapState, mapActions } from 'vuex';
+import MatrixLogin from './matrix-login.vue';
 
 export default {
+	components: {
+		MatrixLogin,
+	},
 	data() {
 		return { showConfirmLoadBackup: false };
 	},
@@ -24,16 +28,8 @@ export default {
 			'error',
 		]),
 		...mapActions([
-			'loginMatrixWithPassword',
 			'saveBackup',
 		]),
-		matrixLogin() {
-			const usernameEl = this.$el.querySelector('#username');
-			const passwordEl = this.$el.querySelector('#password');
-			this.loginMatrixWithPassword({ username: usernameEl.value, password: passwordEl.value });
-			this.$el.querySelector('#username').value = '';
-			this.$el.querySelector('#password').value = '';
-		},
 		_loadBackup(event) {
 			const files = event.target.files || event.dataTransfer.files;
 			Array.from(files).forEach((file) => {
@@ -116,22 +112,7 @@ export default {
 			You are currently <b>not connected</b>.<br><br>
 		</p>
 		<p>
-			<table>
-				<tr>
-					<td>Username</td>
-					<td><input class="input--border" type="text" id="username"></td>
-				</tr>
-				<tr>
-					<td>Password</td>
-					<td><input class="input--border" type="password" id="password"></td>
-				</tr>
-				<tr>
-					<td></td>
-					<td style="text-align: right">
-						<button @click="matrixLogin" type="button" class="button btn--blue">Login</button>
-					</td>
-				</tr>
-			</table>
+			<matrix-login></matrix-login>
 		</p>
 	</div>
 
