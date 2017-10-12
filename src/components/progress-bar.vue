@@ -21,10 +21,11 @@ export default {
 		]),
 		skipToTime(event) {
 			if (this.currentMedia.id) {
+				const rect = this.$el.getBoundingClientRect();
 				const duration = this.currentMedia.durationAlbum || this.currentMedia.durationS;
 				this.$store.commit(
 					'skipToTime',
-					duration * (event.clientX / event.currentTarget.offsetWidth)
+					duration * ((event.clientX - rect.left) / rect.width)
 				);
 			}
 		},
