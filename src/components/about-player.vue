@@ -84,7 +84,7 @@ export default {
 		<b>2.0.11</b><br>
 		<ul>
 			<li> <a @click="setShowSettings">Backup and recover</a> your Audius data.</li>
-			<li> Share media with clicks in addition to drag and drop.</li>
+			<li> Added media sharing UI.</li>
 			<li> Improved Audius logo. Thanks <a href="http://buryat.me" target="_blank"><i>Buryat</i></a>.</li>
 		</ul>
 		<b>2.0.10</b><br>
@@ -286,8 +286,6 @@ export default {
 			<li>Imgur</li>
 		</ul>
 	</p>
-	<h2>Impressum</h2>
-	<p>Brauch ich nicht weil: keine kommerziellen Inhalte, keine regelmässigen Inhalte. Hier machst du den Inhalt!</p>
 </div>
 
 </template>
