@@ -10,6 +10,10 @@ const WebScraperSettings = () => import(/* webpackChunkName: "web-scraper-settin
 const MatrixRoomSettings = () => import(/* webpackChunkName: "matrix-room-settings" */'./matrix-settings.vue');
 const MediaEdit = () => import(/* webpackChunkName: "media-edit" */'./media-edit.vue');
 
+function disableSelect(event) {
+	event.preventDefault();
+}
+
 export default {
 	name: 'main-right',
 	components: {
@@ -47,6 +51,7 @@ export default {
 		document.addEventListener('mouseup', () => {
 			this.resize = false;
 			this.resizeWidth = false;
+			window.removeEventListener('selectstart', disableSelect);
 		});
 		const br = this.$el.getBoundingClientRect();
 		document.addEventListener('mousemove', (event) => {
@@ -66,9 +71,11 @@ export default {
 		...mapMutations(['setMainRightTab']),
 		resizeStart() {
 			this.resize = true;
+			window.addEventListener('selectstart', disableSelect);
 		},
 		resizeWidthStart() {
 			this.resizeWidth = true;
+			window.addEventListener('selectstart', disableSelect);
 		},
 	},
 };

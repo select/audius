@@ -1,11 +1,14 @@
 <script>
-import { mapMutations, mapState, mapActions } from 'vuex';
+import { mapMutations, mapState } from 'vuex';
 
 import PlayListManager from './play-list-manager.vue';
 
 const MatrixRoomManager = () => import(/* webpackChunkName: "matrix-room-manager" */'./matrix-room-manager.vue');
 const WebScraperManager = () => import(/* webpackChunkName: "web-scraper-manager" */'./web-scraper-manager.vue');
 
+function disableSelect(event) {
+	event.preventDefault();
+}
 
 export default {
 	components: {
@@ -14,8 +17,9 @@ export default {
 		WebScraperManager,
 	},
 	mounted() {
-		document.addEventListener('mouseup', (event) => {
+		document.addEventListener('mouseup', () => {
 			this.resize = false;
+			window.removeEventListener('selectstart', disableSelect);
 		});
 		const ww = (window.innerWidth || document.documentElement.clientWidth);
 		document.addEventListener('mousemove', (event) => {
@@ -30,6 +34,7 @@ export default {
 		resizeStart(event) {
 			event.preventDefault();
 			this.resize = true;
+			window.addEventListener('selectstart', disableSelect);
 		},
 	},
 	computed: {
