@@ -54,7 +54,14 @@ export default {
 		},
 	},
 	computed: {
-		...mapState(['matrixEnabled', 'matrixRooms', 'currentMatrixRoom', 'matrixRoomsOrdered', 'matrixRooms', 'matrixLoggedIn']),
+		...mapState([
+			'matrixEnabled',
+			'matrixRooms',
+			'currentMatrixRoom',
+			'matrixRoomsOrdered',
+			'matrixRooms',
+			'matrixLoggedIn',
+		]),
 		_matrixRoomsOrdered: {
 			get() {
 				return this.matrixRoomsOrdered;
