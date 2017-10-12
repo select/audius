@@ -15,7 +15,7 @@ export const presistMutation = {
 	movePlayListMedia: ['playList', 'tags', 'entities'],
 	moveTagsOrdered: ['tagsOrdered'],
 	migrationSuccess: ['migration'],
-	removeVideo: ['playList', 'tags', 'entities'],
+	removeMedia: ['playList', 'tags', 'entities'],
 	upgradeEntities: ['entities'],
 	setStartStopMarker: ['entities'],
 	updateWebScraper: ['webScrapers'],

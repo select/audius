@@ -30,9 +30,10 @@ export default {
 			'queue',
 			'error',
 			'queueRemoveIndex',
-			'removeVideo',
+			'removeMedia',
 			'queuePlayIndex',
 			'setShowMediaEdit',
+			'addSearchResult',
 		]),
 		...mapActions(['matrixSend', 'matrixRedact']),
 		setShowConfirmDelte() {
@@ -49,15 +50,19 @@ export default {
 		remove() {
 			if (this.currentMatrixRoom) {
 				this.matrixRedact(this.video);
+			} else if (this.currentPlayList !== null){
+				this.removeMedia({ mediaIds: [this.video.id], tagName: this.currentPlayList });
 			} else {
-				this.removeVideo([this.video.id]);
+				this.error('No suitable media source selected.');
 			}
 		},
 		addToPlaylist() {
 			if (this.currentMatrixRoom) {
 				this.matrixSend({ media: this.video, roomId: this.currentMatrixRoom });
+			} else if (this.currentPlayList !== null) {
+				this.addSearchResult({ media: this.video, tagName: this.currentPlayList });
 			} else {
-				this.$store.commit('addSearchResult', this.video);
+				this.error('No suitable media source selected.');
 			}
 		},
 		youtubeLink() {

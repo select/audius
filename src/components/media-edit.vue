@@ -1,5 +1,5 @@
 <script>
-import { mapState, mapMutations } from 'vuex';
+import { mapState, mapMutations, mapActions } from 'vuex';
 
 import { getMediaEntity } from '../vuex/getCurrentPlayList';
 import { debounce, getMediaLink, youtubeLink } from '../utils';
@@ -20,6 +20,7 @@ export default {
 			'matrixRooms',
 			'matrixRoomsOrdered',
 			'matrixLoggedIn',
+			'matrixLoggedIn',
 			'tagsOrdered',
 			'webScrapers',
 			'webScrapersOrdered',
@@ -37,8 +38,7 @@ export default {
 				matrixRooms: this.matrixRoomsOrdered
 					.filter(sourceId => this.matrixRooms[sourceId].playList.some(
 						({ id }) => id === this.media.id)
-					)
-					.map(sourceId => this.matrixRooms[sourceId].name),
+					),
 				webScrapers: this.webScrapersOrdered
 					.filter(sourceId => this.webScrapers[sourceId].playList.some(
 						({ id }) => id === this.media.id)
@@ -56,8 +56,7 @@ export default {
 				matrixRooms: this.matrixRoomsOrdered
 					.filter(sourceId => !this.matrixRooms[sourceId].playList.some(
 						({ id }) => id === this.media.id)
-					)
-					.map(sourceId => this.matrixRooms[sourceId].name),
+					),
 			};
 			if (!data.tags.includes('Default')) data.tags.unshift('Default');
 			return data;
@@ -84,14 +83,42 @@ export default {
 		},
 	},
 	methods: {
+		...mapActions([
+			'matrixSend',
+			'matrixRedact',
+		]),
 		...mapMutations([
 			'updateMedia',
+			'addSearchResult',
+			'removeMedia',
+			'play',
+			'queue',
 		]),
 		_setName: debounce(function debouncedSetName(name) {
 			this.patchMedia({ name });
 		}, 1000),
+		id2name(id) {
+			return this.matrixRooms[id].name;
+		},
 		addMediaTo(sourceName, sourceId) {
-
+			if (sourceName === 'matrixRooms') {
+				this.matrixSend({ media: this.media, roomId: sourceId });
+			} else if (sourceName === 'tags') {
+				this.addSearchResult({
+					media: this.media,
+					tagName: sourceId === 'Default' ? '' : sourceId,
+				});
+			}
+		},
+		removeMediaFrom(sourceName, sourceId) {
+			if (sourceName === 'matrixRooms') {
+				this.matrixRedact(this.media);
+			} else if (sourceName === 'tags') {
+				this.removeMedia({
+					mediaIds: [this.media.id],
+					tagName: sourceId === 'Default' ? '' : sourceId,
+				});
+			}
 		},
 		youtubeLink() {
 			if (!this.media) return '';
@@ -120,10 +147,6 @@ export default {
 			window.getSelection().removeAllRanges();
 			tmpEl.parentNode.removeChild(tmpEl);
 		},
-		_play() {
-			if (this.isQueue) this.queuePlayIndex(this.queueIndex);
-			else this.play({ media: this.media });
-		},
 	},
 };
 </script>
@@ -144,13 +167,13 @@ export default {
 	<div class="button-group media-edit__link-buttons">
 		<button
 			class="button"
-			@click="_play()"
+			@click="play({ media })"
 			title="Play">
 			<span class="wmp-icon-play"></span>
 		</button>
 		<button
 			class="button"
-			@click="copyToClip"
+			@click="queue(media)"
 			v-bind:class="{ active: copyActive }"
 			title="Add to queue">
 			<span class="wmp-icon-queue2 icon--small"></span>
@@ -193,19 +216,19 @@ export default {
 		<ul>
 			<li
 				v-for="id in removeFrom[src.api]"
-				@click="removeMediaFrom(src.api)"
-				:title="'Remove from '+src.label"
+				@click="removeMediaFrom(src.api, id)"
+				:title="src.api === 'tags' ? 'Remove from '+src.label : ''"
 				class="active">
-				<div> {{id}} </div>
-				<span class="wmp-icon-close"></span>
+				<div> {{src.api === 'matrixRooms' ? id2name(id) : id}} </div>
+				<span v-if="src.api === 'tags'" class="wmp-icon-close"></span>
 			</li>
 		</ul>
 		<ul if="src.api in addTo">
 			<li
 				v-for="id in addTo[src.api]"
-				@click="addMediaTo(src.api)"
+				@click="addMediaTo(src.api, id)"
 				:title="'Add to '+src.label">
-				<div> {{id}} </div>
+				<div> {{src.api === 'matrixRooms' ? id2name(id) : id}} </div>
 				<span class="wmp-icon-add"></span>
 			</li>
 		</ul>
@@ -213,7 +236,7 @@ export default {
 	<p v-if="currentMediaSource=='webScrapers' && !removeFrom.webScrapers.length">
 		… nothing found
 	</p>
-	<p v-if="currentMediaSource=='matrixRooms' && !(removeFrom.matrixRooms.length && addTo.matrixRooms.length)">
+	<p v-if="currentMediaSource=='matrixRooms' && !matrixLoggedIn">
 		… matrix not connected
 	</p>
 	<!-- <div class="box-1-1 media-edit__limits">
@@ -279,7 +302,7 @@ export default {
 				white-space: nowrap
 				overflow: hidden
 				text-overflow: ellipsis
-			*:last-child
+			[class^="wmp-icon"]
 				display: none
 			&:hover
 				*:last-child

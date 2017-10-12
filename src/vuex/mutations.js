@@ -275,32 +275,27 @@ export const mutations = {
 	renamePlayList(state, { newName, oldName }) {
 		rename(state, 'tags', newName, oldName);
 	},
-	removeVideo(state, mediaIds) {
-		if (state.currentPlayList !== null) {
-			if (!state.currentPlayList) {
-				state.playList = state.playList.filter(id => !mediaIds.includes(id));
-			} else {
-				const tag = state.currentPlayList;
-				state.tags[tag] = state.tags[tag].filter(id => !mediaIds.includes(id));
-			}
+	removeMedia(state, { mediaIds, tagName }) {
+		if (tagName === '') {
+			state.playList = state.playList.filter(id => !mediaIds.includes(id));
+		} else {
+			state.tags[tagName] = state.tags[tagName].filter(id => !mediaIds.includes(id));
 		}
 	},
-	addSearchResult(state, media) {
-		if (state.currentPlayList !== null) {
-			if (media.trackId) {
-				media = Object.assign({}, media);
-				delete media.trackId;
-				delete media.isTrack;
+	addSearchResult(state, { media, tagName }) {
+		if (media.trackId) {
+			media = Object.assign({}, media);
+			delete media.trackId;
+			delete media.isTrack;
+		}
+		const id = media.id;
+		state.entities[id] = media;
+		if (tagName) {
+			if (!state.tags[tagName].includes(id)) {
+				state.tags[tagName].unshift(media.id);
 			}
-			const id = media.id;
-			state.entities[id] = media;
-			if (state.currentPlayList) {
-				if (!state.tags[state.currentPlayList].includes(id)) {
-					state.tags[state.currentPlayList].unshift(media.id);
-				}
-			} else if (!state.playList.includes(id)) {
-				state.playList.unshift(id);
-			}
+		} else if (!state.playList.includes(id)) {
+			state.playList.unshift(id);
 		}
 	},
 	dropMoveItem(state, { itemId, to }) {
