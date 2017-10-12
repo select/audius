@@ -40,16 +40,14 @@ export const actionsMatrix = {
 					.then(rooms => {
 						commit('setMatrixLoggedIn', { rooms });
 						dispatch('updatePublicRooms');
-					})
-					.catch(error => commit('error', `Login failed. ${error}`));
+					});
 			} else if (!state.matrixLoggedIn) {
 				matrixClient
 					.login(state.matrix.credentials, state.matrix.isGuest, dispatch, commit)
 					.then(rooms => {
 						commit('setMatrixLoggedIn', { rooms });
 						dispatch('updatePublicRooms');
-					})
-					.catch(error => commit('error', `Login failed. ${error}`));
+					});
 			}
 		});
 	},
