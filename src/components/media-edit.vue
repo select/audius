@@ -164,119 +164,121 @@ export default {
 			placeholder="… title"
 			:value="media.title">
 	</div>
-	<div class="button-group media-edit__link-buttons">
-		<button
-			class="button"
-			@click="play({ media })"
-			title="Play">
-			<span class="wmp-icon-play"></span>
-		</button>
-		<button
-			class="button"
-			@click="queue(media)"
-			v-bind:class="{ active: copyActive }"
-			title="Add to queue">
-			<span class="wmp-icon-queue2 icon--small"></span>
-		</button>
-		<button
-			class="button"
-			@click="copyToClip"
-			v-bind:class="{ active: copyActive }"
-			title="Copy name and URL">
-			<span
-				class="copy wmp-icon-copy icon--small"
+	<div class="media-edit__body">
+		<div class="button-group media-edit__link-buttons">
+			<button
+				class="button"
+				@click="play({ media })"
+				title="Play">
+				<span class="wmp-icon-play"></span>
+			</button>
+			<button
+				class="button"
+				@click="queue(media)"
 				v-bind:class="{ active: copyActive }"
-				></span>
-		</button>
-		<a
-			title="Visit media source"
-			class="button"
-			target="_blank"
-			:href="sourceLink">
-			<span
-				:class="{
-					'wmp-icon-link': ['video', 'audio'].includes(media.type),
-					'wmp-icon-youtube icon--small': media.type === 'youtube',
-					'wmp-icon-vimeo  icon--small': media.type === 'vimeo',
-				}"></span>
-		</a>
-	</div>
-	<div class="spacer"></div>
-	<div class="spacer"></div>
-	<div class="button-group">
-		<button
+				title="Add to queue">
+				<span class="wmp-icon-queue2 icon--small"></span>
+			</button>
+			<button
+				class="button"
+				@click="copyToClip"
+				v-bind:class="{ active: copyActive }"
+				title="Copy name and URL">
+				<span
+					class="copy wmp-icon-copy icon--small"
+					v-bind:class="{ active: copyActive }"
+					></span>
+			</button>
+			<a
+				title="Visit media source"
+				class="button"
+				target="_blank"
+				:href="sourceLink">
+				<span
+					:class="{
+						'wmp-icon-link': ['video', 'audio'].includes(media.type),
+						'wmp-icon-youtube icon--small': media.type === 'youtube',
+						'wmp-icon-vimeo  icon--small': media.type === 'vimeo',
+					}"></span>
+			</a>
+		</div>
+		<div class="spacer"></div>
+		<div class="spacer"></div>
+		<div class="button-group">
+			<button
+				v-for="src in sourceApiNames"
+				class="button btn--blue-ghost"
+				:class="{'btn--blue': currentMediaSource == src.api}"
+				@click="currentMediaSource = src.api">{{src.label}}</button>
+		</div>
+		<div
 			v-for="src in sourceApiNames"
-			class="button btn--blue-ghost"
-			:class="{'btn--blue': currentMediaSource == src.api}"
-			@click="currentMediaSource = src.api">{{src.label}}</button>
-	</div>
-	<div
-		v-for="src in sourceApiNames"
-		v-if="currentMediaSource == src.api">
-		<ul>
-			<li
-				v-for="id in removeFrom[src.api]"
-				@click="removeMediaFrom(src.api, id)"
-				:title="src.api === 'tags' ? 'Remove from '+src.label : ''"
-				class="active">
-				<div> {{src.api === 'matrixRooms' ? id2name(id) : id}} </div>
-				<span v-if="src.api === 'tags'" class="wmp-icon-close"></span>
-			</li>
-		</ul>
-		<ul if="src.api in addTo">
-			<li
-				v-for="id in addTo[src.api]"
-				@click="addMediaTo(src.api, id)"
-				:title="'Add to '+src.label">
-				<div> {{src.api === 'matrixRooms' ? id2name(id) : id}} </div>
-				<span class="wmp-icon-add"></span>
-			</li>
-		</ul>
-	</div>
-	<p v-if="currentMediaSource=='webScrapers' && !removeFrom.webScrapers.length">
-		… nothing found
-	</p>
-	<p v-if="currentMediaSource=='matrixRooms' && !matrixLoggedIn">
-		… matrix not connected
-	</p>
-	<!-- <div class="box-1-1 media-edit__limits">
-		<div>
-			<label>Start</label>
-			<div><input class="input--border" type="number" :value="media.start">s</div>
+			v-if="currentMediaSource == src.api">
+			<ul>
+				<li
+					v-for="id in removeFrom[src.api]"
+					@click="removeMediaFrom(src.api, id)"
+					:title="src.api === 'tags' ? 'Remove from '+src.label : ''"
+					class="active">
+					<div> {{src.api === 'matrixRooms' ? id2name(id) : id}} </div>
+					<span v-if="src.api === 'tags'" class="wmp-icon-close"></span>
+				</li>
+			</ul>
+			<ul if="src.api in addTo">
+				<li
+					v-for="id in addTo[src.api]"
+					@click="addMediaTo(src.api, id)"
+					:title="'Add to '+src.label">
+					<div> {{src.api === 'matrixRooms' ? id2name(id) : id}} </div>
+					<span class="wmp-icon-add"></span>
+				</li>
+			</ul>
 		</div>
-		<div>
-			<label>Stop</label>
-			<div><input class="input--border" type="number" placeholder="">s</div>
-		</div>
-	</div> -->
-	<!-- <div class="row media-edit__links">
-		<div>
-			<th>Thumbnail</th>
-			<td>
-				<input
+		<p v-if="currentMediaSource=='webScrapers' && !removeFrom.webScrapers.length">
+			… nothing found
+		</p>
+		<p v-if="currentMediaSource=='matrixRooms' && !matrixLoggedIn">
+			… matrix not connected
+		</p>
+		<!-- <div class="box-1-1 media-edit__limits">
+			<div>
+				<label>Start</label>
+				<div><input class="input--border" type="number" :value="media.start">s</div>
+			</div>
+			<div>
+				<label>Stop</label>
+				<div><input class="input--border" type="number" placeholder="">s</div>
+			</div>
+		</div> -->
+		<!-- <div class="row media-edit__links">
+			<div>
+				<th>Thumbnail</th>
+				<td>
+					<input
+						type="text"
+						:value="media.thumbUrl"
+						placeholder="… https://example.com/img/video.png">
+				</td>
+				<td></td>
+			</div>
+			<tr>
+				<th>Source</th>
+				<td>
+					<input
 					type="text"
-					:value="media.thumbUrl"
-					placeholder="… https://example.com/img/video.png">
-			</td>
-			<td></td>
-		</div>
-		<tr>
-			<th>Source</th>
-			<td>
-				<input
-				type="text"
-				:value="media.href"
-				placeholder="… https://example.com/video-item">
-			</td>
-			<td></td>
-		</tr>
-	</div> -->
-	<!-- <div class="row">
-		<label>Track parser</label><br>
-		<textarea class="input--border" cols="30" rows="4" placeholder="… insert text with tracks"></textarea>
-		<button class="button btn--blue">Parse</button>
-	</div> -->
-	<div class="spacer"></div>
+					:value="media.href"
+					placeholder="… https://example.com/video-item">
+				</td>
+				<td></td>
+			</tr>
+		</div> -->
+		<!-- <div class="row">
+			<label>Track parser</label><br>
+			<textarea class="input--border" cols="30" rows="4" placeholder="… insert text with tracks"></textarea>
+			<button class="button btn--blue">Parse</button>
+		</div> -->
+		<div class="spacer"></div>
+	</div>
 </div>
 </template>
 
@@ -284,6 +286,10 @@ export default {
 @import '../sass/vars'
 @import '../sass/color'
 .settings.media-edit
+	display: flex
+	flex-direction: column
+	overflow: hidden
+	height: 100%
 	p
 		text-align: center
 	ul
@@ -324,6 +330,7 @@ export default {
 		padding-right: #{2 * $grid-space}
 
 .media-edit__header
+	height: $touch-size-medium
 	margin: $grid-space
 	display: flex
 	> *
@@ -336,7 +343,9 @@ export default {
 		height: $touch-size-medium
 		width: 100%
 		margin-bottom: $grid-space
-
+.media-edit__body
+	flex: 1
+	overflow-y: auto
 .media-edit__link-buttons
 	& > .button
 		display: flex
