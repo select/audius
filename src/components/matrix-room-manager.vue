@@ -207,7 +207,7 @@ export default {
 	transform-origin: 5.8rem 3.5rem
 	font-size: 0.8rem
 	color: $color-athensgrey
-	cursor: default
+	pointer-events: none
 .matrix-room__room-list:before
 	content: 'ROOMS'
 .matrix-room__room-join-create:before
