@@ -76,6 +76,12 @@ export const mutationsMatrix = {
 			state.matrixRoomsOrdered = state.matrixRoomsOrdered.filter(id => roomIndex.has(id));
 		}
 	},
+	toggleMatrixLoginModal(state, toggleState) {
+		state.leftMenuTab = 'radio';
+		state.showLeftMenu = true;
+		state.showMatrixLoginModal =
+			toggleState !== undefined ? toggleState : !state.showMatrixLoginModal;
+	},
 	toggleMatrixRoomModal(state, toggleState) {
 		state.createMatrixRoomModal =
 			toggleState !== undefined ? toggleState : !state.createMatrixRoomModal;

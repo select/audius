@@ -4,12 +4,15 @@ import draggable from 'vuedraggable';
 
 import MatrixCreateRoom from './matrix-create-room.vue';
 import MatrixPublicRooms from './matrix-public-rooms.vue';
+import MatrixLogin from './matrix-login.vue';
+
 
 export default {
 	components: {
 		draggable,
 		MatrixCreateRoom,
 		MatrixPublicRooms,
+		MatrixLogin,
 	},
 	data() {
 		return {
@@ -29,6 +32,7 @@ export default {
 			'setShowMediumSettings',
 			'toggleMatrixRoomModal',
 			'toggleMatrixRoomDirectory',
+			'toggleMatrixLoginModal',
 			'error',
 		]),
 		...mapActions(['joinMatrixRoom', 'leaveMatrixRoom', 'matrixSend', 'initMatrix']),
@@ -61,6 +65,7 @@ export default {
 			'matrixRoomsOrdered',
 			'matrixRooms',
 			'matrixLoggedIn',
+			'showMatrixLoginModal',
 		]),
 		_matrixRoomsOrdered: {
 			get() {
@@ -106,6 +111,18 @@ export default {
 	</div>
 	<matrix-create-room></matrix-create-room>
 	<matrix-public-rooms></matrix-public-rooms>
+
+	<div class="modal" v-if="showMatrixLoginModal" @click="toggleMatrixLoginModal()">
+		<div class="modal__body" @click.stop>
+			You are a guest user. Guest users are not allowed to join this room. Create a full accound with
+			<a
+			href="https://riot.im/app/#/room/#audius:matrix.org"
+			target="_blank">Riot</a>
+			or <a href="https://matrix.org/docs/projects/try-matrix-now.html#clients" target="_blank">another client</a> and login below.
+			<matrix-login></matrix-login>
+		</div>
+	</div>
+
 	<draggable
 		class="matrix-room__tags"
 		v-model="_matrixRoomsOrdered"

@@ -83,6 +83,7 @@ export const store = new Vuex.Store({
 		showMatrixRoomDirectory: false,
 		matrixEnabled: false,
 		matrixLoggedIn: false,
+		showMatrixLoginModal: false,
 		matrix: {
 			hasCredentials: false,
 			credentials: {

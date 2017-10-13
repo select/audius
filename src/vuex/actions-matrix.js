@@ -125,7 +125,10 @@ export const actionsMatrix = {
 				commit('setLeftMenuTab', 'radio');
 			})
 			.catch(error => {
-				commit('error', `Could not join room: ${error}`);
+				// {"errcode":"M_FORBIDDEN","error":"Guest access not allowed"}
+				console.log('err',error)
+				if (error.message === 'Guest access not allowed') commit('toggleMatrixLoginModal', true);
+				commit('error', `Could not join room: ${error.message}`);
 			});
 	},
 	createMatrixRoom({ commit }, options) {
