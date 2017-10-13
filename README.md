@@ -11,7 +11,7 @@ Audius is the ultimate streaming music player.
 - Plays Imgur "Most Viral" as video stream.
 - Create your own web channels with the build in web scraper.
 - Set start end times of media items (e.g. to cut of trailing silence)
-- Split YouTube full albums into seperate songs.
+- Split YouTube full albums into separate songs.
 - Connect to the Matrix network and create rooms to share and discover music with your friends.
 
 <img src="https://audius.rockdapus.org/img/audius.screenshot.1280x800.png" />
