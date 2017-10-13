@@ -8,7 +8,7 @@ import {
 	importPlayListFromString,
 	streamlyUrlRegEx,
 	ajaxPostJSON,
-	ajax,
+	ajaxJSON,
 	findMediaText,
 } from '../utils';
 import { getCurrentPlayListEntities } from './getCurrentPlayList';
@@ -76,7 +76,7 @@ export const actions = {
 				.then(data => commit('importPlayList', { data }))
 				.catch(error => commit('error', `Could not import streamly playlist. ${error}`));
 		} else {
-			ajax(url)
+			ajaxJSON(url)
 				.then(data => {
 					commit('importPlayList', { data, tagName: name });
 					commit('setPendingImportURL', null);
