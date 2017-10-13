@@ -13,7 +13,7 @@ export const matrixClient = {
 			.then(et => this.client.paginateEventTimeline(et, { backwards: true }));
 	},
 	login(credentials, isGuest, dispatch, commit) {
-		return new Promise((resolve) => {
+		return new Promise(resolve => {
 			this.client = Matrix.createClient({
 				...credentials,
 				baseUrl: 'https://matrix.org',
@@ -21,21 +21,31 @@ export const matrixClient = {
 				timelineSupport: true,
 			});
 
-			this.client.on('Room.timeline', (event) => {
+			this.client.on('Room.timeline', event => {
 				const message = event.event.content.body;
 				const roomId = event.event.room_id;
 				if (!(roomId in this.firstEvent)) this.firstEvent[roomId] = event.event.event_id;
-				if (event.event.type === 'audiusMedia') dispatch('parseMatrixMessage', { roomId, eventId: event.event.event_id, message: event.event.content });
-				else if (message) dispatch('parseMatrixMessage', { roomId, message });
+				if (event.event.type === 'audiusMedia') {
+					dispatch('parseMatrixMessage', {
+						roomId,
+						eventId: event.event.event_id,
+						message: event.event.content,
+					});
+				} else if (message) dispatch('parseMatrixMessage', { roomId, message });
 			});
 
-			this.client.on('sync', (syncState) => {
+			this.client.on('sync', syncState => {
 				if (syncState === 'ERROR') {
 					if (this.syncFailCount >= 5) {
 						commit('error', 'Could not connect to matrix more than 5 time. Disconnecting.');
 						this.logout(); // FIXME does not stop the login
 					} else {
-						commit('error', `Could not connect to matrix server. ${this.syncFailCount ? 'Attempt ' + this.syncFailCount : ''}`);
+						commit(
+							'error',
+							`Could not connect to matrix server. ${this.syncFailCount
+								? 'Attempt ' + this.syncFailCount
+								: ''}`
+						);
 						this.syncFailCount++;
 					}
 				} else if (syncState === 'SYNCING') {
@@ -71,16 +81,19 @@ export const matrixClient = {
 	sendMessage(roomId, media) {
 		return this.client.sendTextMessage(roomId, JSON.stringify(media));
 	},
-	setRoomAllowGuests(roomId, toggleState){
-		return this.client.sendStateEvent(roomId, 'm.room.guest_access', { guest_access: toggleState ? 'can_join' : 'forbidden' });
+	setRoomAllowGuests(roomId, toggleState) {
+		return this.client.sendStateEvent(roomId, 'm.room.guest_access', {
+			guest_access: toggleState ? 'can_join' : 'forbidden',
+		});
 	},
 	setRoomHistoryVisibility(roomId, state) {
 		// m.room.history_visibility
 		if (['invited', 'joined', 'shared', 'world_readable'].includes(state)) {
-			throw (`setRoomHistoryVisibility unknown state ${state}`);
+			throw `setRoomHistoryVisibility unknown state ${state}`;
 		}
-		return this.client.sendStateEvent(roomId, 'm.room.history_visibility', { history_visibility: state });
-
+		return this.client.sendStateEvent(roomId, 'm.room.history_visibility', {
+			history_visibility: state,
+		});
 	},
 	setRoomName(roomId, name) {
 		return this.client.setRoomName(roomId, name);
@@ -92,28 +105,30 @@ export const matrixClient = {
 		return this.client.setRoomTag(roomId, tagName);
 	},
 	createRoom(options) {
-		return this.client.createRoom(Object.assign(options, {
-			initial_state: [
-				{
-					type: 'm.room.guest_access',
-					state_key: '',
-					content: { guest_access: 'can_join' },
-				},
-				{
-					type: 'm.room.history_visibility',
-					state_key: '',
-					content: { history_visibility: 'world_readable' },
-				},
-			],
-			// room_alias_name: 'blaa-audius',
-			// visibility: 'public', // or 'private'
-			// invite: [
-			// 	'@bllakd:matrix.org',
-			// 	'@user1:matrix.org',
-			// ],
-			// name: 'Blaaa [Audius]',
-			// topic: 'Join this room with https://audius.rockdapus.org',
-		}));
+		return this.client.createRoom(
+			Object.assign(options, {
+				initial_state: [
+					{
+						type: 'm.room.guest_access',
+						state_key: '',
+						content: { guest_access: 'can_join' },
+					},
+					{
+						type: 'm.room.history_visibility',
+						state_key: '',
+						content: { history_visibility: 'world_readable' },
+					},
+				],
+				// room_alias_name: 'blaa-audius',
+				// visibility: 'public', // or 'private'
+				// invite: [
+				// 	'@bllakd:matrix.org',
+				// 	'@user1:matrix.org',
+				// ],
+				// name: 'Blaaa [Audius]',
+				// topic: 'Join this room with https://audius.rockdapus.org',
+			})
+		);
 	},
 	listPublicRooms() {
 		return this.client.publicRooms({
@@ -148,3 +163,5 @@ export const matrixClient = {
 		});
 	},
 };
+
+window.matrixClient = matrixClient;
