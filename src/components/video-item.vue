@@ -14,7 +14,12 @@ export default {
 		expiryDate: Date,
 		isWebScraper: Boolean,
 	},
-	computed: mapState(['isMobile', 'currentMatrixRoom', 'matrixRooms']),
+	computed: mapState([
+		'isMobile',
+		'currentMatrixRoom',
+		'currentPlayList',
+		'matrixRooms',
+	]),
 	data() {
 		return {
 			copyActive: false,
