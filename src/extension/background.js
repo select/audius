@@ -98,6 +98,7 @@ setTimeout(() => {
 // One a request is finished, wait 2s and then start the next one
 browser.runtime.onMessage.addListener(async request => {
 	if (request.audius) {
+		sandbox.contentWindow.postMessage({ type: 'handshakeSandbox' }, '*');
 		logger('## background event webpage', request);
 		if (['loadScript', 'getNext'].includes(request.type)) {
 			sandbox.contentWindow.postMessage(request, '*');
