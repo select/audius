@@ -32,7 +32,7 @@ function refineWebSearchResult(media) {
  * @param {Set} indexKnown index of known ids
  * @return {Promise} Promise that returns [{mediaObject}]
  */
-export function findMediaText(text, youtubeApiKey, indexKnown = new Set()) {
+export function findMediaText(text, youtubeApiKey, { indexKnown = new Set(), extendPlayLists = false }) {
 	const promises = [];
 	let isPlayList = false;
 	// Find YouTube links in text message.
@@ -44,7 +44,7 @@ export function findMediaText(text, youtubeApiKey, indexKnown = new Set()) {
 		promises.push(getYouTubeInfo({ ids: ytIds, youtubeApiKey }));
 	}
 
-	if (youTubePlaylistRexEx.test(text)) {
+	if (extendPlayLists && youTubePlaylistRexEx.test(text)) {
 		isPlayList = true;
 		promises.push(getPlayList(youtubeApiKey, text));
 	}

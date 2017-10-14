@@ -126,7 +126,7 @@ export const actionsMatrix = {
 			})
 			.catch(error => {
 				// {"errcode":"M_FORBIDDEN","error":"Guest access not allowed"}
-				console.log('err',error)
+				console.log('err', error);
 				if (error.message === 'Guest access not allowed') commit('toggleMatrixLoginModal', true);
 				commit('error', `Could not join room: ${error.message}`);
 			});
@@ -239,7 +239,7 @@ export const actionsMatrix = {
 			window.console.log(`[Matrix-Media] %c${message.title}`, 'color: #2DA7EF;');
 		} else {
 			window.console.log(`[Matrix-Text] %c${message}`, 'color: #2DA7EF;');
-			findMediaText(message, state.youtubeApiKey, index).then(({ mediaList }) => {
+			findMediaText(message, state.youtubeApiKey, { indexKnown: index }).then(({ mediaList }) => {
 				addMatrixMessage(state, commit, roomId, eventId, mediaList);
 			});
 		}

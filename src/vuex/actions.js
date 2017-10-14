@@ -14,16 +14,13 @@ import {
 import { getCurrentPlayListEntities } from './getCurrentPlayList';
 // the matrix client will be lazy loaded since it's not need on startup
 
-
-
-
 /* eslint-disable no-param-reassign */
 export const actions = {
 	...actionsMatrix,
 	...actionsWebScraper,
 	search({ commit, state }, query) {
 		query = query.trim();
-		findMediaText(query, state.youtubeApiKey).then(res => {
+		findMediaText(query, state.youtubeApiKey, { extendPlayLists: true }).then(res => {
 			if (res.mediaList.length) {
 				commit('searchSuccess', Object.assign(res, { id: query }));
 				return;
@@ -160,4 +157,3 @@ export const actions = {
 		document.body.removeChild(element);
 	},
 };
-
