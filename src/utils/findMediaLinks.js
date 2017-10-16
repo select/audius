@@ -13,8 +13,8 @@ import { hashCode } from './hashCode';
 import { getMediaDuration } from './getMediaDuration';
 import { mediaBaseObject } from '../vuex/mediaBaseObject';
 
-const audioRegEx = /(http|https)?:\/\/\S+\.(mp3|oga|m4a|flac|wav|aiff|aif|wma|asf)/ig;
-const videoRegEx = /(http|https)?:\/\/\S+\.(avi|mkv|mp4|webm|ogg)/ig;
+export const audioRegEx = /(http|https)?:\/\/\S+\.(mp3|oga|m4a|flac|wav|aiff|aif|wma|asf)/ig;
+export const videoRegEx = /(http|https)?:\/\/\S+\.(avi|mkv|mp4|webm|ogg)/ig;
 
 function refineWebSearchResult(media) {
 	const urlParts = media.url.split('/');
@@ -54,7 +54,7 @@ export function findMediaText(text, youtubeApiKey, { indexKnown = new Set(), ext
 		.filter(id => id && !indexKnown.has(id)) // filter empty & known
 		.filter((item, pos, self) => self.indexOf(item) === pos); // filter dublicates
 	if (viIds.length) {
-		promises.push(Promise.all(viIds.map(id => getVimeoInfo(id))));
+		promises.push(getVimeoInfo(viIds));
 	}
 
 	// Find audio files

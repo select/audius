@@ -1,89 +1,99 @@
 import { hashCode } from './hashCode';
-import { getYouTubeInfo } from './youtube';
+import { getYouTubeInfo, findYouTubeIdsText } from './youtube';
+import { getVimeoInfo, findVimeoIdsText } from './vimeo';
 import { webScraper as wsBase } from './webScraper';
+import { audioRegEx, videoRegEx } from './findMediaLinks';
 
+class MediaConverter {
+	constructor(localUrl, remoteUrl) {
+		this.localUrl = localUrl;
+		this.remoteUrl = remoteUrl;
+	}
+	getMediaData(type, _url, _title) {
+		const url = _url.replace(this.localUrl, this.remoteUrl);
+		const title = _title || url.substring(url.lastIndexOf('/') + 1, url.length);
+		return {
+			type,
+			title,
+			url,
+			id: `${hashCode(url)}`,
+		};
+	}
+}
 
 export const webScraper = Object.assign({}, wsBase, {
 	getYouTubeInfo,
-	findVideos(html, youtubeApiKey) {
+	findMediaHtml(html, localUrl, remoteUrl, youtubeApiKey) {
 		const node = document.createElement('div');
 		node.innerHTML = html;
-		// const ytMatches = [
-		// 	...html.match(/http(?:s?):\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-_]*)(&(amp;)?‌​[\w?‌​=]*)?/gi) || [],
-		// 	...html.match(/youtube\.com\/embed\/[\w\-_]+/gi) || [],
-		// 	...html.match(/ytimg.com\/vi_webp\/[\w\-_]+/gi) || [],
-		// ];
-		// const audioMatches = html.match(/[^"'=]+\.(mp3|oga|m4a|flac|wav|aiff|aif|wma|asf)/gi);
-		// const videoMatches = html.match(/[^"'=]+\.(avi|mkv|mp4|webm|ogg)/gi);
 
-		// console.log("videoMatches", videoMatches);
-		// console.log("audioMatches", audioMatches);
-		// console.log("ytMatches", ytMatches);
+		const mc = new MediaConverter(localUrl, remoteUrl);
+		const youtubeIds = [];
+		const vimeoIds = [];
 
-		// hyperlinks to videos
-		const videoHrefNodes = node.querySelectorAll('[href$=".(avi|mkv|mp4|webm|ogg)"]');
-		const videoSrcNodes = node.querySelectorAll('[src$=".(avi|mkv|mp4|webm|ogg)"]');
-		const audioHrefNodes = node.querySelectorAll(
-			'[href$=".(mp3|oga|m4a|flac|wav|aiff|aif|wma|asf)"]'
-		);
-		const audioSrcNodes = node.querySelectorAll(
-			'[src$=".(mp3|oga|m4a|flac|wav|aiff|aif|wma|asf)"]'
-		);
-		//
+		// Check all `<audiu>`, `<video>`, `<source>`, `<a>` elements for media.
 		const mediaList = [
-			...Array.from(videoHrefNodes).map(_node => ({
-				type: 'video',
-				url: _node.href,
-				id: `${hashCode(_node.href)}`,
-				title: _node.innerHTML,
-			})),
-			...Array.from(videoSrcNodes).map(_node => ({
-				type: 'video',
-				url: _node.src,
-				id: `${hashCode(_node.src)}`,
-				title: _node.src,
-			})),
-			...Array.from(audioHrefNodes).map(_node => ({
-				type: 'audio',
-				url: _node.href,
-				id: `${hashCode(_node.href)}`,
-				title: _node.innerHTML,
-			})),
-			...Array.from(audioSrcNodes).map(_node => ({
-				type: 'audio',
-				url: _node.src,
-				id: `${hashCode(_node.src)}`,
-				title: _node.src,
-			})),
+			...Array.from(
+				node.querySelectorAll('[href]')
+			).reduce((acc, _node) => {
+				if (videoRegEx.test(_node.href)) acc.push(mc.getMediaData('video', _node.href, _node.innerHTML));
+				else if (audioRegEx.test(_node.href)) acc.push(mc.getMediaData('audio', _node.href, _node.innerHTML));
+				else {
+					youtubeIds.push(...findYouTubeIdsText(_node.href));
+					vimeoIds.push(...findVimeoIdsText(_node.href));
+				}
+				return acc;
+			}, []),
+			...Array.from(
+				node.querySelectorAll('[src]')
+			).reduce((acc, _node) => {
+				if (videoRegEx.test(_node.src)) acc.push(mc.getMediaData('video', _node.src));
+				else if (audioRegEx.test(_node.src)) acc.push(mc.getMediaData('audio', _node.src));
+				else {
+					youtubeIds.push(...findYouTubeIdsText(_node.src));
+					vimeoIds.push(...findVimeoIdsText(_node.src));
+				}
+				return acc;
+			}, []),
 		];
-		// embedded youtube videos
-		const ytNodes = node.querySelectorAll('iframe[allowfullscreen], iframe.youtube-player');
-		node.remove();
-		if (ytNodes.length) {
-			const ids = Array.from(ytNodes)
-				.map(_node => {
-					const url = _node.src.replace(/\?.*$/, '');
-					const match = /youtube\.com\/embed\/(.+)$/.exec(url);
-					return match ? match[1] : null;
-				})
-				.filter(id => !!id);
-			return getYouTubeInfo({ ids, youtubeApiKey });
+
+		const promises = [];
+
+		// Get all iframes with possible yt or vimeo embed.
+		const iframes = node.querySelectorAll('iframe');
+
+		// Search for embeded youtube videos.
+		const ytEmbedRegEx = /youtube\.com\/(v|embed)\/([^"?]+)/;
+		youtubeIds.push(...Array.from(iframes).reduce((acc, _node) => {
+			const match = ytEmbedRegEx.exec(_node.src);
+			if (match && !acc.some(id => id === match[2])) acc.push(match[2]);
+			return acc;
+		}, []));
+		if (youtubeIds.length) promises.push(getYouTubeInfo({ ids: youtubeIds, youtubeApiKey }));
+
+		// Search for emedded vimeo videos.
+		const vimeoEmbedRegEx = /vimeo.com\/video\/([^"?]+)/;
+		vimeoIds.push(...Array.from(iframes).reduce((acc, _node) => {
+			const match = vimeoEmbedRegEx.exec(_node.src);
+			if (match && !acc.some(id => id === match[1])) acc.push(match[1]);
+			return acc;
+		}, []));
+		if (vimeoIds.length) {
+			promises.push(getVimeoInfo(vimeoIds));
 		}
-		return mediaList;
+
+		node.remove();
+
+		return Promise.all(promises)
+			.then(results => results.reduce((acc, res) => [...acc, ...res], []))
+			.then(flatResults => [...flatResults, ...mediaList]);
 	},
 
 	scanOneUrl({ url, youtubeApiKey }) {
-		console.log("_scanOneUrl", url);
-		return this.ajaxRaw(url)
-			.then(rawHTML => this.findVideos(rawHTML, youtubeApiKey))
-			.then(mediaList =>
-				mediaList.map(media =>
-					Object.assign({}, media, {
-						url: media.url ? media.url.replace(`${window.location.origin}/`, url) : undefined,
-					})
-				)
-			);
-		// .then(r => {console.log('map ', r); return r});
+		// FIXME this breaks for root URLs without a trailing `/`` !!
+		return this.ajaxRaw(url).then(rawHTML =>
+			this.findMediaHtml(rawHTML, `${window.location.origin}/`, url.substring(0, url.lastIndexOf('/') + 1), youtubeApiKey)
+		);
 	},
 	/**
 	 * scanUrl - from a URL or URL pattern return a list of
