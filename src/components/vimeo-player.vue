@@ -8,8 +8,9 @@ export default {
 			this.$store.watch(state => state.currentMedia, () => {
 				// if video changed, set new video in player
 				if (this.currentMedia.type === 'vimeo') {
-					this.player.loadVideo(this.currentMedia.id)
-						.then((id) => {
+					this.player
+						.loadVideo(this.currentMedia.id)
+						.then(() => {
 							if (this.currentMedia.start) this.player.setCurrentTime(this.currentMedia.start);
 							this.player.play();
 						}).catch(error => {
@@ -17,6 +18,7 @@ export default {
 						});
 				} else if (this.player) {
 					this.player.pause();
+					// Unload video to stop buffering.
 					this.player.unload().then();
 				}
 			}),
