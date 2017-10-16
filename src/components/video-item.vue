@@ -120,7 +120,7 @@ export default {
 		v-bind:title="expiryDate ? '🕑 hide in < 5min' : ''"
 		v-on:dblclick="_play"
 		v-bind:data-id="video.id">
-		<div v-if="isVisible || !isPlayList">
+		<div v-if="isVisible || !isPlayList || video.tracks">
 			<div class="media-list__main">
 				<span class="wmp-icon-album media-list__album-hint" v-if="video.tracks"></span>
 				<div class="media-list__thumbnail" v-bind:style="{ backgroundImage: _backgroundImage() }"></div>
