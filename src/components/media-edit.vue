@@ -356,6 +356,8 @@ export default {
 		width: $touch-size-medium
 		border: 0
 		color: $color-palesky
+		&:hover
+			color: $color-pictonblue
 		span
 			height: $touch-size-tiny
 .copy
