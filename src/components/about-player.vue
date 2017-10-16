@@ -28,28 +28,6 @@ export default {
 			<dd>Find song on YouTube</dd>
 		</dl>
 	</p>
-	<!-- <p>
-		When search is active.
-		<dl>
-			<dt>up / down</dt>
-			<dd>Select song</dd>
-			<dt>Ctrl + space</dt>
-			<dd>Add song to playlist</dd>
-			<dt>enter</dt>
-			<dd>Play selected song</dd>
-		</dl>
-	</p> -->
-	<!-- <p>
-		When jump to file is active.
-		<dl>
-			<dt>up / down</dt>
-			<dd>Select song</dd>
-			<dt>enter</dt>
-			<dd>Play selected song</dd>
-			<dt>q</dt>
-			<dd>Queue selected song</dd>
-		</dl>
-	</p> -->
 	<h2 id="community">Community</h2>
 	<p>
 		If you have questions or feedback, join the chat on matrix (#audius:matrix.org) or create an issue on github.<br>
