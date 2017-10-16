@@ -288,7 +288,7 @@ export const mutations = {
 			delete media.trackId;
 			delete media.isTrack;
 		}
-		const id = media.id;
+		const { id } = media;
 		state.entities[id] = media;
 		if (tagName) {
 			if (!state.tags[tagName].includes(id)) {

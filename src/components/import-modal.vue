@@ -40,7 +40,7 @@ export default {
 			this.close();
 		},
 		importChannel() {
-			this.error('Not implemented yet .·´¯`(>▂<)´¯`·.')
+			this.error('Not implemented yet .·´¯`(>▂<)´¯`·.');
 		},
 	},
 	computed: {

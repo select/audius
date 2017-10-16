@@ -48,7 +48,7 @@ export default {
 			return data;
 		},
 		addTo() {
-			const removeFrom = this.removeFrom;
+			const { removeFrom } = this;
 			const data = {
 				tags: this.tagsOrdered.filter(
 					sourceId => !removeFrom.tags.includes(sourceId)

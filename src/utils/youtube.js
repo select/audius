@@ -17,7 +17,7 @@ export function parseYoutubeDescription(v) {
 	const snippet = v.snippet || {};
 	const description = snippet.description || '';
 	const durationYt = v.contentDetails ? v.contentDetails.duration : undefined;
-	const id = v.id;
+	const { id } = v;
 
 	const descriptionLines = description.split('\n');
 	return descriptionLines

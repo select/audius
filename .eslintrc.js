@@ -26,6 +26,7 @@ module.exports = {
 		'no-tabs': 'off',
 		'no-plusplus': 'off',
 		'no-underscore-dangle': 'off',
+		'function-paren-newline': 'off',
 		'comma-dangle': [
 			'error',
 			{

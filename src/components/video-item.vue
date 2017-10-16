@@ -55,7 +55,7 @@ export default {
 		remove() {
 			if (this.currentMatrixRoom) {
 				this.matrixRedact(this.video);
-			} else if (this.currentPlayList !== null){
+			} else if (this.currentPlayList !== null) {
 				this.removeMedia({ mediaIds: [this.video.id], tagName: this.currentPlayList });
 			} else {
 				this.error('No suitable media source selected.');
