@@ -78,6 +78,7 @@ indexDB
 				type: getParameterByName('type'),
 			});
 		}
+		if (getParameterByName('showImgur')) store.commit('selectMediaSource', { type: 'webscraper', id: 'Imgur' });
 		// Remove all URL paramters from URL bar.
 		cleanWindowLocation();
 
