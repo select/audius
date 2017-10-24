@@ -1,19 +1,22 @@
 <script>
-import { mapMutations } from 'vuex';
+import { mapMutations, mapState } from 'vuex';
 
 export default {
 	name: 'about-player',
 	methods: {
 		...mapMutations(['setShowSettings', 'toggleLeftMenu', 'setLeftMenuTab']),
 	},
+	computed: {
+		...mapState(['isMobile']),
+	},
 };
 </script>
 
 <template>
 	<div class="wmp-about">
-	<h2>Keyboard shortcuts</h2>
+	<h2 v-if="!isMobile">Keyboard shortcuts</h2>
 	<p>
-		<dl>
+		<dl v-if="!isMobile">
 			<dt>c</dt>
 			<dd>Play / pause</dd>
 			<dt>b</dt>
