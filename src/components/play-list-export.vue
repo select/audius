@@ -24,11 +24,11 @@ export default {
 		]),
 	},
 	methods: {
-		...mapActions(['exportToURL', 'exportToFile']),
+		...mapActions(['exportToURL', 'exportToFile', 'error']),
 		exportFile() {
 			this.exportToFile({
 				data: this.currentExportData,
-				fileName: this.currentWebScraper ? `${this.currentWebScraper}.audius-channel` : this.currentName ? `${this.currentName}.audius-playlist` : 'default.audius-playlist'
+				fileName: this.currentWebScraper ? `${this.currentWebScraper}.audius-channel` : this.currentName ? `${this.currentName}.audius-playlist` : 'default.audius-playlist',
 			});
 		},
 		niceDate(date) {
@@ -38,7 +38,8 @@ export default {
 			return `${dateObject.getFullYear()}-${dateObject.getMonth() + 1}-${dateObject.getDate()} ${dateObject.getHours()}:${minutes}`;
 		},
 		getLink(type, url, name) {
-			if (type === 'room') return `${window.location.href}?import=${this.currentMatrixRoom}&type=${this.exportTypeName}&title=${encodeURIComponent(this.matrixRooms[this.currentMatrixRoom].name)}`;
+			if (type === 'Imgur') return `${window.location.href}?showImgur=1`;
+			else if (type === 'room') return `${window.location.href}?import=${this.currentMatrixRoom}&type=${this.exportTypeName}&title=${encodeURIComponent(this.matrixRooms[this.currentMatrixRoom].name)}`;
 			else if (['channel', 'playList', undefined].includes(type)) return `${window.location.href}?import=${url}&type=${type}&title=${encodeURIComponent(name)}`;
 			else if (type === 'url') return url;
 			return '';
@@ -61,17 +62,19 @@ export default {
 					this.copyURLActive = null;
 					this.copyActive = null;
 				}, 800);
-			} catch (err) {
-				console.warn('execCommand Error', err);
+			} catch (error) {
+				this.error(`Could not copy to clipboard. ${error}`);
 			}
 			window.getSelection().removeAllRanges();
 			tmpEl.parentNode.removeChild(tmpEl);
 		},
 		twitterLink(item) {
-			return `https://twitter.com/intent/tweet?text=${item.name || 'Default'} (${item.type}) ${this.getLink(item.type, item.url, item.name)}`;
+			const text = `${item.name || 'Default'} (${item.type}) ${this.getLink(item.type, item.url, item.name)}`;
+			return `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
 		},
 		whatsAppLink(item) {
-			return `https://api.whatsapp.com/send?text=${item.name || 'Default'} (${item.type}) ${this.getLink(item.type, item.url, item.name)}`;
+			const text = `${item.name || 'Default'} (${item.type}) ${this.getLink(item.type, item.url, item.name)}`;
+			return encodeURIComponent(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`);
 		},
 	},
 };
@@ -85,6 +88,14 @@ export default {
 				class="wmp-icon-close"
 				title="[Esc] Close"
 				v-on:click="$emit('toggleExport', false)"></span>
+		</div>
+		<div v-if="currentWebScraper == 'Imgur'" class="play-list__export-room">
+			<button
+				class="button btn--blue play-list__export-copy-room"
+				v-bind:class="{ active: copyURLActive }"
+				@click="copyToClip('Imgur')">
+					copy link
+				</button>
 		</div>
 		<div v-if="currentMatrixRoom" class="play-list__export-room">
 			<button
@@ -107,7 +118,7 @@ export default {
 			</a>
 		</div>
 		<div v-else>
-			<div class="button-group">
+			<div v-if="currentWebScraper != 'Imgur'" class="button-group">
 				<button
 					class="button btn--blue"
 					v-on:click="exportToURL">create link</button>
@@ -115,7 +126,7 @@ export default {
 			<div
 				class="play-list__export-list-wrapper"
 				v-if="exportURLs.length">
-				<p class="smaller">
+				<p v-if="currentWebScraper != 'Imgur'" class="smaller">
 					Click and paste to share your {{exportTypeName}}.
 				</p>
 				<p>
@@ -202,7 +213,7 @@ export default {
 			font-size: .7rem
 .play-list__export
 	.button
-		text-align: center
+		justify-content: center
 	a.button
 		position: relative
 		justify-content: center
