@@ -34,7 +34,7 @@ export default {
 			'toggleMute',
 			'toggleRepeat',
 			'playPause',
-			'setStartStopMarker',
+			'setShowMediaEdit',
 		]),
 		...mapActions([
 			'nextVideo',
@@ -118,15 +118,20 @@ export default {
 			</div>
 		</div>
 		<div class="au-header__control-bar">
-			<div
-				class="au-header__current-song"
-				@click="scrollToCurrentSong">
-				<div class="au-header__current-song-name" v-if="currentMedia">{{currentMedia.title}}</div>
-				<div class="au-header__current-song-time" v-if="currentMedia && currentMedia.duration">
-					<span v-if="currentTimeObj.h">{{currentTimeObj.h}}:</span>{{currentTimeObj.m}}:{{currentTimeObj.s}}
-					/
-					<span v-if="currentMedia.duration.h">{{currentMedia.duration.h}}:</span>{{currentMedia.duration.m}}:{{currentMedia.duration.s}}
+			<div class="au-header__current-song">
+				<div @click="scrollToCurrentSong" v-if="currentMedia.id">
+					<div class="au-header__current-song-name">{{currentMedia.title}}</div>
+					<div class="au-header__current-song-time" v-if="currentMedia.duration">
+						<span v-if="currentTimeObj.h">{{currentTimeObj.h}}:</span>{{currentTimeObj.m}}:{{currentTimeObj.s}}
+						/
+						<span v-if="currentMedia.duration.h">{{currentMedia.duration.h}}:</span>{{currentMedia.duration.m}}:{{currentMedia.duration.s}}
+					</div>
 				</div>
+				<span
+					class="wmp-icon-share"
+					v-if="currentMedia.id"
+					title="Share"
+					@click="setShowMediaEdit(currentMedia.id)"></span>
 			</div>
 			<div class="au-header__controls" :disabled="!filteredPlayListLength ">
 				<span
@@ -208,9 +213,12 @@ header
 	padding: 0 #{2*$grid-space}
 .au-header__current-song
 	display: flex
-	flex-direction: column
 	justify-content: center
 	cursor: pointer
+	flex-direction: row
+	align-items: center
+	> div
+		flex-direction: column
 	.au-header__current-song-name
 		font-size: 1.1em
 		// font-weight: bold
