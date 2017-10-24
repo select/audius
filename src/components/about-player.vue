@@ -64,6 +64,7 @@ export default {
 			<li> <a @click="setShowSettings">Backup and recover</a> your Audius data.</li>
 			<li> Added media sharing UI.</li>
 			<li> Improved Audius logo. Thanks <a href="http://buryat.me" target="_blank"><i>Buryat</i></a>.</li>
+			<li> Show matrix login for rooms that don't allow guests.</li>
 		</ul>
 		<b>2.0.10</b><br>
 		<ul>
