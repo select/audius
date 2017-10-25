@@ -89,6 +89,7 @@ export default {
 	<div class="youtube-player">
 		<iframe
 			class="vimeo-player"
+			title="Vimeo player"
 			src="https://player.vimeo.com/video/76979871"
 			width="100%"
 			height="100%"

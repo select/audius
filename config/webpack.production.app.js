@@ -1,8 +1,8 @@
 /* global __dirname */
 
 const webpack = require('webpack');
-const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
+const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin');
 
 const configDev = require('./webpack.base.js');
 
@@ -42,17 +42,14 @@ module.exports = Object.assign(configDev, {
 			threshold: 10240,
 			minRatio: 0.8,
 		}),
-		// new SWPrecacheWebpackPlugin(
-		// 	{
-		// 		cacheId: 'audius',
-		// 		filename: 'service-worker.js',
-		// 		maximumFileSizeToCacheInBytes: 4194304,
-		// 		stripPrefix: 'dist-website/'
-		// 		runtimeCaching: [{
-		// 			handler: 'cacheFirst',
-		// 			urlPattern: /i.ytimg.com\/vi\/.*\/default.jpg$/,
-		// 		}],
-		// 	}
-		// ),
+		// service worker caching
+		new SWPrecacheWebpackPlugin({
+			cacheId: 'audius-sw',
+			filename: 'service-worker.js',
+			minify: true,
+			navigateFallback: '/index.html',
+			staticFileGlobsIgnorePatterns: [/\.map$/, /asset-manifest\.json$/],
+			stripPrefix: configDev.output.path,
+		}),
 	],
 });

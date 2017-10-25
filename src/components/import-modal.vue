@@ -84,7 +84,7 @@ export default {
 						</label>
 					</div>
 					<p v-if="!extensionAvilable">
-						Please install the <a href="https://chrome.google.com/webstore/detail/ekpajajepcojhnjmlibfbjmdjcafajoh" target="_blank">Audius extension</a> for this feature.
+						Please install the <a href="https://chrome.google.com/webstore/detail/ekpajajepcojhnjmlibfbjmdjcafajoh" target="_blank" rel="noopener">Audius extension</a> for this feature.
 					</p>
 				</p>
 			</div>

@@ -77,6 +77,7 @@ export default {
 					<input
 						v-on:keyup.enter="addTags"
 						type="text"
+						aria-label="New playlist name"
 						placeholder="... new playlist">
 				</div>
 				<div class="play-list-manager__create">

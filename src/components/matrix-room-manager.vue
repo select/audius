@@ -85,7 +85,7 @@ export default {
 		&nbsp; … connecting to Matrix
 	</div>
 	<div v-if="!matrixEnabled" class="play-list-manager__enable-matrix">
-		<a href="https://matrix.org/" target="_blank">Matrix</a> is a chat network that allows you to share music and videos with your friends. Press the button to create a guest user and join Matrix.
+		<a href="https://matrix.org/" target="_blank" rel="noopener">Matrix</a> is a chat network that allows you to share music and videos with your friends. Press the button to create a guest user and join Matrix.
 		<br>
 		<br>
 		<button
@@ -117,8 +117,8 @@ export default {
 			You are a guest user. Guest users are not allowed to join this room. Create a full accound with
 			<a
 			href="https://riot.im/app/#/room/#audius:matrix.org"
-			target="_blank">Riot</a>
-			or <a href="https://matrix.org/docs/projects/try-matrix-now.html#clients" target="_blank">another client</a> and login below.
+			target="_blank" rel="noopener">Riot</a>
+			or <a href="https://matrix.org/docs/projects/try-matrix-now.html#clients" target="_blank" rel="noopener">another client</a> and login below.
 			<matrix-login></matrix-login>
 		</div>
 	</div>

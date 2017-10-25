@@ -3,7 +3,6 @@
 const WebpackDevServer = require('webpack-dev-server');
 const webpack = require('webpack');
 const CircularDependencyPlugin = require('circular-dependency-plugin');
-const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin');
 
 const config = require('./webpack.base.js');
 
@@ -29,18 +28,6 @@ config.plugins = [
 	new webpack.NamedModulesPlugin(),
 	new CircularDependencyPlugin(),
 	new webpack.HotModuleReplacementPlugin(),
-	// new SWPrecacheWebpackPlugin(
-	// 	{
-	// 		cacheId: 'audius',
-	// 		filename: 'service-worker.js',
-	// 		maximumFileSizeToCacheInBytes: 4194304,
-	// 		stripPrefix: 'dist-website/',
-	// 		// runtimeCaching: [{
-	// 		// 	handler: 'cacheFirst',
-	// 		// 	urlPattern: /[.]mp3$/,
-	// 		// }],
-	// 	}
-	// ),
 	new webpack.LoaderOptionsPlugin({
 		options: {
 			context: __dirname,

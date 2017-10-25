@@ -85,13 +85,6 @@ body
 	::-webkit-scrollbar-thumb
 		background: $color-aluminium-dark
 
-#app
-	position: absolute
-	top: 0
-	left: 0
-	width: 100%
-	height: 100%
-
 .web-app
 	width: 100%
 	height: 100%

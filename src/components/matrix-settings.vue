@@ -48,7 +48,7 @@ export default {
 		v-bind:disabled="!room.isAdmin"
 		:value="room.name">
 	<div class="row">
-		<a v-bind:href="'https://matrix.to/#/'+room.alias" target="_blank">{{room.alias}}</a>
+		<a v-bind:href="'https://matrix.to/#/'+room.alias" target="_blank" rel="noopener">{{room.alias}}</a>
 
 	</div>
 	<div class="spacer"></div>

@@ -104,7 +104,7 @@ export default {
 				@click="copyToClip('room')">
 					copy link
 				</button>
-			<a class="button btn--blue" :href="twitterLink({type: 'room', name: matrixRooms[this.currentMatrixRoom].name})" target="_blank">
+			<a class="button btn--blue" :href="twitterLink({type: 'room', name: matrixRooms[this.currentMatrixRoom].name})" target="_blank" rel="noopener">
 				<span class="wmp-icon-twitter"></span>
 				<div>twitter</div>
 			</a>
@@ -112,7 +112,7 @@ export default {
 				class="button btn--blue"
 				v-if="isMobile"
 				:href="whatsAppLink({type: 'room', name: matrixRooms[this.currentMatrixRoom].name})"
-				target="_blank">
+				target="_blank" rel="noopener">
 				<span class="wmp-icon-whatsapp"></span>
 				<div>whatsapp</div>
 			</a>
@@ -152,12 +152,12 @@ export default {
 								<span class="wmp-icon-link"></span>
 							</div>
 							<div v-if="isMobile">
-								<a :href="whatsAppLink(item)" target="_blank">
+								<a :href="whatsAppLink(item)" target="_blank" rel="noopener">
 									<span class="wmp-icon-whatsapp"></span>
 								</a>
 							</div>
 							<div>
-								<a :href="twitterLink(item)" target="_blank">
+								<a :href="twitterLink(item)" target="_blank" rel="noopener">
 									<span class="wmp-icon-twitter"></span>
 								</a>
 							</div>

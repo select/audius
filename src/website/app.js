@@ -78,7 +78,8 @@ indexDB
 				type: getParameterByName('type'),
 			});
 		}
-		if (getParameterByName('showImgur')) store.commit('selectMediaSource', { type: 'webscraper', id: 'Imgur' });
+		if (getParameterByName('showImgur'))
+			store.commit('selectMediaSource', { type: 'webscraper', id: 'Imgur' });
 		// Remove all URL paramters from URL bar.
 		cleanWindowLocation();
 
@@ -96,10 +97,8 @@ setTimeout(() => {
 	start({ timeout: true });
 }, 2000);
 
-// if ('serviceWorker' in navigator && process.env.NODE_ENV === 'production') {
-// 	navigator.serviceWorker
-// 		.register('./service-worker.js')
-// 		.then(function() {
-// 			console.log('Service Worker Registered');
-// 		});
-// }
+(function() {
+	if ('serviceWorker' in navigator) {
+		navigator.serviceWorker.register('/service-worker.js');
+	}
+})();

@@ -1,4 +1,5 @@
 /* global __dirname */
+const path = require('path');
 const webpack = require('webpack');
 const autoprefixer = require('autoprefixer');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
@@ -7,7 +8,7 @@ const CircularDependencyPlugin = require('circular-dependency-plugin');
 module.exports = {
 	entry: './src/website/app.js',
 	output: {
-		path: `${__dirname}/../dist-website/`,
+		path: path.resolve(`${__dirname}/../dist-website/`),
 		filename: 'app.js',
 	},
 	resolve: {
@@ -37,9 +38,7 @@ module.exports = {
 		],
 	},
 	plugins: [
-		new CopyWebpackPlugin([
-			{ context: './src/website/static/', from: '**/*', to: './' },
-		]),
+		new CopyWebpackPlugin([{ context: './src/website/static/', from: '**/*', to: './' }]),
 		new CircularDependencyPlugin({
 			failOnError: true,
 		}),

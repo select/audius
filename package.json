@@ -14,7 +14,8 @@
     "extension:rls": "npm run version; npm run build:prod:extension; cd dist-extension/; zip -r ../audius.extension.zip . *",
     "version": "src/scripts/bump-version.js",
     "build:prod:extension": "./node_modules/.bin/webpack --config='./config/webpack.production.extension.js' --progress --display-error-details",
-    "icons": "./config/convert-icomoon.js ./src/icons/media-player.zip ./src/sass/_icon.map.sass ./src/fonts/"
+    "icons": "./config/convert-icomoon.js ./src/icons/media-player.zip ./src/sass/_icon.map.sass ./src/fonts/",
+    "serve-static": "http-server -p 8080 ./dist-website"
   },
   "license": "MIT",
   "private": true,
@@ -49,6 +50,7 @@
     "eslint-plugin-jsx-a11y": "^6.0.2",
     "eslint-plugin-react": "^7.4.0",
     "file-loader": "^1.1.5",
+    "http-server": "^0.10.0",
     "markdown-styles": "^3.1.10",
     "node-sass": "^4.5.3",
     "postcss-loader": "^2.0.8",

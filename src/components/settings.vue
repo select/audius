@@ -81,7 +81,7 @@ export default {
 	</div>
 	<h3>Extension</h3>
 	<p>
-		Then extension is <b v-if="extensionAvilable">installed</b><span v-else><b>not installed</b>. You can install it from the <a href="https://chrome.google.com/webstore/detail/ekpajajepcojhnjmlibfbjmdjcafajoh" target="_blank">Chrome web store</a>. If you just installed it please reload this page and this message will disappear</span>.
+		Then extension is <b v-if="extensionAvilable">installed</b><span v-else><b>not installed</b>. You can install it from the <a href="https://chrome.google.com/webstore/detail/ekpajajepcojhnjmlibfbjmdjcafajoh" target="_blank" rel="noopener">Chrome web store</a>. If you just installed it please reload this page and this message will disappear</span>.
 	</p>
 	<h3>YouTube</h3>
 	<p>
@@ -93,7 +93,7 @@ export default {
 			:value="youtubeApiKeyUI"
 			@input="setYoutubeApiKey($event.target.value)">
 		<br>
-		<span class="smaller">Create your own key in the <a href="https://console.developers.google.com/" target="_blank">Google Developers Console</a></span>
+		<span class="smaller">Create your own key in the <a href="https://console.developers.google.com/" target="_blank" rel="noopener">Google Developers Console</a></span>
 	</p>
 	<h3>Matrix</h3>
 	<div class="settings__buttons" @click="setMatrixEnabled">

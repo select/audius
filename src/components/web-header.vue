@@ -100,6 +100,7 @@ export default {
 					<input
 						type="text"
 						class="au-header__search-input"
+						aria-label="Search media"
 						placeholder="Search"
 						@click="stopPropagation"
 						@input="searchInput"

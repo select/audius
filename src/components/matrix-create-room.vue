@@ -64,8 +64,8 @@ export default {
 				You are a guest user. Guest users are not allowed to create rooms. Create a full accound with
 					<a
 					href="https://riot.im/app/#/room/#audius:matrix.org"
-					target="_blank">Riot</a>
-					or <a href="https://matrix.org/docs/projects/try-matrix-now.html#clients" target="_blank">another client</a> and login below.
+					target="_blank" rel="noopener">Riot</a>
+					or <a href="https://matrix.org/docs/projects/try-matrix-now.html#clients" target="_blank" rel="noopener">another client</a> and login below.
 				<p>
 					<matrix-login></matrix-login>
 				</p>

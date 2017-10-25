@@ -29,6 +29,7 @@
   "start_url": "/",
   "display": "standalone",
   "background_color": "#FFFFFF",
+  "theme_color": "#2DA7EF",
   "orientation": "portrait",
   "permissions": [
     "unlimitedStorage"
