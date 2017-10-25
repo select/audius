@@ -1,4 +1,4 @@
-# Audius
+# Audius ([https://audius.rockdapus.org/](https://audius.rockdapus.org/))
 
 Audius is the ultimate streaming music player.
 
@@ -40,6 +40,12 @@ Create your own rooms with Audius and share it with your friends.
 
 
 ## Change log
+
+**2.0.11**
+* Backup and recover your Audius data.
+* Added media sharing UI.
+* Improved Audius logo. Thanks [*Buryat*](http://buryat.me).
+* Show matrix login for rooms that don't allow guests.
 
 **2.0.10**
 * Add full screen mode for continous full screen playback. Add controls for prev, next, timeline.
