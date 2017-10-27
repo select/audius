@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node ./config/webpack.devserver.js",
     "test": "eslint ./src/**/*.js",
-    "build:prod:app": "./node_modules/.bin/webpack --config='./config/webpack.production.app.js' --progress --display-error-details",
+    "build:prod:app": "./node_modules/.bin/webpack --config='./config/webpack.production.app.js' --progress --display-error-details && ./src/scripts/single-file-release.js",
     "build": "./node_modules/.bin/webpack --config='./config/webpack.base.js' --progress --display-error-details",
     "build:extension": "./node_modules/.bin/webpack --config='./config/webpack.dev.extension.js' --progress --display-error-details --watch",
     "docu": "livingstyleguide compile ./src/sass/styleguide.lsg ./documentation/styleguide.html && nodejs node_modules/.bin/generate-md --layout github --input README.md --output ./documentation/",
