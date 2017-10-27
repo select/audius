@@ -1,6 +1,6 @@
 import { youtubeApiKey } from '../../utils/config';
 
-export const initialState = {
+export const state = {
 	errorMessages: [],
 	entities: {},
 	currentMedia: {},
@@ -55,5 +55,5 @@ export const initialState = {
 		results: [],
 	},
 	extensionAvilable: false,
-
+	matrixEnabled: false,
 };

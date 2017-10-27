@@ -2,13 +2,12 @@
 
 // Matrix
 
-export const initialState = {
+export const state = {
 	currentMatrixRoom: null,
 	matrixRooms: {},
 	matrixRoomsOrdered: [],
 	createMatrixRoomModal: false,
 	showMatrixRoomDirectory: false,
-	matrixEnabled: false,
 	matrixLoggedIn: false,
 	showMatrixLoginModal: false,
 	matrix: {
