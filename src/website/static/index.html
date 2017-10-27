@@ -27,14 +27,38 @@
 			display: flex;
 			align-items: center;
 			justify-content: center;
+			font-family: Arial, Helvetica, sans-serif;
 		}
 		#app > img {
 			width: 60%;
 			max-width: 300px;
 		}
+		#au-about {
+			font-size: .6em;
+			color: #2176A8;
+			position: absolute;
+			bottom: 0;
+		}
 	</style>
 </head>
 <body>
-	<div id="app"><img class="au-header__logo" src="img/audius.logo.white.svg" alt="Audius - music player - logo"></div>
+	<div id="app">
+		<img class="au-header__logo" src="img/audius.logo.white.svg" alt="Audius - music player - logo">
+		<i id="version">0.0.0</i>
+		<div id="au-about">
+Audius is the ultimate streaming music player.
+Create playlist, no login required, stored in the indexDB in your browser.
+Share your playlists as hyperlinks, files and in Matrix rooms.
+Queue songs, play history.
+Organize playlists with drag and drop.
+Supports: YouTube/Vimeo/.mp3/.oga/.wav/.mp4/.webm/.ogg URLs.
+Runs "offline" - a pure HTML5 app that can run without a server.
+Plays Imgur "Most Viral" as video stream.
+Create your own web channels with the build in web scraper.
+Set start end times of media items (e.g. to cut of trailing silence)
+Split YouTube full albums into separate songs.
+Connect to the Matrix network and create rooms to share and discover music with your friends.
+		</div>
+	</div>
 </body>
 </html>
