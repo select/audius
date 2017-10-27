@@ -213,7 +213,7 @@ export const mutations = {
 	// ----------------------------------------------------------
 	error(state, message) {
 		if (typeof message === 'string') message = { error: message };
-		state.errorMessages = [...state.errorMessages, message];
+		state.errorMessages = [...state.errorMessages, Object.assign(message, { id: state.errorMessages.length })];
 	},
 	videoError(state, message) {
 		const video = state.currentMedia;

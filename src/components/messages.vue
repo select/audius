@@ -2,26 +2,34 @@
 import { mapState } from 'vuex';
 
 export default {
-	created() {
-		const knownIdxs = [];
+	mounted() {
+		/* eslint no-param-reassign: 'off' */
+		this.knownIdxs = [];
+		this.hideMessages();
 		this.subscriptions = [
 			this.$store.watch(state => state.errorMessages, () => {
-				(function hideEl(el, newIdxs, kidx) {
-					setTimeout(() => {
-						newIdxs.forEach(idx => {
-							el.querySelector(`[data-id="${idx}"]`).hidden = true;
-						});
-						kidx.push(...newIdxs);
-					}, 5000);
-				})(
-					this.$el,
-					[...Array(this.errorMessages.length).keys()].filter(
-						idx => !knownIdxs.includes(idx) && !this.errorMessages[idx].sticky
-					),
-					knownIdxs
-				);
+				this.hideMessages();
 			}),
 		];
+	},
+	methods: {
+		hideMessages() {
+			(function hideEl(el, errors, kidx) {
+				if (!errors.length) return;
+				setTimeout(() => {
+					errors.forEach(error => {
+						el.querySelector(`[data-id="${error.id}"]`).hidden = true;
+					});
+					kidx.push(...errors.map(({ id }) => id));
+				}, errors[0].timeout || 5000);
+			})(
+				this.$el,
+				this.errorMessages.filter(
+					error => !this.knownIdxs.includes(error.id) && !error.sticky
+				),
+				this.knownIdxs
+			);
+		},
 	},
 	beforeDestroy() {
 		this.subscriptions.forEach((unsubscribe) => { unsubscribe(); });
@@ -35,8 +43,8 @@ export default {
 <template>
 	<div class="messages">
 		<div
-			v-for="(message, idx) in errorMessages"
-			v-bind:data-id="idx"
+			v-for="message in errorMessages"
+			v-bind:data-id="message.id"
 			class="messages__message">
 			{{message.error}}
 		</div>
