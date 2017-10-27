@@ -86,7 +86,7 @@ indexDB
 		start({ recoverdState: true });
 	})
 	.catch(error => {
-		store.commit('error', { error, sticky: true });
+		store.commit('error', { error, timeout: 15000 });
 	});
 
 document.addEventListener('DOMContentLoaded', () => {
