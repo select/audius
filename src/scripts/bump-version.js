@@ -21,3 +21,17 @@ fs.writeFileSync(
 	manifestJsonPath,
 	JSON.stringify(Object.assign(manifestJson, { version: versionNumber }), null, "\t")
 );
+
+const headerPath = `${__dirname}/../components/web-header.vue`;
+const headerVue = fs.readFileSync(headerPath, 'utf-8');
+fs.writeFileSync(
+	headerPath,
+	headerVue.replace(/<i id="version">([\d\.]+)<\/i>/, `<i id="version">${versionNumber}</i>`)
+);
+
+const indexPath = `${__dirname}/../website/static/index.html`;
+const indexHtml = fs.readFileSync(indexPath, 'utf-8');
+fs.writeFileSync(
+	indexPath,
+	indexHtml.replace(/<i id="version">([\d\.]+)<\/i>/, `<i id="version">${versionNumber}</i>`)
+);
