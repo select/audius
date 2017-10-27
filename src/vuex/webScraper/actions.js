@@ -1,4 +1,4 @@
-import { webScraper } from '../utils';
+import { webScraper } from '../../utils';
 
 function extensionMessage(detail) {
 	window.dispatchEvent(

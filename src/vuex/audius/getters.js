@@ -1,5 +1,5 @@
-import { youtubeApiKey } from '../utils/config';
-import { s2time } from '../utils';
+import { youtubeApiKey } from '../../utils/config';
+import { s2time } from '../../utils';
 
 import { getCurrentPlayListEntities, getCurrentName } from './getCurrentPlayList';
 

@@ -33,6 +33,7 @@ export default {
 			'toggleMatrixRoomModal',
 			'toggleMatrixRoomDirectory',
 			'toggleMatrixLoginModal',
+			'setMatrixRoomTag',
 			'error',
 		]),
 		...mapActions(['joinMatrixRoom', 'leaveMatrixRoom', 'matrixSend', 'initMatrix']),

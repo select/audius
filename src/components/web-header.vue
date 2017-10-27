@@ -88,8 +88,9 @@ export default {
 	<header>
 		<div class="au-header__search">
 			<div>
-				<img class="au-header__logo" src="img/audius.logo.white.svg" alt="Audius - music player - logo">
-				<i id="version">2.0.12</i>
+				<img class="au-header__logo" src="img/audius.logo.white.svg" alt="Audius - ♫♪.ılılıll|̲̅̅●̲̅̅|̲̅̅=̲̅̅|̲̅̅●̲̅̅|llılılı.♫♪
+ -">
+				<i href="#audius-changelog"><i id="version">2.0.12</i></i>
 			</div>
 			<div class="au-header__search-controls">
 				<div
@@ -208,6 +209,12 @@ header
 	h1
 		font-weight: 100
 		padding-left: #{2*$grid-space}
+	a,a:visited
+		display: inline-block
+		text-decoration: none
+		color: $color-white
+		cursor: help
+
 .au-header__control-bar
 	display: flex
 	justify-content: space-between

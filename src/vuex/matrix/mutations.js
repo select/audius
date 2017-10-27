@@ -11,7 +11,7 @@ const matrixRoomTemplate = () =>
 	);
 
 /* eslint-disable no-param-reassign */
-export const mutationsMatrix = {
+export const mutations = {
 	setMatrixEnabled(state) {
 		state.matrixEnabled = !state.matrixEnabled;
 	},

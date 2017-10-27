@@ -25,10 +25,4 @@ export const presistMutation = {
 	addWebScraper: ['webScrapersOrdered', 'webScrapers'],
 	renameWebScraper: ['webScrapersOrdered', 'webScrapers'],
 	setIsMobile: ['isMobile'],
-	setMatrixCredentials: ['matrix'],
-	setPublicRooms: ['matrix'],
-	setMatrixEnabled: ['matrixEnabled'],
-	updateMatrixRoom: ['matrixRooms'],
-	matrixRemoveAccount: ['matrix'],
-	deleteMatrixRoom: ['matrixRoomsOrdered'],
 };

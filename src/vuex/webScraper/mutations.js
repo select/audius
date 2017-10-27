@@ -1,5 +1,5 @@
-import { webScraper } from '../utils';
-import { rename } from './mutations-rename';
+import { webScraper } from '../../utils';
+import { rename } from '../audius/mutations-rename';
 
 /* eslint-disable no-param-reassign */
 export const mutationsWebScraper = {

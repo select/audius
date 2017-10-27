@@ -1,7 +1,5 @@
-import { mutationsMatrix } from './mutations-matrix';
-import { mutationsWebScraper } from './mutations-web-scraper';
 import { rename } from './mutations-rename';
-import { youtubeApiKey } from '../utils/config';
+import { youtubeApiKey } from '../../utils/config';
 import {
 	getCurrentPlayListEntities,
 	getCurrentPlayList,
@@ -130,8 +128,6 @@ function play(state, mediaId, media) {
 
 /* eslint-disable no-param-reassign */
 export const mutations = {
-	...mutationsMatrix,
-	...mutationsWebScraper,
 	recoverState(state, recoveredState) {
 		state = Object.assign(state, recoveredState);
 		if (state.currentPlayList === null) state.currentPlayList = '';

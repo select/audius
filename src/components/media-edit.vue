@@ -1,10 +1,8 @@
 <script>
 import { mapState, mapMutations, mapActions } from 'vuex';
 
-import { getMediaEntity } from '../vuex/getCurrentPlayList';
+import { getMediaEntity } from '../vuex/audius/getCurrentPlayList';
 import { debounce, getMediaLink, youtubeLink } from '../utils';
-
-
 
 export default {
 	data() {

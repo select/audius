@@ -1,6 +1,6 @@
 import { ajaxJSON } from './ajax';
 import { time2s, s2time, duration } from './timeConverter';
-import { mediaBaseObject } from '../vuex/mediaBaseObject';
+import { mediaBaseObject } from '../vuex/audius/mediaBaseObject';
 
 export const isYouTubeVideoRegEx = /.*youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-_]*)(&(amp;)?‌​[\w?‌​=]*)?/;
 export const youTubePlaylistRexEx = /.*youtu(?:be\.com\/|\.be\/).*list=([\w\-_]*)/;

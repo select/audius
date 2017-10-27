@@ -1,20 +1,12 @@
-import {
-	findYouTubeIdsText,
-	getYouTubeInfo,
-	youTubePlaylistRexEx,
-	getPlayList,
-} from './youtube';
-import {
-	findVimeoIdsText,
-	getVimeoInfo,
-} from './vimeo';
+import { findYouTubeIdsText, getYouTubeInfo, youTubePlaylistRexEx, getPlayList } from './youtube';
+import { findVimeoIdsText, getVimeoInfo } from './vimeo';
 import { s2time } from './timeConverter';
 import { hashCode } from './hashCode';
 import { getMediaDuration } from './getMediaDuration';
-import { mediaBaseObject } from '../vuex/mediaBaseObject';
+import { mediaBaseObject } from '../vuex/audius/mediaBaseObject';
 
-export const audioRegEx = /(http|https)?:\/\/\S+\.(mp3|oga|m4a|flac|wav|aiff|aif|wma|asf)/ig;
-export const videoRegEx = /(http|https)?:\/\/\S+\.(avi|mkv|mp4|webm|ogg)/ig;
+export const audioRegEx = /(http|https)?:\/\/\S+\.(mp3|oga|m4a|flac|wav|aiff|aif|wma|asf)/gi;
+export const videoRegEx = /(http|https)?:\/\/\S+\.(avi|mkv|mp4|webm|ogg)/gi;
 
 function refineWebSearchResult(media) {
 	const urlParts = media.url.split('/');
@@ -32,7 +24,11 @@ function refineWebSearchResult(media) {
  * @param {Set} indexKnown index of known ids
  * @return {Promise} Promise that returns [{mediaObject}]
  */
-export function findMediaText(text, youtubeApiKey, { indexKnown = new Set(), extendPlayLists = false }) {
+export function findMediaText(
+	text,
+	youtubeApiKey,
+	{ indexKnown = new Set(), extendPlayLists = false }
+) {
 	const promises = [];
 	let isPlayList = false;
 	// Find YouTube links in text message.
@@ -63,11 +59,13 @@ export function findMediaText(text, youtubeApiKey, { indexKnown = new Set(), ext
 		.filter((item, pos, self) => self.indexOf(item) === pos); // filter dublicates
 	if (audioUrls.length) {
 		promises.push(
-			Promise.all(audioUrls.map(url =>
-				getMediaDuration(url, 'audio').then(durationS =>
-					refineWebSearchResult({ url, href: url, durationS, type: 'audio' })
+			Promise.all(
+				audioUrls.map(url =>
+					getMediaDuration(url, 'audio').then(durationS =>
+						refineWebSearchResult({ url, href: url, durationS, type: 'audio' })
+					)
 				)
-			))
+			)
 		);
 	}
 
@@ -76,11 +74,13 @@ export function findMediaText(text, youtubeApiKey, { indexKnown = new Set(), ext
 		.filter((item, pos, self) => self.indexOf(item) === pos); // filter dublicates
 	if (videoUrls.length) {
 		promises.push(
-			Promise.all(videoUrls.map(url =>
-				getMediaDuration(url, 'video').then(durationS =>
-					refineWebSearchResult({ url, href: url, durationS, type: 'video' })
+			Promise.all(
+				videoUrls.map(url =>
+					getMediaDuration(url, 'video').then(durationS =>
+						refineWebSearchResult({ url, href: url, durationS, type: 'video' })
+					)
 				)
-			))
+			)
 		);
 	}
 

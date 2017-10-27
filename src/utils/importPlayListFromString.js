@@ -1,5 +1,5 @@
 import { s2time } from './timeConverter';
-import { mediaBaseObject } from '../vuex/mediaBaseObject';
+import { mediaBaseObject } from '../vuex/audius/mediaBaseObject';
 
 export const streamlyUrlRegEx = /Streamly\/#/i;
 
@@ -37,9 +37,6 @@ export function importPlayListFromString(dataString) {
 			} catch (e) {
 				reject(e);
 			}
-		} else if (dataString.indexOf('window.getAudiusPlaylist = function()') !== -1) {
-			eval(dataString);
-			dataJSON = window.getAudiusPlaylist();
 		} else {
 			reject('Cannot import - unknown data format');
 		}

@@ -1,5 +1,3 @@
-import { actionsMatrix } from './actions-matrix';
-import { actionsWebScraper } from './actions-web-scraper';
 import { presistMutation } from './presistMutation';
 import {
 	searchYoutube,
@@ -10,14 +8,12 @@ import {
 	ajaxPostJSON,
 	ajaxJSON,
 	findMediaText,
-} from '../utils';
+} from '../../utils';
 import { getCurrentPlayListEntities } from './getCurrentPlayList';
 // the matrix client will be lazy loaded since it's not need on startup
 
 /* eslint-disable no-param-reassign */
 export const actions = {
-	...actionsMatrix,
-	...actionsWebScraper,
 	search({ commit, state }, query) {
 		query = query.trim();
 		findMediaText(query, state.youtubeApiKey, { extendPlayLists: true }).then(res => {

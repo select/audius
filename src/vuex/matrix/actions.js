@@ -1,5 +1,5 @@
-import { findMediaText, getMediaLink } from '../utils';
-import { getMediaEntity } from './getCurrentPlayList';
+import { findMediaText, getMediaLink } from '../../utils';
+import { getMediaEntity } from '../audius/getCurrentPlayList';
 // This must be avialable in the whole module since it's lazy loaded.
 // Do not delete;
 let matrixClient;
@@ -26,10 +26,10 @@ function addMatrixMessage(state, commit, roomId, eventId, results) {
 }
 
 /* eslint-disable no-param-reassign */
-export const actionsMatrix = {
+export const actions = {
 	initMatrix({ commit, state, dispatch }) {
-		import(/* webpackChunkName: "matrix-client" */ '../utils/matrixClient').then(mc => {
-			matrixClient = mc.matrixClient;
+		import(/* webpackChunkName: "matrix-client" */ '../../utils/matrixClient').then(mc => {
+			({ matrixClient } = mc);
 			if (!state.matrix.hasCredentials) {
 				matrixClient
 					.getCredentials()
@@ -52,8 +52,8 @@ export const actionsMatrix = {
 		});
 	},
 	loginMatrixWithPassword({ commit, state, dispatch }, { username, password }) {
-		import(/* webpackChunkName: "matrix-client" */ '../utils/matrixClient').then(mc => {
-			matrixClient = mc.matrixClient;
+		import(/* webpackChunkName: "matrix-client" */ '../../utils/matrixClient').then(mc => {
+			({ matrixClient } = mc);
 			matrixClient
 				.getCredentialsWithPassword(username, password)
 				.then(credentials => commit('setMatrixCredentials', { credentials, isGuest: false }))
@@ -159,7 +159,7 @@ export const actionsMatrix = {
 	setRoomTag({ commit }, { roomId, tagName }) {
 		matrixClient
 			.setRoomTag(roomId, tagName)
-			.then(() => console.log('room tag is set'))
+			.then(() => commit('error', { error: 'room tag is set', type: 'success' }))
 			.catch(error => commit('error', `Could not set tagName. ${error}`));
 	},
 	updateRoomOptions({ commit }, options) {
