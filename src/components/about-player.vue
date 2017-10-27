@@ -4,7 +4,7 @@ import { mapMutations, mapState } from 'vuex';
 export default {
 	name: 'about-player',
 	methods: {
-		...mapMutations(['setShowSettings', 'toggleLeftMenu', 'setLeftMenuTab']),
+		...mapMutations(['setShowSettings', 'toggleLeftMenu', 'setLeftMenuTab', 'toggleSearch']),
 	},
 	computed: {
 		...mapState(['isMobile']),
@@ -42,11 +42,16 @@ export default {
 			<a class="button btn--blue" href="https://github.com/select/audius/issues" target="_blank" rel="noopener">Create issue</a>
 		</div>
 	</p>
-	<h2 id="matrix">Share your music with Matrix</h2>
+	<h2>Run your own Audius</h2>
+	<p>
+		Easy as - Download the <a href="audius.app.html" download>audius app</a>, upload it to <b>your server</b>. Done!
+	<p>
+	<p>
+		If you run Audius as file (<pre style="display: inline">file://</pre> URL) all information are <b>lost</b> when you restart.
+	</p>
+	<h2 id="matrix">Join a Matrix room and share</h2>
 	<p>
 		<a href="https://matrix.org/" target="_blank" rel="noopener">Matrix</a> is a chat network that allows you to share songs with Audius.
-	</p>
-	<p>
 	</p>
 	<div class="about-player__community-btns">
 		<button class="button btn--blue" @click="setLeftMenuTab('radio')">Join a room</button>
@@ -56,12 +61,28 @@ export default {
 		<b>Create your own rooms</b> and share them with your friends.
 		Already have an account from <a href="https://riot.im/app/" target="_blank" rel="noopener">Riot</a> or <a href="https://matrix.org/docs/projects/try-matrix-now.html#clients" target="_blank" rel="noopener">another client</a>? Login with your username in the Audius <a @click="setShowSettings">settings</a>.
 	</p>
-	<h2 id="extension">Extension and web channels</h2>
+	<h2 id="extension">Web channels</h2>
 	<p>
-		<a href="https://chrome.google.com/webstore/detail/ekpajajepcojhnjmlibfbjmdjcafajoh" target="_blank" rel="noopener">The Audius extension</a> helps to search external webpages. It is required when you create or import <a @click="setLeftMenuTab('tv')">web channels <span class="wmp-icon-queue_music"title="Toggle playlists"></span></a>. Web channels are still in development, currently they allow you to search on your favorite website for sounds and videos.
+		Channels can search through any website. To do this they need <a href="https://chrome.google.com/webstore/detail/ekpajajepcojhnjmlibfbjmdjcafajoh" target="_blank" rel="noopener">the Audius extension</a>. Once installed you can also search through websites by pasting a URL in the <a @click="toggleSearch()">search field</a>.
+
 	</p>
-	<h2>Change log</h2>
 	<p>
+		The Imgur <a @click="setLeftMenuTab('tv')">web channel</a> is a build in demo. You can create your own <a @click="setLeftMenuTab('tv')">channel</a>. There are two methods.
+	</p>
+	<p>
+		<dl class="wmp-about__web-channels">
+			<dt>URL patterns</dt>
+			<dd><pre style="display: inline">http://example.com/page[1-5]</pre></dd>
+			<dt>Script</dt>
+			<dd>a small JS script that is executed in a secure sanbox of the extension. <a href="https://github.com/select/audius" target="_blank" rel="noopener">API documentation</a> is half way there.</dd>
+		</dl>
+	</p>
+	<h2 id="audius-changelog">Change log</h2>
+	<p>
+		<b>2.0.12</b><br>
+		<ul>
+			<li> Singe HTML file <a href="audius.app.html" download>audius app</a>.</li>
+		</ul>
 		<b>2.0.11</b><br>
 		<ul>
 			<li> <a @click="setShowSettings">Backup and recover</a> your Audius data.</li>
@@ -159,11 +180,7 @@ export default {
 		<b>Chrome android:</b><br>
 		Tap the menu button and tap <i>Add to homescreen</i>. The app is not yet optimized for mobile phones, it might work on tablets.
 	</p>
-	<p>
-		<b>Local HTML5:</b><br>
-		Since this player is a pure HTML5 app without server side code you can simply download the HTML and JS code and run it from a local file.
-		 You can also download the latest version from the <a href="#source-code">source code</a> repository at github. <br>
-	</p>
+
 	<p>
 		Why use the web version then?
 		<ol>
@@ -315,6 +332,13 @@ export default {
 		font-size: .7rem
 		white-space: inherit
 		overflow: auto
+.wmp-about__web-channels.wmp-about__web-channels
+	dt
+		width: 8em
+	dd:last-child
+		margin-top: $grid-space
+		height: auto
+		display: block
 .about-player__community-btns
 	display: flex
 	justify-content: center
