@@ -25,12 +25,20 @@ export const matrixClient = {
 				const message = event.event.content.body;
 				const roomId = event.event.room_id;
 				if (!(roomId in this.firstEvent)) this.firstEvent[roomId] = event.event.event_id;
-				if (event.event.type === 'audiusMedia') {
+				if (event.event.type === ['audiusMedia']) { // legacy events, remove 2019
 					dispatch('parseMatrixMessage', {
 						roomId,
 						eventId: event.event.event_id,
 						message: event.event.content,
 					});
+				} else if (event.event.type === 'org.rockdapus.audius') {
+					if (event.event.content.type === 'media') {
+						dispatch('parseMatrixMessage', {
+							roomId,
+							eventId: event.event.event_id,
+							message: event.event.content.data,
+						});
+					}
 				} else if (message) dispatch('parseMatrixMessage', { roomId, message });
 			});
 
@@ -73,7 +81,7 @@ export const matrixClient = {
 		return this.client.leave(roomIdOrAlias);
 	},
 	sendEvent(roomId, media) {
-		return this.client.sendEvent(roomId, 'audiusMedia', media);
+		return this.client.sendEvent(roomId, 'org.rockdapus.audius', { type: 'media', data: media });
 	},
 	redactEvent(roomId, eventId) {
 		return this.client.redactEvent(roomId, eventId);
