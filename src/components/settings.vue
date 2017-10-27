@@ -62,6 +62,13 @@ export default {
 			class="button btn--blue-ghost"
 			title="Load backup from file"
 			@click="showConfirmLoadBackup = true">Load backup</button>
+
+		<a
+			class="button btn--gray-ghost"
+			style="float:right"
+			title="Download Audius app"
+			href="audius.app.html"
+			download>Audius app</a>
 	</p>
 	<div class="modal" v-if="showConfirmLoadBackup" @click.stop="showConfirmLoadBackup = false">
 		<div class="modal__body" @click.stop>
