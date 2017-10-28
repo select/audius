@@ -1,6 +1,6 @@
 <script>
 import Vue from 'vue';
-import { mapActions } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 
 export default {
 	data() {
@@ -9,9 +9,7 @@ export default {
 			showImportOtherPlaylist: false,
 		};
 	},
-	props: [
-		'tags',
-	],
+	computed: mapState(['sourcesOrdered']),
 	methods: {
 		...mapActions(['importPlayListFromString', 'importURL']),
 		importPlayListHandler(event) {
@@ -84,7 +82,8 @@ export default {
 			v-on:click="showImportOtherPlaylist = true">other playlist</button>
 		<div v-if="showImportOtherPlaylist">
 			<select class="play-list__other-playlist-input">
-				<option v-for="playListName in tags">{{playListName}}</option>
+				<option value="">Default</option>
+				<option v-for="playListName in sourcesOrdered">{{playListName}}</option>
 			</select>
 			<button class="button btn--blue" v-on:click="importOtherPlayList">load</button>
 		</div>

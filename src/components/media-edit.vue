@@ -15,24 +15,26 @@ export default {
 		...mapState([
 			'showMediaEdit',
 			'entities',
-			'matrixRooms',
-			'matrixRoomsOrdered',
-			'matrixLoggedIn',
-			'matrixLoggedIn',
-			'tagsOrdered',
-			'webScrapers',
-			'webScrapersOrdered',
-			'tags',
+			'sourcesOrdered',
+			'sources',
 			'playList',
+			'currentMediaSource',
 		]),
+		...mapState({
+			webScrapers: state => state.webScraper.sources,
+			webScrapersOrdered: state => state.webScraper.sourcesOrdered,
+			matrixRooms: state => state.matrix.sources,
+			matrixRoomsOrdered: state => state.matrix.sourcesOrdered,
+			matrixLoggedIn: state => state.matrix.matrixLoggedIn,
+		}),
 		media() {
 			if (!this.showMediaEdit) return {};
 			return getMediaEntity(this.$store.state, this.showMediaEdit);
 		},
 		removeFrom() {
 			const data = {
-				tags: this.tagsOrdered
-					.filter(sourceId => this.tags[sourceId].includes(this.media.id)),
+				tags: this.sourcesOrdered
+					.filter(sourceId => this.sources[sourceId].includes(this.media.id)),
 				matrixRooms: this.matrixRoomsOrdered
 					.filter(sourceId => this.matrixRooms[sourceId].playList.some(
 						({ id }) => id === this.media.id)
@@ -48,7 +50,7 @@ export default {
 		addTo() {
 			const { removeFrom } = this;
 			const data = {
-				tags: this.tagsOrdered.filter(
+				tags: this.sourcesOrdered.filter(
 					sourceId => !removeFrom.tags.includes(sourceId)
 				),
 				matrixRooms: this.matrixRoomsOrdered
@@ -156,7 +158,7 @@ export default {
 	<div class="media-edit__header">
 		<div class="media-list__thumbnail" v-bind:style="{ backgroundImage: backgroundImage }"></div>
 		<input
-			@input="_setMediaTitle(currentMatrixRoom, $event.target.value)"
+			@input="_setMediaTitle(currentMediaSource.id, $event.target.value)"
 			type="text"
 			class="media-edit__name"
 			placeholder="… title"

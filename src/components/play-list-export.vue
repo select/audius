@@ -11,10 +11,7 @@ export default {
 	computed: {
 		...mapState([
 			'exportURLs',
-			'currentWebScraper',
-			'webScrapers',
-			'currentMatrixRoom',
-			'matrixRooms',
+			'currentMediaSource',
 			'isMobile',
 		]),
 		...mapGetters([
@@ -26,9 +23,14 @@ export default {
 	methods: {
 		...mapActions(['exportToURL', 'exportToFile', 'error']),
 		exportFile() {
+			const { id, type } = this.currentMediaSource;
+			const fileExtensions = {
+				playList: 'audius-playlist',
+				webScraper: 'audius-channel',
+			};
 			this.exportToFile({
 				data: this.currentExportData,
-				fileName: this.currentWebScraper ? `${this.currentWebScraper}.audius-channel` : this.currentName ? `${this.currentName}.audius-playlist` : 'default.audius-playlist',
+				fileName: `${id || 'Default'}.${fileExtensions[type]}`,
 			});
 		},
 		niceDate(date) {
@@ -39,7 +41,7 @@ export default {
 		},
 		getLink(type, url, name) {
 			if (type === 'Imgur') return `${window.location.href}?showImgur=1`;
-			else if (type === 'room') return `${window.location.href}?import=${this.currentMatrixRoom}&type=${this.exportTypeName}&title=${encodeURIComponent(this.matrixRooms[this.currentMatrixRoom].name)}`;
+			else if (type === 'room') return `${window.location.href}?import=${this.currentMediaSource.id}&type=${this.exportTypeName}&title=${encodeURIComponent(this.matrixRooms[this.currentMatrixRoom.id].name)}`;
 			else if (['channel', 'playList', undefined].includes(type)) return `${window.location.href}?import=${url}&type=${type}&title=${encodeURIComponent(name)}`;
 			else if (type === 'url') return url;
 			return '';
@@ -89,7 +91,9 @@ export default {
 				title="[Esc] Close"
 				v-on:click="$emit('toggleExport', false)"></span>
 		</div>
-		<div v-if="currentWebScraper == 'Imgur'" class="play-list__export-room">
+		<div
+			v-if="currentMediaSource.type === 'webScraper' && currentMediaSource.id == 'Imgur'"
+			class="play-list__export-room">
 			<button
 				class="button btn--blue play-list__export-copy-room"
 				v-bind:class="{ active: copyURLActive }"
@@ -97,28 +101,28 @@ export default {
 					copy link
 				</button>
 		</div>
-		<div v-if="currentMatrixRoom" class="play-list__export-room">
+		<div v-if="currentMediaSource.type === 'matrix' && currentMediaSource.id" class="play-list__export-room">
 			<button
 				class="button btn--blue play-list__export-copy-room"
 				v-bind:class="{ active: copyURLActive }"
 				@click="copyToClip('room')">
 					copy link
 				</button>
-			<a class="button btn--blue" :href="twitterLink({type: 'room', name: matrixRooms[this.currentMatrixRoom].name})" target="_blank" rel="noopener">
+			<a class="button btn--blue" :href="twitterLink({type: 'room', name: matrixRooms[this.currentMediaSource.id].name})" target="_blank" rel="noopener">
 				<span class="wmp-icon-twitter"></span>
 				<div>twitter</div>
 			</a>
 			<a
 				class="button btn--blue"
 				v-if="isMobile"
-				:href="whatsAppLink({type: 'room', name: matrixRooms[this.currentMatrixRoom].name})"
+				:href="whatsAppLink({type: 'room', name: matrixRooms[this.currentMediaSource.id].name})"
 				target="_blank" rel="noopener">
 				<span class="wmp-icon-whatsapp"></span>
 				<div>whatsapp</div>
 			</a>
 		</div>
 		<div v-else>
-			<div v-if="currentWebScraper != 'Imgur'" class="button-group">
+			<div v-if="currentMediaSource.id != 'Imgur'" class="button-group">
 				<button
 					class="button btn--blue"
 					v-on:click="exportToURL">create link</button>
@@ -126,7 +130,7 @@ export default {
 			<div
 				class="play-list__export-list-wrapper"
 				v-if="exportURLs.length">
-				<p v-if="currentWebScraper != 'Imgur'" class="smaller">
+				<p v-if="currentMediaSource.id != 'Imgur'" class="smaller">
 					Click and paste to share your {{exportTypeName}}.
 				</p>
 				<p>

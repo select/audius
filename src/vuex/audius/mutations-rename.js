@@ -1,12 +1,12 @@
 /* eslint-disable no-param-reassign */
 export function rename(state, type, newName, oldName) {
-	if (state[type][newName]) return;
-	const itemsObject = Object.assign({}, state[type]);
+	if (state[type].sources[newName]) return;
+	const itemsObject = Object.assign({}, state[type].sources);
 	itemsObject[newName] = itemsObject[oldName];
-	const itemsOrdered = [...state[`${type}Ordered`]];
+	const itemsOrdered = [...state[type].sourcesOrdered];
 	itemsOrdered[itemsOrdered.indexOf(oldName)] = newName;
 	delete itemsObject[oldName];
-	state[type] = itemsObject;
-	state[`${type}Ordered`] = itemsOrdered;
-	state[type.includes('web') ? 'currentWebScraper' : 'currentPlayList'] = newName;
+	state[type].sources = itemsObject;
+	state[type].sourcesOrdered = itemsOrdered;
+	state.currentMediaSource.id = newName;
 }

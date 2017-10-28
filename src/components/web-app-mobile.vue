@@ -1,5 +1,5 @@
 <script>
-import { mapState, mapMutations, mapActions } from 'vuex';
+import { mapState, mapMutations } from 'vuex';
 
 import PlayList from './play-list.vue';
 import WebHeader from './web-header.vue';
@@ -7,14 +7,14 @@ import WebHeader from './web-header.vue';
 import MediaPlayer from './media-player.vue';
 
 import AboutPlayer from './about-player.vue';
-import Queue from './queue.vue';
 
 import PlayListManager from './play-list-manager.vue';
 
-const Settings = () => import(/* webpackChunkName: "settings" */'./settings.vue');
-const SearchResults = () => import(/* webpackChunkName: "search-results" */'./search-results.vue');
-const MatrixRoomManager = () => import(/* webpackChunkName: "matrix-room-manager" */'./matrix-room-manager.vue');
-const WebScraperManager = () => import(/* webpackChunkName: "web-scraper-manager" */'./web-scraper-manager.vue');
+const Settings = () => import(/* webpackChunkName: "components/settings" */'./settings.vue');
+const SearchResults = () => import(/* webpackChunkName: "components/search-results" */'./search-results.vue');
+const MatrixRoomManager = () => import(/* webpackChunkName: "components/matrix-room-manager" */'./matrix-room-manager.vue');
+const WebScraperManager = () => import(/* webpackChunkName: "components/web-scraper-manager" */'./web-scraper-manager.vue');
+const Queue = () => import(/* webpackChunkName: "components/queue" */'./queue.vue');
 
 
 export default {
@@ -52,7 +52,6 @@ export default {
 	]),
 	methods: {
 		...mapMutations(['setMainRightTab', 'setLeftMenuTab']),
-		...mapActions(['initMatrix']),
 	},
 };
 </script>
@@ -67,11 +66,11 @@ export default {
 				v-on:click="setLeftMenuTab('playList');setMainRightTab('');"
 				v-bind:class="{ active: leftMenuTab == 'playList' && mainRightTab != 'about' }">PlayList</li>
 			<li
-				v-on:click="setLeftMenuTab('radio');setMainRightTab('');"
-				v-bind:class="{ active: leftMenuTab == 'radio' }">Rooms</li>
+				v-on:click="setLeftMenuTab('matrix');setMainRightTab('');"
+				v-bind:class="{ active: leftMenuTab == 'matrix' }">Rooms</li>
 			<li
-				v-on:click="setLeftMenuTab('tv');setMainRightTab('');"
-				v-bind:class="{ active: leftMenuTab == 'tv' }">Channels</li>
+				v-on:click="setLeftMenuTab('webScraper');setMainRightTab('');"
+				v-bind:class="{ active: leftMenuTab == 'webScraper' }">Channels</li>
 			<li
 				@click="setMainRightTab('queue')"
 				v-bind:class="{ active: mainRightTab == 'queue' || queueActive }">
@@ -92,7 +91,7 @@ export default {
 			<play-list v-show="!(mainRightTab || leftMenuTab)"></play-list>
 			<about-player v-show="mainRightTab == 'about'"></about-player>
 			<search-results v-if="mainRightTab == 'search'"></search-results>
-			<queue v-show="mainRightTab == 'queue'"></queue>
+			<queue v-if="mainRightTab == 'queue'"></queue>
 			<div class="audius-chat" v-show="mainRightTab == 'chat'"> </div>
 			<settings v-if="mainRightTab == 'settings'"></settings>
 			<play-list-manager v-show="leftMenuTab == 'playList'"></play-list-manager>

@@ -1,11 +1,11 @@
 <script >
 import { mapMutations, mapActions, mapState } from 'vuex';
-import YoutubePlayer from './youtube-player.vue';
-import VimeoPlayer from './vimeo-player.vue';
-import WebMediaPlayer from './web-media-player.vue';
 import ProgressBar from './progress-bar.vue';
 import { debounce } from '../utils';
 
+const WebMediaPlayer = () => import(/* webpackChunkName: "components/web-media-player" */'./web-media-player.vue');
+const YoutubePlayer = () => import(/* webpackChunkName: "components/youtube-player" */'./youtube-player.vue');
+const VimeoPlayer = () => import(/* webpackChunkName: "components/vimeo-player" */'./vimeo-player.vue');
 
 export default {
 	name: 'main-right',
@@ -17,12 +17,21 @@ export default {
 	},
 	computed: mapState([
 		'currentMedia',
-		'currentWebScraper',
-		'currentMatrixRoom',
 		'fullscreen',
 	]),
 	data() {
-		return { showControls: false };
+		return {
+			showYoutube: false,
+			showVimeo: false,
+			showControls: false,
+		};
+	},
+	created() {
+		this.unsubscribe = this.$store.watch(state => state.currentMedia, () => {
+			if (this.currentMedia.type === 'youtube') this.showYoutube = true;
+			if (this.currentMedia.type === 'vimeo') this.showVimeo = true;
+			if (this.showYoutube && this.showVimeo) this.unsubscribe();
+		});
 	},
 	mounted() {
 		this.$el.addEventListener('mousemove', () => {
@@ -57,8 +66,12 @@ export default {
 			fullscreen
 		}">
 		<div :class="{'media-player--hide': !showControls}">
-			<div class="media-player__prev" title="Previous" @click.stop="previousVideo">‹</div>
-			<div class="media-player__next" title="Next" @click.stop="nextVideo">›</div>
+			<div class="media-player__prev" title="Previous" @click.stop="previousVideo">
+				<span class="wmp-icon-previous"></span>
+			</div>
+			<div class="media-player__next" title="[b] Next" @click.stop="nextVideo">
+				<span class="wmp-icon-next"></span>
+			</div>
 		</div>
 		<img
 			:class="{'media-player--hide': !showControls}"
@@ -80,14 +93,14 @@ export default {
 		<div
 			class="media-player__yt-player"
 			v-bind:class="{'media-player--hide-yt-player': currentMedia.type !== 'youtube'}">
-			<youtube-player></youtube-player>
+			<youtube-player v-if="showYoutube"></youtube-player>
 		</div>
 		<div
 			class="media-player__yt-player"
 			v-bind:class="{'media-player--hide-yt-player': currentMedia.type !== 'vimeo'}">
-			<vimeo-player></vimeo-player>
+			<vimeo-player v-if="showVimeo"></vimeo-player>
 		</div>
-		<web-media-player v-show="!['youtube', 'vimeo'].includes(currentMedia.type)"></web-media-player>
+		<web-media-player v-if="['audio', 'video'].includes(currentMedia.type)"></web-media-player>
 		<progress-bar></progress-bar>
 	</div>
 </template>
@@ -101,7 +114,7 @@ export default {
 	overflow: hidden
 	border-top: 1px solid $color-aluminium
 	position: relative
-	background: $color-catskillwhite
+	background: $color-black
 	&.fullscreen
 		position: fixed
 		top: 0
@@ -161,7 +174,7 @@ span.media-player__full-btn
 	display: flex
 	justify-content: center
 	align-items: center
-	font-size: 3rem
+	font-size: 2rem
 	color: $color-catskillwhite
 	cursor: pointer
 .media-player__next

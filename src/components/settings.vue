@@ -9,14 +9,24 @@ export default {
 	data() {
 		return { showConfirmLoadBackup: false };
 	},
+	created() {
+		if (this.matrixEnabled) {
+			this.initModule('matrix');
+		}
+	},
 	computed: {
 		...mapGetters(['youtubeApiKeyUI']),
 		...mapState([
-			'matrixLoggedIn',
-			'matrix',
 			'matrixEnabled',
 			'extensionAvilable',
 		]),
+		...mapState([
+			'matrixLoggedIn',
+			'matrix',
+		].reduce(
+			(acc, n) => Object.assign(acc, { [n]: state => state.matrix[n] }),
+			{}
+		)),
 	},
 	methods: {
 		...mapMutations([
@@ -29,6 +39,7 @@ export default {
 		]),
 		...mapActions([
 			'saveBackup',
+			'initModule',
 		]),
 		_loadBackup(event) {
 			const files = event.target.files || event.dataTransfer.files;

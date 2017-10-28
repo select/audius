@@ -1,11 +1,9 @@
-/* eslint-disable no-multiple-empty-lines */
-
 // Matrix
-
-export const state = {
+export const state = () => ({
+	paginationIndex: {},
 	currentMatrixRoom: null,
-	matrixRooms: {},
-	matrixRoomsOrdered: [],
+	sources: {},
+	sourcesOrdered: [],
 	createMatrixRoomModal: false,
 	showMatrixRoomDirectory: false,
 	matrixLoggedIn: false,
@@ -20,4 +18,4 @@ export const state = {
 		publicRooms: [],
 	},
 	extensionAvilable: false,
-};
+});

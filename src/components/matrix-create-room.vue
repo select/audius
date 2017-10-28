@@ -42,7 +42,6 @@ export default {
 	},
 	computed: {
 		...mapState(['createMatrixRoomModal', 'matrix']),
-		...mapGetters(['tagNames']),
 		slugName() {
 			if (this.roomName.length < 5) return '…';
 			const slug = slugify(this.roomName)

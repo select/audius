@@ -21,14 +21,13 @@ export default {
 	},
 	created() {
 		if (this.matrixEnabled) {
-			this.initMatrix();
+			this.initModule('matrix');
 		}
 	},
 	methods: {
 		...mapMutations([
 			'setMatrixEnabled',
 			'selectMediaSource',
-			'movematrixRoomsOrdered',
 			'setShowMediumSettings',
 			'toggleMatrixRoomModal',
 			'toggleMatrixRoomDirectory',
@@ -36,7 +35,7 @@ export default {
 			'setMatrixRoomTag',
 			'error',
 		]),
-		...mapActions(['joinMatrixRoom', 'leaveMatrixRoom', 'matrixSend', 'initMatrix']),
+		...mapActions(['joinMatrixRoom', 'leaveMatrixRoom', 'matrixSend', 'initModule']),
 		addMatrixRoom() {
 			const el = document.querySelector('.matrix-room input');
 			const roomIdRegEx = /#[\w-]+:[\w-]+\.\w{2,}/;
@@ -61,19 +60,24 @@ export default {
 	computed: {
 		...mapState([
 			'matrixEnabled',
-			'matrixRooms',
-			'currentMatrixRoom',
-			'matrixRoomsOrdered',
-			'matrixRooms',
+			'loadedModules',
+			'currentMediaSource',
+		]),
+		...mapState([
+			'sources',
+			'sourcesOrdered',
 			'matrixLoggedIn',
 			'showMatrixLoginModal',
-		]),
-		_matrixRoomsOrdered: {
+		].reduce(
+			(acc, n) => Object.assign(acc, { [n]: state => state.matrix[n] }),
+			{}
+		)),
+		_sourcesOrdered: {
 			get() {
-				return this.matrixRoomsOrdered;
+				return this.sourcesOrdered;
 			},
 			set(value) {
-				this.moveRoomsOrdered(value);
+				this.error('not implemented');
 			},
 		},
 	},
@@ -82,124 +86,128 @@ export default {
 
 <template>
 <div class="matrix-room play-list-manager__wrapper">
-	<div v-if="matrixEnabled && !matrixLoggedIn" class="matrix-room__logging-in">
-		&nbsp; … connecting to Matrix
-	</div>
 	<div v-if="!matrixEnabled" class="play-list-manager__enable-matrix">
 		<a href="https://matrix.org/" target="_blank" rel="noopener">Matrix</a> is a chat network that allows you to share music and videos with your friends. Press the button to create a guest user and join Matrix.
 		<br>
 		<br>
 		<button
 			class="button btn--blue"
-			@click="setMatrixEnabled();initMatrix();"
+			@click="setMatrixEnabled();initModule('matrix');"
 			type="button">Join Matrix</button>
 	</div>
-	<div
-		class="play-list-manager__room-suggestions"
-		v-if="matrixLoggedIn && !matrixRoomsOrdered.length">
-		You did not join any rooms yet!
-		<br>
-		<br>
-		<button class="button btn--blue" @click="toggleMatrixRoomDirectory()">
-			<span class="wmp-icon-format_list_bulleted"></span>
-			rooms
-		</button>
-		<br>
-		<br>
-		Open the room list
-		or
-		create your own room.
-	</div>
-	<matrix-create-room></matrix-create-room>
-	<matrix-public-rooms></matrix-public-rooms>
-
-	<div class="modal" v-if="showMatrixLoginModal" @click="toggleMatrixLoginModal()">
-		<div class="modal__body" @click.stop>
-			You are a guest user. Guest users are not allowed to join this room. Create a full accound with
-			<a
-			href="https://riot.im/app/#/room/#audius:matrix.org"
-			target="_blank" rel="noopener">Riot</a>
-			or <a href="https://matrix.org/docs/projects/try-matrix-now.html#clients" target="_blank" rel="noopener">another client</a> and login below.
-			<matrix-login></matrix-login>
+	matrixEnabled: {{matrixEnabled}} loadedModules.matrix: {{loadedModules.matrix}}
+	<div v-if="matrixEnabled && loadedModules.matrix">
+		matrixLoggedIn: {{matrixLoggedIn}}
+		<div v-if="matrixEnabled && !matrixLoggedIn" class="matrix-room__logging-in">
+			&nbsp; … connecting to Matrix
 		</div>
-	</div>
+		<div
+			class="play-list-manager__room-suggestions"
+			v-if="matrixLoggedIn && !sourcesOrdered.length">
+			You did not join any rooms yet!
+			<br>
+			<br>
+			<button class="button btn--blue" @click="toggleMatrixRoomDirectory()">
+				<span class="wmp-icon-format_list_bulleted"></span>
+				rooms
+			</button>
+			<br>
+			<br>
+			Open the room list
+			or
+			create your own room.
+		</div>
+		<matrix-create-room></matrix-create-room>
+		<matrix-public-rooms></matrix-public-rooms>
 
-	<draggable
-		class="matrix-room__tags"
-		v-model="_matrixRoomsOrdered"
-		element="ul"
-		:options="{
-			animation: 150,
-			scrollSpeed: 20,
-			handle: '.play-list-manager__drag-handle',
-		}">
+		<div class="modal" v-if="showMatrixLoginModal" @click="toggleMatrixLoginModal()">
+			<div class="modal__body" @click.stop>
+				You are a guest user. Guest users are not allowed to join this room. Create a full accound with
+				<a
+				href="https://riot.im/app/#/room/#audius:matrix.org"
+				target="_blank" rel="noopener">Riot</a>
+				or <a href="https://matrix.org/docs/projects/try-matrix-now.html#clients" target="_blank" rel="noopener">another client</a> and login below.
+				<matrix-login></matrix-login>
+			</div>
+		</div>
+
 		<draggable
-			v-for="id in _matrixRoomsOrdered"
-			:key="id"
-			class="play-list-manager__tag-drop-zone"
-			element="li"
-			@add="dropAdd($event, id)"
+			class="matrix-room__tags"
+			v-model="_sourcesOrdered"
+			element="ul"
 			:options="{
-				sort: false,
-				handle: '.no-handle',
-				group: { name: 'lists' }
-			}"
-			v-bind:class="{ active: currentMatrixRoom == id }">
-			<div class="play-list-manager__drag-handle"></div>
-			<div
-				class="play-list-manager__tag-body"
-				@click="selectMediaSource({ type: 'radio', id: id })">
-				<div>
-					{{matrixRooms[id].name}}
+				animation: 150,
+				scrollSpeed: 20,
+				handle: '.play-list-manager__drag-handle',
+			}">
+			<draggable
+				v-for="id in _sourcesOrdered"
+				:key="id"
+				class="play-list-manager__tag-drop-zone"
+				element="li"
+				@add="dropAdd($event, id)"
+				:options="{
+					sort: false,
+					handle: '.no-handle',
+					group: { name: 'lists' }
+				}"
+				v-bind:class="{ active: currentMediaSource.id == id }">
+				<div class="play-list-manager__drag-handle"></div>
+				<div
+					class="play-list-manager__tag-body"
+					@click="selectMediaSource({ type: 'webScraper', id: id })">
+					<div>
+						{{matrixRooms[id].name}}
+					</div>
+					<div>
+						{{matrixRooms[id].playList.length - Object.keys(matrixRooms[id].playedMedia).length}} New
+						{{numWatched(id)}} Watched
+					</div>
 				</div>
-				<div>
-					{{matrixRooms[id].playList.length - Object.keys(matrixRooms[id].playedMedia).length}} New
-					{{numWatched(id)}} Watched
+				<div class="play-list-manager__menu">
+					<span
+						class="wmp-icon-mode_edit"
+						title="Edit room"
+						@click.stop="setShowMediumSettings({ medium: 'matrix', id })"></span>
+					<span
+						class="wmp-icon-close"
+						title="Leave room"
+						@click.stop="showConfirmDelte = id"></span>
 				</div>
-			</div>
-			<div class="play-list-manager__menu">
-				<span
-					class="wmp-icon-mode_edit"
-					title="Edit room"
-					@click.stop="setShowMediumSettings({ medium: 'matrix', id })"></span>
-				<span
-					class="wmp-icon-close"
-					title="Leave room"
-					@click.stop="showConfirmDelte = id"></span>
-			</div>
+			</draggable>
 		</draggable>
-	</draggable>
 
-	<ul class="matrix-room__tags">
-		<li
-			class="play-list-manager__input"
-			v-if="matrixLoggedIn">
-			<div class="play-list-manager__tag-body">
-				<input
-					v-on:keyup.enter="addMatrixRoom"
-					type="text"
-					placeholder="… room id or name">
-			</div>
-			<div class="matrix-room__room-join-create">
-				<span
-					class="wmp-icon-add"
-					title="Create / join room"
-					@click="addMatrixRoom"></span>
-			</div>
-			<div class="matrix-room__room-list">
-				<span
-					class="wmp-icon-format_list_bulleted"
-					title="Room List"
-					@click="toggleMatrixRoomDirectory()"></span>
-			</div>
-		</li>
-	</ul>
-	<div class="modal" v-if="showConfirmDelte" @click="showConfirmDelte = false">
-		<div class="modal__body" @click.stop>
-			Are you sure you want to leave the room?
-			<div class="modal__btn-group">
-				<button class="button" @click="showConfirmDelte = false">Cancel</button>
-				<button class="button btn--blue" @click.stop="leaveMatrixRoom(showConfirmDelte);showConfirmDelte = false;">Leave</button>
+		<ul class="matrix-room__tags">
+			<li
+				class="play-list-manager__input"
+				v-if="matrixLoggedIn">
+				<div class="play-list-manager__tag-body">
+					<input
+						v-on:keyup.enter="addMatrixRoom"
+						type="text"
+						placeholder="… room id or name">
+				</div>
+				<div class="matrix-room__room-join-create">
+					<span
+						class="wmp-icon-add"
+						title="Create / join room"
+						@click="addMatrixRoom"></span>
+				</div>
+				<div class="matrix-room__room-list">
+					<span
+						class="wmp-icon-format_list_bulleted"
+						title="Room List"
+						@click="toggleMatrixRoomDirectory()"></span>
+				</div>
+			</li>
+		</ul>
+		<div class="modal" v-if="showConfirmDelte" @click="showConfirmDelte = false">
+			<div class="modal__body" @click.stop>
+				Are you sure you want to leave the room?
+				<div class="modal__btn-group">
+					<button class="button" @click="showConfirmDelte = false">Cancel</button>
+					<button class="button btn--blue" @click.stop="leaveMatrixRoom(showConfirmDelte);showConfirmDelte = false;">Leave</button>
+				</div>
 			</div>
 		</div>
 	</div>

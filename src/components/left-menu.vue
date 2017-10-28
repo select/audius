@@ -3,8 +3,8 @@ import { mapMutations, mapState } from 'vuex';
 
 import PlayListManager from './play-list-manager.vue';
 
-const MatrixRoomManager = () => import(/* webpackChunkName: "matrix-room-manager" */'./matrix-room-manager.vue');
-const WebScraperManager = () => import(/* webpackChunkName: "web-scraper-manager" */'./web-scraper-manager.vue');
+const MatrixRoomManager = () => import(/* webpackChunkName: "components/matrix-room-manager" */'./matrix-room-manager.vue');
+const WebScraperManager = () => import(/* webpackChunkName: "components/web-scraper-manager" */'./web-scraper-manager.vue');
 
 function disableSelect(event) {
 	event.preventDefault();
@@ -56,16 +56,16 @@ export default {
 			v-on:click="setLeftMenuTab('playList')"
 			v-bind:class="{ active: leftMenuTab == 'playList' }">Playlist</li>
 		<li
-			v-on:click="setLeftMenuTab('radio')"
-			v-bind:class="{ active: leftMenuTab == 'radio' }">Rooms</li>
+			v-on:click="setLeftMenuTab('matrix')"
+			v-bind:class="{ active: leftMenuTab == 'matrix' }">Rooms</li>
 		<li
-			v-on:click="setLeftMenuTab('tv');"
-			v-bind:class="{ active: leftMenuTab == 'tv' }">Channels</li>
+			v-on:click="setLeftMenuTab('webScraper');"
+			v-bind:class="{ active: leftMenuTab == 'webScraper' }">Channels</li>
 	</ul>
 	<div class="left-menu__wrapper">
 		<play-list-manager v-show="leftMenuTab == 'playList'"></play-list-manager>
-		<matrix-room-manager v-if="leftMenuTab == 'radio'"></matrix-room-manager>
-		<web-scraper-manager v-if="leftMenuTab == 'tv'"></web-scraper-manager>
+		<matrix-room-manager v-if="leftMenuTab == 'matrix'"></matrix-room-manager>
+		<web-scraper-manager v-if="leftMenuTab == 'webScraper'"></web-scraper-manager>
 	</div>
 	<div
 		class="left-menu__drag-handle"

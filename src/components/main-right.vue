@@ -1,14 +1,14 @@
 <script >
 import { mapMutations, mapState } from 'vuex';
 import AboutPlayer from './about-player.vue';
-import Queue from './queue.vue';
 import MediaPlayer from './media-player.vue';
 
-const Settings = () => import(/* webpackChunkName: "settings" */'./settings.vue');
-const SearchResults = () => import(/* webpackChunkName: "search-results" */'./search-results.vue');
-const WebScraperSettings = () => import(/* webpackChunkName: "web-scraper-settings" */'./web-scraper-settings.vue');
-const MatrixRoomSettings = () => import(/* webpackChunkName: "matrix-room-settings" */'./matrix-settings.vue');
-const MediaEdit = () => import(/* webpackChunkName: "media-edit" */'./media-edit.vue');
+const Settings = () => import(/* webpackChunkName: "components/settings" */'./settings.vue');
+const SearchResults = () => import(/* webpackChunkName: "components/search-results" */'./search-results.vue');
+const WebScraperSettings = () => import(/* webpackChunkName: "components/web-scraper-settings" */'./web-scraper-settings.vue');
+const MatrixRoomSettings = () => import(/* webpackChunkName: "components/matrix-room-settings" */'./matrix-settings.vue');
+const MediaEdit = () => import(/* webpackChunkName: "components/media-edit" */'./media-edit.vue');
+const Queue = () => import(/* webpackChunkName: "components/queue" */'./queue.vue');
 
 function disableSelect(event) {
 	event.preventDefault();
@@ -33,8 +33,7 @@ export default {
 		'showSettings',
 		'showMediumSettings',
 		'currentMedia',
-		'currentWebScraper',
-		'currentMatrixRoom',
+		'currentMediaSource',
 		'showMediaEdit',
 		'queue',
 	]),
@@ -100,11 +99,11 @@ export default {
 			@click="setMainRightTab('about')"
 			v-bind:class="{ active: mainRightTab == 'about' }">About</li>
 		<li
-			v-if="showMediumSettings.tv && currentWebScraper"
+			v-if="showMediumSettings.tv && currentMediaSource.type === 'webScraper'"
 			@click="setMainRightTab('webScraperSettings')"
 			v-bind:class="{ active: mainRightTab == 'webScraperSettings' }">Channel Settings</li>
 		<li
-			v-if="showMediumSettings.matrix && currentMatrixRoom"
+			v-if="showMediumSettings.matrix && currentMediaSource.type === 'matrix'"
 			@click="setMainRightTab('matrixRoomSettings')"
 			v-bind:class="{ active: mainRightTab == 'matrixRoomSettings' }">Room Settings</li>
 		<li
@@ -119,10 +118,10 @@ export default {
 	<div class="main-right__content" v-show="mainRightTab">
 		<about-player v-show="mainRightTab == 'about'"></about-player>
 		<search-results v-if="mainRightTab == 'search'"></search-results>
-		<queue v-show="mainRightTab == 'queue'"></queue>
+		<queue v-if="mainRightTab == 'queue'"></queue>
 		<media-edit v-if="mainRightTab == 'mediaEdit'"></media-edit>
-		<web-scraper-settings v-if="mainRightTab == 'webScraperSettings' && currentWebScraper"></web-scraper-settings>
-		<matrix-room-settings v-if="mainRightTab == 'matrixRoomSettings' && currentMatrixRoom"></matrix-room-settings>
+		<web-scraper-settings v-if="mainRightTab == 'webScraperSettings' && currentMediaSource.type === 'webScraper'"></web-scraper-settings>
+		<matrix-room-settings v-if="mainRightTab == 'matrixRoomSettings' && currentMediaSource.type === 'matrix'"></matrix-room-settings>
 		<settings v-if="mainRightTab == 'settings'"></settings>
 	</div>
 	<div

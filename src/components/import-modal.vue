@@ -11,11 +11,11 @@ export default {
 	mounted() {
 		this.importName = this.pendingImportURL ? this.pendingImportURL.name : '';
 		if (!this.matrixLoggedIn && this.matrixEnabled) {
-			this.initMatrix();
+			this.initModule('matrix');
 		}
 	},
 	methods: {
-		...mapActions(['importURL', 'joinMatrixRoom', 'initMatrix']),
+		...mapActions(['importURL', 'joinMatrixRoom', 'initModule']),
 		...mapMutations(['setPendingImportURL', 'setMatrixEnabled', 'error']),
 		close() {
 			this.setPendingImportURL(null);
@@ -46,12 +46,19 @@ export default {
 	computed: {
 		...mapState([
 			'pendingImportURL',
-			'webScrapers',
 			'matrixEnabled',
-			'matrixLoggedIn',
 			'extensionAvilable',
 		]),
-		...mapGetters(['tagNames']),
+		...mapState([
+			'matrixLoggedIn',
+		].reduce(
+			(acc, n) => Object.assign(acc, { [n]: state => state.matrix[n] }),
+			{}
+		)),
+		...mapState({
+			webScrapers: state => state.webScraper.sources,
+		}),
+		...mapGetters(['sourcesOrdered']),
 	},
 };
 </script>
@@ -123,7 +130,7 @@ export default {
 					<div class="import-modal__row">
 						<select class="import-modal__other-playlist-input">
 							<option value="">Default</option>
-							<option v-for="playListName in tagNames">{{playListName}}</option>
+							<option v-for="playListName in sourcesOrdered">{{playListName}}</option>
 						</select>
 						<button class="button btn--blue" @click="addToPlayList">Add</button>
 					</div>

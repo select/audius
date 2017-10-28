@@ -5,15 +5,16 @@ import draggable from 'vuedraggable';
 
 import { starterPlaylist, throttle, debounce } from '../utils';
 import VideoItem from './video-item.vue';
-import PlayListExport from './play-list-export.vue';
-import PlayListImport from './play-list-import.vue';
+
+const PlayListExport = () => import(/* webpackChunkName: "components/play-list-export" */'./play-list-export.vue');
+const PlayListImport = () => import(/* webpackChunkName: "components/play-list-import" */'./play-list-import.vue');
 
 function isElementInViewport(el) {
 	if (!el) return false;
 	const rect = el.getBoundingClientRect();
 	return (
 		(rect.top + 300) >= 0 &&
-		(rect.bottom - 300) <= (window.innerHeight || document.documentElement.clientHeight) /* or $(window).height() */
+		(rect.bottom - 300) <= (window.innerHeight || document.documentElement.clientHeight)
 	);
 }
 
@@ -63,7 +64,7 @@ export default {
 			'toggleJump',
 			'dropMoveItem',
 			'setShowWatched',
-			'setLeftMenuTab'
+			'setLeftMenuTab',
 		]),
 		...mapActions(['importURL', 'matrixPaginate', 'runWebScraper', 'matrixSend']),
 		checkElementVisible(hide) {
@@ -79,16 +80,16 @@ export default {
 		},
 		dropAdd(event) { // Element is dropped into the list from another list
 			const itemId = event.item.dataset.id;
-			if (this.currentMatrixRoom) {
-				this.matrixSend({ itemId, roomId: this.currentMatrixRoom });
+			const { id, type } = this.currentMediaSource;
+			if (type === 'matrix') {
+				this.matrixSend({ itemId, roomId: id });
 			} else {
-				this.dropMoveItem({ itemId, to: this.currentPlayList });
+				this.dropMoveItem({ itemId, to: id });
 			}
 		},
 		clear(close) {
 			if (!this.filterQuery) this.toggleJump(false);
 			clearTimeout(this.blurTimer);
-			event.stopPropagation();
 			document.querySelector('.play-list-footer__search-input').value = '';
 			document.querySelector('.play-list-footer__search-input').focus();
 			this.filterPlayList('');
@@ -111,38 +112,29 @@ export default {
 				this.filterPlayList('');
 			}
 		},
-		_expiryDate(id) {
-			if (this.currentWebScraper) {
-				return this.webScrapers[this.currentWebScraper].playedMedia[id];
-			}
-			if (this.currentMatrixRoom) {
-				return this.matrixRooms[this.currentMatrixRoom].playedMedia[id];
-			}
-			return null;
+		_expiryDate(mediaId) {
+			const { type, id } = this.currentMediaSource;
+			if (type === 'playList') return null;
+			return this.$store[type].sources[id].playedMedia[mediaId];
 		},
 	},
 	computed: {
 		...mapGetters([
 			'filteredPlayListLength',
 			'filteredPlayList',
-			'tagNames',
 		]),
 		...mapState([
 			'currentMedia',
 			'showJump',
 			'showImport',
 			'showExport',
-			'currentPlayList',
+			'currentMediaSource',
 			'entities',
 			'isPlaying',
 			'filterQuery',
 			'tags',
 			'jumpCursor',
-			'leftMenuTab',
-			'currentMatrixRoom',
-			'currentWebScraper',
 			'webScrapers',
-			'paginationIndex',
 			'matrixRooms',
 			'showWatched',
 		]),
@@ -151,17 +143,18 @@ export default {
 				return this.filteredPlayList;
 			},
 			set(value) {
-				if (!this.showJump && this.currentPlayList !== null) {
+				const { type } = this.currentMediaSource;
+				if (!this.showJump && type === 'playList') {
 					this.movePlayListMedia(
 						value.map(media => media.id)
 					);
 				}
-				if (this.currentMatrixRoom) {
+				if (type === 'matrix') {
 					const index = new Set(this.filteredPlayList.map(({ id }) => id));
 					value
 						.filter(({ id }) => !index.has(id))
 						.forEach(media => {
-							this.matrixSend({ media, roomId: this.currentMatrixRoom });
+							this.matrixSend({ media, roomId: this.currentMediaSource.id });
 						});
 				}
 			},
@@ -172,12 +165,8 @@ export default {
 				|| this.showExport
 				|| this.showJump
 				|| this.filteredPlayListLength
-				|| this.currentWebScraper
-				|| this.currentMatrixRoom);
-		},
-		currentSourceId() {
-			const names = ['currentPlayList', 'currentMatrixRoom', 'currentWebScraper'];
-			return this[names.find(n => !!this[n])];
+				|| ['matrix', 'webScraper'].includes(this.currentMediaSource.type)
+			);
 		},
 	},
 };
@@ -224,7 +213,6 @@ export default {
 		</draggable>
 
 		<play-list-import
-			:tags="tagNames"
 			v-on:toggleImport="toggleImport"
 			v-on:importOtherPlayList="importOtherPlayList"
 			v-show="showImport"></play-list-import>
@@ -246,14 +234,13 @@ export default {
 		<div
 			v-show="!(showImport || showExport)"
 			>
-
 			<div
-				v-if="(currentWebScraper || currentMatrixRoom) && !showWatched[currentSourceId]"
-				@click="setShowWatched({ id: currentSourceId, toggleState: true })"
+				v-if="['matrix', 'webScraper'].includes(currentMediaSource.type) && !showWatched[currentMediaSource.id]"
+				@click="setShowWatched({ id: currentMediaSource.id, toggleState: true })"
 				class="play-list__load-more"> show watched items </div>
 			<div
-				v-if="(currentWebScraper || currentMatrixRoom) && showWatched[currentSourceId]"
-				@click="setShowWatched({ id: currentSourceId, toggleState: false })"
+				v-if="['matrix', 'webScraper'].includes(currentMediaSource.type) && showWatched[currentMediaSource.id]"
+				@click="setShowWatched({ id: currentMediaSource.id, toggleState: false })"
 				class="play-list__load-more"> hide watched items </div>
 			<draggable
 				class="media-list"
@@ -274,32 +261,32 @@ export default {
 					ref="playListEls"
 					:key="index"
 					:video="media"
-					:isPlayList="currentPlayList !== null"
+					:isPlayList="currentMediaSource.type === 'playList'"
 					:isSelected="jumpCursor === media.id"
 					:expiryDate="_expiryDate(media.id)"
-					:isWebScraper="!!(currentWebScraper)"
+					:isWebScraper="currentMediaSource.type == 'webScraper'"
 					:isPlaying="isPlaying && (currentMedia.id == media.id)"></video-item>
 			</draggable>
 
 			<div
 				class="play-list__greeting"
-				v-if="currentMatrixRoom && !_entities.length ">
+				v-if="currentMediaSource.type === 'matrix' && !_entities.length ">
 				Nothing found. Click load more or add from search or playlists.
 			</div>
 			<div
 				class="play-list__greeting"
-				v-if="currentWebScraper && !_entities.length ">
+				v-if="currentMediaSource.type == 'webScraper' && !_entities.length ">
 				Nothing found. Click load more.
 			</div>
 
 			<div
-				v-if="currentWebScraper"
-				@click="runWebScraper(currentWebScraper)"
-				class="play-list__load-more"> … load more (Page {{paginationIndex[currentWebScraper] || 0}}) </div>
+				v-if="currentMediaSource.type == 'webScraper'"
+				@click="runWebScraper(currentMediaSource.id)"
+				class="play-list__load-more"> … load more (Page {{paginationIndex[currentMediaSource.id] || 0}}) </div>
 			<div
-				v-if="currentMatrixRoom"
-				@click="matrixPaginate(currentMatrixRoom)"
-				class="play-list__load-more"> … load more (Page {{paginationIndex[currentMatrixRoom] || 0}}) </div>
+				v-if="currentMediaSource.type == 'matrix'"
+				@click="matrixPaginate(currentMediaSource.id)"
+				class="play-list__load-more"> … load more (Page {{paginationIndex[currentMediaSource.id] || 0}}) </div>
 		</div>
 
 	</div>
@@ -311,7 +298,7 @@ export default {
 				{{filteredPlayListLength}} Songs
 			</li>
 			<li
-				v-if="currentPlayList !== null"
+				v-if="currentMediaSource.type === 'playList'"
 				v-bind:class="{ active: showImport }"
 				@click="toggleImport()">
 				<span class="wmp-icon-add"></span> Add

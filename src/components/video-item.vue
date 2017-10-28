@@ -14,12 +14,15 @@ export default {
 		expiryDate: Date,
 		isWebScraper: Boolean,
 	},
-	computed: mapState([
-		'isMobile',
-		'currentMatrixRoom',
-		'currentPlayList',
-		'matrixRooms',
-	]),
+	computed: {
+		...mapState([
+			'isMobile',
+			'currentMediaSource',
+		]),
+		...mapState({
+			matrixRooms: state => state.matrix.matrixRooms,
+		}),
+	},
 	data() {
 		return {
 			copyActive: false,
@@ -53,19 +56,21 @@ export default {
 			else this.play({ media: this.video });
 		},
 		remove() {
-			if (this.currentMatrixRoom) {
+			const { id, type } = this.currentMediaSource;
+			if (type === 'matrix') {
 				this.matrixRedact(this.video);
-			} else if (this.currentPlayList !== null) {
-				this.removeMedia({ mediaIds: [this.video.id], tagName: this.currentPlayList });
+			} else if (type === 'playList') {
+				this.removeMedia({ mediaIds: [this.video.id], tagName: id });
 			} else {
 				this.error('No suitable media source selected.');
 			}
 		},
 		addToPlaylist() {
-			if (this.currentMatrixRoom) {
-				this.matrixSend({ media: this.video, roomId: this.currentMatrixRoom });
-			} else if (this.currentPlayList !== null) {
-				this.addSearchResult({ media: this.video, tagName: this.currentPlayList });
+			const { id, type } = this.currentMediaSource;
+			if (type === 'matrix') {
+				this.matrixSend({ media: this.video, roomId: id });
+			} else if (type === 'playList') {
+				this.addSearchResult({ media: this.video, tagName: id });
 			} else {
 				this.error('No suitable media source selected.');
 			}
@@ -174,7 +179,7 @@ export default {
 						@click="setShowMediaEdit(video.id);selected = false"></span>
 					<span
 						class="wmp-icon-close"
-						v-if="isPlayList || isQueue || (currentMatrixRoom && matrixRooms[currentMatrixRoom].isAdmin)"
+						v-if="isPlayList || isQueue || (currentMediaSource.type === 'matrix' && matrixRooms[currentMediaSource.id].isAdmin)"
 						@click="setShowConfirmDelte();selected = false"
 						title="Remove"></span>
 

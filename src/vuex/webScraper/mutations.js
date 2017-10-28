@@ -2,33 +2,32 @@ import { webScraper } from '../../utils';
 import { rename } from '../audius/mutations-rename';
 
 /* eslint-disable no-param-reassign */
-export const mutationsWebScraper = {
+export const mutations = {
 	// Web Scraper
 	// ---
 	addWebScraper(state, name) {
 		if (!name) {
 			let counter = 1;
 			name = `Channel ${counter}`;
-			while (name in state.webScrapers) {
+			while (name in state.sources) {
 				name = `Channel ${counter++}`;
 			}
 		}
 
-		state.webScrapers[name] = { playList: [], playedMedia: {}, settings: {}, archive: [] };
-		if (!state.webScrapersOrdered.includes(name)) state.webScrapersOrdered.push(name);
+		state.sources[name] = { playList: [], playedMedia: {}, settings: {}, archive: [] };
+		if (!state.sourcesOrdered.includes(name)) state.sourcesOrdered.push(name);
 		state.currentWebScraper = name;
 	},
 	deleteWebScraper(state, id) {
-		delete state.webScrapers[id];
-		state.webScrapersOrdered = state.webScrapersOrdered.filter(n => n !== id);
+		delete state.sources[id];
+		state.sourcesOrdered = state.sourcesOrdered.filter(n => n !== id);
 	},
 	initScraperSuccess(state, id) {
-		console.log("id", id);
-		state.webScrapersInitialized[id] = true;
+		state.sourcesInitialized[id] = true;
 	},
 	addUrlPattern(state, { id, urlPattern }) {
-		const urls = state.webScrapers[id].settings.urls || [];
-		const { settings } = state.webScrapers[id];
+		const urls = state.sources[id].settings.urls || [];
+		const { settings } = state.sources[id];
 		if (!urls.some(p => p === urlPattern)) {
 			settings.urls = [
 				...urls,
@@ -36,7 +35,7 @@ export const mutationsWebScraper = {
 			];
 			settings.numPages = settings.urls.reduce((acc, { numPages }) => acc + numPages, 0);
 		}
-		state.webScrapers = Object.assign({}, state.webScrapers);
+		state.sources = Object.assign({}, state.sources);
 	},
 	setShowWatched(state, { id, toggleState }) {
 		state.showWatched[id] = toggleState;
@@ -47,10 +46,10 @@ export const mutationsWebScraper = {
 		state.paginationIndex = Object.assign({}, state.paginationIndex);
 	},
 	updateWebScraper(state, { id, values }) {
-		state.webScrapers[id] = Object.assign({}, state.webScrapers[id], values);
-		state.webScrapers = Object.assign({}, state.webScrapers);
+		state.sources[id] = Object.assign({}, state.sources[id], values);
+		state.sources = Object.assign({}, state.sources);
 	},
 	renameWebScraper(state, { newName, oldName }) {
-		rename(state, 'webScrapers', newName, oldName);
+		rename(state, 'webScraper', newName, oldName);
 	},
 };

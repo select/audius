@@ -2,7 +2,7 @@ export const presistMutation = {
 	setMatrixCredentials: ['matrix'],
 	setPublicRooms: ['matrix'],
 	setMatrixEnabled: ['matrixEnabled'],
-	updateMatrixRoom: ['matrixRooms'],
+	updateMatrixRoom: ['sources'],
 	matrixRemoveAccount: ['matrix'],
-	deleteMatrixRoom: ['matrixRoomsOrdered'],
+	deleteMatrixRoom: ['sourcesOrdered'],
 };

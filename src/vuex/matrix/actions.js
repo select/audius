@@ -5,7 +5,7 @@ import { getMediaEntity } from '../audius/getCurrentPlayList';
 let matrixClient;
 
 function addMatrixMessage(state, commit, roomId, eventId, results) {
-	const room = state.matrixRooms[roomId];
+	const room = state.sources[roomId];
 	if (!results.length) return;
 	const playList = [
 		...room.playList,
@@ -28,7 +28,7 @@ function addMatrixMessage(state, commit, roomId, eventId, results) {
 /* eslint-disable no-param-reassign */
 export const actions = {
 	initMatrix({ commit, state, dispatch }) {
-		import(/* webpackChunkName: "matrix-client" */ '../../utils/matrixClient').then(mc => {
+		import(/* webpackChunkName: "utils/matrixClient" */ '../../utils/matrixClient').then(mc => {
 			({ matrixClient } = mc);
 			if (!state.matrix.hasCredentials) {
 				matrixClient
@@ -66,11 +66,11 @@ export const actions = {
 	},
 	matrixSend({ state, commit }, { itemId, roomId, media }) {
 		const curMedia = media || getMediaEntity(state, itemId);
-		if (state.matrixRooms[roomId].playList.some(({ id }) => id === curMedia.id)) {
+		if (state.sources[roomId].playList.some(({ id }) => id === curMedia.id)) {
 			commit('error', 'The media item was already posted.');
 			return;
 		}
-		if (state.matrixRooms[roomId].humanReadablePosts) {
+		if (state.sources[roomId].humanReadablePosts) {
 			matrixClient
 				.sendMessage(roomId, getMediaLink(curMedia))
 				.catch(error => commit('error', `Posting message to matrix room failed. ${error}`));
@@ -91,7 +91,7 @@ export const actions = {
 				commit('updateMatrixRoom', {
 					roomId: media.roomId,
 					values: {
-						playList: state.matrixRooms[media.roomId].playList.filter(
+						playList: state.sources[media.roomId].playList.filter(
 							({ eventId }) => eventId !== media.eventId
 						),
 					},
@@ -121,8 +121,8 @@ export const actions = {
 			.then(room => {
 				room.name = name || id;
 				commit('setMatrixLoggedIn', { rooms: [room] });
-				commit('selectMediaSource', { type: 'radio', id: room.roomId });
-				commit('setLeftMenuTab', 'radio');
+				commit('selectMediaSource', { type: 'webScraper', id: room.roomId });
+				commit('setLeftMenuTab', 'webScraper');
 			})
 			.catch(error => {
 				// {"errcode":"M_FORBIDDEN","error":"Guest access not allowed"}
@@ -223,8 +223,8 @@ export const actions = {
 	},
 	parseMatrixMessage({ state, commit }, { roomId, eventId, message }) {
 		// Get the room for the message.
-		const room = state.matrixRooms[roomId];
-		if (!(roomId in state.matrixRooms)) {
+		const room = state.sources[roomId];
+		if (!(roomId in state.sources)) {
 			commit('error', `Could not find matrix room ${roomId}`);
 			commit('updateMatrixRoom', { roomId });
 			return;

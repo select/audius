@@ -90,16 +90,17 @@ export const actions = {
 			});
 	},
 	nextVideo({ state, commit, dispatch }) {
-		if (state.currentWebScraper) {
+		console.log('check if next viedo works');
+		if (state.currentMediaSource.type === 'webScraper') {
 			const cp = getCurrentPlayListEntities(state);
 			if (cp.length < 7) {
-				dispatch('runWebScraper', state.currentWebScraper);
+				dispatch('runWebScraper', state.currentMediaSource.id);
 			}
 		}
-		if (state.currentMatrixRoom) {
+		if (state.currentMediaSource.type === 'matrix') {
 			const cp = getCurrentPlayListEntities(state);
 			if (cp.length < 7) {
-				dispatch('matrixPaginate', state.currentMatrixRoom);
+				dispatch('matrixPaginate', state.currentMediaSource.id);
 			}
 		}
 		commit('nextVideo');

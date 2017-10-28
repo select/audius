@@ -8,7 +8,8 @@ export const getters = {
 		return state.currentWebScraper ? 'channel' : state.currentMatrixRoom ? 'room' : 'playlist';
 	},
 	playList(state) {
-		if (state.currentPlayList) return state.tags[state.currentPlayList];
+		const { type, id } = state.currentMediaSource;
+		if (type === 'playList' && id) return state.sources[id];
 		return state.playList;
 	},
 	playListLength(state) {
@@ -64,8 +65,5 @@ export const getters = {
 	sessionHistoryHasPrev(state) {
 		const hlength = state.sessionHistory.length;
 		return hlength > 0 && state.sessionHistoryPos < hlength - 2;
-	},
-	tagNames(state) {
-		return Object.keys(state.tags);
 	},
 };

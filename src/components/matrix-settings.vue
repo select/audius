@@ -6,7 +6,10 @@ import { debounce } from '../utils';
 export default {
 	computed: {
 		...mapGetters(['youtubeApiKeyUI']),
-		...mapState(['matrix', 'matrixRooms', 'currentMatrixRoom']),
+		...mapState(['matrix', 'matrixRooms', 'currentMediaSource']),
+		currentMatrixRoom() {
+			return this.currentMediaSource.type === 'matrix' ? this.currentMediaSource.id : null;
+		},
 		room() {
 			return this.matrixRooms[this.currentMatrixRoom];
 		},

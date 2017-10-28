@@ -12,9 +12,6 @@ const matrixRoomTemplate = () =>
 
 /* eslint-disable no-param-reassign */
 export const mutations = {
-	setMatrixEnabled(state) {
-		state.matrixEnabled = !state.matrixEnabled;
-	},
 	setPublicRooms(state, rooms) {
 		state.matrix = Object.assign(
 			{},
@@ -29,43 +26,43 @@ export const mutations = {
 	},
 	setMatrixLoggedIn(state, { rooms }) {
 		state.matrixLoggedIn = true;
-		const userId = state.matrix.credentials.userId;
+		const { userId } = state.matrix.credentials;
 
 		rooms.forEach(room => {
-			const roomId = room.roomId;
+			const { roomId } = room;
 
 			// Create room if not known yet.
-			if (!(roomId in state.matrixRooms)) {
-				state.matrixRooms[roomId] = Object.assign({}, matrixRoomTemplate(), { name: room.name });
+			if (!(roomId in state.sources)) {
+				state.sources[roomId] = Object.assign({}, matrixRoomTemplate(), { name: room.name });
 			}
 
 			if (room.currentState) {
 				// Set members of the room.
-				state.matrixRooms[roomId].members = Object
+				state.sources[roomId].members = Object
 					.entries(room.currentState.members)
 					.map(([id, member]) => ({ id, powerLevel: member.powerLevel }));
 
 				// Set flag indicating if current user is admin.
 				const myuser = room.currentState.members[userId] || {};
-				state.matrixRooms[roomId].isAdmin = myuser.powerLevel >= 100;
+				state.sources[roomId].isAdmin = myuser.powerLevel >= 100;
 
 				try {
-					state.matrixRooms[roomId].alias = room.currentState.events['m.room.aliases']['matrix.org'].event.content.aliases[0];
+					state.sources[roomId].alias = room.currentState.events['m.room.aliases']['matrix.org'].event.content.aliases[0];
 				} catch (e) {
 					console.warn('could not get alias, well it is bad code anyway');
 				}
 			}
 
 			// Add to room list if not on the list.
-			if (!state.matrixRoomsOrdered.includes(roomId)) {
-				state.matrixRoomsOrdered.unshift(roomId);
+			if (!state.sourcesOrdered.includes(roomId)) {
+				state.sourcesOrdered.unshift(roomId);
 			}
 			// Set room name if it changed and is not a matrix id.
 			if (
-				state.matrixRooms[roomId].name !== room.name &&
+				state.sources[roomId].name !== room.name &&
 				!room.name.includes(':matrix.org')
 			) {
-				state.matrixRooms[roomId].name = room.name;
+				state.sources[roomId].name = room.name;
 			}
 		});
 		// Remove room from room list if it does not exist any more.
@@ -73,12 +70,10 @@ export const mutations = {
 		// called when adding "one" new room
 		if (rooms.length > 1) {
 			const roomIndex = new Set(rooms.map(({ roomId }) => roomId));
-			state.matrixRoomsOrdered = state.matrixRoomsOrdered.filter(id => roomIndex.has(id));
+			state.sourcesOrdered = state.sourcesOrdered.filter(id => roomIndex.has(id));
 		}
 	},
 	toggleMatrixLoginModal(state, toggleState) {
-		state.leftMenuTab = 'radio';
-		state.showLeftMenu = true;
 		state.showMatrixLoginModal =
 			toggleState !== undefined ? toggleState : !state.showMatrixLoginModal;
 	},
@@ -102,22 +97,26 @@ export const mutations = {
 	},
 	matrixLogout(state) {
 		state.matrixLoggedIn = false;
-		state.matrixRooms = {};
-		state.matrixRoomsOrdered = [];
+		state.sources = {};
+		state.sourcesOrdered = [];
 		state.currentMatrixRoom = '';
 	},
 	deleteMatrixRoom(state, roomId) {
-		state.matrixRoomsOrdered = state.matrixRoomsOrdered.filter(id => id !== roomId);
+		state.sourcesOrdered = state.sourcesOrdered.filter(id => id !== roomId);
 	},
 	updateMatrixRoom(state, { roomId, values }) {
 		// Create room if it does not exist.
-		if (!state.matrixRooms[roomId]) {
-			state.matrixRooms[roomId] = Object.assign({}, matrixRoomTemplate(), { name: roomId });
+		if (!state.sources[roomId]) {
+			state.sources[roomId] = Object.assign({}, matrixRoomTemplate(), { name: roomId });
 		}
 		// Assign values to room. This assumes that merging ect was done in the function
 		// that triggered this mutation.
-		state.matrixRooms[roomId] = Object.assign({}, state.matrixRooms[roomId], values);
+		state.sources[roomId] = Object.assign({}, state.sources[roomId], values);
 		// Update the reference so the UI redraws.
-		state.matrixRooms = Object.assign({}, state.matrixRooms);
+		state.sources = Object.assign({}, state.sources);
+	},
+	setPaginationIndex(state, { id, index }) {
+		state.paginationIndex[id] = index;
+		state.paginationIndex = Object.assign({}, state.paginationIndex);
 	},
 };

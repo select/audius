@@ -1,10 +1,9 @@
-import { rename } from './mutations-rename';
 import { youtubeApiKey } from '../../utils/config';
 import {
 	getCurrentPlayListEntities,
 	getCurrentPlayList,
 	getCurrentName,
-	getMediaEntity
+	getMediaEntity,
 } from './getCurrentPlayList';
 
 /* eslint-disable no-param-reassign */
@@ -25,22 +24,8 @@ function playMedia(state, media) {
 }
 
 function selectMediaSource(state, { type, id }) {
-	if (type === 'tv' || type === 'webscraper') {
-		state.currentPlayList = null;
-		state.currentMatrixRoom = null;
-		state.currentWebScraper = id;
-		state.leftMenuTab = 'tv';
-	} else if (type === 'radio' || type === 'matrix') {
-		state.currentWebScraper = null;
-		state.currentPlayList = null;
-		state.currentMatrixRoom = id;
-		state.leftMenuTab = 'radio';
-	} else if (type === 'playList') {
-		state.currentWebScraper = null;
-		state.currentMatrixRoom = null;
-		state.currentPlayList = id;
-		state.leftMenuTab = 'playList';
-	}
+	state.currentMediaSource = { type, id };
+	state.leftMenuTab = type;
 	if (state.isMobile) {
 		state.leftMenuTab = '';
 		state.mainRightTab = '';
@@ -130,7 +115,12 @@ function play(state, mediaId, media) {
 export const mutations = {
 	recoverState(state, recoveredState) {
 		state = Object.assign(state, recoveredState);
-		if (state.currentPlayList === null) state.currentPlayList = '';
+		if (state.currentMediaSource.type !== 'playList') {
+			state.currentMediaSource = {
+				type: 'playlist',
+				id: '',
+			};
+		}
 	},
 	loadBackup(state, backup) {
 		if (backup.AudiusBackup) state = Object.assign(state, backup.data);
@@ -155,10 +145,6 @@ export const mutations = {
 	setMainRightTab(state, id) {
 		state.mainRightTab = id;
 	},
-	setLeftMenuTab(state, id) {
-		state.leftMenuTab = id;
-		state.showLeftMenu = true;
-	},
 	setShowSettings(state) {
 		state.showSettings = true;
 		state.mainRightTab = 'settings';
@@ -169,7 +155,7 @@ export const mutations = {
 	},
 	setShowMediumSettings(state, { medium, id }) {
 		state.showMediumSettings[medium] = true;
-		if (medium === 'tv') {
+		if (medium === 'webScraper') {
 			state.mainRightTab = 'webScraperSettings';
 			selectMediaSource(state, { type: medium, id });
 		} else if (medium === 'matrix') {
@@ -209,7 +195,10 @@ export const mutations = {
 	// ----------------------------------------------------------
 	error(state, message) {
 		if (typeof message === 'string') message = { error: message };
-		state.errorMessages = [...state.errorMessages, Object.assign(message, { id: state.errorMessages.length })];
+		state.errorMessages = [
+			...state.errorMessages,
+			Object.assign(message, { id: state.errorMessages.length }),
+		];
 	},
 	videoError(state, message) {
 		const video = state.currentMedia;
@@ -229,53 +218,62 @@ export const mutations = {
 		let playList;
 		if (tagName !== undefined) {
 			if (tagName) {
-				if (!state.tagsOrdered.includes(tagName)) {
-					state.tagsOrdered.push(tagName);
-					state.tags[tagName] = [];
+				if (!state.sourcesOrdered.includes(tagName)) {
+					state.sourcesOrdered.push(tagName);
+					state.sources[tagName] = [];
 				}
-				playList = state.tags[tagName];
-			} else playList = state.playList;
+				playList = state.sources[tagName];
+			} else ({ playList } = state);
 		} else {
 			playList = getCurrentPlayList(state);
 		}
 		playList = [...data.playList.filter(id => !playList.includes(id)), ...playList];
 		if (tagName !== undefined) {
 			if (tagName) {
-				state.tags[tagName] = playList;
+				state.sources[tagName] = playList;
 			} else state.playList = playList;
-			state.currentPlayList = tagName;
-		} else if (state.currentPlayList) {
-			state.tags[state.currentPlayList] = playList;
+			state.currentMediaSource.id = tagName;
+		} else if (state.currentMediaSource.id) {
+			state.sources[state.currentMediaSource.id] = playList;
 		} else {
 			state.playList = playList;
 		}
 		state.entities = Object.assign({}, state.entities, data.entities);
-		state.tags = Object.assign({}, state.tags);
+		state.sources = Object.assign({}, state.sources);
 	},
 	importOtherPlayList(state, playListName) {
-		if (!state.currentPlayList) {
+		const { id } = state.currentMediaSource;
+		if (!id) {
 			state.playList = [
 				...state.playList,
-				...state.tags[playListName].filter(id => !state.playList.includes(id)),
+				...state.sources[playListName].filter(_id => !state.playList.includes(_id)),
 			];
 		} else {
-			const tags = Object.assign({}, state.tags);
-			const currentPlayList = [...tags[state.currentPlayList]];
-			tags[state.currentPlayList] = [
-				...currentPlayList,
-				...state.tags[playListName].filter(id => !currentPlayList.includes(id)),
+			const sources = Object.assign({}, state.sources);
+			const currentSource = [...sources[id]];
+			sources[id] = [
+				...currentSource,
+				...state.sources[playListName].filter(_id => !currentSource.includes(_id)),
 			];
-			state.tags = tags;
+			state.sources = sources;
 		}
 	},
 	renamePlayList(state, { newName, oldName }) {
-		rename(state, 'tags', newName, oldName);
+		if (state.sources[newName]) return;
+		const sources = Object.assign({}, state.sources);
+		sources[newName] = sources[oldName];
+		const sourcesOrdered = [...state.sourcesOrdered];
+		sourcesOrdered[sourcesOrdered.indexOf(oldName)] = newName;
+		delete sources[oldName];
+		state.sources = sources;
+		state.sourcesOrdered = sourcesOrdered;
+		state.currentMediaSource.id = newName;
 	},
 	removeMedia(state, { mediaIds, tagName }) {
 		if (tagName === '') {
 			state.playList = state.playList.filter(id => !mediaIds.includes(id));
 		} else {
-			state.tags[tagName] = state.tags[tagName].filter(id => !mediaIds.includes(id));
+			state.sources[tagName] = state.sources[tagName].filter(id => !mediaIds.includes(id));
 		}
 	},
 	addSearchResult(state, { media, tagName }) {
@@ -287,8 +285,8 @@ export const mutations = {
 		const { id } = media;
 		state.entities[id] = media;
 		if (tagName) {
-			if (!state.tags[tagName].includes(id)) {
-				state.tags[tagName].unshift(media.id);
+			if (!state.sources[tagName].includes(id)) {
+				state.sources[tagName].unshift(media.id);
 			}
 		} else if (!state.playList.includes(id)) {
 			state.playList.unshift(id);
@@ -304,9 +302,9 @@ export const mutations = {
 			}
 
 			if (to) {
-				if (!state.tags[to].includes(itemId)) {
-					state.tags[to].unshift(itemId);
-					state.tags = Object.assign({}, state.tags);
+				if (!state.sources[to].includes(itemId)) {
+					state.sources[to].unshift(itemId);
+					state.sources = Object.assign({}, state.sources);
 				}
 			} else if (!state.playList.includes(itemId)) {
 				state.playList.unshift(itemId);
@@ -391,41 +389,48 @@ export const mutations = {
 	},
 	movePlayListMedia(state, playList) {
 		addMissingMediaToEntities(state, playList);
-		if (state.currentPlayList) state.tags[state.currentPlayList] = playList;
+		const { id } = state.currentMediaSource;
+		if (id) state.sources[id] = playList;
 		else state.playList = playList;
 	},
-	moveTagsOrdered(state, tagsOrdered) {
-		state.tagsOrdered = tagsOrdered;
+	moveTagsOrdered(state, sourcesOrdered) {
+		state.sourcesOrdered = sourcesOrdered;
 	},
 	moveQueue(state, queue) {
 		state.queue = [...queue];
 	},
 	addTags(state, { mediaIds = [], tag }) {
-		if (mediaIds.length) tag = tag || state.currentPlayList;
+		if (mediaIds.length) tag = tag || state.currentMediaSource.id;
 		if (!tag) {
 			// if we want to use the current playlist action.tag === undefined
 			let counter = 1;
 			tag = `Playlist ${counter}`;
-			while (tag in state.tags) {
+			while (tag in state.sources) {
 				tag = `Playlist ${counter++}`;
 			}
 		}
 
-		if (!state.tagsOrdered.includes(tag)) state.tagsOrdered.push(tag);
+		if (!state.sourcesOrdered.includes(tag)) state.sourcesOrdered.push(tag);
 
-		if (state.tags[tag]) {
-			state.tags[tag] = [
-				...state.tags[tag],
-				...mediaIds.filter(id => !state.tags[tag].includes(id)),
+		if (state.sources[tag]) {
+			state.sources[tag] = [
+				...state.sources[tag],
+				...mediaIds.filter(id => !state.sources[tag].includes(id)),
 			];
-		} else state.tags[tag] = mediaIds;
+		} else state.sources[tag] = mediaIds;
 		selectMediaSource(state, { type: 'playList', id: tag });
+	},
+	setLeftMenuTab(state, id) {
+		state.leftMenuTab = id;
+		state.showLeftMenu = true;
 	},
 	selectMediaSource,
 	deletePlayList(state, playListName) {
-		delete state.tags[playListName];
-		state.tagsOrdered = state.tagsOrdered.filter(name => name !== playListName);
-		if (state.currentPlayList === playListName) state.currentPlayList = '';
+		delete state.sources[playListName];
+		state.sourcesOrdered = state.sourcesOrdered.filter(name => name !== playListName);
+		if (state.currentMediaSource.id === playListName) {
+			state.currentMediaSource = { id: '', type: 'playList' };
+		}
 	},
 	setYoutubeApiKey(state, youtubeApiKeyIn) {
 		if (!youtubeApiKeyIn) state.youtubeApiKey = youtubeApiKey;
@@ -461,5 +466,11 @@ export const mutations = {
 	},
 	setExtensionAvilable(state, data) {
 		state.extensionAvilable = data;
+	},
+	setLoadedModules(state, moduleName) {
+		state.loadedModules = Object.assign({ [moduleName]: true }, state.loadedModules);
+	},
+	setMatrixEnabled(state) {
+		state.matrixEnabled = !state.matrixEnabled;
 	},
 };

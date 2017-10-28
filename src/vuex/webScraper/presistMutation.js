@@ -1,8 +1,8 @@
 export const presistMutation = {
-	play: ['webScrapers', 'matrixRooms'],
-	nextVideo: ['webScrapers'],
-	updateWebScraper: ['webScrapers'],
-	addUrlPattern: ['webScrapers'],
-	addWebScraper: ['webScrapersOrdered', 'webScrapers'],
-	renameWebScraper: ['webScrapersOrdered', 'webScrapers'],
+	play: ['sources', 'matrixRooms'],
+	nextVideo: ['sources'],
+	updateWebScraper: ['sources'],
+	addUrlPattern: ['sources'],
+	addWebScraper: ['sourcesOrdered', 'sources'],
+	renameWebScraper: ['sourcesOrdered', 'sources'],
 };

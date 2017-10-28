@@ -17,15 +17,15 @@ export default {
 		},
 		dropAdd(event) { // Element is dropped into the list from another list
 			const itemId = event.item.dataset.id;
-			this.dropMoveItem({ itemId, from: this.currentPlayList, to: '' });
+			this.dropMoveItem({ itemId, from: this.currentMediaSource.id, to: '' });
 		},
 	},
 	computed: {
 		...mapGetters(['playListLength']),
-		...mapState(['tags', 'tagsOrdered', 'currentPlayList']),
+		...mapState(['sourcesOrdered', 'currentMediaSource']),
 		_tagsOrdered: {
 			get() {
-				return this.tagsOrdered;
+				return this.sourcesOrdered;
 			},
 			set(value) {
 				this.moveTagsOrdered(value);
@@ -39,7 +39,7 @@ export default {
 	<div class="play-list-manager__wrapper">
 		<ul>
 			<li
-				v-bind:class="{ active: currentPlayList !== null && !currentPlayList }"
+				v-bind:class="{ active: currentMediaSource.id === '' }"
 				class="play-list-manager__default-playlist"
 				@click="selectMediaSource({type: 'playList', id: ''})">
 				<div class="play-list-manager__drag-handle play-list-manager--default"></div>
@@ -67,9 +67,9 @@ export default {
 				handle: '.play-list-manager__drag-handle',
 			}">
 			<play-list-tag
-				v-for="(tagName, index) in _tagsOrdered"
-				:key="index"
-				v-bind:index="index"></play-list-tag>
+				v-for="id in _tagsOrdered"
+				:key="id"
+				:id="id"></play-list-tag>
 		</draggable>
 		<ul class="play-list-manager__tags">
 			<li class="play-list-manager__input">

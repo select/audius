@@ -4,17 +4,31 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 
 import { indexDB } from '../utils';
-
-import { getters, actions, mutations, presistMutation, initialState } from './audius';
-import * as matrix from './matrix';
-import * as webScraper from './webScraper';
+import { getters, actions, mutations, presistMutation, state as initialState } from './audius';
 
 Vue.use(Vuex);
 
 export const store = new Vuex.Store({
-	actions: Object.assign(actions, matrix.actions, webScraper.actions),
-	mutations: Object.assign(mutations, matrix.mutations, webScraper.mutations),
-	state: Object.assign(initialState, matrix.initialState, webScraper.initialState),
+	actions: Object.assign(actions, {
+		initModule({ dispatch, commit, state }, name) {
+			if (name in state.loadedModules) return;
+			console.log('registerModule', name);
+			if (name === 'matrix') {
+				import(/* webpackChunkName: "vuex/matrix" */ './matrix').then(module => {
+					store.registerModule(name, module);
+					commit('setLoadedModules', name);
+					dispatch('initMatrix');
+				});
+			} else if (name === 'webScraper') {
+				import(/* webpackChunkName: "vuex/webScraper" */ './webScraper').then(module => {
+					store.registerModule(name, module);
+					commit('setLoadedModules', name);
+				});
+			}
+		},
+	}),
+	mutations,
+	state: initialState,
 	getters,
 	plugins: [
 		vstore => {

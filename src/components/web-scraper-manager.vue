@@ -7,9 +7,12 @@ export default {
 			showConfirmDelte: false,
 		};
 	},
+	created() {
+		this.initModule('webScraper');
+	},
 	methods: {
 		...mapMutations(['selectMediaSource', 'setShowMediumSettings', 'addWebScraper', 'deleteWebScraper']),
-		...mapActions(['initWebScraper']),
+		...mapActions(['initModule', 'initWebScraper']),
 		_addWebScraper() {
 			const el = document.querySelector('.ws-manager__input input');
 			this.addWebScraper(el.value);
@@ -22,17 +25,27 @@ export default {
 		},
 	},
 	computed: {
-		...mapState(['webScrapersOrdered', 'webScrapers', 'currentWebScraper']),
+		...mapState([
+			'loadedModules',
+		]),
+		...mapState([
+			'webScrapersOrdered',
+			'webScrapers',
+			'currentWebScraper',
+		].reduce(
+			(acc, n) => Object.assign(acc, { [n]: state => state.webScraper[n] }),
+			{}
+		)),
 	},
 };
 </script>
 
 <template>
-	<div class="play-list-manager__wrapper">
+	<div class="play-list-manager__wrapper" v-if="loadedModules.webScraper">
 		<ul class="play-list-manager__tags">
 			<li
 				v-for="id in webScrapersOrdered"
-				@click="initWebScraper(id);selectMediaSource({type: 'tv', id: id})"
+				@click="initWebScraper(id);selectMediaSource({type: 'webScraper', id: id})"
 				v-bind:class="{ active: currentWebScraper === id }">
 				<div class="play-list-manager__drag-handle"></div>
 				<div class="play-list-manager__tag-body">
@@ -45,7 +58,7 @@ export default {
 					<span
 						class="wmp-icon-mode_edit"
 						title="Edit channel"
-						@click.stop="setShowMediumSettings({ medium: 'tv', id })"></span>
+						@click.stop="setShowMediumSettings({ medium: 'webScraper', id })"></span>
 					<span
 						class="wmp-icon-close"
 						title="Delte channel"

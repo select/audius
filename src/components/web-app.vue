@@ -7,7 +7,7 @@ import LeftMenu from './left-menu.vue';
 import Messages from './messages.vue';
 import WebAppMobile from './web-app-mobile.vue';
 
-const ImportModal = () => import(/* webpackChunkName: "import-modal" */'./import-modal.vue');
+const ImportModal = () => import(/* webpackChunkName: "components/import-modal" */'./import-modal.vue');
 
 export default {
 	components: {
@@ -43,10 +43,11 @@ export default {
 </template>
 
 <style lang="sass?indentedSyntax">
-@import '../sass/font'
 @import '../sass/vars'
-@import '../sass/card'
 @import '../sass/color'
+@import '../sass/font'
+
+@import '../sass/card'
 @import '../sass/input'
 @import '../sass/icon'
 @import '../sass/modal'

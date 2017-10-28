@@ -25,6 +25,8 @@ function start(options) {
 		!startConditions.started
 	) {
 		startConditions.started = true;
+		Vue.config.debug = true;
+		Vue.config.devtools = true;
 		new Vue({
 			el: '#app',
 			render: h => h(WebApp),
@@ -78,15 +80,16 @@ indexDB
 				type: getParameterByName('type'),
 			});
 		}
-		if (getParameterByName('showImgur'))
-			store.commit('selectMediaSource', { type: 'webscraper', id: 'Imgur' });
+		if (getParameterByName('showImgur')) {
+			store.commit('selectMediaSource', { type: 'webScraper', id: 'Imgur' });
+		}
 		// Remove all URL paramters from URL bar.
 		cleanWindowLocation();
 
 		start({ recoverdState: true });
 	})
 	.catch(error => {
-		store.commit('error', { error, timeout: 15000 });
+		store.commit('error', { error: `Error starting Audius. ${error}`, timeout: 15000 });
 	});
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -97,8 +100,8 @@ setTimeout(() => {
 	start({ timeout: true });
 }, 2000);
 
-(function() {
-	if ('serviceWorker' in navigator) {
-		navigator.serviceWorker.register('/service-worker.js');
-	}
-})();
+// (function() {
+// 	if ('serviceWorker' in navigator) {
+// 		navigator.serviceWorker.register('/service-worker.js');
+// 	}
+// })();

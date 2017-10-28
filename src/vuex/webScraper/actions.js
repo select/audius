@@ -8,13 +8,13 @@ function extensionMessage(detail) {
 	);
 }
 
-export const actionsWebScraper = {
+export const actions = {
 	webScraperUpdateSuccess({ state, commit }, { id, mediaList }) {
 		if (!mediaList) {
 			commit('error', `Requesting ${id} did not return results.`);
 			return;
 		}
-		const ws = state.webScrapers[id];
+		const ws = state.sources[id];
 		const pl = ws ? ws.playList : [];
 		const archive = ws && ws.archive ? ws.archive : [];
 		const index = new Set([...pl.map(v => v.id), ...archive]);
@@ -33,10 +33,10 @@ export const actionsWebScraper = {
 		}
 	},
 	initWebScraper({ state, commit, dispatch }, id) {
-		if (id && !(id in state.webScrapers)) {
+		if (id && !(id in state.sources)) {
 			commit('addWebScraper', id);
 		}
-		const ws = state.webScrapers[id];
+		const ws = state.sources[id];
 		if (!ws.playList.length) {
 			dispatch('runWebScraper', id);
 		}
@@ -46,7 +46,7 @@ export const actionsWebScraper = {
 			commit('error', `Can not find channel "${id}".`);
 			return;
 		}
-		const ws = state.webScrapers[id];
+		const ws = state.sources[id];
 		const index = state.paginationIndex[id] || 0;
 		if (id === 'Imgur') {
 			commit('setPaginationIndex', { id, index: index + 1 });
@@ -55,7 +55,7 @@ export const actionsWebScraper = {
 			}).catch(error => commit('error', `Could not get Imgur. ${error}`));
 		} else if (ws.settings.type === 'script') {
 			commit('setPaginationIndex', { id, index: index + 1 });
-			if (state.webScrapersInitialized[id]) {
+			if (state.sourcesInitialized[id]) {
 				extensionMessage({
 					audius: true,
 					type: 'getNext',
