@@ -1,4 +1,4 @@
-# Audius ([https://audius.rockdapus.org/](https://audius.rockdapus.org/))
+# Audius ([audius.rockdapus.org](https://audius.rockdapus.org/))
 
 Audius is the ultimate streaming music player.
 
@@ -7,7 +7,7 @@ Audius is the ultimate streaming music player.
 - Queue songs, play history.
 - Organize playlists with drag and drop.
 - Supports: YouTube/Vimeo/.mp3/.oga/.wav/.mp4/.webm/.ogg URLs.
-- Runs "offline" - a pure HTML5 app that can run without a server.
+- Runs "offline" - a pure HTML5 progressive web app that is self contained.
 - Plays Imgur "Most Viral" as video stream.
 - Create your own web channels with the build in web scraper.
 - Set start end times of media items (e.g. to cut of trailing silence)
@@ -48,7 +48,7 @@ Create your own rooms with Audius and share it with your friends.
 * Show matrix login for rooms that don't allow guests.
 
 **2.0.10**
-* Add full screen mode for continous full screen playback. Add controls for prev, next, timeline.
+* Add full screen mode for continuous full screen playback. Add controls for prev, next, timeline.
 * Custom channel scripts, executed in secure sandbox in extension.
 * Change user interface to less technical language. Thanks <i>Caspar</i>.
 * Improve matrix room creation and settings: guest access, history readability. Only full members can create rooms.
@@ -122,6 +122,11 @@ Create your own rooms with Audius and share it with your friends.
 		Windows users: Click _Add to taskbar_.
 		Linux users: Click _Add to desktop_.
 		Chromebook users: Click _Add to shelf_.
+
+## Run you own Audius
+
+Download the <a href="audius.app.hmtl" download>audius app</a> and upload it to you server.
+
 
 **Chrome android:**
 Tap the menu button and tap _Add to homescreen_. The app is not yet optimized for mobile phones, it might work on tablets.
@@ -204,13 +209,13 @@ This is the internal media data JSON fromat of Audius.
 },
 ```
 
-### Web scaper plugin
+### Web scaper channels
 
-A web scraper plugin is an object with data and functions
-The functions are evaled and executed in a sandbox in the Audius extension. 
+A web scraper channel can be created by using URL patterns or a custom  object with data entries and functions.
+The functions are evaled and executed in a sandbox in the Audius extension.
 
 It must implement
-- `getUrl()` returns `{ type: '…', …data, responseTemplate: {type: '…'}}`
+- `getUrl()` which returns `{ type: '…', …data, responseTemplate: {type: '…'}}`
 - a fuction that processes the data retrived from the call that `getURL` triggers
 
 Available types:
