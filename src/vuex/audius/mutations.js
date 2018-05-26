@@ -1,10 +1,12 @@
 import { youtubeApiKey } from '../../utils/config';
+import { mergeDeep } from '../../utils';
 import {
 	getCurrentPlayListEntities,
 	getCurrentPlayList,
 	getCurrentName,
 	getMediaEntity,
 } from './getCurrentPlayList';
+import { migrateState } from '../../utils/migrate.2.0.12';
 
 /* eslint-disable no-param-reassign */
 function playMedia(state, media) {
@@ -114,16 +116,28 @@ function play(state, mediaId, media) {
 /* eslint-disable no-param-reassign */
 export const mutations = {
 	recoverState(state, recoveredState) {
-		state = Object.assign(state, recoveredState);
+		['matrix', 'webScraper'].forEach(moduleName => {
+			Object.assign(state[moduleName], recoveredState[moduleName]);
+			delete recoveredState[moduleName];
+		});
+		Object.assign(state, recoveredState);
 		if (state.currentMediaSource.type !== 'playList') {
 			state.currentMediaSource = {
-				type: 'playlist',
+				type: 'playList',
 				id: '',
 			};
 		}
 	},
 	loadBackup(state, backup) {
-		if (backup.AudiusBackup) state = Object.assign(state, backup.data);
+		if (backup.AudiusBackup) {
+			if (backup.AudiusBackup < '2.0.12') {
+				debugger;
+				const data = migrateState(backup.data);
+				state = Object.assign(state, data);
+			} else {
+				state = Object.assign(state, backup.data);
+			}
+		}
 	},
 	searchSuccess(state, { mediaList = [], id = null, isPlayList }) {
 		if (!mediaList.length) {
@@ -472,5 +486,9 @@ export const mutations = {
 	},
 	setMatrixEnabled(state) {
 		state.matrixEnabled = !state.matrixEnabled;
+	},
+	setPaginationIndex(state, { id, index }) {
+		state.paginationIndex[id] = index;
+		state.paginationIndex = Object.assign({}, state.paginationIndex);
 	},
 };

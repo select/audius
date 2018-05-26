@@ -15,7 +15,7 @@ export function debounceImmediate(func, wait = 500) {
 	let context;
 	let timestamp;
 	let callCount = 0;
-	return function() {
+	return function _callback() {
 		// save details of latest call
 		context = this;
 		args = [].slice.call(arguments, 0);
@@ -57,7 +57,7 @@ export function debounce(func, wait = 500) {
 	let context;
 	let timestamp;
 
-	return function() {
+	return function _callback() {
 		// save details of latest call
 		context = this;
 		args = [].slice.call(arguments, 0);
@@ -92,7 +92,7 @@ export function throttle(fn, threshhold, scope) {
 	threshhold || (threshhold = 250);
 	let last;
 	let deferTimer;
-	return function() {
+	return function _callback() {
 		const context = scope || this;
 
 		const now = +new Date();

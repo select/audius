@@ -21,3 +21,5 @@ export { cleanWindowLocation, getParameterByName } from './windowLocationTools';
 export { webScraper } from './webScraper';
 export { getMediaDuration } from './getMediaDuration';
 export { youtubeLink, getMediaLink } from './mediaLink';
+export { mapModuleState } from './vuex-addons';
+export { getDotPath, setDotPath } from './dotPath';

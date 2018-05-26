@@ -1,5 +1,6 @@
 <script>
 import { mapActions, mapState, mapGetters, mapMutations } from 'vuex';
+import { mapModuleState } from '../utils';
 
 export default {
 	data() {
@@ -49,15 +50,8 @@ export default {
 			'matrixEnabled',
 			'extensionAvilable',
 		]),
-		...mapState([
-			'matrixLoggedIn',
-		].reduce(
-			(acc, n) => Object.assign(acc, { [n]: state => state.matrix[n] }),
-			{}
-		)),
-		...mapState({
-			webScrapers: state => state.webScraper.sources,
-		}),
+		...mapModuleState('matrix', ['matrixLoggedIn']),
+		...mapModuleState('webScraper', { webScrapers: 'matrixLoggedIn' }),
 		...mapGetters(['sourcesOrdered']),
 	},
 };

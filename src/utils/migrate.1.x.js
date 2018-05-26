@@ -3,7 +3,7 @@
 import { store } from '../vuex/store';
 
 function getDb(version) {
-	return new Promise((resolve, reject) => {
+	return new Promise((resolve) => {
 		indexedDB.open(version, 1).onsuccess = event => {
 			resolve(event.target.result);
 		};
@@ -11,22 +11,25 @@ function getDb(version) {
 }
 
 function getObjectStore(db, name) {
-	return new Promise((resolve, reject) => {
+	return new Promise((resolve) => {
 		const state = {};
-		db.transaction(name, 'readonly').objectStore(name).openCursor().onsuccess = event => {
-			const cursor = event.target.result;
-			if (cursor) {
-				state[cursor.key] = cursor.value;
-				cursor.continue();
-			} else {
-				resolve(state);
-			}
-		};
+		db
+			.transaction(name, 'readonly')
+			.objectStore(name)
+			.openCursor().onsuccess = event => {
+				const cursor = event.target.result;
+				if (cursor) {
+					state[cursor.key] = cursor.value;
+					cursor.continue();
+				} else {
+					resolve(state);
+				}
+			};
 	});
 }
 
 function migrate0() {
-	return new Promise((resolve, reject) => {
+	return new Promise((resolve) => {
 		const migrationVersion = 'audius_0.03';
 		if (!store.state.migration[migrationVersion]) {
 			const stores = ['mediaEntities', 'state'];
@@ -42,7 +45,9 @@ function migrate0() {
 								store.commit('selectPlayList', undefined);
 								if (data.playList && data.entities) {
 									data.playList.reverse();
-									store.commit('importPlayList', {data: { playList: data.playList, entities: data.entities }});
+									store.commit('importPlayList', {
+										data: { playList: data.playList, entities: data.entities },
+									});
 								}
 								if (data.tags) {
 									Object.keys(data.tags).forEach(tagName => {
@@ -66,10 +71,10 @@ function migrate0() {
 }
 
 function migrate1() {
-	return new Promise((resolve, reject) => {
+	return new Promise((resolve) => {
 		const migrationVersion = 'audius_0.03.2';
 		if (!store.state.migration[migrationVersion]) {
-			const newEtities = Object.entries(store.state.entities).reduce((acc, [key, video])=> {
+			const newEtities = Object.entries(store.state.entities).reduce((acc, [key, video]) => {
 				if (!video.type) video.type = 'youtube';
 				return { ...acc, [key]: video };
 			}, {});
@@ -83,11 +88,11 @@ function migrate1() {
 
 export function migrate() {
 	migrate0()
-		.then((migrationVersion) => {
-			if (migrationVersion) store.commit('migrationSuccess', { version: migrationVersion, toggleState: true });
+		.then(version => {
+			if (version) store.commit('migrationSuccess', { version, toggleState: true });
 			return migrate1();
-		}).then((migrationVersion) => {
-			if (migrationVersion) store.commit('migrationSuccess', { version: migrationVersion, toggleState: true });
+		})
+		.then(version => {
+			if (version) store.commit('migrationSuccess', { version, toggleState: true });
 		});
 }
-

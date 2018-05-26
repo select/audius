@@ -1,17 +1,18 @@
 <script>
-import { mapGetters, mapState, mapActions } from 'vuex';
+import { mapGetters, mapActions, mapState } from 'vuex';
 
-import { debounce } from '../utils';
+import { mapModuleState, debounce } from '../utils';
 
 export default {
 	computed: {
 		...mapGetters(['youtubeApiKeyUI']),
-		...mapState(['matrix', 'matrixRooms', 'currentMediaSource']),
+		...mapState(['currentMediaSource']),
+		...mapModuleState('matrix', ['credentials', 'sources']),
 		currentMatrixRoom() {
 			return this.currentMediaSource.type === 'matrix' ? this.currentMediaSource.id : null;
 		},
 		room() {
-			return this.matrixRooms[this.currentMatrixRoom];
+			return this.sources[this.currentMediaSource.id];
 		},
 		members() {
 			return this.room.members || [];
@@ -26,7 +27,7 @@ export default {
 			return this.members.filter(({ powerLevel }) => powerLevel < 50);
 		},
 		myId() {
-			return this.matrix.credentials.userId;
+			return this.credentials.userId;
 		},
 	},
 	methods: {
@@ -36,7 +37,7 @@ export default {
 		}, 1000),
 		_inviteUser() {
 			// TODO
-		}
+		},
 	},
 };
 </script>

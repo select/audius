@@ -5,7 +5,7 @@ import draggable from 'vuedraggable';
 import MatrixCreateRoom from './matrix-create-room.vue';
 import MatrixPublicRooms from './matrix-public-rooms.vue';
 import MatrixLogin from './matrix-login.vue';
-
+import { mapModuleState } from '../utils';
 
 export default {
 	components: {
@@ -22,6 +22,9 @@ export default {
 	created() {
 		if (this.matrixEnabled) {
 			this.initModule('matrix');
+			setTimeout(() => {
+				this.$forceUpdate();
+			},1000);
 		}
 	},
 	methods: {
@@ -52,9 +55,9 @@ export default {
 			this.matrixSend({ roomId, itemId });
 		},
 		numWatched(id) {
-			if (!(id in this.matrixRooms)) return 0;
-			const res = this.matrixRooms[id].archive ? this.matrixRooms[id].archive.length : 0;
-			return res + Object.keys(this.matrixRooms[id].playedMedia).length;
+			if (!(id in this.sources)) return 0;
+			const res = this.sources[id].archive ? this.sources[id].archive.length : 0;
+			return res + Object.keys(this.sources[id].playedMedia).length;
 		},
 	},
 	computed: {
@@ -63,15 +66,12 @@ export default {
 			'loadedModules',
 			'currentMediaSource',
 		]),
-		...mapState([
+		...mapModuleState('matrix', [
 			'sources',
 			'sourcesOrdered',
 			'matrixLoggedIn',
 			'showMatrixLoginModal',
-		].reduce(
-			(acc, n) => Object.assign(acc, { [n]: state => state.matrix[n] }),
-			{}
-		)),
+		]),
 		_sourcesOrdered: {
 			get() {
 				return this.sourcesOrdered;
@@ -95,9 +95,7 @@ export default {
 			@click="setMatrixEnabled();initModule('matrix');"
 			type="button">Join Matrix</button>
 	</div>
-	matrixEnabled: {{matrixEnabled}} loadedModules.matrix: {{loadedModules.matrix}}
 	<div v-if="matrixEnabled && loadedModules.matrix">
-		matrixLoggedIn: {{matrixLoggedIn}}
 		<div v-if="matrixEnabled && !matrixLoggedIn" class="matrix-room__logging-in">
 			&nbsp; … connecting to Matrix
 		</div>
@@ -155,12 +153,12 @@ export default {
 				<div class="play-list-manager__drag-handle"></div>
 				<div
 					class="play-list-manager__tag-body"
-					@click="selectMediaSource({ type: 'webScraper', id: id })">
+					@click="selectMediaSource({ type: 'matrix', id: id })">
 					<div>
-						{{matrixRooms[id].name}}
+						{{sources[id].name}}
 					</div>
 					<div>
-						{{matrixRooms[id].playList.length - Object.keys(matrixRooms[id].playedMedia).length}} New
+						{{sources[id].playList.length - Object.keys(sources[id].playedMedia).length}} New
 						{{numWatched(id)}} Watched
 					</div>
 				</div>

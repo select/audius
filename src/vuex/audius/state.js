@@ -57,6 +57,7 @@ export const state = {
 		results: [],
 	},
 	extensionAvilable: false,
-	matrixEnabled: false,
+	matrixEnabled: true,
 	loadedModules: {},
+	paginationIndex: {},
 };

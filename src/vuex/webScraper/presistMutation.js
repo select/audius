@@ -1,5 +1,5 @@
 export const presistMutation = {
-	play: ['sources', 'matrixRooms'],
+	play: ['sources'],
 	nextVideo: ['sources'],
 	updateWebScraper: ['sources'],
 	addUrlPattern: ['sources'],

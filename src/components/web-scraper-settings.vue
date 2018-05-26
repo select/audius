@@ -1,6 +1,7 @@
 <script>
 import draggable from 'vuedraggable';
 import { mapGetters, mapMutations, mapState } from 'vuex';
+import { mapModuleState } from '../utils';
 
 export default {
 	components: {
@@ -8,18 +9,20 @@ export default {
 	},
 	computed: {
 		...mapGetters(['youtubeApiKeyUI']),
-		...mapState(['webScrapers', 'currentWebScraper', 'extensionAvilable']),
+		...mapState('currentMediaSource'),
+		...mapModuleState('webScraper', ['sources', 'extensionAvilable']),
 		settings() {
-			return this.webScrapers[this.currentWebScraper].settings;
+			const { id, type } = this.currentMediaSource;
+			if (type !== 'webScraper') return {};
+			return this.sources[id].settings;
 		},
 		_urls: {
 			get() {
-				if (!(this.currentWebScraper && this.settings)) return [];
 				return this.settings.urls || [];
 			},
 			set(value) {
 				this.updateWebScraper({
-					id: this.currentWebScraper,
+					id: this.currentMediaSource.id,
 					values: {
 						settings: {
 							...this.settings,
@@ -34,7 +37,7 @@ export default {
 		...mapMutations(['updateWebScraper', 'addUrlPattern', 'renameWebScraper']),
 		updateSettings(values) {
 			this.updateWebScraper({
-				id: this.currentWebScraper,
+				id: this.currentMediaSource.id,
 				values: {
 					settings: {
 						...this.settings,
@@ -46,7 +49,7 @@ export default {
 		_addUrlPattern() {
 			const el = this.$el.querySelector('.ws-settings .input-list__input');
 			this.addUrlPattern({
-				id: this.currentWebScraper,
+				id: this.currentMediaSource.id,
 				urlPattern: el.value,
 			});
 			el.value = '';
@@ -61,11 +64,11 @@ export default {
 <template>
 <div class="settings ws-settings">
 	<input
-		@input="renameWebScraper({oldName: currentWebScraper, newName: $event.target.value})"
+		@input="renameWebScraper({oldName: currentMediaSource.id, newName: $event.target.value})"
 		class="ws-settings__name"
 		type="text"
 		placeholder="... name"
-		:value="this.currentWebScraper">
+		:value="this.currentMediaSource.id">
 	<div class="button-group">
 		<button
 			class="button btn--blue-ghost"

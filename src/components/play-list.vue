@@ -3,7 +3,7 @@ import Vue from 'vue';
 import { mapGetters, mapMutations, mapState, mapActions } from 'vuex';
 import draggable from 'vuedraggable';
 
-import { starterPlaylist, throttle, debounce } from '../utils';
+import { starterPlaylist, throttle, debounce, mapModuleState } from '../utils';
 import VideoItem from './video-item.vue';
 
 const PlayListExport = () => import(/* webpackChunkName: "components/play-list-export" */'./play-list-export.vue');
@@ -115,7 +115,7 @@ export default {
 		_expiryDate(mediaId) {
 			const { type, id } = this.currentMediaSource;
 			if (type === 'playList') return null;
-			return this.$store[type].sources[id].playedMedia[mediaId];
+			return this.$store.state[type].sources[id].playedMedia[mediaId];
 		},
 	},
 	computed: {
@@ -134,10 +134,11 @@ export default {
 			'filterQuery',
 			'tags',
 			'jumpCursor',
-			'webScrapers',
-			'matrixRooms',
 			'showWatched',
+			'paginationIndex',
 		]),
+		...mapModuleState('matrix', { matrixRooms: 'sources' }),
+		...mapModuleState('webScraper', { webScrapers: 'sources' }),
 		_entities: {
 			get() {
 				return this.filteredPlayList;

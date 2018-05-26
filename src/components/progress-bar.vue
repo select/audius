@@ -128,6 +128,9 @@ export default {
 @import '../sass/vars'
 @import '../sass/color'
 
+.media-player .au-header__progress
+	height: 1.2*$grid-space
+
 .au-header__progress
 	position: absolute
 	z-index: 1

@@ -5,7 +5,12 @@ import { getCurrentPlayListEntities, getCurrentName } from './getCurrentPlayList
 
 export const getters = {
 	exportTypeName(state) {
-		return state.currentWebScraper ? 'channel' : state.currentMatrixRoom ? 'room' : 'playlist';
+		const nameMap = {
+			webScraper: 'channel',
+			matrix: 'room',
+			playList: 'playlist',
+		};
+		return nameMap[state.currentMediaSource.type];
 	},
 	playList(state) {
 		const { type, id } = state.currentMediaSource;

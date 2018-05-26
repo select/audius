@@ -2,7 +2,7 @@
 import { mapState, mapMutations, mapActions } from 'vuex';
 
 import { getMediaEntity } from '../vuex/audius/getCurrentPlayList';
-import { debounce, getMediaLink, youtubeLink } from '../utils';
+import { debounce, getMediaLink, youtubeLink, mapModuleState } from '../utils';
 
 export default {
 	data() {
@@ -20,12 +20,14 @@ export default {
 			'playList',
 			'currentMediaSource',
 		]),
-		...mapState({
-			webScrapers: state => state.webScraper.sources,
-			webScrapersOrdered: state => state.webScraper.sourcesOrdered,
-			matrixRooms: state => state.matrix.sources,
-			matrixRoomsOrdered: state => state.matrix.sourcesOrdered,
-			matrixLoggedIn: state => state.matrix.matrixLoggedIn,
+		...mapModuleState('webScraper', {
+			webScrapers: 'sources',
+			webScrapersOrdered: 'sourcesOrdered',
+		}),
+		...mapModuleState('matrix', {
+			matrixRooms: 'sources',
+			matrixRoomsOrdered: 'sourcesOrdered',
+			matrixLoggedIn: 'matrixLoggedIn',
 		}),
 		media() {
 			if (!this.showMediaEdit) return {};

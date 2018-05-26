@@ -1,7 +1,7 @@
 /* eslint no-new: "off" */
 import Vue from 'vue';
 
-// import { migrate } from '../utils/indexDB.migrate';
+import { migrateState, deleteOldKeys } from '../utils/migrate.2.0.12';
 import { indexDB, cleanWindowLocation, getParameterByName } from '../utils';
 import { store } from '../vuex/store';
 import './keyshorts';
@@ -25,8 +25,6 @@ function start(options) {
 		!startConditions.started
 	) {
 		startConditions.started = true;
-		Vue.config.debug = true;
-		Vue.config.devtools = true;
 		new Vue({
 			el: '#app',
 			render: h => h(WebApp),
@@ -38,10 +36,13 @@ function start(options) {
 indexDB
 	.init()
 	.then(() => indexDB.recoverState())
-	.then(state => {
+	.then(recoveredState => {
 		// Recover the last saved state from IndexDb
-		store.commit('recoverState', state);
-		// migrate();
+		// console.log("recover state", recoveredState);
+		const newState = migrateState(recoveredState);
+		console.log("newState", newState);
+		deleteOldKeys();
+		store.commit('recoverState', newState);
 
 		// Detect if this a mobile device (before rendering the UI).
 		store.commit('setIsMobile', isMobile());
@@ -99,9 +100,3 @@ document.addEventListener('DOMContentLoaded', () => {
 setTimeout(() => {
 	start({ timeout: true });
 }, 2000);
-
-// (function() {
-// 	if ('serviceWorker' in navigator) {
-// 		navigator.serviceWorker.register('/service-worker.js');
-// 	}
-// })();

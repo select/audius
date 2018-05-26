@@ -1,6 +1,8 @@
 <script>
 import { mapGetters, mapMutations, mapState, mapActions } from 'vuex';
+
 import MatrixLogin from './matrix-login.vue';
+import { mapModuleState } from '../utils';
 
 export default {
 	components: {
@@ -20,13 +22,12 @@ export default {
 			'matrixEnabled',
 			'extensionAvilable',
 		]),
-		...mapState([
+		...mapModuleState('matrix', [
 			'matrixLoggedIn',
 			'matrix',
-		].reduce(
-			(acc, n) => Object.assign(acc, { [n]: state => state.matrix[n] }),
-			{}
-		)),
+			'credentials',
+			'isGuest',
+		]),
 	},
 	methods: {
 		...mapMutations([
@@ -120,14 +121,14 @@ export default {
 	</div>
 	<div v-if="matrixEnabled">
 		<p v-if="matrixLoggedIn">
-				You are <b>connected</b> as {{matrix.credentials.userId}}.
-				<span v-if="matrix.isGuest !== false">You are a <b>guest</b> user.</span>
+				You are <b>connected</b> as {{credentials.userId}}.
+				<span v-if="isGuest !== false">You are a <b>guest</b> user.</span>
 				<br><br>
 				<button @click="matrixLogout" type="button" class="button btn--blue">Log out</button>
 				<button @click="matrixRemoveAccount" type="button" class="button btn--blue">Remove Account</button>
 		</p>
 		<p v-else>
-			You are currently <b>not connected</b>.<br><br>
+			You are currently <b>not connected</b> ({{credentials.userId}}).<br><br>
 		</p>
 		<p>
 			<matrix-login></matrix-login>

@@ -30,12 +30,12 @@ export const actions = {
 	initMatrix({ commit, state, dispatch }) {
 		import(/* webpackChunkName: "utils/matrixClient" */ '../../utils/matrixClient').then(mc => {
 			({ matrixClient } = mc);
-			if (!state.matrix.hasCredentials) {
+			if (!state.hasCredentials) {
 				matrixClient
 					.getCredentials()
 					.then(credentials => commit('setMatrixCredentials', { credentials, isGuest: true }))
 					.then(() =>
-						matrixClient.login(state.matrix.credentials, state.matrix.isGuest, dispatch, commit)
+						matrixClient.login(state.credentials, state.isGuest, dispatch, commit)
 					)
 					.then(rooms => {
 						commit('setMatrixLoggedIn', { rooms });
@@ -43,7 +43,7 @@ export const actions = {
 					});
 			} else if (!state.matrixLoggedIn) {
 				matrixClient
-					.login(state.matrix.credentials, state.matrix.isGuest, dispatch, commit)
+					.login(state.credentials, state.isGuest, dispatch, commit)
 					.then(rooms => {
 						commit('setMatrixLoggedIn', { rooms });
 						dispatch('updatePublicRooms');
@@ -58,7 +58,7 @@ export const actions = {
 				.getCredentialsWithPassword(username, password)
 				.then(credentials => commit('setMatrixCredentials', { credentials, isGuest: false }))
 				.then(() =>
-					matrixClient.login(state.matrix.credentials, state.matrix.isGuest, dispatch, commit)
+					matrixClient.login(state.credentials, state.isGuest, dispatch, commit)
 				)
 				.then(rooms => commit('setMatrixLoggedIn', { rooms }))
 				.catch(error => commit('error', `${error}`));
@@ -99,7 +99,7 @@ export const actions = {
 			})
 			.catch(error => commit('error', `Could not remove media from matrix room. ${error}`));
 	},
-	matrixPaginate({ state, commit }, id) {
+	matrixPaginate({ state, commit, rootState }, id) {
 		// const id = state.currentMatrixRoom;
 		matrixClient
 			.paginate(state.currentMatrixRoom)
@@ -107,7 +107,7 @@ export const actions = {
 				if (res) {
 					commit('setPaginationIndex', {
 						id,
-						index: (state.paginationIndex[id] || 0) + 1,
+						index: (rootState.paginationIndex[id] || 0) + 1,
 					});
 				} else {
 					commit('error', 'You reached the last page of this room.');
@@ -121,7 +121,7 @@ export const actions = {
 			.then(room => {
 				room.name = name || id;
 				commit('setMatrixLoggedIn', { rooms: [room] });
-				commit('selectMediaSource', { type: 'webScraper', id: room.roomId });
+				commit('selectMediaSource', { type: 'matrix', id: room.roomId });
 				commit('setLeftMenuTab', 'webScraper');
 			})
 			.catch(error => {
@@ -143,7 +143,7 @@ export const actions = {
 					values: { isHidden: options.visibility === 'private' },
 				});
 				commit('toggleMatrixRoomModal', false);
-				commit('selectMediaSource', { type: 'radio', id: room.room_id });
+				commit('selectMediaSource', { type: 'matrix', id: room.room_id });
 				commit('setLeftMenuTab', 'radio');
 			})
 			.catch(error => {

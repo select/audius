@@ -5,6 +5,9 @@ import { rename } from '../audius/mutations-rename';
 export const mutations = {
 	// Web Scraper
 	// ---
+	recoverState_webScraper(state, recoveredState) {
+		Object.assign(state, recoveredState);
+	},
 	addWebScraper(state, name) {
 		if (!name) {
 			let counter = 1;
@@ -40,10 +43,6 @@ export const mutations = {
 	setShowWatched(state, { id, toggleState }) {
 		state.showWatched[id] = toggleState;
 		state.showWatched = Object.assign({}, state.showWatched);
-	},
-	setPaginationIndex(state, { id, index }) {
-		state.paginationIndex[id] = index;
-		state.paginationIndex = Object.assign({}, state.paginationIndex);
 	},
 	updateWebScraper(state, { id, values }) {
 		state.sources[id] = Object.assign({}, state.sources[id], values);

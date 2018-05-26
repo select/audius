@@ -1,6 +1,5 @@
 // Matrix
-export const state = () => ({
-	paginationIndex: {},
+export const state = {
 	currentMatrixRoom: null,
 	sources: {},
 	sourcesOrdered: [],
@@ -8,14 +7,11 @@ export const state = () => ({
 	showMatrixRoomDirectory: false,
 	matrixLoggedIn: false,
 	showMatrixLoginModal: false,
-	matrix: {
-		hasCredentials: false,
-		credentials: {
-			accessToken: '',
-			userId: '',
-			deviceId: '',
-		},
-		publicRooms: [],
+	hasCredentials: false,
+	credentials: {
+		accessToken: '',
+		userId: '',
+		deviceId: '',
 	},
-	extensionAvilable: false,
-});
+	publicRooms: [],
+};

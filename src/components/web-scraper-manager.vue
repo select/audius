@@ -1,5 +1,6 @@
 <script>
 import { mapActions, mapMutations, mapState } from 'vuex';
+import { mapModuleState } from '../utils';
 
 export default {
 	data() {
@@ -19,23 +20,20 @@ export default {
 			el.value = '';
 		},
 		numWatched(id) {
-			if (!(id in this.webScrapers)) return 0;
-			const res = this.webScrapers[id].archive ? this.webScrapers[id].archive.length : 0;
-			return res + Object.keys(this.webScrapers[id].playedMedia).length;
+			if (!(id in this.sources)) return 0;
+			const res = this.sources[id].archive ? this.sources[id].archive.length : 0;
+			return res + Object.keys(this.sources[id].playedMedia).length;
 		},
 	},
 	computed: {
 		...mapState([
 			'loadedModules',
+			'currentMediaSource',
 		]),
-		...mapState([
-			'webScrapersOrdered',
-			'webScrapers',
-			'currentWebScraper',
-		].reduce(
-			(acc, n) => Object.assign(acc, { [n]: state => state.webScraper[n] }),
-			{}
-		)),
+		...mapModuleState('webScraper', [
+			'sourcesOrdered',
+			'sources',
+		]),
 	},
 };
 </script>
@@ -44,16 +42,16 @@ export default {
 	<div class="play-list-manager__wrapper" v-if="loadedModules.webScraper">
 		<ul class="play-list-manager__tags">
 			<li
-				v-for="id in webScrapersOrdered"
+				v-for="id in sourcesOrdered"
 				@click="initWebScraper(id);selectMediaSource({type: 'webScraper', id: id})"
-				v-bind:class="{ active: currentWebScraper === id }">
+				v-bind:class="{ active: currentMediaSource.id === id }">
 				<div class="play-list-manager__drag-handle"></div>
 				<div class="play-list-manager__tag-body">
 					<div> {{id}} </div>
-					<div v-if="webScrapers[id] && webScrapers[id].playList">{{webScrapers[id].playList.length - Object.keys(webScrapers[id].playedMedia).length}} New {{numWatched(id)}} Watched </div>
+					<div v-if="sources[id] && sources[id].playList">{{sources[id].playList.length - Object.keys(sources[id].playedMedia).length}} New {{numWatched(id)}} Watched </div>
 				</div>
 				<div
-					v-if="webScrapers[id] && webScrapers[id].settings"
+					v-if="sources[id] && sources[id].settings"
 					class="play-list-manager__menu">
 					<span
 						class="wmp-icon-mode_edit"

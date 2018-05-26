@@ -1,6 +1,8 @@
+import { setDotPath } from './dotPath';
+
 export const indexDB = {
 	db: {},
-	writeStore(stateName, data) {
+	writeStore(stateName, data, options = {}) {
 		return new Promise((resolve, reject) => {
 			const transaction = indexDB.db.transaction(['state'], 'readwrite');
 			transaction.onerror = error => {
@@ -10,7 +12,9 @@ export const indexDB = {
 			transaction.onerror = error => {
 				reject(error);
 			};
-			const putRequest = objectStore.put(data, stateName);
+			const putRequest = options.delete
+				? objectStore.delete(stateName)
+				: objectStore.put(data, stateName);
 			putRequest.onerror = event => {
 				reject(event.target.error.name);
 			};
@@ -54,11 +58,11 @@ export const indexDB = {
 
 			request.onerror = event => reject(`DB Error ${event.target.error.name}`);
 
-			const state = {};
+			const state = { webScraper: {}, matrix: {} };
 			request.onsuccess = event => {
 				const cursor = event.target.result;
 				if (cursor) {
-					state[cursor.key] = cursor.value;
+					setDotPath(state, cursor.key, cursor.value);
 					cursor.continue();
 				} else {
 					resolve(state);

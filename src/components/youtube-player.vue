@@ -1,7 +1,7 @@
 <script>
 /* global YT */
 import { mapState, mapMutations, mapActions } from 'vuex';
-import { injectScript } from '../utils';
+import { injectScript, isYouTubeVideoRegEx } from '../utils';
 
 
 export default {
@@ -20,8 +20,11 @@ export default {
 				// if video changed, set new video in player
 				if (this.currentMedia.type === 'youtube') {
 					try {
-						const videoId = this.player.getVideoData()
-							? this.player.getVideoData().video_id
+						const match = isYouTubeVideoRegEx.exec(this.player.getVideoUrl());
+						console.log("match", match);
+						console.log("this.player.getVideoUrl()", this.player.getVideoUrl());
+						const videoId = match
+							? match[1]
 							: undefined;
 						const currentMediaId = this.currentMedia.youtubeId || this.currentMedia.id;
 						if (videoId !== currentMediaId) {
@@ -37,8 +40,8 @@ export default {
 							this.lastTrackId = this.currentMedia.trackId;
 						}
 						this.player.playVideo();
-					} catch (e) {
-						this.error('YouTub player was not ready, try again.');
+					} catch (error) {
+						this.error(`YouTub player had an error. ${error}`);
 					}
 				} else if (this.player) {
 					this.player.pauseVideo();
@@ -89,7 +92,7 @@ export default {
 				height: '100%',
 				width: '100%',
 				videoId: initialVideos[Math.floor(Math.random() * initialVideos.length)],
-				playerVars: {controls: 0},
+				// playerVars: {controls: 0},
 				events: {
 					onStateChange: this.onPlayerStateChange,
 					onError: this.onPlayerError,

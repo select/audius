@@ -1,7 +1,8 @@
 <script>
-import { mapActions, mapState, mapGetters, mapMutations } from 'vuex';
+import { mapActions, mapState, mapMutations } from 'vuex';
 import { slugify } from '../utils/slugify';
 import MatrixLogin from './matrix-login.vue';
+import { mapModuleState } from '../utils';
 
 export default {
 	components: {
@@ -41,7 +42,7 @@ export default {
 		},
 	},
 	computed: {
-		...mapState(['createMatrixRoomModal', 'matrix']),
+		...mapModuleState('matrix', ['createMatrixRoomModal', 'matrix']),
 		slugName() {
 			if (this.roomName.length < 5) return '…';
 			const slug = slugify(this.roomName)

@@ -20,7 +20,7 @@ export default {
 			'currentMediaSource',
 		]),
 		...mapState({
-			matrixRooms: state => state.matrix.matrixRooms,
+			matrixRooms: state => state.matrix.sources,
 		}),
 	},
 	data() {

@@ -134,7 +134,7 @@ export const actions = {
 		const now = new Date();
 		const fileName = `Audius.${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}.backup`;
 		const data = {
-			AudiusBackup: '2.0.10',
+			AudiusBackup: '2.0.12',
 			data: Array.from(
 				new Set(Object.values(presistMutation).reduce((acc, item) => [...acc, ...item], []))
 			).reduce((acc, key) => Object.assign(acc, { [key]: state[key] }), {}),

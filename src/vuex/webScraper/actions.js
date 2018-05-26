@@ -41,18 +41,21 @@ export const actions = {
 			dispatch('runWebScraper', id);
 		}
 	},
-	runWebScraper({ state, commit, dispatch }, id) {
+	runWebScraper({ state, commit, dispatch, rootState }, id) {
 		if (!id) {
 			commit('error', `Can not find channel "${id}".`);
 			return;
 		}
 		const ws = state.sources[id];
-		const index = state.paginationIndex[id] || 0;
+		const index = rootState.paginationIndex[id] || 0;
 		if (id === 'Imgur') {
 			commit('setPaginationIndex', { id, index: index + 1 });
-			webScraper.getImgurMedia(state.paginationIndex[id]).then(mediaList => {
-				dispatch('webScraperUpdateSuccess', { id, mediaList });
-			}).catch(error => commit('error', `Could not get Imgur. ${error}`));
+			webScraper
+				.getImgurMedia(rootState.paginationIndex[id])
+				.then(mediaList => {
+					dispatch('webScraperUpdateSuccess', { id, mediaList });
+				})
+				.catch(error => commit('error', `Could not get Imgur. ${error}`));
 		} else if (ws.settings.type === 'script') {
 			commit('setPaginationIndex', { id, index: index + 1 });
 			if (state.sourcesInitialized[id]) {

@@ -20,7 +20,8 @@ export function getCurrentPlayList(state) {
 }
 
 export function getCurrentPlayListEntities(state) {
-	const { sourceId, type } = state.currentMediaSource;
+	const { type } = state.currentMediaSource;
+	const sourceId = state.currentMediaSource.id;
 	if (type === 'playList') {
 		return (getCurrentPlayList(state) || []).map(id => state.entities[id] || { id });
 	}
@@ -37,6 +38,6 @@ export function getCurrentPlayListEntities(state) {
 
 export function getCurrentName(state) {
 	const { id, type } = state.currentMediaSource;
-	if (type === 'matrix') return state.matrix.matrixRooms[id].name;
+	if (type === 'matrix') return state.matrix.sources[id].name;
 	return id;
 }
