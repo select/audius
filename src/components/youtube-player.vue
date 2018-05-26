@@ -20,9 +20,9 @@ export default {
 				// if video changed, set new video in player
 				if (this.currentMedia.type === 'youtube') {
 					try {
-						const videoId = this.player.getVideoUrl()
-							? isYouTubeVideoRegEx.exec(this.player.getVideoUrl())[1]
-							: undefined;
+						const url = this.player.getVideoUrl();
+						const match = isYouTubeVideoRegEx.exec(url);
+						const videoId = match ? match[1] : undefined;
 						const currentMediaId = this.currentMedia.youtubeId || this.currentMedia.id;
 						if (videoId !== currentMediaId) {
 							this.duration = this.player.getDuration();
@@ -38,7 +38,6 @@ export default {
 						}
 						this.player.playVideo();
 					} catch (error) {
-						console.log('eherer');
 						this.error(`YouTub player had an error. ${error}`);
 					}
 				} else if (this.player) {
