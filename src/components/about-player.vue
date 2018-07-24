@@ -62,7 +62,7 @@ export default {
 		<a href="https://matrix.org/" target="_blank" rel="noopener">Matrix</a> is a chat network that allows you to share songs with Audius.
 	</p>
 	<div class="about-player__community-btns">
-		<button class="button btn--blue" @click="setLeftMenuTab('radio')">Join a room</button>
+		<button class="button btn--blue" @click="setLeftMenuTab('matrix')">Join a room</button>
 	</div>
 	<p>
 		You can drag and drop songs on the room names in the matrix tab or add search results!

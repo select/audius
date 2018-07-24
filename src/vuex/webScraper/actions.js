@@ -9,6 +9,11 @@ function extensionMessage(detail) {
 }
 
 export const actions = {
+	renameWebScraper({ state, commit }, { oldName, newName }) {
+		if (state.sources[newName]) return;
+		commit('renameWebScraper', { oldName, newName });
+		commit('selectMediaSource', { type: 'webScraper', id: newName });
+	},
 	webScraperUpdateSuccess({ state, commit }, { id, mediaList }) {
 		if (!mediaList) {
 			commit('error', `Requesting ${id} did not return results.`);

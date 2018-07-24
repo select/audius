@@ -20,4 +20,5 @@ export const presistMutation = {
 	updateCurrentMedia: ['entities'],
 	setIsMobile: ['isMobile'],
 	setMatrixEnabled: ['matrixEnabled'],
+
 };

@@ -4,7 +4,7 @@ import { mapModuleState } from '../utils';
 
 export default {
 	methods: {
-		...mapActions(['updatePublicRooms']),
+		...mapActions(['updatePublicRooms', 'joinMatrixRoom']),
 		...mapMutations(['toggleMatrixRoomDirectory']),
 		close() {
 			this.toggleMatrixRoomDirectory(false);
@@ -26,9 +26,15 @@ export default {
 				<div
 					v-if="!(publicRooms && publicRooms.length)"
 					class="about-player__community-btns">
-					<a class="button btn--blue" href="?import=!zKinTrtpQEyHfnIbnI:matrix.org&type=room&title=Random">Random</a>
-					<a class="button btn--blue" href="?import=!VTIhlnDdHsxZFZQNFh:matrix.org&type=room&title=Rock">Rock</a>
-					<a class="button btn--blue" href="?import=!sgKmJzakMmEdSCgKCE:matrix.org&type=room&title=Electronic">Electronic</a>
+					<div class="button btn--blue" @click="joinMatrixRoom({ id: '!zKinTrtpQEyHfnIbnI:matrix.org', name: 'Random' })">Random</div>
+<!-- http://localhost:8080/?import=!wkEBtQpMVXqZktQwjF:matrix.org&type=room&title=Docu%20%2F%20Tech%20%2F%20Science%20%5BAudius%5D
+http://localhost:8080/?import=!sgKmJzakMmEdSCgKCE:matrix.org&type=room&title=Electronic%20%5BAudius%5D
+http://localhost:8080/?import=!vginOAdNcoiesrilGC:matrix.org&type=room&title=Music%20Links
+http://localhost:8080/?import=!aSJNcnulrVagkddEtD:matrix.org&type=room&title=Chillout%20%5BAudius%5D
+http://localhost:8080/?import=!uFhErnfpYhhlauJsNK:matrix.org&type=room&title=Music%20Discovery -->
+
+					<div class="button btn--blue" @click="joinMatrixRoom({ id: '!VTIhlnDdHsxZFZQNFh:matrix.org', name: 'Rock' })">Rock</div>
+					<div class="button btn--blue" @click="joinMatrixRoom({ id: '!sgKmJzakMmEdSCgKCE:matrix.org', name: 'Electronic' })">Electronic</div>
 				</div>
 				<div v-if="!(publicRooms && publicRooms.length)">
 					<br>
@@ -39,7 +45,7 @@ export default {
 						class="button btn--blue"
 						v-for="room in publicRooms"
 						v-bind:title="'['+room.numberOfMembers+' Members] '+room.topic"
-						v-bind:href="'?import='+room.id+'&type=room&title='+encodeURIComponent(room.name)">
+						@click="joinMatrixRoom({ id: room.id, name: room.name })">
 						{{room.name}}
 					</a>
 				</div>

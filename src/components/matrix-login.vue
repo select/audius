@@ -1,7 +1,11 @@
 <script>
 import { mapActions } from 'vuex';
+import { mapModuleState } from '../utils';
 
 export default {
+	computed: {
+		...mapModuleState('matrix', ['credentials']),
+	},
 	methods: {
 		...mapActions(['loginMatrixWithPassword']),
 		matrixLogin() {
@@ -19,7 +23,7 @@ export default {
 	<table class="matrix-login">
 		<tr>
 			<td>Username</td>
-			<td><input class="input--border" type="text" id="username"></td>
+			<td><input class="input--border" type="text" id="username" :value="credentials.userId"></td>
 		</tr>
 		<tr>
 			<td>Password</td>

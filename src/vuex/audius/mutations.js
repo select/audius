@@ -1,12 +1,11 @@
 import { youtubeApiKey } from '../../utils/config';
-import { mergeDeep } from '../../utils';
 import {
 	getCurrentPlayListEntities,
 	getCurrentPlayList,
 	getCurrentName,
 	getMediaEntity,
 } from './getCurrentPlayList';
-import { migrateState } from '../../utils/migrate.2.0.12';
+import { migrateIndexDb2012 } from '../../utils/migrate.2.0.12';
 
 /* eslint-disable no-param-reassign */
 function playMedia(state, media) {
@@ -113,6 +112,11 @@ function play(state, mediaId, media) {
 	}
 }
 
+function uniqById(a) {
+	const seen = new Set();
+	return a.filter(({ id }) => (seen.has(id) ? false : seen.add(id)));
+}
+
 /* eslint-disable no-param-reassign */
 export const mutations = {
 	recoverState(state, recoveredState) {
@@ -131,8 +135,7 @@ export const mutations = {
 	loadBackup(state, backup) {
 		if (backup.AudiusBackup) {
 			if (backup.AudiusBackup < '2.0.12') {
-				debugger;
-				const data = migrateState(backup.data);
+				const data = migrateIndexDb2012(backup.data);
 				state = Object.assign(state, data);
 			} else {
 				state = Object.assign(state, backup.data);
@@ -145,12 +148,13 @@ export const mutations = {
 		} else {
 			state.mainRightTab = 'search';
 		}
+
 		state.search.isPlayList = isPlayList;
 		if (state.search.id !== id) {
-			state.search.results = mediaList;
+			state.search.results = uniqById(mediaList);
 			state.search.id = id;
 		} else {
-			state.search.results = [...state.search.results, ...mediaList];
+			state.search.results = uniqById([...state.search.results, ...mediaList]);
 		}
 	},
 	toggleSearch(state, toggleState) {
@@ -276,11 +280,11 @@ export const mutations = {
 		if (state.sources[newName]) return;
 		const sources = Object.assign({}, state.sources);
 		sources[newName] = sources[oldName];
-		const sourcesOrdered = [...state.sourcesOrdered];
-		sourcesOrdered[sourcesOrdered.indexOf(oldName)] = newName;
+		// const sourcesOrdered = [...state.sourcesOrdered];
+		// sourcesOrdered[sourcesOrdered.indexOf(oldName)] = newName;
 		delete sources[oldName];
 		state.sources = sources;
-		state.sourcesOrdered = sourcesOrdered;
+		state.sourcesOrdered[state.sourcesOrdered.indexOf(oldName)] = newName;
 		state.currentMediaSource.id = newName;
 	},
 	removeMedia(state, { mediaIds, tagName }) {

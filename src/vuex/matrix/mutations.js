@@ -23,7 +23,16 @@ export const mutations = {
 		state.credentials = credentials;
 		state.isGuest = isGuest;
 	},
+	joinRoom(state, room) {
+		const { roomId } = room;
+		if (roomId in state.sources) return;
+		state.sources[roomId] = Object.assign({}, matrixRoomTemplate(), { name: room.name });
+		state.sourcesOrdered = [...state.sourcesOrdered, roomId];
+	},
+	renameRoom(state, { rooms }) {
+	},
 	setMatrixLoggedIn(state, { rooms }) {
+		state.showMatrixLoginModal = false;
 		state.matrixLoggedIn = true;
 		const { userId } = state.credentials;
 
@@ -46,8 +55,9 @@ export const mutations = {
 				state.sources[roomId].isAdmin = myuser.powerLevel >= 100;
 
 				try {
-					state.sources[roomId].alias =
-						room.currentState.events['m.room.aliases']['matrix.org'].event.content.aliases[0];
+					[state.sources[roomId].alias] = room.currentState.events['m.room.aliases'][
+						'matrix.org'
+					].event.content.aliases;
 				} catch (e) {
 					console.warn('could not get alias, well it is bad code anyway');
 				}
@@ -65,17 +75,13 @@ export const mutations = {
 		// Remove room from room list if it does not exist any more.
 		// Do not do that if length is one, sice this function is also
 		// called when adding "one" new room
-		const missing = Object.keys(state.sources).filter(
-			id => !state.sourcesOrdered.includes(id)
-		);
-		state.sourcesOrdered.push(...missing);
-		if (rooms.length > 1) {
+		if (rooms.length >= 1) {
 			const roomIndex = new Set(rooms.map(({ roomId }) => roomId));
 			state.sourcesOrdered = [
 				// remove old
 				...state.sourcesOrdered.filter(id => roomIndex.has(id)),
 				// add missing
-				...Object.keys(rooms).filter(({ roomId }) => !state.sourcesOrdered.includes(roomId)),
+				...rooms.filter(({ roomId }) => !state.sourcesOrdered.includes(roomId)),
 			];
 		}
 	},
@@ -87,14 +93,25 @@ export const mutations = {
 		state.createMatrixRoomModal =
 			toggleState !== undefined ? toggleState : !state.createMatrixRoomModal;
 	},
+	toggleMatrixConsentModal(state, options) {
+		if (typeof options === 'boolean') {
+			state.showMatrixConsentModal = options;
+			return;
+		}
+		const { toggleState, message } = options;
+		if (message) state.matrixConsentMessage = message;
+		state.showMatrixConsentModal =
+			toggleState !== undefined ? toggleState : !state.showMatrixConsentModal;
+	},
 	toggleMatrixRoomDirectory(state, toggleState) {
 		state.showMatrixRoomDirectory =
 			toggleState !== undefined ? toggleState : !state.showMatrixRoomDirectory;
 	},
 	matrixRemoveAccount(state) {
-		state = Object.assign(state, {
+		Object.assign(state, {
 			hasCredentials: false,
 			matrixLoggedIn: false,
+			isGuest: null,
 			credentials: {
 				accessToken: '',
 				userId: '',

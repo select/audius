@@ -15,7 +15,7 @@ export default {
 <template>
 <div class="wmp-about">
 	<p>
-		The Imgur <a @click="setLeftMenuTab('tv')">web channel</a> is a build in demo. You can create your own <a @click="setLeftMenuTab('tv')">channel</a>. There are two methods.
+		The Imgur <a @click="selectMediaSource({type: 'webScraper', id: 'Imgur'});setLeftMenuTab('webScraper')">web channel</a> is a build in demo. You can create your own <a @click="setLeftMenuTab('webScraper')">channel</a>. There are two methods.
 	</p>
 	<p>
 		<dl class="wmp-about__web-channels">

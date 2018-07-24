@@ -8,6 +8,7 @@ export function mapModuleState(namespace, attributes) {
 		));
 	}
 	return Object.entries(attributes).reduce((acc, [alias, attribute]) => {
+		console.log("namespace", namespace);
 		acc[alias] = (state) => state[namespace][attribute];
 		return acc;
 	}, {});

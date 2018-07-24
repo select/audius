@@ -25,7 +25,8 @@ export const matrixClient = {
 				const message = event.event.content.body;
 				const roomId = event.event.room_id;
 				if (!(roomId in this.firstEvent)) this.firstEvent[roomId] = event.event.event_id;
-				if (event.event.type === ['audiusMedia']) { // legacy events, remove 2019
+				if (event.event.type === 'audiusMedia') {
+					// legacy events, remove 2019
 					dispatch('parseMatrixMessage', {
 						roomId,
 						eventId: event.event.event_id,
@@ -42,17 +43,25 @@ export const matrixClient = {
 				} else if (message) dispatch('parseMatrixMessage', { roomId, message });
 			});
 
-			this.client.on('sync', syncState => {
+			this.client.on('sync', (syncState, a, event) => {
 				if (syncState === 'ERROR') {
-					if (this.syncFailCount >= 5) {
-						commit('error', 'Could not connect to matrix more than 5 time. Disconnecting.');
-						this.logout(); // FIXME does not stop the login
+					if (event) {
+						commit('error', `${event.error.data.error}`);
+						if (event.error.data.errcode === 'M_UNKNOWN_TOKEN') {
+							commit('toggleMatrixLoginModal', true);
+						}
+						this.client.stopClient();
+						return;
+					}
+					if (this.syncFailCount >= 3) {
+						commit('error', 'Could not connect to matrix more than 3 time. Disconnecting.');
+						this.client.stopClient();
 					} else {
 						commit(
 							'error',
-							`Could not connect to matrix server. ${this.syncFailCount
-								? 'Attempt ' + this.syncFailCount
-								: ''}`
+							`Could not connect to matrix server. ${
+								this.syncFailCount ? 'Attempt ' + this.syncFailCount : ''
+							}`
 						);
 						this.syncFailCount++;
 					}

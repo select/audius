@@ -1,6 +1,6 @@
 <script>
 import draggable from 'vuedraggable';
-import { mapGetters, mapMutations, mapState } from 'vuex';
+import { mapGetters, mapMutations, mapState, mapActions } from 'vuex';
 import { mapModuleState } from '../utils';
 
 export default {
@@ -9,7 +9,7 @@ export default {
 	},
 	computed: {
 		...mapGetters(['youtubeApiKeyUI']),
-		...mapState('currentMediaSource'),
+		...mapState(['currentMediaSource']),
 		...mapModuleState('webScraper', ['sources', 'extensionAvilable']),
 		settings() {
 			const { id, type } = this.currentMediaSource;
@@ -34,7 +34,8 @@ export default {
 		},
 	},
 	methods: {
-		...mapMutations(['updateWebScraper', 'addUrlPattern', 'renameWebScraper']),
+		...mapMutations(['updateWebScraper', 'addUrlPattern']),
+		...mapActions(['renameWebScraper']),
 		updateSettings(values) {
 			this.updateWebScraper({
 				id: this.currentMediaSource.id,
@@ -86,7 +87,7 @@ export default {
 			class="input--border"
 			rows="10"
 			:value="settings.script"
-			@input="updateSettings({ script: $event.target.value })"></textarea>
+			@input.stop="updateSettings({ script: $event.target.value })"></textarea>
 		<div class="smaller">The code is executed in a <a href="https://developer.chrome.com/extensions/sandboxingEval">secure sandbox</a> in the extension.</div>
 	</div>
 	<div v-if="settings.type == 'urls'">

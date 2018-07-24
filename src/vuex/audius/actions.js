@@ -90,7 +90,6 @@ export const actions = {
 			});
 	},
 	nextVideo({ state, commit, dispatch }) {
-		console.log('check if next viedo works');
 		if (state.currentMediaSource.type === 'webScraper') {
 			const cp = getCurrentPlayListEntities(state);
 			if (cp.length < 7) {

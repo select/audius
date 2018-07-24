@@ -11,13 +11,14 @@ export default {
 					this.player
 						.loadVideo(this.currentMedia.id)
 						.then(() => {
-							if (this.currentMedia.start) this.player.setCurrentTime(this.currentMedia.start);
-							this.player.play();
-						}).catch(error => {
+							if (this.currentMedia.start) return this.player.setCurrentTime(this.currentMedia.start).then();
+							return;
+						}).then(() => this.player.play().then())
+						.catch(error => {
 							this.error(`Could not load vimeo video: ${error}`);
 						});
 				} else if (this.player) {
-					this.player.pause();
+					this.player.pause().then(() => {});
 					// Unload video to stop buffering.
 					this.player.unload().then();
 				}
@@ -41,9 +42,9 @@ export default {
 			this.$store.watch(state => state.isPlaying, () => {
 				// if isPlaying changed start stop video
 				if (this.currentMedia.type === 'vimeo' && this.isPlaying) {
-					this.player.play();
+					this.player.play().then(() => {});
 				} else {
-					this.player.pause();
+					this.player.pause().then(() => {});
 				}
 			}),
 		];
@@ -65,7 +66,20 @@ export default {
 		initPlayer() {
 			if (!this.player) {
 				injectScript('https://player.vimeo.com/api/player.js').then(() => {
-					this.player = new window.Vimeo.Player(document.querySelector('.vimeo-player'));
+					this.player = new window.Vimeo.Player(
+						document.querySelector('.vimeo-player'),
+						{ // FIXME does not work
+							id: this.currentMedia.id,
+							autoplay: true,
+						}
+					);
+					this.player.ready()
+						.then(() => this.player.loadVideo(this.currentMedia.id))
+						.then(() => {
+							setTimeout(() => {
+								this.player.play(); // FIXME does not work
+							}, 500);
+						});
 					this.player.on('play', () => {
 						this.timeInterval = setInterval(() => {
 							this.player.getCurrentTime().then(s => { this.setCurrentTime(s); });

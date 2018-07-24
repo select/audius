@@ -4,14 +4,6 @@ import { s2time } from '../../utils';
 import { getCurrentPlayListEntities, getCurrentName } from './getCurrentPlayList';
 
 export const getters = {
-	exportTypeName(state) {
-		const nameMap = {
-			webScraper: 'channel',
-			matrix: 'room',
-			playList: 'playlist',
-		};
-		return nameMap[state.currentMediaSource.type];
-	},
 	playList(state) {
 		const { type, id } = state.currentMediaSource;
 		if (type === 'playList' && id) return state.sources[id];

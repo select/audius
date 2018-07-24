@@ -1,7 +1,7 @@
 /* eslint no-new: "off" */
 import Vue from 'vue';
 
-import { migrateState, deleteOldKeys } from '../utils/migrate.2.0.12';
+import { migrate2012 } from '../utils/migrate.2.0.12';
 import { indexDB, cleanWindowLocation, getParameterByName } from '../utils';
 import { store } from '../vuex/store';
 import './keyshorts';
@@ -38,11 +38,9 @@ indexDB
 	.then(() => indexDB.recoverState())
 	.then(recoveredState => {
 		// Recover the last saved state from IndexDb
-		// console.log("recover state", recoveredState);
-		const newState = migrateState(recoveredState);
-		console.log("newState", newState);
-		deleteOldKeys();
-		store.commit('recoverState', newState);
+		store.commit('recoverState', recoveredState);
+
+		migrate2012(store, recoveredState);
 
 		// Detect if this a mobile device (before rendering the UI).
 		store.commit('setIsMobile', isMobile());

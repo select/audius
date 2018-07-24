@@ -7,7 +7,10 @@ export const state = {
 	showMatrixRoomDirectory: false,
 	matrixLoggedIn: false,
 	showMatrixLoginModal: false,
+	showMatrixConsentModal: false,
+	matrixConsentMessage: '',
 	hasCredentials: false,
+	isGuest: null,
 	credentials: {
 		accessToken: '',
 		userId: '',

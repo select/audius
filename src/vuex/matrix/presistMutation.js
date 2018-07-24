@@ -1,9 +1,18 @@
 export const presistMutation = {
 	play: ['sources'],
 	nextVideo: ['sources'],
-	setMatrixCredentials: ['credentials'],
+	setMatrixCredentials: ['credentials', 'hasCredentials', 'isGuest'],
 	setPublicRooms: ['publicRooms'],
-	updateMatrixRoom: ['sources'],
-	matrixRemoveAccount: ['credentials'],
+	updateMatrixRoom: ['sourcesOrdered', 'sources'],
+	matrixRemoveAccount: ['credentials', 'hasCredentials', 'isGuest'],
 	deleteMatrixRoom: ['sourcesOrdered', 'sources'],
+	setMatrixLoggedIn: ['sourcesOrdered'],
+	saveMatrix: [
+		'sources',
+		'sourcesOrdered',
+		'credentials',
+		'hasCredentials',
+		'isGuest',
+		'publicRooms',
+	],
 };

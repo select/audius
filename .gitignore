@@ -3,4 +3,4 @@ dist/
 .sass-cache/
 development/
 deploy
-dist-website/
+dist-website/*

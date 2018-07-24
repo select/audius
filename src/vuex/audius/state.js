@@ -35,6 +35,7 @@ export const state = {
 	jumpCursor: '',
 	exportURLs: [],
 	pendingImportURL: null,
+	version: '0.0.0',
 	migration: {
 		'audius_0.03': false,
 		'audius_0.03.2': false,

@@ -1,14 +1,14 @@
 export function getMediaEntity(state, mediaId) {
-	if (state.search.results) {
-		const media = state.search.results.find(item => item.id === mediaId);
-		if (media) return media;
+	if (mediaId in state.entities) return state.entities[mediaId];
+	let media = state.search.results.find(item => item.id === mediaId);
+	if (media) return media;
+	for (const sourceName of ['matrix', 'webScraper']) {
+		for (const sourceId of state[sourceName].sourcesOrdered) {
+			media = state[sourceName].sources[sourceId].playList.find(({ id }) => id === mediaId)
+			if (media) return media;
+		}
 	}
-	const { id, type } = state.currentMediaSource;
-	if (['matrix', 'webScraper'].includes(type)) {
-		const store = state[type][type === 'matrix' ? 'matrixRooms' : 'webScrapers'][id];
-		return Object.assign({}, store.playList.find(({ _id }) => _id === mediaId));
-	}
-	return state.entities[mediaId];
+	return {};
 }
 
 export function getCurrentPlayList(state) {

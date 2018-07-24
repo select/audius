@@ -17,6 +17,9 @@ export default {
 	},
 	mounted() {
 		this.videoPlayer = document.querySelector('.video-player');
+		this.player = this[`${this.currentMedia.type}Player`];
+		this.player.src = this.currentMedia.url;
+		this.player.play();
 		this.videoPlayer.onended = () => {
 			clearInterval(this.timeInterval);
 			this.nextVideo();

@@ -4,6 +4,7 @@ import draggable from 'vuedraggable';
 
 import MatrixCreateRoom from './matrix-create-room.vue';
 import MatrixPublicRooms from './matrix-public-rooms.vue';
+import MatrixConsentModal from './matrix-consent.vue';
 import MatrixLogin from './matrix-login.vue';
 import { mapModuleState } from '../utils';
 
@@ -12,6 +13,7 @@ export default {
 		draggable,
 		MatrixCreateRoom,
 		MatrixPublicRooms,
+		MatrixConsentModal,
 		MatrixLogin,
 	},
 	data() {
@@ -65,6 +67,7 @@ export default {
 			'matrixEnabled',
 			'loadedModules',
 			'currentMediaSource',
+			'matrix',
 		]),
 		...mapModuleState('matrix', [
 			'sources',
@@ -97,7 +100,7 @@ export default {
 	</div>
 	<div v-if="matrixEnabled && loadedModules.matrix">
 		<div v-if="matrixEnabled && !matrixLoggedIn" class="matrix-room__logging-in">
-			&nbsp; … connecting to Matrix
+			&nbsp; … connecting to Matrix.org
 		</div>
 		<div
 			class="play-list-manager__room-suggestions"
@@ -117,6 +120,7 @@ export default {
 		</div>
 		<matrix-create-room></matrix-create-room>
 		<matrix-public-rooms></matrix-public-rooms>
+		<matrix-consent-modal></matrix-consent-modal>
 
 		<div class="modal" v-if="showMatrixLoginModal" @click="toggleMatrixLoginModal()">
 			<div class="modal__body" @click.stop>
@@ -130,6 +134,7 @@ export default {
 		</div>
 
 		<draggable
+			v-if="matrixLoggedIn"
 			class="matrix-room__tags"
 			v-model="_sourcesOrdered"
 			element="ul"
@@ -155,7 +160,7 @@ export default {
 					class="play-list-manager__tag-body"
 					@click="selectMediaSource({ type: 'matrix', id: id })">
 					<div>
-						{{sources[id].name}}
+						{{matrix.sources[id].name}}
 					</div>
 					<div>
 						{{sources[id].playList.length - Object.keys(sources[id].playedMedia).length}} New

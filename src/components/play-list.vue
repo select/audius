@@ -65,6 +65,7 @@ export default {
 			'dropMoveItem',
 			'setShowWatched',
 			'setLeftMenuTab',
+			'selectMediaSource',
 		]),
 		...mapActions(['importURL', 'matrixPaginate', 'runWebScraper', 'matrixSend']),
 		checkElementVisible(hide) {
@@ -196,13 +197,13 @@ export default {
 			<div>
 				Join a room and share your discoveries <br>
 				<button
-					@click="setLeftMenuTab('radio')"
+					@click="setLeftMenuTab('matrix')"
 					class="button btn--blue">join room</button>
 			</div>
 			<div>
 				Watch funny videos from Imgur <br>
 				<button
-					@click="setLeftMenuTab('tv')"
+					@click="selectMediaSource({type: 'webScraper', id: 'Imgur'});setLeftMenuTab('webScraper')"
 					class="button btn--blue">watch imgur</button>
 			</div>
 			<div>
@@ -277,7 +278,7 @@ export default {
 			<div
 				class="play-list__greeting"
 				v-if="currentMediaSource.type == 'webScraper' && !_entities.length ">
-				Nothing found. Click load more.
+				Nothing found. Click below to load more.
 			</div>
 
 			<div

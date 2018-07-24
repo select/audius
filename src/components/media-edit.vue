@@ -8,7 +8,7 @@ export default {
 	data() {
 		return {
 			copyActive: false,
-			currentMediaSource: 'tags',
+			selectedMediaSourceTab: 'tags',
 		};
 	},
 	computed: {
@@ -19,6 +19,8 @@ export default {
 			'sources',
 			'playList',
 			'currentMediaSource',
+			'matrix',
+			'webScraper',
 		]),
 		...mapModuleState('webScraper', {
 			webScrapers: 'sources',
@@ -37,12 +39,12 @@ export default {
 			const data = {
 				tags: this.sourcesOrdered
 					.filter(sourceId => this.sources[sourceId].includes(this.media.id)),
-				matrixRooms: this.matrixRoomsOrdered
-					.filter(sourceId => this.matrixRooms[sourceId].playList.some(
+				matrixRooms: this.matrix.sourcesOrdered
+					.filter(sourceId => this.matrix.sources[sourceId].playList.some(
 						({ id }) => id === this.media.id)
 					),
-				webScrapers: this.webScrapersOrdered
-					.filter(sourceId => this.webScrapers[sourceId].playList.some(
+				webScrapers: this.webScraper.sourcesOrdered
+					.filter(sourceId => this.webScraper.sources[sourceId].playList.some(
 						({ id }) => id === this.media.id)
 					),
 			};
@@ -210,12 +212,12 @@ export default {
 			<button
 				v-for="src in sourceApiNames"
 				class="button btn--blue-ghost"
-				:class="{'btn--blue': currentMediaSource == src.api}"
-				@click="currentMediaSource = src.api">{{src.label}}</button>
+				:class="{'btn--blue': selectedMediaSourceTab == src.api}"
+				@click="selectedMediaSourceTab = src.api">{{src.label}}</button>
 		</div>
 		<div
 			v-for="src in sourceApiNames"
-			v-if="currentMediaSource == src.api">
+			v-if="selectedMediaSourceTab == src.api">
 			<ul>
 				<li
 					v-for="id in removeFrom[src.api]"
@@ -236,10 +238,10 @@ export default {
 				</li>
 			</ul>
 		</div>
-		<p v-if="currentMediaSource=='webScrapers' && !removeFrom.webScrapers.length">
+		<p v-if="selectedMediaSourceTab=='webScrapers' && !removeFrom.webScrapers.length">
 			… nothing found
 		</p>
-		<p v-if="currentMediaSource=='matrixRooms' && !matrixLoggedIn">
+		<p v-if="selectedMediaSourceTab=='matrixRooms' && !matrixLoggedIn">
 			… matrix not connected
 		</p>
 		<!-- <div class="box-1-1 media-edit__limits">

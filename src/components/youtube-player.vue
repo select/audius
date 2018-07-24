@@ -21,8 +21,6 @@ export default {
 				if (this.currentMedia.type === 'youtube') {
 					try {
 						const match = isYouTubeVideoRegEx.exec(this.player.getVideoUrl());
-						console.log("match", match);
-						console.log("this.player.getVideoUrl()", this.player.getVideoUrl());
 						const videoId = match
 							? match[1]
 							: undefined;
@@ -91,9 +89,10 @@ export default {
 			this.player = new YT.Player('youtube-iframe', {
 				height: '100%',
 				width: '100%',
-				videoId: initialVideos[Math.floor(Math.random() * initialVideos.length)],
+				videoId: this.currentMedia.youtubeId || this.currentMedia.id || initialVideos[Math.floor(Math.random() * initialVideos.length)],
 				// playerVars: {controls: 0},
 				events: {
+					onReady: this.onPlayerReady,
 					onStateChange: this.onPlayerStateChange,
 					onError: this.onPlayerError,
 				},
@@ -112,6 +111,9 @@ export default {
 		onPlayerError(event) {
 			this.videoError(event.data);
 			this.error(`YouTube could not play the video. Error Code ${event.data}`);
+		},
+		onPlayerReady(event) {
+			this.player.playVideo();
 		},
 		onPlayerStateChange() {
 			const playerState = this.player.getPlayerState();
@@ -158,6 +160,6 @@ export default {
 	width: 100%
 	height: 100%
 	overflow: hidden
-	background: $color-aluminium-dark
+	background: $color-black
 
 </style>

@@ -25,6 +25,11 @@ function addMatrixMessage(state, commit, roomId, eventId, results) {
 	});
 }
 
+const urlRegex = /(https?:\/\/[^\s]+)/g;
+function urlify(text) {
+	return text.replace(urlRegex, '<a href="$1" target="_blank">$1</a>');
+}
+
 /* eslint-disable no-param-reassign */
 export const actions = {
 	initMatrix({ commit, state, dispatch }) {
@@ -34,20 +39,19 @@ export const actions = {
 				matrixClient
 					.getCredentials()
 					.then(credentials => commit('setMatrixCredentials', { credentials, isGuest: true }))
-					.then(() =>
-						matrixClient.login(state.credentials, state.isGuest, dispatch, commit)
-					)
+					.then(() => matrixClient.login(state.credentials, state.isGuest, dispatch, commit))
 					.then(rooms => {
 						commit('setMatrixLoggedIn', { rooms });
 						dispatch('updatePublicRooms');
-					});
+					})
+					.catch(error => commit('error', `${error}1`));
 			} else if (!state.matrixLoggedIn) {
 				matrixClient
 					.login(state.credentials, state.isGuest, dispatch, commit)
 					.then(rooms => {
 						commit('setMatrixLoggedIn', { rooms });
-						dispatch('updatePublicRooms');
-					});
+					})
+					.catch(error => commit('error', `${error}2`));
 			}
 		});
 	},
@@ -57,15 +61,13 @@ export const actions = {
 			matrixClient
 				.getCredentialsWithPassword(username, password)
 				.then(credentials => commit('setMatrixCredentials', { credentials, isGuest: false }))
-				.then(() =>
-					matrixClient.login(state.credentials, state.isGuest, dispatch, commit)
-				)
+				.then(() => matrixClient.login(state.credentials, state.isGuest, dispatch, commit))
 				.then(rooms => commit('setMatrixLoggedIn', { rooms }))
-				.catch(error => commit('error', `${error}`));
+				.catch(error => commit('error', `${error}3`));
 		});
 	},
-	matrixSend({ state, commit }, { itemId, roomId, media }) {
-		const curMedia = media || getMediaEntity(state, itemId);
+	matrixSend({ state, rootState, commit }, { itemId, roomId, media }) {
+		const curMedia = media || getMediaEntity(rootState, itemId);
 		if (state.sources[roomId].playList.some(({ id }) => id === curMedia.id)) {
 			commit('error', 'The media item was already posted.');
 			return;
@@ -100,9 +102,8 @@ export const actions = {
 			.catch(error => commit('error', `Could not remove media from matrix room. ${error}`));
 	},
 	matrixPaginate({ state, commit, rootState }, id) {
-		// const id = state.currentMatrixRoom;
 		matrixClient
-			.paginate(state.currentMatrixRoom)
+			.paginate(rootState.currentMediaSource.id)
 			.then(res => {
 				if (res) {
 					commit('setPaginationIndex', {
@@ -116,19 +117,25 @@ export const actions = {
 			.catch(() => commit('error', 'Paginating matrix room failed'));
 	},
 	joinMatrixRoom({ commit }, { id, name }) {
+		commit('toggleMatrixRoomDirectory', false);
 		matrixClient
 			.joinRoom(id)
 			.then(room => {
 				room.name = name || id;
-				commit('setMatrixLoggedIn', { rooms: [room] });
+				commit('joinRoom', room);
 				commit('selectMediaSource', { type: 'matrix', id: room.roomId });
-				commit('setLeftMenuTab', 'webScraper');
+				commit('setLeftMenuTab', 'matrix');
 			})
 			.catch(error => {
 				// {"errcode":"M_FORBIDDEN","error":"Guest access not allowed"}
 				console.log('err', error);
 				if (error.message === 'Guest access not allowed') commit('toggleMatrixLoginModal', true);
-				commit('error', `Could not join room: ${error.message}`);
+				if (error.errcode === 'M_CONSENT_NOT_GIVEN') {
+					commit('setLeftMenuTab', 'matrix');
+					commit('toggleMatrixConsentModal', { toggleState: true, message: urlify(error.message.replace(/\.$/, '')) });
+				} else {
+					commit('error', `Could not join room: ${error.message}`);
+				}
 			});
 	},
 	createMatrixRoom({ commit }, options) {
@@ -153,7 +160,7 @@ export const actions = {
 	setRoomName({ commit }, { id, name }) {
 		matrixClient
 			.setRoomName(id, name)
-			.then(() => commit('setMatrixLoggedIn', { rooms: [{ roomId: id, name }] }))
+			.then(() => commit('updateMatrixRoom', { roomId: id, values: { name } }))
 			.catch(error => commit('error', `Could not rename matrix room: ${error}`));
 	},
 	setRoomTag({ commit }, { roomId, tagName }) {
@@ -221,7 +228,7 @@ export const actions = {
 		matrixClient.logout();
 		commit('matrixLogout');
 	},
-	parseMatrixMessage({ state, commit }, { roomId, eventId, message }) {
+	parseMatrixMessage({ state, commit, rootState }, { roomId, eventId, message }) {
 		// Get the room for the message.
 		const room = state.sources[roomId];
 		if (!(roomId in state.sources)) {
@@ -239,7 +246,7 @@ export const actions = {
 			window.console.log(`[Matrix-Media] %c${message.title}`, 'color: #2DA7EF;');
 		} else {
 			window.console.log(`[Matrix-Text] %c${message}`, 'color: #2DA7EF;');
-			findMediaText(message, state.youtubeApiKey, { indexKnown: index }).then(({ mediaList }) => {
+			findMediaText(message, rootState.youtubeApiKey, { indexKnown: index }).then(({ mediaList }) => {
 				addMatrixMessage(state, commit, roomId, eventId, mediaList);
 			});
 		}

@@ -202,10 +202,10 @@ export default {
 				v-bind:class="{ active: showSongs }"
 				class="media-list__tracks">
 				<video-item
-					v-for="track in video.tracks"
+					v-for="(track, index) in video.tracks"
 					:video="track"
 					:isPlayList="false"
-					:key="track.start"
+					:key="index"
 					:isSearchResult="isSearchResult"
 					:isPlaying="false"></video-item>
 			</ul>

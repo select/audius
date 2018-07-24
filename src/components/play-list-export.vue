@@ -17,8 +17,10 @@ export default {
 		...mapGetters([
 			'currentName',
 			'currentExportData',
-			'exportTypeName',
 		]),
+		...mapState({
+			matrixRooms: (state) => state.matrix.sources,
+		}),
 	},
 	methods: {
 		...mapActions(['exportToURL', 'exportToFile', 'error']),
@@ -41,7 +43,7 @@ export default {
 		},
 		getLink(type, url, name) {
 			if (type === 'Imgur') return `${window.location.href}?showImgur=1`;
-			else if (type === 'room') return `${window.location.href}?import=${this.currentMediaSource.id}&type=${this.exportTypeName}&title=${encodeURIComponent(this.matrixRooms[this.currentMatrixRoom.id].name)}`;
+			else if (type === 'matrix') return `${window.location.href}?import=${this.currentMediaSource.id}&type=${this.currentMediaSource.type}&title=${encodeURIComponent(this.matrixRooms[this.currentMediaSource.id].name)}`;
 			else if (['channel', 'playList', undefined].includes(type)) return `${window.location.href}?import=${url}&type=${type}&title=${encodeURIComponent(name)}`;
 			else if (type === 'url') return url;
 			return '';
@@ -105,17 +107,17 @@ export default {
 			<button
 				class="button btn--blue play-list__export-copy-room"
 				v-bind:class="{ active: copyURLActive }"
-				@click="copyToClip('room')">
+				@click="copyToClip('matrix')">
 					copy link
 				</button>
-			<a class="button btn--blue" :href="twitterLink({type: 'room', name: matrixRooms[this.currentMediaSource.id].name})" target="_blank" rel="noopener">
+			<a class="button btn--blue" :href="twitterLink({type: 'matrix', name: matrixRooms[currentMediaSource.id].name})" target="_blank" rel="noopener">
 				<span class="wmp-icon-twitter"></span>
 				<div>twitter</div>
 			</a>
 			<a
 				class="button btn--blue"
 				v-if="isMobile"
-				:href="whatsAppLink({type: 'room', name: matrixRooms[this.currentMediaSource.id].name})"
+				:href="whatsAppLink({type: 'matrix', name: matrixRooms[this.currentMediaSource.id].name})"
 				target="_blank" rel="noopener">
 				<span class="wmp-icon-whatsapp"></span>
 				<div>whatsapp</div>

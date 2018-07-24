@@ -1,6 +1,7 @@
 <script>
 import { mapGetters, mapMutations, mapState } from 'vuex';
 import draggable from 'vuedraggable';
+import { debounce } from '../utils';
 
 export default {
 	components: {
@@ -18,8 +19,9 @@ export default {
 		...mapMutations(['selectMediaSource', 'deletePlayList', 'renamePlayList', 'dropMoveItem']),
 		dropAdd(event) { // Element is dropped into the list from another list
 			const itemId = event.item.dataset.id;
-			this.dropMoveItem({ itemId, from: this.currentMediaSource, to: { type: 'playList', id: this.id } });
+			this.dropMoveItem({ itemId, from: this.currentMediaSource, to: this.id });
 		},
+		_renamePlayList: debounce(function rn(data) { this.renamePlayList(data); }, 900),
 	},
 	computed: {
 		...mapGetters(['playListLength']),
@@ -49,7 +51,7 @@ export default {
 						class="play-list-manager__tag-name-input"
 						type="text"
 						:value="id"
-						@input="renamePlayList({oldName: id, newName: $event.target.value})"
+						@input="_renamePlayList({oldName: id, newName: $event.target.value})"
 						placeholder="... playlist name">
 				</div>
 				<div>{{sources[id].length}} Songs</div>

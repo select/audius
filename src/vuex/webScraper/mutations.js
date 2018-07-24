@@ -1,5 +1,4 @@
 import { webScraper } from '../../utils';
-import { rename } from '../audius/mutations-rename';
 
 /* eslint-disable no-param-reassign */
 export const mutations = {
@@ -49,6 +48,12 @@ export const mutations = {
 		state.sources = Object.assign({}, state.sources);
 	},
 	renameWebScraper(state, { newName, oldName }) {
-		rename(state, 'webScraper', newName, oldName);
+		const itemsObject = Object.assign({}, state.sources);
+		itemsObject[newName] = itemsObject[oldName];
+		const itemsOrdered = [...state.sourcesOrdered];
+		itemsOrdered[itemsOrdered.indexOf(oldName)] = newName;
+		delete itemsObject[oldName];
+		state.sources = itemsObject;
+		state.sourcesOrdered = itemsOrdered;
 	},
 };
