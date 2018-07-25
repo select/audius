@@ -1,5 +1,5 @@
 <script>
-import { mapActions, mapState, mapMutations } from 'vuex';
+import { mapActions, mapMutations } from 'vuex';
 import { slugify } from '../utils/slugify';
 import MatrixLogin from './matrix-login.vue';
 import { mapModuleState } from '../utils';
@@ -42,7 +42,7 @@ export default {
 		},
 	},
 	computed: {
-		...mapModuleState('matrix', ['createMatrixRoomModal', 'matrix']),
+		...mapModuleState('matrix', ['createMatrixRoomModal', 'isGuest']),
 		slugName() {
 			if (this.roomName.length < 5) return '…';
 			const slug = slugify(this.roomName)
@@ -60,15 +60,10 @@ export default {
 		@click="close"
 		class="modal matrix-create">
 		<div class="modal__body" @click.stop>
-			<div v-if="matrix.isGuest !== false">
-				You are a guest user. Guest users are not allowed to create rooms. Create a full accound with
-					<a
-					href="https://riot.im/app/#/room/#audius:matrix.org"
-					target="_blank" rel="noopener">Riot</a>
-					or <a href="https://matrix.org/docs/projects/try-matrix-now.html#clients" target="_blank" rel="noopener">another client</a> and login below.
-				<p>
-					<matrix-login></matrix-login>
-				</p>
+			<div v-if="isGuest !== false">
+				Guest users are not allowed to create rooms. <br>
+				Please login or register your Riot.im account. <br><br>
+				<matrix-login></matrix-login>
 			</div>
 			<div v-else>
 				<h3>Create matrix room</h3>
@@ -111,4 +106,9 @@ export default {
 	input
 		width: 100%
 		margin-bottom: $grid-space
+.matrix-create__group
+	display: flex
+	align-items: flex-end
+.create-room__register
+	margin-bottom: 3px;
 </style>

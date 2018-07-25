@@ -11,13 +11,13 @@ export default {
 	},
 	mounted() {
 		this.importName = this.pendingImportURL ? this.pendingImportURL.name : '';
-		if (!this.matrixLoggedIn && this.matrixEnabled) {
+		if (!this.matrixLoggedIn) {
 			this.initModule('matrix');
 		}
 	},
 	methods: {
 		...mapActions(['importURL', 'joinMatrixRoom', 'initModule']),
-		...mapMutations(['setPendingImportURL', 'setMatrixEnabled', 'error']),
+		...mapMutations(['setPendingImportURL', 'error']),
 		close() {
 			this.setPendingImportURL(null);
 		},
@@ -47,7 +47,6 @@ export default {
 	computed: {
 		...mapState([
 			'pendingImportURL',
-			'matrixEnabled',
 			'extensionAvilable',
 		]),
 		...mapModuleState('matrix', ['matrixLoggedIn']),
@@ -63,7 +62,7 @@ export default {
 		@click="close"
 		class="import-modal modal">
 		<div class="modal__body" @click.stop>
-			<div v-if="pendingImportURL.type === 'channel'">
+			<div v-if="pendingImportURL.type === 'webScraper'">
 				<p>
 					<h3>Import channel</h3>
 					<div class="import-modal__row">
@@ -89,29 +88,22 @@ export default {
 					</p>
 				</p>
 			</div>
-			<div v-if="pendingImportURL.type === 'room'">
+			<div v-if="pendingImportURL.type === 'matrix'">
 				<h3>Join room</h3>
-					<p v-if="!matrixEnabled">
-							<button
-								@click="setMatrixEnabled"
-								class="button btn--blue">
-								enable Matrix
-							</button>
-					</p>
-					<p v-if="!matrixLoggedIn && matrixEnabled">
+					<p v-if="!matrixLoggedIn">
 							… connecting to Matrix. Please be patient.
 					</p>
 					<p>
 						<div class="import-modal__row">
 							<div>{{pendingImportURL.name}}</div>
 							<button
-								v-bind:class="{disabled: !(matrixEnabled && matrixLoggedIn)}"
+								v-bind:class="{disabled: !matrixLoggedIn}"
 								class="button btn--blue"
 								@click="importRoom">Join</button>
 						</div>
 					</p>
 			</div>
-			<div v-if="pendingImportURL.type != 'channel' && pendingImportURL.type != 'room'">
+			<div v-if="pendingImportURL.type != 'webScraper' && pendingImportURL.type != 'matrix'">
 				<p>
 					Create new playlist
 					<div class="import-modal__row">

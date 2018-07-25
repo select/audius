@@ -58,7 +58,6 @@ export const state = {
 		results: [],
 	},
 	extensionAvilable: false,
-	matrixEnabled: true,
 	loadedModules: {},
 	paginationIndex: {},
 };

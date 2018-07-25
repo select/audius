@@ -46,7 +46,6 @@ export default {
 		'search',
 		'website',
 		'leftMenuTab',
-		'matrixEnabled',
 		'mainRightTab',
 		'queue',
 	]),

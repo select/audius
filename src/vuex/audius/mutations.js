@@ -9,13 +9,14 @@ import { migrateIndexDb2012 } from '../../utils/migrate.2.0.12';
 
 /* eslint-disable no-param-reassign */
 function playMedia(state, media) {
-	if (state.currentMatrixRoom) {
-		state.matrixRooms[state.currentMatrixRoom].playedMedia[media.id] = new Date();
-		state.matrixRooms = Object.assign({}, state.matrixRooms);
-	} else if (state.currentWebScraper) {
-		state.webScrapers[state.currentWebScraper].playedMedia[media.id] = new Date();
-		state.webScrapers = Object.assign({}, state.webScrapers);
-	}
+	['matrix', 'webScraper'].forEach(sourceName => {
+		if (sourceName in state.loadedModules) {
+			Object.values(state[sourceName].sources).forEach(({ playedMedia }) => {
+				playedMedia[media.id] = new Date();
+			});
+			state[sourceName].sources = Object.assign({}, state[sourceName].sources);
+		}
+	});
 	Object.assign(state, {
 		sessionHistoryPos: -1,
 		sessionHistory: [...state.sessionHistory, media],
@@ -161,7 +162,7 @@ export const mutations = {
 		state.website.showSearch = toggleState !== undefined ? toggleState : !state.website.showSearch;
 	},
 	setMainRightTab(state, id) {
-		state.mainRightTab = id;
+		state.mainRightTab = state.mainRightTab === id ? '' : id;
 	},
 	setShowSettings(state) {
 		state.showSettings = true;
@@ -488,11 +489,12 @@ export const mutations = {
 	setLoadedModules(state, moduleName) {
 		state.loadedModules = Object.assign({ [moduleName]: true }, state.loadedModules);
 	},
-	setMatrixEnabled(state) {
-		state.matrixEnabled = !state.matrixEnabled;
-	},
 	setPaginationIndex(state, { id, index }) {
 		state.paginationIndex[id] = index;
 		state.paginationIndex = Object.assign({}, state.paginationIndex);
+	},
+	setShowWatched(state, { id, toggleState }) {
+		state.showWatched[id] = toggleState;
+		state.showWatched = Object.assign({}, state.showWatched);
 	},
 };

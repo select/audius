@@ -19,6 +19,4 @@ export const presistMutation = {
 	videoError: ['entities'],
 	updateCurrentMedia: ['entities'],
 	setIsMobile: ['isMobile'],
-	setMatrixEnabled: ['matrixEnabled'],
-
 };

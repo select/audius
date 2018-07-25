@@ -39,10 +39,6 @@ export const mutations = {
 		}
 		state.sources = Object.assign({}, state.sources);
 	},
-	setShowWatched(state, { id, toggleState }) {
-		state.showWatched[id] = toggleState;
-		state.showWatched = Object.assign({}, state.showWatched);
-	},
 	updateWebScraper(state, { id, values }) {
 		state.sources[id] = Object.assign({}, state.sources[id], values);
 		state.sources = Object.assign({}, state.sources);

@@ -47,6 +47,11 @@ export default {
 				this.queueActive = false;
 			}, 800);
 		});
+		this.$store.watch(state => state.mainRightTab, () => {
+			const $el = this.$el.querySelector('.media-player');
+			if (!this.mainRightTab) $el.style.height = '100%';
+			else $el.style.height = '';
+		});
 		document.addEventListener('mouseup', () => {
 			this.resize = false;
 			this.resizeWidth = false;

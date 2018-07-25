@@ -22,16 +22,13 @@ export default {
 		};
 	},
 	created() {
-		if (this.matrixEnabled) {
-			this.initModule('matrix');
-			setTimeout(() => {
-				this.$forceUpdate();
-			},1000);
-		}
+		this.initModule('matrix');
+		setTimeout(() => {
+			this.$forceUpdate();
+		}, 1000);
 	},
 	methods: {
 		...mapMutations([
-			'setMatrixEnabled',
 			'selectMediaSource',
 			'setShowMediumSettings',
 			'toggleMatrixRoomModal',
@@ -64,7 +61,6 @@ export default {
 	},
 	computed: {
 		...mapState([
-			'matrixEnabled',
 			'loadedModules',
 			'currentMediaSource',
 			'matrix',
@@ -89,17 +85,8 @@ export default {
 
 <template>
 <div class="matrix-room play-list-manager__wrapper">
-	<div v-if="!matrixEnabled" class="play-list-manager__enable-matrix">
-		<a href="https://matrix.org/" target="_blank" rel="noopener">Matrix</a> is a chat network that allows you to share music and videos with your friends. Press the button to create a guest user and join Matrix.
-		<br>
-		<br>
-		<button
-			class="button btn--blue"
-			@click="setMatrixEnabled();initModule('matrix');"
-			type="button">Join Matrix</button>
-	</div>
-	<div v-if="matrixEnabled && loadedModules.matrix">
-		<div v-if="matrixEnabled && !matrixLoggedIn" class="matrix-room__logging-in">
+	<div v-if="loadedModules.matrix">
+		<div v-if="!matrixLoggedIn" class="matrix-room__logging-in">
 			&nbsp; … connecting to Matrix.org
 		</div>
 		<div
@@ -124,11 +111,8 @@ export default {
 
 		<div class="modal" v-if="showMatrixLoginModal" @click="toggleMatrixLoginModal()">
 			<div class="modal__body" @click.stop>
-				You are a guest user. Guest users are not allowed to join this room. Create a full accound with
-				<a
-				href="https://riot.im/app/#/room/#audius:matrix.org"
-				target="_blank" rel="noopener">Riot</a>
-				or <a href="https://matrix.org/docs/projects/try-matrix-now.html#clients" target="_blank" rel="noopener">another client</a> and login below.
+				Guest users are not allowed to join this room. <br>
+				Please login or register your <b>Riot.im account</b>.<br><br>
 				<matrix-login></matrix-login>
 			</div>
 		</div>
@@ -162,9 +146,9 @@ export default {
 					<div>
 						{{matrix.sources[id].name}}
 					</div>
-					<div>
-						{{sources[id].playList.length - Object.keys(sources[id].playedMedia).length}} New
-						{{numWatched(id)}} Watched
+					<div class="matrix-room__tag-footer">
+						<div> {{sources[id].playList.length - Object.keys(sources[id].playedMedia).length}} New </div>
+						<div> {{sources[id].members ? sources[id].members.length : '?'}} Members </div>
 					</div>
 				</div>
 				<div class="play-list-manager__menu">
@@ -261,7 +245,10 @@ export default {
 		align-items: center
 		> span
 			margin-right: #{2 * $grid-space}
-
+.matrix-room__tag-footer
+	display: flex
+	div
+		min-width: 4em
 </style>
 
 

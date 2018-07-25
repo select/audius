@@ -4,7 +4,7 @@ import { mapModuleState } from '../utils';
 
 export default {
 	computed: {
-		...mapModuleState('matrix', ['credentials']),
+		...mapModuleState('matrix', ['credentials', 'isGuest']),
 	},
 	methods: {
 		...mapActions(['loginMatrixWithPassword']),
@@ -23,7 +23,7 @@ export default {
 	<table class="matrix-login">
 		<tr>
 			<td>Username</td>
-			<td><input class="input--border" type="text" id="username" :value="credentials.userId"></td>
+			<td><input class="input--border" type="text" id="username" :value="isGuest? '' : credentials.userId"></td>
 		</tr>
 		<tr>
 			<td>Password</td>
@@ -32,6 +32,10 @@ export default {
 		<tr>
 			<td></td>
 			<td style="text-align: right">
+				<a
+					class="button btn--blue-ghost create-room__register"
+					target="_blank"
+					href="https://riot.im/app/#/register">Register</a>
 				<button @click="matrixLogin" type="button" class="button btn--blue">Login</button>
 			</td>
 		</tr>

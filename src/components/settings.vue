@@ -9,17 +9,16 @@ export default {
 		MatrixLogin,
 	},
 	data() {
-		return { showConfirmLoadBackup: false };
+		return {
+			showConfirmLoadBackup: false,
+		};
 	},
 	created() {
-		if (this.matrixEnabled) {
-			this.initModule('matrix');
-		}
+		this.initModule('matrix');
 	},
 	computed: {
 		...mapGetters(['youtubeApiKeyUI']),
 		...mapState([
-			'matrixEnabled',
 			'extensionAvilable',
 		]),
 		...mapModuleState('matrix', [
@@ -34,7 +33,6 @@ export default {
 			'setYoutubeApiKey',
 			'matrixRemoveAccount',
 			'matrixLogout',
-			'setMatrixEnabled',
 			'loadBackup',
 			'error',
 		]),
@@ -114,12 +112,8 @@ export default {
 		<br>
 		<span class="smaller">Create your own key in the <a href="https://console.developers.google.com/" target="_blank" rel="noopener">Google Developers Console</a></span>
 	</p>
-	<h3>Matrix</h3>
-	<div class="settings__buttons" @click="setMatrixEnabled">
-			<div v-if="matrixEnabled" class="button">disable Matrix</div>
-			<div v-else class="button btn--blue">enable Matrix</div>
-	</div>
-	<div v-if="matrixEnabled">
+	<h3>Matrix / Riot.im</h3>
+	<div>
 		<p v-if="matrixLoggedIn">
 				You are <b>connected</b> as {{credentials.userId}}.
 				<span v-if="isGuest !== false">You are a <b>guest</b> user.</span>

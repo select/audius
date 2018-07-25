@@ -72,12 +72,12 @@ export default {
 		:value="this.currentMediaSource.id">
 	<div class="button-group">
 		<button
-			class="button btn--blue-ghost"
-			:class="{ 'btn--blue': settings.type == 'urls' }"
+			:class="{ 'btn--tab-active': settings.type == 'urls' }"
+			class="button btn--tab"
 			@click="updateSettings({ type: 'urls' })">URL patterns</button>
 		<button
-			class="button btn--blue-ghost"
-			:class="{ 'btn--blue': settings.type == 'script' }"
+			:class="{ 'btn--tab-active': settings.type == 'script' }"
+			class="button btn--tab"
 			@click="updateSettings({ type: 'script' })">Script</button>
 	</div>
 	<div

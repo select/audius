@@ -7,6 +7,7 @@ const matrixRoomTemplate = () =>
 			playList: [],
 			playedMedia: {},
 			archive: [],
+			members: 0,
 		})
 	);
 
@@ -28,8 +29,6 @@ export const mutations = {
 		if (roomId in state.sources) return;
 		state.sources[roomId] = Object.assign({}, matrixRoomTemplate(), { name: room.name });
 		state.sourcesOrdered = [...state.sourcesOrdered, roomId];
-	},
-	renameRoom(state, { rooms }) {
 	},
 	setMatrixLoggedIn(state, { rooms }) {
 		state.showMatrixLoginModal = false;

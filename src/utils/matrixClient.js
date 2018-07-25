@@ -50,12 +50,12 @@ export const matrixClient = {
 						if (event.error.data.errcode === 'M_UNKNOWN_TOKEN') {
 							commit('toggleMatrixLoginModal', true);
 						}
-						this.client.stopClient();
+						this.stop();
 						return;
 					}
 					if (this.syncFailCount >= 3) {
 						commit('error', 'Could not connect to matrix more than 3 time. Disconnecting.');
-						this.client.stopClient();
+						this.stop();
 					} else {
 						commit(
 							'error',
@@ -77,8 +77,20 @@ export const matrixClient = {
 			this.client.startClient({ initialSyncLimit: 20 });
 		});
 	},
-	logout() {
-		this.client.logout();
+	// return promise
+	register(options) {
+		const { username, password, sessionId, auth, bindThreepids, guestAccessToken } = options;
+		return this.client.register(
+			username,
+			password,
+			sessionId,
+			auth,
+			bindThreepids,
+			guestAccessToken
+		);
+	},
+	stop() {
+		this.client.stopClient();
 	},
 	isGuest() {
 		return this.client.isGuest();

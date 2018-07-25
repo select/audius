@@ -66,6 +66,29 @@ export const actions = {
 				.catch(error => commit('error', `${error}3`));
 		});
 	},
+	registerMatrixUser({ state, commit, dispatch }, options) {
+		Object.assign(
+			{
+				sessionId: '',
+				auth: undefined,
+				bindThreepids: { email: true },
+				guestAccessToken: undefined,
+			},
+			options
+		);
+		import(/* webpackChunkName: "matrix-client" */ '../../utils/matrixClient').then(mc => {
+			({ matrixClient } = mc);
+			matrixClient
+				.register(options)
+				.then(event => {
+					console.log('event', event);
+					return event;
+				})
+				.then(credentials => commit('setMatrixCredentials', { credentials, isGuest: false }))
+				.then(() => matrixClient.login(state.credentials, state.isGuest, dispatch, commit))
+				.catch(error => commit('error', `Register: ${error}`));
+		});
+	},
 	matrixSend({ state, rootState, commit }, { itemId, roomId, media }) {
 		const curMedia = media || getMediaEntity(rootState, itemId);
 		if (state.sources[roomId].playList.some(({ id }) => id === curMedia.id)) {
@@ -132,7 +155,10 @@ export const actions = {
 				if (error.message === 'Guest access not allowed') commit('toggleMatrixLoginModal', true);
 				if (error.errcode === 'M_CONSENT_NOT_GIVEN') {
 					commit('setLeftMenuTab', 'matrix');
-					commit('toggleMatrixConsentModal', { toggleState: true, message: urlify(error.message.replace(/\.$/, '')) });
+					commit('toggleMatrixConsentModal', {
+						toggleState: true,
+						message: urlify(error.message.replace(/\.$/, '')),
+					});
 				} else {
 					commit('error', `Could not join room: ${error.message}`);
 				}
@@ -246,9 +272,11 @@ export const actions = {
 			window.console.log(`[Matrix-Media] %c${message.title}`, 'color: #2DA7EF;');
 		} else {
 			window.console.log(`[Matrix-Text] %c${message}`, 'color: #2DA7EF;');
-			findMediaText(message, rootState.youtubeApiKey, { indexKnown: index }).then(({ mediaList }) => {
-				addMatrixMessage(state, commit, roomId, eventId, mediaList);
-			});
+			findMediaText(message, rootState.youtubeApiKey, { indexKnown: index }).then(
+				({ mediaList }) => {
+					addMatrixMessage(state, commit, roomId, eventId, mediaList);
+				}
+			);
 		}
 	},
 };

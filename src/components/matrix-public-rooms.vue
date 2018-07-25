@@ -2,6 +2,17 @@
 import { mapActions, mapMutations } from 'vuex';
 import { mapModuleState } from '../utils';
 
+const roomsList = [
+	{ id: '!zKinTrtpQEyHfnIbnI:matrix.org', name: 'Random' },
+	{ id: '!wkEBtQpMVXqZktQwjF:matrix.org', name: 'Docu / Tech / Science [Audius]' },
+	{ id: '!sgKmJzakMmEdSCgKCE:matrix.org', name: 'Electronic ' },
+	{ id: '!vginOAdNcoiesrilGC:matrix.org', name: 'Music Links' },
+	{ id: '!aSJNcnulrVagkddEtD:matrix.org', name: 'Chillout ' },
+	// { id: '!uFhErnfpYhhlauJsNK:matrix.org', name: 'Music Discovery' },
+	{ id: '!VTIhlnDdHsxZFZQNFh:matrix.org', name: 'Rock' },
+	{ id: '!sgKmJzakMmEdSCgKCE:matrix.org', name: 'Electronic' },
+];
+
 export default {
 	methods: {
 		...mapActions(['updatePublicRooms', 'joinMatrixRoom']),
@@ -11,7 +22,14 @@ export default {
 		},
 	},
 	computed: {
-		...mapModuleState('matrix', ['showMatrixRoomDirectory', 'publicRooms']),
+		...mapModuleState('matrix', ['sources', 'showMatrixRoomDirectory', 'publicRooms']),
+		filteredRoomList() {
+			return roomsList.filter(({ id }) => !(id in this.sources));
+		},
+		filteredPublicRooms() {
+			console.log("this.publicRooms", this.publicRooms);
+			return this.publicRooms.filter(({ id }) => !(id in this.sources));
+		},
 	},
 };
 </script>
@@ -25,16 +43,14 @@ export default {
 				<h3>Public rooms</h3>
 				<div
 					v-if="!(publicRooms && publicRooms.length)"
-					class="about-player__community-btns">
-					<div class="button btn--blue" @click="joinMatrixRoom({ id: '!zKinTrtpQEyHfnIbnI:matrix.org', name: 'Random' })">Random</div>
-<!-- http://localhost:8080/?import=!wkEBtQpMVXqZktQwjF:matrix.org&type=room&title=Docu%20%2F%20Tech%20%2F%20Science%20%5BAudius%5D
-http://localhost:8080/?import=!sgKmJzakMmEdSCgKCE:matrix.org&type=room&title=Electronic%20%5BAudius%5D
-http://localhost:8080/?import=!vginOAdNcoiesrilGC:matrix.org&type=room&title=Music%20Links
-http://localhost:8080/?import=!aSJNcnulrVagkddEtD:matrix.org&type=room&title=Chillout%20%5BAudius%5D
-http://localhost:8080/?import=!uFhErnfpYhhlauJsNK:matrix.org&type=room&title=Music%20Discovery -->
+					class="about-player__community-btns matrix-public-rooms__buttons">
 
-					<div class="button btn--blue" @click="joinMatrixRoom({ id: '!VTIhlnDdHsxZFZQNFh:matrix.org', name: 'Rock' })">Rock</div>
-					<div class="button btn--blue" @click="joinMatrixRoom({ id: '!sgKmJzakMmEdSCgKCE:matrix.org', name: 'Electronic' })">Electronic</div>
+					<div
+						v-for="room in filteredRoomList"
+						class="button btn--blue"
+						@click="joinMatrixRoom({ id: room.id, name: room.name })">
+						{{room.name}}
+					</div>
 				</div>
 				<div v-if="!(publicRooms && publicRooms.length)">
 					<br>
@@ -43,7 +59,7 @@ http://localhost:8080/?import=!uFhErnfpYhhlauJsNK:matrix.org&type=room&title=Mus
 				<div class="matrix-public-rooms__buttons">
 					<a
 						class="button btn--blue"
-						v-for="room in publicRooms"
+						v-for="room in filteredPublicRooms"
 						v-bind:title="'['+room.numberOfMembers+' Members] '+room.topic"
 						@click="joinMatrixRoom({ id: room.id, name: room.name })">
 						{{room.name}}
