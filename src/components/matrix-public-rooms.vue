@@ -3,14 +3,14 @@ import { mapActions, mapMutations } from 'vuex';
 import { mapModuleState } from '../utils';
 
 const roomsList = [
-	{ id: '!zKinTrtpQEyHfnIbnI:matrix.org', name: 'Random' },
-	{ id: '!wkEBtQpMVXqZktQwjF:matrix.org', name: 'Docu / Tech / Science [Audius]' },
-	{ id: '!sgKmJzakMmEdSCgKCE:matrix.org', name: 'Electronic ' },
 	{ id: '!vginOAdNcoiesrilGC:matrix.org', name: 'Music Links' },
-	{ id: '!aSJNcnulrVagkddEtD:matrix.org', name: 'Chillout ' },
-	// { id: '!uFhErnfpYhhlauJsNK:matrix.org', name: 'Music Discovery' },
-	{ id: '!VTIhlnDdHsxZFZQNFh:matrix.org', name: 'Rock' },
+	{ id: '!zKinTrtpQEyHfnIbnI:matrix.org', name: 'Random' },
+	{ id: '!doxyJrwhqLPtPKawfE:matrix.org', name: '😁😄😅😆😆 wtf' },
 	{ id: '!sgKmJzakMmEdSCgKCE:matrix.org', name: 'Electronic' },
+	{ id: '!VTIhlnDdHsxZFZQNFh:matrix.org', name: 'Rock' },
+	{ id: '!aSJNcnulrVagkddEtD:matrix.org', name: 'Chillout ' },
+	{ id: '!wkEBtQpMVXqZktQwjF:matrix.org', name: 'Docu / Tech / Science [Audius]' },
+	// { id: '!uFhErnfpYhhlauJsNK:matrix.org', name: 'Music Discovery' },
 ];
 
 export default {
@@ -27,7 +27,6 @@ export default {
 			return roomsList.filter(({ id }) => !(id in this.sources));
 		},
 		filteredPublicRooms() {
-			console.log("this.publicRooms", this.publicRooms);
 			return this.publicRooms.filter(({ id }) => !(id in this.sources));
 		},
 	},
@@ -64,6 +63,7 @@ export default {
 						@click="joinMatrixRoom({ id: room.id, name: room.name })">
 						{{room.name}}
 					</a>
+					<span v-if="publicRooms && publicRooms.length && !filteredPublicRooms.length">… you joined all available rooms</span>
 				</div>
 				<div class="modal__btn-group">
 					<button class="button" @click="close">Cancel</button>

@@ -35,7 +35,6 @@ export const store = new Vuex.Store({
 	actions: Object.assign(actions, {
 		initModule({ dispatch, commit, state }, moduleName) {
 			if (moduleName in state.loadedModules) return;
-			console.log('registerModule', moduleName);
 			const savedState = state[moduleName];
 			if (moduleName === 'matrix') {
 				import(/* webpackChunkName: "vuex/matrix" */ './matrix').then(module => {

@@ -7,12 +7,13 @@ Audius is the ultimate streaming music player.
 - Queue songs, play history.
 - Organize playlists with drag and drop.
 - Supports: YouTube/Vimeo/.mp3/.oga/.wav/.mp4/.webm/.ogg URLs.
-- Runs "offline" - a pure HTML5 progressive web app that is self contained.
 - Plays Imgur "Most Viral" as video stream.
 - Create your own web channels with the build in web scraper.
 - Set start end times of media items (e.g. to cut of trailing silence)
 - Split YouTube full albums into separate songs.
 - Connect to the Matrix network and create rooms to share and discover music with your friends.
+- Runs "offline" - a pure HTML5 progressive web app that is self contained.
+- Run you own Audius instance as as single HTML file.
 
 <img src="https://audius.rockdapus.org/img/audius.screenshot.1280x800.png" />
 
@@ -23,11 +24,16 @@ If you have questions or feedback, join the chat on matrix or create an issue on
 - [Join the chat](https://riot.im/app/#/room/#audius:matrix.org)
 - [Create an issue](https://github.com/select/audius/issues)
 
+## Run your own Audius
+Easy as - Download the [audius app](https://github.com/select/audius/blob/master/dist-website/audius.app.html), upload it to your server. Done!
+
+If you run Audius as file (`file://` URL) all information are lost when you restart.
+
 ## Extension
 
 The [audius extension](https://chrome.google.com/webstore/detail/ekpajajepcojhnjmlibfbjmdjcafajoh) helps to search  external webpages.
 	
-## Share your Music with Matrix
+## Share your Music with Matrix / Riot.im
 [Matrix](https://matrix.org/) is a chat network that Audius uses to share songs.
 
 Join a room and drag and drop to add new music.
@@ -40,6 +46,15 @@ Create your own rooms with Audius and share it with your friends.
 
 
 ## Change log
+
+**2.0.12**		
+* Singe HTML file Audius app.
+* Modularization into main app, matrix, and webscraper to optimize loading speed.
+* Bootsplash, and other PWA things.
+* Fix share component so it always finds a media object.
+* Hide Matrix rooms.
+* Show Matrix consent link, now required to use Matrix.
+* Better registration flow for Matrix.
 
 **2.0.11**
 * Backup and recover your Audius data.

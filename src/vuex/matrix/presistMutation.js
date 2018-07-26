@@ -7,6 +7,7 @@ export const presistMutation = {
 	matrixRemoveAccount: ['credentials', 'hasCredentials', 'isGuest'],
 	deleteMatrixRoom: ['sourcesOrdered', 'sources'],
 	setMatrixLoggedIn: ['sourcesOrdered'],
+	toggleHideRoom: ['sources'],
 	saveMatrix: [
 		'sources',
 		'sourcesOrdered',

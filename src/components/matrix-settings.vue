@@ -1,5 +1,5 @@
 <script>
-import { mapGetters, mapActions, mapState } from 'vuex';
+import { mapGetters, mapActions, mapState, mapMutations } from 'vuex';
 
 import { mapModuleState, debounce } from '../utils';
 
@@ -32,6 +32,7 @@ export default {
 	},
 	methods: {
 		...mapActions(['setRoomName', 'updateRoomOptions', 'setRoomTag']),
+		...mapMutations(['toggleHideRoom']),
 		_setRoomName: debounce(function debouncedSetName(id, name) {
 			this.setRoomName({ id, name });
 		}, 1000),
@@ -44,6 +45,10 @@ export default {
 
 <template>
 <div class="settings matrix-settings">
+	<div
+		@click="toggleHideRoom(currentMediaSource.id)"
+		class="matrix-settings__hidden-icon"
+		:class="room.hidden ? 'wmp-icon-visibility_off' : 'wmp-icon-visibility'"></div>
 	<input
 		@input="_setRoomName(currentMatrixRoom, $event.target.value)"
 		type="text"
@@ -53,7 +58,6 @@ export default {
 		:value="room.name">
 	<div class="row">
 		<a v-bind:href="'https://matrix.to/#/'+room.alias" target="_blank" rel="noopener">{{room.alias}}</a>
-
 	</div>
 	<div class="spacer"></div>
 	<div class="smaller row" v-if="!room.isAdmin"><b>You are not an admin</b>, you can not edit this room.</div>
@@ -141,6 +145,7 @@ export default {
 @import '../sass/vars'
 @import '../sass/color'
 .settings.matrix-settings
+	position: relative
 	overflow: hidden
 	.row, h3, h4, .matrix-settings__name
 		padding: 0 $grid-space
@@ -153,4 +158,9 @@ export default {
 		height: #{2 * $grid-space}
 .matrix-settings__me
 	color: $color-pictonblue
+.matrix-settings__hidden-icon
+	position: absolute
+	top: 0
+	right: 0
+	cursor: pointer
 </style>

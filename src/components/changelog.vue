@@ -13,11 +13,18 @@ export default {
 </script>
 
 <template>
-	<h2 id="audius-changelog">Change log</h2>
+<div class="wmp-about">
+	<h2 id="audius-changelog">Changelog</h2>
 	<p>
 		<b>2.0.12</b><br>
 		<ul>
-			<li> Singe HTML file <a href="audius.app.html" download>audius app</a>.</li>
+			<li> Singe HTML file <a href="audius.app.html" download>Audius app</a>.</li>
+			<li> Modularization into main app, matrix, and webscraper to optimize loading speed.</li>
+			<li> Bootsplash, and other PWA things.</li>
+			<li> Fix share component so it always finds a media object.</li>
+			<li> Hide Matrix rooms.</li>
+			<li> Show Matrix consent link, now required to use Matrix.</li>
+			<li> Better registration flow for Matrix.</li>
 		</ul>
 		<b>2.0.11</b><br>
 		<ul>
@@ -102,9 +109,7 @@ export default {
 			<li> New (import)/export using <a href="http://myjson.com/" target="_blank" rel="noopener">myjson.com</a>. </li>
 		</ul>
 	</p>
-
 </div>
-
 </template>
 
 <style lang="sass?indentedSyntax">

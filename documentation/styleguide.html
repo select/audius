@@ -1,34 +1,135 @@
 <!doctype html>
-<html>
-
-<head>
-<meta charset="utf-8">
-<meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
-<meta content="width=device-width, initial-scale=1.0" name="viewport">
-<meta content="The LivingStyleGuide Gem – http://livingstyleguide.org" name="generator">
-<title>Audius Living Style Guide</title>
-<script>
-// see: http://www.hagenburger.net/BLOG/Simple-HTML5-Fix-for-IE.html
-for(var e,l='article aside footer header nav section time picture'.split(' ');e=l.pop();document.createElement(e));
-</script>
-<style>
-@charset "UTF-8";
+<html id="src/sass/styleguide">
+  <head>
+    <meta charset="utf-8">
+    <meta content="ie=edge" http-equiv="x-ua-compatible">
+    <meta content="width=device-width,initial-scale=1" name="viewport">
+    <meta content="livingstyleguide.org 2.0.2" name="generator">
+    <title>Audius Living Style Guide</title>
+    <script>
+      function selectElementRange(copyElementSelect) {
+  var range = document.createRange()
+  range.selectNode(copyElementSelect)
+  window.getSelection().removeAllRanges()
+  window.getSelection().addRange(range)
+  document.execCommand("copy")
+  if (copyElementSelect.classList.contains("lsg-remove")) {
+    document.body.removeChild(copyElementSelect)
+  }
+  window.getSelection().removeAllRanges()
+}
+function testCopy() {
+  try {
+    document.execCommand("copy")
+    return true
+  }
+  catch (error) {
+    return false
+  }
+}
+document.addEventListener("DOMContentLoaded", function() {
+  if (testCopy()) {
+    var code = document.getElementsByClassName("lsg-code")
+    for (var i = 0; i < code.length; i++) {
+      var newButton = createButton()
+      code[i].appendChild(newButton)
+      newButton.addEventListener("click", function(event) {
+        selectElementRange(this.parentNode)
+      })
+    }
+  }
+})
+function createButton(copyCodeSelect) {
+  var buttonCopy = document.createElement("button")
+  buttonCopy.className = "lsg-button"
+  return buttonCopy
+}
+document.addEventListener("DOMContentLoaded", function() {
+  if (testCopy()) {
+    var colorSwatches = document.getElementsByClassName("lsg-color-swatch")
+    for (var i = 0; i < colorSwatches.length; i++) {
+      if (!colorSwatches[i].classList.contains("lsg-empty")) {
+        colorSwatches[i].addEventListener("click", function(event) {
+          if (event.target == this.children[0]) {
+            selectElementRange(createDiv(this.children[0].innerHTML))
+          }
+          else {
+            var copyHexColors = window.getComputedStyle(this, "::after").getPropertyValue("content")
+            copyHexColors = copyHexColors.replace(/'|"/g, "")
+            selectElementRange(createDiv(copyHexColors))
+          }
+        })
+      }
+    }
+  }
+})
+function createDiv(copyHexColors) {
+  var divCopy = document.createElement("div")
+  divCopy.className = "lsg-remove"
+  divCopy.setAttribute("style", "opacity: 0; position: absolute; top: -10000px")
+  divCopy.appendChild(document.createTextNode(copyHexColors))
+  document.body.appendChild(divCopy)
+  return divCopy
+}
+(function(win) {
+  var getClasses = function(el) {
+    return el.className.split(/\s+/g);
+  };
+  var addClass = function(el, name) {
+    var classList = getClasses(el)
+    if (classList.indexOf(name) == -1) {
+      classList.push(name)
+      el.className = classList.join(" ")
+    }
+  }
+  var removeClass = function(el, name) {
+    var classList = getClasses(el)
+    classList[classList.indexOf(name)] = null
+    el.className = classList.join(" ")
+  }
+  var toggleClass = function(el, name) {
+    var classList = getClasses(el)
+    if (classList.indexOf(name) == -1) {
+      addClass(el, name)
+      return true
+    }
+    else {
+      removeClass(el, name)
+      return false
+    }
+  }
+  var html = document.getElementsByTagName("HTML")[0]
+  var hideCode = localStorage.getItem("lsg-hide-code")
+  if (hideCode == "true") {
+    addClass(html, "lsg-hide-code")
+  }
+  function toggleCode(event) {
+    event.preventDefault()
+    var hideCode = toggleClass(html, "lsg-hide-code")
+    localStorage.setItem("lsg-hide-code", hideCode)
+  }
+  document.addEventListener("DOMContentLoaded", function() {
+    var switches = document.getElementsByClassName("lsg-code-switch")
+    for (var i = 0; i < switches.length; i++) {
+      switches[i].addEventListener("click", toggleCode)
+    }
+  })
+})(window);
+    </script>
+    <style>
+      @charset "UTF-8";
 @import url("https://fonts.googleapis.com/css?family=Nobile");
-/* line 3, src/sass/_input.sass */
 .audius .button-group,
 .web-app .button-group {
   display: flex;
   justify-content: center;
-  align-items: center;
-}
-/* line 7, src/sass/_input.sass */
-.audius .button-group > *,
-.web-app .button-group > * {
-  margin-right: 0.45rem;
-}
-/* line 9, src/sass/_input.sass */
+  align-items: center; }
+  .audius .button-group > *,
+  .web-app .button-group > * {
+    margin-right: 0.45rem; }
 .audius .button,
 .web-app .button {
+  display: inline-flex;
   font-family: "Nobile", sans-serif;
   font-size: 1em;
   padding: 0 0.45rem;
@@ -40,49 +141,44 @@ for(var e,l='article aside footer header nav section time picture'.split(' ');e=
   border-radius: 2px;
   transition: all 250ms;
   outline: 0;
-  cursor: pointer;
-}
-/* line 22, src/sass/_input.sass */
-.audius .button.btn--blue-ghost,
-.web-app .button.btn--blue-ghost {
-  border-color: #2DA7EF;
-  background: transparent;
-  color: #2DA7EF;
-}
-/* line 26, src/sass/_input.sass */
-.audius .button.btn--blue,
-.web-app .button.btn--blue {
-  border-color: #2DA7EF;
-  background: #2DA7EF;
-  color: #fff;
-}
-/* line 30, src/sass/_input.sass */
-.audius .button.disabled, .audius .button[disabled="disabled"],
-.web-app .button.disabled,
-.web-app .button[disabled="disabled"] {
-  cursor: pointer;
-  background-color: #C8CCD5;
-  border: 1px solid #C8CCD5;
-}
-/* line 35, src/sass/_input.sass */
-.audius .button.disabled,
-.web-app .button.disabled {
-  pointer-events: none;
-}
-/* line 37, src/sass/_input.sass */
-.audius .button [class^="wmp-icon"],
-.web-app .button [class^="wmp-icon"] {
-  width: 1.8rem;
-  height: 1.8rem;
-}
-/* line 40, src/sass/_input.sass */
+  align-items: center;
+  cursor: pointer; }
+  .audius .button.btn--blue-ghost,
+  .web-app .button.btn--blue-ghost {
+    border-color: #2DA7EF;
+    background: transparent;
+    color: #2DA7EF; }
+  .audius .button.btn--tab,
+  .web-app .button.btn--tab {
+    border-color: #A8ADB7;
+    background: #fff;
+    color: #A8ADB7; }
+  .audius .button.btn--tab-active,
+  .web-app .button.btn--tab-active {
+    border-color: #A8ADB7;
+    background: #A8ADB7;
+    color: #fff; }
+  .audius .button.btn--blue,
+  .web-app .button.btn--blue {
+    border-color: #2DA7EF;
+    background: #2DA7EF;
+    color: #fff; }
+  .audius .button.disabled, .audius .button[disabled="disabled"],
+  .web-app .button.disabled,
+  .web-app .button[disabled="disabled"] {
+    cursor: pointer;
+    background-color: #C8CCD5;
+    border: 1px solid #C8CCD5; }
+  .audius .button.disabled,
+  .web-app .button.disabled {
+    pointer-events: none; }
+  .audius .button [class^="wmp-icon"],
+  .web-app .button [class^="wmp-icon"] {
+    width: 1.8rem;
+    height: 1.8rem; }
 .audius a.button,
 .web-app a.button {
-  display: flex;
-  align-items: center;
-  text-decoration: none;
-}
-/* line 44, src/sass/_input.sass */
+  text-decoration: none; }
 .audius select,
 .web-app select {
   background: transparent;
@@ -90,339 +186,223 @@ for(var e,l='article aside footer header nav section time picture'.split(' ');e=
   height: 2.25rem;
   display: block;
   width: 100%;
-  font-size: 1em;
-}
-/* line 51, src/sass/_input.sass */
+  font-size: 1em; }
 .audius [type='checkbox'],
 .web-app [type='checkbox'] {
-  display: none;
-}
-/* line 53, src/sass/_input.sass */
-.audius [type='checkbox'] + label,
-.web-app [type='checkbox'] + label {
-  margin-left: 0;
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  height: 1.8rem;
-  min-width: 1.8rem;
-  padding-right: 0.45rem;
-  cursor: pointer;
-}
-/* line 64, src/sass/_input.sass */
-.audius [type='checkbox'] + label:before,
-.web-app [type='checkbox'] + label:before {
-  content: " ";
-  font-family: "shoutr";
-  font-size: 1rem;
-  width: 1.35rem;
-  height: 1.35rem;
-  line-height: 1.35rem;
-  margin-right: 0.45rem;
-  transition: 250ms;
-  color: #fff;
-  border: 1px solid #2DA7EF;
-  border-radius: 2px;
-  background-color: #fff;
-}
-/* line 77, src/sass/_input.sass */
-.audius [type='checkbox']:checked + label:before,
-.web-app [type='checkbox']:checked + label:before {
-  background-color: #2DA7EF;
-  content: "";
-}
-/* line 82, src/sass/_input.sass */
-.audius [type='checkbox']:disabled + label,
-.web-app [type='checkbox']:disabled + label {
-  pointer-events: none;
-}
-/* line 84, src/sass/_input.sass */
-.audius [type='checkbox']:disabled + label:before,
-.web-app [type='checkbox']:disabled + label:before {
-  border-color: #C8CCD5;
-}
-/* line 86, src/sass/_input.sass */
-.audius [type='checkbox']:disabled:checked + label:before,
-.web-app [type='checkbox']:disabled:checked + label:before {
-  background-color: #C8CCD5;
-}
-/* line 89, src/sass/_input.sass */
+  display: none; }
+  .audius [type='checkbox'] + label,
+  .web-app [type='checkbox'] + label {
+    margin-left: 0;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    height: 1.8rem;
+    min-width: 1.8rem;
+    padding-right: 0.45rem;
+    cursor: pointer; }
+    .audius [type='checkbox'] + label:before,
+    .web-app [type='checkbox'] + label:before {
+      content: " ";
+      font-family: "shoutr";
+      font-size: 1rem;
+      width: 1.35rem;
+      height: 1.35rem;
+      line-height: 1.35rem;
+      margin-right: 0.45rem;
+      transition: 250ms;
+      color: #fff;
+      border: 1px solid #2DA7EF;
+      border-radius: 2px;
+      background-color: #fff; }
+  .audius [type='checkbox']:checked + label:before,
+  .web-app [type='checkbox']:checked + label:before {
+    background-color: #2DA7EF;
+    content: ""; }
+  .audius [type='checkbox']:disabled + label,
+  .web-app [type='checkbox']:disabled + label {
+    pointer-events: none; }
+    .audius [type='checkbox']:disabled + label:before,
+    .web-app [type='checkbox']:disabled + label:before {
+      border-color: #C8CCD5; }
+  .audius [type='checkbox']:disabled:checked + label:before,
+  .web-app [type='checkbox']:disabled:checked + label:before {
+    background-color: #C8CCD5; }
 .audius input,
 .web-app input {
   height: 2.25rem;
   font-size: 1rem;
   border: 0;
-  font-family: "Nobile", sans-serif;
-}
-/* line 94, src/sass/_input.sass */
-.audius input[disabled="disabled"],
-.web-app input[disabled="disabled"] {
-  background-color: #E2E4E9;
-}
-/* line 96, src/sass/_input.sass */
-.audius input.input--border,
-.web-app input.input--border {
-  border: 1px solid #C8CCD5;
-  padding: 0 0.45rem;
-}
-
+  font-family: "Nobile", sans-serif; }
+  .audius input[disabled="disabled"],
+  .web-app input[disabled="disabled"] {
+    background-color: #E2E4E9; }
+  .audius input.input--border,
+  .web-app input.input--border {
+    border: 1px solid #C8CCD5;
+    padding: 0 0.45rem; }
 @font-face {
   font-family: "WampIcons";
   src: url("../fonts/media-player.ttf");
   font-weight: normal;
-  font-style: normal;
-}
-/* line 11, src/sass/_icon.sass */
+  font-style: normal; }
 [class^="wmp-icon-"], [class*=" wmp-icon-"] {
   text-align: center;
   position: relative;
   width: 3.15rem;
   height: 3.15rem;
-  display: inline-block;
-}
-/* line 17, src/sass/_icon.sass */
-[class^="wmp-icon-"]:before, [class*=" wmp-icon-"]:before {
-  /* use !important to prevent issues with browser extensions that change fonts */
-  speak: none;
-  font-style: normal;
-  font-weight: normal;
-  font-variant: normal;
-  text-transform: none;
-  line-height: 1;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  font-family: "WampIcons" !important;
-  position: absolute;
-  font-size: 1.7em;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-}
-
-/* line 36, src/sass/_icon.sass */
+  display: inline-block; }
+  [class^="wmp-icon-"]:before, [class*=" wmp-icon-"]:before {
+    /* use !important to prevent issues with browser extensions that change fonts */
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-family: "WampIcons" !important;
+    position: absolute;
+    font-size: 1.7em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%; }
 .icon--small:before {
-  font-size: 1.2em;
-}
-
-/* line 42, src/sass/_icon.sass */
-.wmp-icon-vimeo:before {
-  content: "";
-}
-
-/* line 42, src/sass/_icon.sass */
-.wmp-icon-whatsapp:before {
-  content: "";
-}
-
-/* line 42, src/sass/_icon.sass */
-.wmp-icon-youtube:before {
-  content: "";
-}
-
-/* line 42, src/sass/_icon.sass */
-.wmp-icon-facebook:before {
-  content: "";
-}
-
-/* line 42, src/sass/_icon.sass */
-.wmp-icon-twitter:before {
-  content: "";
-}
-
-/* line 42, src/sass/_icon.sass */
+  font-size: 1.2em; }
+.wmp-icon-visibility:before {
+  content: ""; }
+.wmp-icon-visibility_off:before {
+  content: ""; }
 .wmp-icon-fullscreen:before {
-  content: "";
-}
-
-/* line 42, src/sass/_icon.sass */
+  content: ""; }
 .wmp-icon-fullscreen_exit:before {
-  content: "";
-}
-
-/* line 42, src/sass/_icon.sass */
+  content: ""; }
 .wmp-icon-share:before {
-  content: "";
-}
-
-/* line 42, src/sass/_icon.sass */
+  content: ""; }
 .wmp-icon-album:before {
-  content: "";
-}
-
-/* line 42, src/sass/_icon.sass */
+  content: ""; }
 .wmp-icon-sort:before {
-  content: "";
-}
-
-/* line 42, src/sass/_icon.sass */
+  content: ""; }
 .wmp-icon-zoom_out_map:before {
-  content: "";
-}
-
-/* line 42, src/sass/_icon.sass */
+  content: ""; }
 .wmp-icon-queue_music:before {
-  content: "";
-}
-
-/* line 42, src/sass/_icon.sass */
+  content: ""; }
 .wmp-icon-mode_edit:before {
-  content: "";
-}
-
-/* line 42, src/sass/_icon.sass */
+  content: ""; }
 .wmp-icon-format_list_bulleted:before {
-  content: "";
-}
-
-/* line 42, src/sass/_icon.sass */
+  content: ""; }
 .wmp-icon-dehaze:before {
-  content: "";
-}
-
-/* line 42, src/sass/_icon.sass */
+  content: ""; }
 .wmp-icon-reorder:before {
-  content: "";
-}
-
-/* line 42, src/sass/_icon.sass */
+  content: ""; }
 .wmp-icon-more_vert:before {
-  content: "";
-}
-
-/* line 42, src/sass/_icon.sass */
+  content: ""; }
 .wmp-icon-unfold_more:before {
-  content: "";
-}
-
-/* line 42, src/sass/_icon.sass */
+  content: ""; }
 .wmp-icon-arrow_drop_down:before {
-  content: "";
-}
-
-/* line 42, src/sass/_icon.sass */
+  content: ""; }
 .wmp-icon-arrow_drop_up:before {
-  content: "";
-}
-
-/* line 42, src/sass/_icon.sass */
+  content: ""; }
 .wmp-icon-previous:before {
-  content: "";
-}
-
-/* line 42, src/sass/_icon.sass */
+  content: ""; }
 .wmp-icon-play:before {
-  content: "";
-}
-
-/* line 42, src/sass/_icon.sass */
+  content: ""; }
 .wmp-icon-pause:before {
-  content: "";
-}
-
-/* line 42, src/sass/_icon.sass */
+  content: ""; }
 .wmp-icon-next:before {
-  content: "";
-}
-
-/* line 42, src/sass/_icon.sass */
+  content: ""; }
 .wmp-icon-shuffle:before {
-  content: "";
-}
-
-/* line 42, src/sass/_icon.sass */
+  content: ""; }
 .wmp-icon-repeat:before {
-  content: "";
-}
-
-/* line 42, src/sass/_icon.sass */
+  content: ""; }
 .wmp-icon-repeat_one:before {
-  content: "";
-}
-
-/* line 42, src/sass/_icon.sass */
+  content: ""; }
 .wmp-icon-volume_off:before {
-  content: "";
-}
-
-/* line 42, src/sass/_icon.sass */
+  content: ""; }
 .wmp-icon-volume_up:before {
-  content: "";
-}
-
-/* line 42, src/sass/_icon.sass */
+  content: ""; }
 .wmp-icon-search:before {
-  content: "";
-}
-
-/* line 42, src/sass/_icon.sass */
+  content: ""; }
 .wmp-icon-close:before {
-  content: "";
-}
-
-/* line 42, src/sass/_icon.sass */
+  content: ""; }
 .wmp-icon-add:before {
-  content: "";
-}
-
-/* line 42, src/sass/_icon.sass */
+  content: ""; }
 .wmp-icon-queue2:before {
-  content: "";
-}
-
-/* line 42, src/sass/_icon.sass */
+  content: ""; }
 .wmp-icon-copy:before {
-  content: "";
-}
-
-/* line 42, src/sass/_icon.sass */
+  content: ""; }
 .wmp-icon-local_offer22:before {
-  content: "";
-}
-
-/* line 42, src/sass/_icon.sass */
+  content: ""; }
 .wmp-icon-link:before {
-  content: "";
-}
-
-/* line 42, src/sass/_icon.sass */
+  content: ""; }
 .wmp-icon-delete:before {
-  content: "";
-}
-
-/* line 42, src/sass/_icon.sass */
+  content: ""; }
 .wmp-icon-cloud_upload:before {
-  content: "";
-}
-
-/* line 53, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/_livingstyleguide.scss */
-.livingstyleguide, .livingstyleguide--container, .livingstyleguide--footer, .livingstyleguide--logo, .livingstyleguide--paragraph,
-.livingstyleguide--code-block,
-.livingstyleguide--unordered-list,
-.livingstyleguide--ordered-list, .livingstyleguide--unordered-list-item,
-.livingstyleguide--ordered-list-item, .livingstyleguide--page-title,
-.livingstyleguide--headline,
-.livingstyleguide--sub-headline,
-.livingstyleguide--sub-sub-headline, .livingstyleguide--anchor, .livingstyleguide--example, .livingstyleguide--font-example, .livingstyleguide--code, .livingstyleguide--code-span, .livingstyleguide--code-span kbd,
-.livingstyleguide--code-block kbd, .livingstyleguide--code-span em,
-.livingstyleguide--code-block em, .livingstyleguide--code-span b,
-.livingstyleguide--code-block b, .livingstyleguide--code-span i,
-.livingstyleguide--code-block i, .livingstyleguide--code-span q,
-.livingstyleguide--code-block q, .livingstyleguide--code-span var,
-.livingstyleguide--code-block var, .livingstyleguide--code-highlight, .livingstyleguide--code-highlight-block, .livingstyleguide--color-swatch, .livingstyleguide--color-swatch:before, .livingstyleguide--color-swatches {
+  content: ""; }
+.wmp-icon-vimeo:before {
+  content: ""; }
+.wmp-icon-whatsapp:before {
+  content: ""; }
+.wmp-icon-youtube:before {
+  content: ""; }
+.wmp-icon-facebook:before {
+  content: ""; }
+.wmp-icon-twitter:before {
+  content: ""; }
+.lsg.lsg {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  background-color: #fff;
+  font-family: "Nobile", sans-serif; }
+.my-header {
+  background: #2DA7EF;
+  color: #fff;
+  text-align: center;
+  padding: 100px; }
+  .my-header h1 {
+    color: #fff; }
+[class^="icon-"] {
+  display: inline-block; }
+.livingstyleguide--code-span, .livingstyleguide--code-block {
+  overflow: auto !important;
+  background-color: #E2E4E9 !important; }
+@font-face {
+  font-family: "WampIcons";
+  src: url("../src/fonts/media-player.ttf");
+  font-weight: normal;
+  font-style: normal; }
+body, .lsg-example.lsg-has-full-width {
+  base-font: Nobile;
+  width: 750px; }
+.lsg, .lsg-container, .lsg-footer, .lsg-logo, .lsg-paragraph,
+.lsg-code-block,
+.lsg-unordered-list,
+.lsg-ordered-list,
+.lsg-font-example, .lsg-unordered-list-item,
+.lsg-ordered-list-item, .lsg-page-title,
+.lsg-headline,
+.lsg-sub-headline,
+.lsg-sub-sub-headline, .lsg-anchor, .lsg-example, .lsg-font-example-text, .lsg-code, .lsg-code-span, .lsg-code-span kbd,
+.lsg-code-block kbd, .lsg-code-span em,
+.lsg-code-block em, .lsg-code-span b,
+.lsg-code-block b, .lsg-code-span i,
+.lsg-code-block i, .lsg-code-span q,
+.lsg-code-block q, .lsg-code-span var,
+.lsg-code-block var, .lsg-code-highlight, .lsg-code-highlight-block, .lsg-color-swatch, .lsg-color-swatch::before, .lsg-color-swatch-source, .lsg-color-swatch-value, .lsg-color-swatches {
   background: transparent;
   border: none;
   border-collapse: collapse;
   border-radius: 0;
   border-spacing: 0;
-  -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
   box-sizing: border-box;
   color: inherit;
   display: block;
   font-size: inherit;
-  -webkit-font-smoothing: antialiased;
   font-style: inherit;
   font-weight: inherit;
   line-height: inherit;
@@ -431,1305 +411,851 @@ for(var e,l='article aside footer header nav section time picture'.split(' ');e=
   padding: 0;
   text-align: inherit;
   text-decoration: none;
-  vertical-align: baseline;
-}
-
-/* line 1, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_layout.scss */
-.livingstyleguide {
-  background: #f7f7f7;
+  vertical-align: baseline; }
+.lsg {
+  background: white;
+  display: block; }
+.lsg-container {
   display: block;
-}
-
-/* line 7, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_layout.scss */
-.livingstyleguide--container {
-  display: block;
-  min-height: 50vh;
-}
-
-/* line 13, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_layout.scss */
-.livingstyleguide--footer {
+  min-height: 50vh; }
+.lsg-footer {
   display: block;
   margin: 40px auto;
-  width: 750px;
-}
-
-/* line 20, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_layout.scss */
-.livingstyleguide--logo {
-  background: url("data:image/png;base64,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");
-  background-size: 100%;
+  max-width: 720px; }
+.lsg-logo {
+  color: transparent;
   display: block;
-  height: 100px;
-  margin: auto;
-  overflow: hidden;
-  text-align: left;
-  text-indent: -119988px;
-  width: 203px;
-}
-/* line 32, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_layout.scss */
-.livingstyleguide--logo:hover {
-  -webkit-transform: translateZ(0);
-  -webkit-filter: brightness(0.7);
-  -moz-filter: brightness(0.7);
-  filter: brightness(0.7);
-}
-
-/* line 1, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_content.scss */
-.livingstyleguide--paragraph,
-.livingstyleguide--code-block,
-.livingstyleguide--unordered-list,
-.livingstyleguide--ordered-list {
-  color: #505050;
-  font-family: Nobile;
+  font-size: 0;
+  height: 90px;
+  line-height: 90px;
+  margin: 0 auto 20px;
+  position: relative;
+  text-align: center;
+  width: 360px;
+  z-index: 2; }
+  .lsg-logo:hover {
+    color: black; }
+  .lsg-logo::before {
+    color: transparent;
+    content: "Made with The LivingStyleGuide Gem";
+    display: block;
+    font-family: helvetica neue, helvetica, sans-serif;
+    font-size: 14px;
+    transform: scale(0.5);
+    transition: all 0.1s;
+    white-space: nowrap; }
+  .lsg-logo:hover::before {
+    color: black;
+    transform: scale(1); }
+  .lsg-logo::after {
+    background: linear-gradient(to top, white, white), linear-gradient(to top, white, white), linear-gradient(to top, white, white), linear-gradient(to top, white, white), black;
+    background-position: 5px 5px, 5px 25px, 25px 5px, 25px 25px;
+    background-repeat: no-repeat;
+    background-size: 15px 15px;
+    content: "";
+    height: 45px;
+    left: 50%;
+    margin: -22.5px;
+    position: absolute;
+    top: 50%;
+    transform: rotate(45deg);
+    transition: all 0.1s linear;
+    width: 45px;
+    z-index: -1; }
+  .lsg-logo:hover::after {
+    background-color: transparent;
+    background-position: 0 0, 0 22.5px, 22.5px 0, 22.5px 22.5px;
+    background-size: 25px 25px; }
+.lsg-paragraph,
+.lsg-code-block,
+.lsg-unordered-list,
+.lsg-ordered-list,
+.lsg-font-example {
+  color: black;
+  font-family: helvetica neue, helvetica, sans-serif;
   font-size: 14px;
-  font-weight: normal;
-  line-height: 1.4;
-  margin: 10px auto;
-  text-align: left;
-  width: 750px;
   -webkit-font-smoothing: antialiased;
-}
-
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_content.scss */
-.livingstyleguide--unordered-list-item,
-.livingstyleguide--ordered-list-item {
+  font-weight: normal;
+  line-height: 20px;
+  margin: 20px auto;
+  max-width: 720px;
+  text-align: left; }
+.lsg-paragraph > a,
+.lsg-unordered-list-item > a,
+.lsg-ordered-list-item > a {
+  color: #333333; }
+.lsg-unordered-list-item,
+.lsg-ordered-list-item {
   display: list-item;
   list-style: disc;
-  margin: 5px 0 5px 20px;
-}
-
-/* line 25, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_content.scss */
-.livingstyleguide--page-title,
-.livingstyleguide--headline,
-.livingstyleguide--sub-headline,
-.livingstyleguide--sub-sub-headline {
-  color: #505050;
+  margin: 5px 0 5px 20px; }
+.lsg-page-title,
+.lsg-headline,
+.lsg-sub-headline,
+.lsg-sub-sub-headline {
+  color: black;
   display: block;
-  font-family: Nobile;
-  font-size: 22px;
-  font-weight: bold;
-  line-height: 1.1;
-  margin: 30px auto 10px;
-  text-align: left;
-  width: 750px;
+  font-family: helvetica neue, helvetica, sans-serif;
+  font-size: 32px;
   -webkit-font-smoothing: antialiased;
-}
-
-/* line 42, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_content.scss */
-.livingstyleguide--anchor {
+  font-weight: bold;
+  margin: 80px auto 20px;
+  max-width: 720px;
+  text-align: left; }
+.lsg-anchor {
   color: inherit;
   display: inline;
-  margin-left: -1em;
+  margin-left: -1.3em;
   opacity: 0;
+  padding-right: 0.3em;
   position: absolute;
+  text-align: right;
   text-decoration: none;
-  width: 1em;
-}
-/* line 52, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_content.scss */
-.livingstyleguide--headline:hover .livingstyleguide--anchor, .livingstyleguide--sub-headline:hover .livingstyleguide--anchor, .livingstyleguide--sub-sub-headline:hover .livingstyleguide--anchor {
-  opacity: 0.5;
-}
-/* line 57, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_content.scss */
-.livingstyleguide--headline:hover .livingstyleguide--anchor:hover, .livingstyleguide--sub-headline:hover .livingstyleguide--anchor:hover, .livingstyleguide--sub-sub-headline:hover .livingstyleguide--anchor:hover {
-  opacity: 1;
-}
-/* line 62, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_content.scss */
-.livingstyleguide--anchor:before {
-  content: "#";
-}
-
-/* line 67, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_content.scss */
-.livingstyleguide--page-title {
+  width: 1.3em; }
+  .lsg-headline:hover .lsg-anchor, .lsg-sub-headline:hover .lsg-anchor, .lsg-sub-sub-headline:hover .lsg-anchor {
+    opacity: 0.5; }
+    .lsg-headline:hover .lsg-anchor:hover, .lsg-sub-headline:hover .lsg-anchor:hover, .lsg-sub-sub-headline:hover .lsg-anchor:hover {
+      opacity: 1; }
+  .lsg-anchor::before {
+    content: "#";
+    transition: transform 0.2s; }
+  .lsg-anchor:active::before {
+    transform: scale(0.8); }
+.lsg-page-title {
   display: block;
-  font-size: 30px;
-}
-
-/* line 72, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_content.scss */
-.livingstyleguide--sub-headline {
+  font-size: 42px;
+  line-height: 60px; }
+.lsg-sub-headline {
   display: block;
-  font-size: 16px;
-}
-
-/* line 77, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_content.scss */
-.livingstyleguide--sub-sub-headline {
+  font-size: 21px;
+  line-height: 30px;
+  margin-top: 40px; }
+.lsg-sub-sub-headline {
   display: block;
   font-size: 14px;
-}
-
-/* line 82, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_content.scss */
-.livingstyleguide--example, .livingstyleguide--font-example {
-  background: white;
+  line-height: 20px;
+  margin-top: 40px; }
+.lsg-example {
+  background: linear-gradient(to top left, whitesmoke 12%, white 0, 50%, whitesmoke 0, 62%, white 0) repeat 0 0/4px 4px;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
   display: block;
-  margin: 10px auto 0;
+  margin: 20px auto;
+  max-width: 720px;
   overflow: hidden;
-  padding: 10px;
-  position: relative;
-  width: 750px;
-}
-/* line 94, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_content.scss */
-.livingstyleguide--example.-lsg-has-full-width, .-lsg-has-full-width.livingstyleguide--font-example {
-  border-radius: 0;
+  position: relative; }
+  .lsg-example.lsg-has-full-width {
+    border-radius: 0;
+    display: block;
+    height: auto;
+    margin: 0 auto;
+    max-width: 100%;
+    min-height: auto;
+    padding: 0;
+    width: 100%; }
+    .lsg-example.lsg-has-full-width .lsg-code-block {
+      z-index: 2; }
+      .lsg-example.lsg-has-full-width .lsg-code-block::before {
+        background-color: inherit;
+        bottom: 0;
+        content: "";
+        left: 50%;
+        position: absolute;
+        top: 0;
+        transform: translateX(-50%);
+        width: 100vw;
+        z-index: -1; }
+  .lsg-example.lsg-for-javascript {
+    display: none; }
+hr {
+  border: 0;
+  border-top: 1px #e6e6e6 solid;
+  margin: 80px 20px; }
+.lsg-html {
   display: block;
-  height: auto;
-  margin: 0 auto;
-  min-height: auto;
-  padding: 10px;
-  width: 100%;
-}
-/* line 105, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_content.scss */
-.livingstyleguide--example.-lsg-for-javascript, .-lsg-for-javascript.livingstyleguide--font-example {
-  display: none;
-}
-
-/* line 5, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_code.scss */
-.livingstyleguide--code-span,
-.livingstyleguide--code-block {
-  background: #dddddd;
+  padding: 10px; }
+.lsg-font-example {
+  display: block; }
+.lsg-font-example-text {
+  display: block;
+  margin-bottom: 20px; }
+  .lsg-font-example-text::first-line {
+    font-size: 5.716em; }
+.lsg-code {
+  font-family: andale mono, courier, courier new, monospace; }
+.lsg-code-span,
+.lsg-code-block {
+  background: whitesmoke;
   border-radius: 0;
-  color: #505050;
+  color: black;
   display: inline;
-  font-family: Courier, "Courier New", monospace;
-  font-size: 12px;
-  font-weight: normal;
-  overflow: scroll;
-  padding: 0 3px;
+  font-size: 13px;
   -webkit-font-smoothing: subpixel-antialiased;
-}
-/* line 19, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_code.scss */
-.livingstyleguide--code-span kbd,
-.livingstyleguide--code-block kbd {
-  display: block;
-  font-weight: bold;
-}
-/* line 24, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_code.scss */
-.livingstyleguide--code-span kbd:before,
-.livingstyleguide--code-block kbd:before {
-  content: "> ";
-}
-/* line 29, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_code.scss */
-.livingstyleguide--code-span em,
-.livingstyleguide--code-block em {
-  color: #6a6a6a;
-  display: inline;
   font-style: normal;
-  font-weight: bold;
-  text-decoration: underline;
-  vertical-align: baseline;
-}
-/* line 39, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_code.scss */
-.livingstyleguide--code-span b,
-.livingstyleguide--code-block b {
-  color: #838383;
-  display: inline;
-  font-weight: bold;
-  vertical-align: baseline;
-}
-/* line 47, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_code.scss */
-.livingstyleguide--code-span i,
-.livingstyleguide--code-block i {
-  color: #9d9d9d;
-  display: inline;
-  vertical-align: baseline;
-}
-/* line 54, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_code.scss */
-.livingstyleguide--code-span q,
-.livingstyleguide--code-block q {
-  color: #9d9d9d;
-  display: inline;
-  vertical-align: baseline;
-}
-/* line 60, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_code.scss */
-.livingstyleguide--code-span q:before, .livingstyleguide--code-span q:after,
-.livingstyleguide--code-block q:before,
-.livingstyleguide--code-block q:after {
-  content: "";
-}
-/* line 66, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_code.scss */
-.livingstyleguide--code-span var,
-.livingstyleguide--code-block var {
-  display: inline;
-  text-decoration: underline;
-  vertical-align: baseline;
-}
-
-/* line 74, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_code.scss */
-.livingstyleguide--code-block {
+  font-weight: normal;
+  padding: 0 3px; }
+  .lsg-code-span kbd,
+  .lsg-code-block kbd {
+    display: block;
+    font-weight: bold; }
+    .lsg-code-span kbd::before,
+    .lsg-code-block kbd::before {
+      content: "> "; }
+  .lsg-code-span em,
+  .lsg-code-block em {
+    color: #1a1a1a;
+    display: inline;
+    font-style: normal;
+    font-weight: bold;
+    text-decoration: underline;
+    vertical-align: baseline; }
+  .lsg-code-span b,
+  .lsg-code-block b {
+    color: #333333;
+    display: inline;
+    font-weight: bold;
+    vertical-align: baseline; }
+  .lsg-code-span i,
+  .lsg-code-block i {
+    color: #4d4d4d;
+    display: inline;
+    vertical-align: baseline; }
+  .lsg-code-span q,
+  .lsg-code-block q {
+    color: #4d4d4d;
+    display: inline;
+    vertical-align: baseline; }
+    .lsg-code-span q::before, .lsg-code-span q::after,
+    .lsg-code-block q::before,
+    .lsg-code-block q::after {
+      content: ""; }
+  .lsg-code-span var,
+  .lsg-code-block var {
+    display: inline;
+    text-decoration: underline;
+    vertical-align: baseline; }
+.lsg-code-block {
   display: block;
-  line-height: 1.5;
-  padding: 3px 6px;
-  width: 750px;
-}
-/* line 80, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_code.scss */
-.show-code .livingstyleguide--code-block {
-  display: block;
-}
-
-/* line 85, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_code.scss */
-.livingstyleguide--example + .livingstyleguide--code-block, .livingstyleguide--font-example + .livingstyleguide--code-block {
+  line-height: 20px;
+  margin: auto;
+  max-width: 720px;
+  min-height: 30px;
+  -ms-overflow-style: none;
+  padding: 10px;
+  position: relative; }
+  .lsg-code-block::-webkit-scrollbar {
+    width: 0 !important; }
+.lsg-example + .lsg-code-block {
   border-top-left-radius: 0;
   border-top-right-radius: 0;
-  margin-top: 0;
-}
-
-/* line 91, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_code.scss */
-.livingstyleguide--layout-example + .livingstyleguide--code-block {
-  background: #dddddd;
+  margin-top: 0; }
+.lsg-layout-example + .lsg-code-block {
+  background: whitesmoke;
   border-radius: 0;
   margin: 0 0 10px;
   padding: 10px 0;
-  width: 100%;
-}
-/* line 98, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_code.scss */
-.livingstyleguide--layout-example + .livingstyleguide--code-block .livingstyleguide--code {
-  display: block;
-  margin: auto;
-  width: 750px;
-}
-
-/* line 109, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_code.scss */
-.livingstyleguide--code-highlight, .livingstyleguide--code-highlight-block {
-  background-color: #f6ffa3;
+  width: 100%; }
+  .lsg-layout-example + .lsg-code-block .lsg-code {
+    display: block;
+    margin: auto;
+    max-width: 720px; }
+.lsg-button {
+  background-color: black;
+  background-image: url("data:image/svg+xml;utf8,<svg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' width='100%' height='100%' viewBox='0 0 512 512' enable-background='new 0 0 512 512' xml:space='preserve'> <path id='copy-6-icon' d='M360.277,151.999V50.001H50v310.137h102v101.861h310v-310H360.277z M90,320.138V90.001h230.277v61.998 H152v168.139H90z M421.5,421.499h-230V191.832h20.569c10.639,0,20.745,4.656,27.657,12.744l19.023,22.256H358l19.366-22.408 c6.911-7.996,16.958-12.592,27.528-12.592H421.5V421.499z M379.479,338.581h-145.99v-29h145.99V338.581z M379.479,286.249h-145.99 v-29h145.99V286.249z M233.488,361.999h146.023v29H233.488V361.999z' fill='white'/></svg>");
+  background-position: 50%;
+  background-repeat: no-repeat;
+  background-size: 70%;
+  border: 0;
+  border-radius: 50%;
+  bottom: 10px;
+  cursor: pointer;
+  height: 20px;
+  outline: 0;
+  position: absolute;
+  right: 10px;
+  transition: transform 0.2s;
+  visibility: hidden;
+  width: 20px; }
+  .lsg-button:hover {
+    background-color: #333333; }
+  .lsg-button:active {
+    transform: scale(0.9); }
+  .lsg-code-block:hover .lsg-button {
+    visibility: visible; }
+.lsg-code-highlight, .lsg-code-highlight-block {
+  background-color: black;
   border-radius: 2px;
+  color: whitesmoke;
   display: inline;
-  vertical-align: baseline;
-}
-
-/* line 117, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_code.scss */
-.livingstyleguide--code-highlight-block {
-  display: block;
-}
-
-/* line 1, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_color-swatches.scss */
-.livingstyleguide--color-swatch {
+  font-style: inherit;
+  font-weight: inherit;
+  margin: 0 -1px;
+  padding: 0 1px;
+  text-decoration: inherit;
+  vertical-align: baseline; }
+  .lsg-code-highlight *, .lsg-code-highlight-block * {
+    color: inherit !important; }
+.lsg-code-highlight-block {
+  display: block; }
+.lsg-color-swatch {
   color: black;
+  cursor: pointer;
   float: left;
-  font-family: Courier, "Courier New", monospace;
-  font-size: 12px;
-  font-weight: bold;
-  height: 5.6em;
-  line-height: 1.4em;
+  font-family: andale mono, courier, courier new, monospace;
+  font-size: 13px;
+  height: 5.716em;
+  line-height: 1.429em;
   list-style: none;
   margin: 0 10px 10px 0;
   position: relative;
   text-align: center;
-  z-index: 1;
-}
-/* line 16, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_color-swatches.scss */
-.livingstyleguide--color-swatch:before {
-  border: 4px rgba(0, 0, 0, 0.05) solid;
-  border-radius: 50%;
-  content: "";
-  height: 100%;
-  left: 0;
-  position: absolute;
-  top: 0;
-  width: 100%;
-  z-index: -1;
-}
-/* line 29, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_color-swatches.scss */
-.livingstyleguide--color-swatch:after {
+  transition: transform 0.2s; }
+  .lsg-color-swatch:hover {
+    z-index: 2; }
+  .lsg-color-swatch:active {
+    transform: scale(0.9); }
+  .lsg-color-swatch::before {
+    border-color: rgba(0, 0, 0, 0.05);
+    border-radius: 50%;
+    border-style: solid;
+    border-width: 1px;
+    content: "";
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: -1; }
+  .lsg-color-swatch:hover::before {
+    background-image: url("data:image/svg+xml;utf8,<svg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' width='100%' height='100%' viewBox='0 0 512 512' enable-background='new 0 0 512 512' xml:space='preserve'> <path id='copy-6-icon' d='M360.277,151.999V50.001H50v310.137h102v101.861h310v-310H360.277z M90,320.138V90.001h230.277v61.998 H152v168.139H90z M421.5,421.499h-230V191.832h20.569c10.639,0,20.745,4.656,27.657,12.744l19.023,22.256H358l19.366-22.408 c6.911-7.996,16.958-12.592,27.528-12.592H421.5V421.499z M379.479,338.581h-145.99v-29h145.99V338.581z M379.479,286.249h-145.99 v-29h145.99V286.249z M233.488,361.999h146.023v29H233.488V361.999z' fill='white'/></svg>");
+    background-position: 50% 40%;
+    background-repeat: no-repeat;
+    background-size: 20%;
+    color: black;
+    cursor: pointer; }
+  .lsg-color-swatch::after {
+    display: none; }
+  .lsg-color-swatch.lsg-empty {
+    cursor: default;
+    overflow: hidden;
+    text-align: left;
+    text-indent: -119988px; }
+    .lsg-color-swatch.lsg-empty::before, .lsg-color-swatch.lsg-empty::after {
+      display: none; }
+.lsg-color-swatch-source {
+  display: block; }
+  .lsg-color-swatch-source:hover {
+    text-decoration: underline; }
+.lsg-color-swatch-value {
+  cursor: pointer;
   display: block;
-  font-weight: normal;
-  text-align: center;
-}
-
-/* line 36, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_color-swatches.scss */
-.livingstyleguide--color-swatches {
-  margin: 10px auto -10px auto;
-  overflow: hidden;
+  margin-top: 1.429em;
+  text-align: center; }
+  .lsg-color-swatch:hover .lsg-color-swatch-value {
+    text-decoration: underline; }
+  .lsg-color-swatch-source + .lsg-color-swatch-value {
+    margin-top: 0; }
+  .lsg-color-swatch-source:hover + .lsg-color-swatch-value {
+    text-decoration: none; }
+.lsg-color-swatches {
+  margin: 40px auto -10px;
+  max-width: 740px;
   padding-left: 10px;
-  width: 770px;
-}
-
-/* line 45, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_color-swatches.scss */
-.livingstyleguide--color-swatches.-lsg-1-columns .livingstyleguide--color-swatch {
-  height: 750px;
-  padding-top: 505px;
-  width: 750px;
-}
-
-/* line 45, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_color-swatches.scss */
-.livingstyleguide--color-swatches.-lsg-2-columns .livingstyleguide--color-swatch {
-  height: 370px;
-  padding-top: 239px;
-  width: 370px;
-}
-
-/* line 45, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_color-swatches.scss */
-.livingstyleguide--color-swatches.-lsg-3-columns .livingstyleguide--color-swatch {
-  height: 243px;
-  padding-top: 150.1px;
-  width: 243px;
-}
-
-/* line 45, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_color-swatches.scss */
-.livingstyleguide--color-swatches.-lsg-4-columns .livingstyleguide--color-swatch {
-  height: 180px;
-  padding-top: 106px;
-  width: 180px;
-}
-
-/* line 45, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_color-swatches.scss */
-.livingstyleguide--color-swatches.-lsg-5-columns .livingstyleguide--color-swatch {
-  height: 142px;
-  padding-top: 79.4px;
-  width: 142px;
-}
-
-/* line 45, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_color-swatches.scss */
-.livingstyleguide--color-swatches.-lsg-6-columns .livingstyleguide--color-swatch {
-  height: 116px;
-  padding-top: 61.2px;
-  width: 116px;
-}
-
-/* line 45, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_color-swatches.scss */
-.livingstyleguide--color-swatches.-lsg-7-columns .livingstyleguide--color-swatch {
-  height: 98px;
-  padding-top: 48.6px;
-  width: 98px;
-}
-
-/* line 45, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_color-swatches.scss */
-.livingstyleguide--color-swatches.-lsg-8-columns .livingstyleguide--color-swatch {
-  height: 85px;
-  padding-top: 39.5px;
-  width: 85px;
-}
-
-/* line 45, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_color-swatches.scss */
-.livingstyleguide--color-swatches.-lsg-9-columns .livingstyleguide--color-swatch {
-  height: 74px;
-  padding-top: 31.8px;
-  width: 74px;
-}
-
-/* line 45, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_color-swatches.scss */
-.livingstyleguide--color-swatches.-lsg-10-columns .livingstyleguide--color-swatch {
-  height: 66px;
-  padding-top: 26.2px;
-  width: 66px;
-}
-
-/* line 45, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_color-swatches.scss */
-.livingstyleguide--color-swatches.-lsg-11-columns .livingstyleguide--color-swatch {
-  height: 59px;
-  padding-top: 21.3px;
-  width: 59px;
-}
-
-/* line 45, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_color-swatches.scss */
-.livingstyleguide--color-swatches.-lsg-12-columns .livingstyleguide--color-swatch {
-  height: 53px;
-  padding-top: 17.1px;
-  width: 53px;
-}
-
-/* line 53, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_color-swatches.scss */
-.livingstyleguide--color-swatch.-lsg-empty {
-  overflow: hidden;
-  text-align: left;
-  text-indent: -119988px;
-}
-/* line 58, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_color-swatches.scss */
-.livingstyleguide--color-swatch.-lsg-empty:before, .livingstyleguide--color-swatch.-lsg-empty:after {
-  display: none;
-}
-
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$transition-time:after {
-  content: "250ms";
-}
-
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$grid-space:after {
-  content: "0.45rem";
-}
-
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$touch-size-extratiny:after {
-  content: "1.35rem";
-}
-
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$touch-size-tiny:after {
-  content: "1.8rem";
-}
-
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$touch-size-small:after {
-  content: "2.25rem";
-}
-
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$touch-size-sm:after {
-  content: "2.25rem";
-}
-
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$touch-size-medium:after {
-  content: "3.15rem";
-}
-
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$touch-size-large:after {
-  content: "3.6rem";
-}
-
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$touch-size-huge:after {
-  content: "4.05rem";
-}
-
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$border-radius:after {
-  content: "2px";
-}
-
-/* line 6, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-overlay {
-  color: #f7f7f7;
-}
-/* line 12, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-overlay:before {
-  background: rgba(0, 0, 0, 0.8);
-}
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-overlay:after {
-  content: "rgba(0, 0, 0, 0.8)";
-}
-
-/* line 6, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-tuna {
-  color: #f7f7f7;
-}
-/* line 12, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-tuna:before {
-  background: #303641;
-}
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-tuna:after {
-  content: "#303641";
-}
-
-/* line 6, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-tuna-dark {
-  color: #f7f7f7;
-}
-/* line 12, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-tuna-dark:before {
-  background: #1c222c;
-}
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-tuna-dark:after {
-  content: "#1c222c";
-}
-
-/* line 6, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-fungreen {
-  color: #f7f7f7;
-}
-/* line 12, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-fungreen:before {
-  background: #007d3d;
-}
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-fungreen:after {
-  content: "#007d3d";
-}
-
-/* line 6, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-fungreen-dark {
-  color: #f7f7f7;
-}
-/* line 12, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-fungreen-dark:before {
-  background: #1c551e;
-}
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-fungreen-dark:after {
-  content: "#1c551e";
-}
-
-/* line 12, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-larioja:before {
-  background: #a1c616;
-}
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-larioja:after {
-  content: "#a1c616";
-}
-
-/* line 12, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-larioja-dark:before {
-  background: #88a80e;
-}
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-larioja-dark:after {
-  content: "#88a80e";
-}
-
-/* line 12, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-monza:before {
-  background: #d0021b;
-}
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-monza:after {
-  content: "#d0021b";
-}
-
-/* line 6, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-monza-dark {
-  color: #f7f7f7;
-}
-/* line 12, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-monza-dark:before {
-  background: #950214;
-}
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-monza-dark:after {
-  content: "#950214";
-}
-
-/* line 12, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-clementine:before {
-  background: #f07100;
-}
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-clementine:after {
-  content: "#f07100";
-}
-
-/* line 12, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-clementine-dark:before {
-  background: #cd6101;
-}
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-clementine-dark:after {
-  content: "#cd6101";
-}
-
-/* line 12, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-plum:before {
-  background: #8B2A87;
-}
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-plum:after {
-  content: "#8B2A87";
-}
-
-/* line 6, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-plum-dark {
-  color: #f7f7f7;
-}
-/* line 12, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-plum-dark:before {
-  background: #4F174C;
-}
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-plum-dark:after {
-  content: "#4F174C";
-}
-
-/* line 12, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-raven:before {
-  background: #6c768a;
-}
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-raven:after {
-  content: "#6c768a";
-}
-
-/* line 6, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-raven-dark {
-  color: #f7f7f7;
-}
-/* line 12, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-raven-dark:before {
-  background: #374155;
-}
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-raven-dark:after {
-  content: "#374155";
-}
-
-/* line 12, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-lynch:before {
-  background: #607d8b;
-}
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-lynch:after {
-  content: "#607d8b";
-}
-
-/* line 6, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-lynch-dark {
-  color: #f7f7f7;
-}
-/* line 12, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-lynch-dark:before {
-  background: #374850;
-}
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-lynch-dark:after {
-  content: "#374850";
-}
-
-/* line 12, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-pictonblue:before {
-  background: #2DA7EF;
-}
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-pictonblue:after {
-  content: "#2DA7EF";
-}
-
-/* line 12, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-pictonblue-dark:before {
-  background: #2176A8;
-}
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-pictonblue-dark:after {
-  content: "#2176A8";
-}
-
-/* line 12, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-white:before {
-  background: #fff;
-}
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-white:after {
-  content: "#fff";
-}
-
-/* line 6, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-black {
-  color: #f7f7f7;
-}
-/* line 12, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-black:before {
-  background: #000;
-}
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-black:after {
-  content: "#000";
-}
-
-/* line 12, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-aluminium:before {
-  background: #C8CCD5;
-}
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-aluminium:after {
-  content: "#C8CCD5";
-}
-
-/* line 12, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-athensgrey:before {
-  background: #E2E4E9;
-}
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-athensgrey:after {
-  content: "#E2E4E9";
-}
-
-/* line 12, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-aluminium-dark:before {
-  background: #A8ADB7;
-}
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-aluminium-dark:after {
-  content: "#A8ADB7";
-}
-
-/* line 12, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-catskillwhite:before {
-  background: #EFF1F7;
-}
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-catskillwhite:after {
-  content: "#EFF1F7";
-}
-
-/* line 6, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-mineshaft {
-  color: #f7f7f7;
-}
-/* line 12, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-mineshaft:before {
-  background: #333333;
-}
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-mineshaft:after {
-  content: "#333333";
-}
-
-/* line 12, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-palesky:before {
-  background: #707379;
-}
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-palesky:after {
-  content: "#707379";
-}
-
-/* line 12, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-cherub:before {
-  background: #fbe5e8;
-}
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$color-cherub:after {
-  content: "#fbe5e8";
-}
-
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$icon-uuid:after {
-  content: '"7fb3cfe6"';
-}
-
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$icon-map:after {
-  content: '(vimeo: "", whatsapp: "", youtube: "", facebook: "", twitter: "", fullscreen: "", fullscreen_exit: "", share: "", album: "", sort: "", zoom_out_map: "", queue_music: "", mode_edit: "", format_list_bulleted: "", dehaze: "", reorder: "", more_vert: "", unfold_more: "", arrow_drop_down: "", arrow_drop_up: "", previous: "", play: "", pause: "", next: "", shuffle: "", repeat: "", repeat_one: "", volume_off: "", volume_up: "", search: "", close: "", add: "", queue2: "", copy: "", local_offer22: "", link: "", delete: "", cloud_upload: "")';
-}
-
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$icon-size-small:after {
-  content: "1.7em";
-}
-
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$icon-size-big:after {
-  content: "2.2em";
-}
-
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$livingstyleguide--base-font:after {
-  content: "Nobile";
-}
-
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$livingstyleguide--width:after {
-  content: "750px";
-}
-
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$livingstyleguide--layout-selector:after {
-  content: "body";
-}
-
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$livingstyleguide--base-font-size:after {
-  content: "14px";
-}
-
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$livingstyleguide--base-font-weight:after {
-  content: "normal";
-}
-
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$livingstyleguide--base-line-height:after {
-  content: "1.4";
-}
-
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$livingstyleguide--base-text-align:after {
-  content: "left";
-}
-
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$livingstyleguide--page-title-font-size:after {
-  content: "30px";
-}
-
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$livingstyleguide--headline-font:after {
-  content: "Nobile";
-}
-
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$livingstyleguide--headline-font-size:after {
-  content: "22px";
-}
-
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$livingstyleguide--headline-text-align:after {
-  content: "left";
-}
-
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$livingstyleguide--sub-headline-font-size:after {
-  content: "16px";
-}
-
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$livingstyleguide--sub-sub-headline-font-size:after {
-  content: "14px";
-}
-
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$livingstyleguide--headline-font-weight:after {
-  content: "bold";
-}
-
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$livingstyleguide--headline-line-height:after {
-  content: "1.1";
-}
-
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$livingstyleguide--code-font:after {
-  content: 'Courier, "Courier New", monospace';
-}
-
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$livingstyleguide--code-font-size:after {
-  content: "12px";
-}
-
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$livingstyleguide--code-font-weight:after {
-  content: "normal";
-}
-
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$livingstyleguide--code-line-height:after {
-  content: "1.5";
-}
-
-/* line 12, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$livingstyleguide--background-color:before {
-  background: #f7f7f7;
-}
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$livingstyleguide--background-color:after {
-  content: "#f7f7f7";
-}
-
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$livingstyleguide--border-width:after {
-  content: "1px";
-}
-
-/* line 12, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$livingstyleguide--border-color:before {
-  background: silver;
-}
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$livingstyleguide--border-color:after {
-  content: "silver";
-}
-
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$livingstyleguide--border-radius:after {
-  content: "0";
-}
-
-/* line 12, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$livingstyleguide--color:before {
-  background: #505050;
-}
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$livingstyleguide--color:after {
-  content: "#505050";
-}
-
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$livingstyleguide--gap-width:after {
-  content: "10px";
-}
-
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$livingstyleguide--full-width-padding:after {
-  content: "10px";
-}
-
-/* line 12, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$livingstyleguide--code-background-color:before {
-  background: #dddddd;
-}
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$livingstyleguide--code-background-color:after {
-  content: "#dddddd";
-}
-
-/* line 12, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$livingstyleguide--code-color:before {
-  background: #505050;
-}
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$livingstyleguide--code-color:after {
-  content: "#505050";
-}
-
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$livingstyleguide--code-border-width:after {
-  content: "1px";
-}
-
-/* line 12, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$livingstyleguide--code-border-color:before {
-  background: silver;
-}
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$livingstyleguide--code-border-color:after {
-  content: "silver";
-}
-
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$livingstyleguide--code-border-radius:after {
-  content: "0";
-}
-
-/* line 6, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$livingstyleguide--color-swatch-color {
-  color: #f7f7f7;
-}
-/* line 12, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$livingstyleguide--color-swatch-color:before {
-  background: black;
-}
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$livingstyleguide--color-swatch-color:after {
-  content: "black";
-}
-
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$livingstyleguide--color-swatch-border-width:after {
-  content: "4px";
-}
-
-/* line 6, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$livingstyleguide--color-swatch-border-color {
-  color: #f7f7f7;
-}
-/* line 12, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$livingstyleguide--color-swatch-border-color:before {
-  background: rgba(0, 0, 0, 0.05);
-}
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$livingstyleguide--color-swatch-border-color:after {
-  content: "rgba(0, 0, 0, 0.05)";
-}
-
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$livingstyleguide--color-swatch-border-radius:after {
-  content: "50%";
-}
-
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$livingstyleguide--color-swatches-per-line:after {
-  content: "2";
-}
-
-/* line 12, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$livingstyleguide--highlight-color:before {
-  background: #f6ffa3;
-}
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$livingstyleguide--highlight-color:after {
-  content: "#f6ffa3";
-}
-
-/* line 17, /var/lib/gems/2.3.0/gems/livingstyleguide-1.4.0/stylesheets/livingstyleguide/_variables.scss */
-.\$livingstyleguide--highlight-border-radius:after {
-  content: "2px";
-}
-
-/* line 6, ./src/sass/styleguide.lsg */
-.livingstyleguide {
-  background-color: #fff;
-  font-family: "Nobile", sans-serif;
-}
-
-/* line 9, ./src/sass/styleguide.lsg */
-.my-header {
-  background: #2DA7EF;
-  color: #fff;
-  text-align: center;
-  padding: 100px;
-}
-/* line 14, ./src/sass/styleguide.lsg */
-.my-header h1 {
-  color: #fff;
-}
-
-/* line 16, ./src/sass/styleguide.lsg */
-[class^="icon-"] {
-  display: inline-block;
-}
-
-/* line 18, ./src/sass/styleguide.lsg */
-.livingstyleguide--code-span, .livingstyleguide--code-block {
-  overflow: auto !important;
-  background-color: #E2E4E9 !important;
-}
-
-@font-face {
-  font-family: "WampIcons";
-  src: url("../src/fonts/media-player.ttf");
-  font-weight: normal;
-  font-style: normal;
-}
-
-</style>
-
-</head>
-
-<body class="livingstyleguide">
-<div class="my-header">
+  -webkit-user-select: none;
+  user-select: none; }
+  .lsg-color-swatches::after {
+    clear: both;
+    content: "";
+    display: table; }
+.lsg-color-swatches.lsg-1-columns .lsg-color-swatch {
+  height: 720px;
+  padding-top: 484px;
+  width: 720px; }
+.lsg-color-swatches.lsg-2-columns .lsg-color-swatch {
+  height: 355px;
+  padding-top: 228.5px;
+  width: 355px; }
+.lsg-color-swatches.lsg-3-columns .lsg-color-swatch {
+  height: 233px;
+  padding-top: 143.1px;
+  width: 233px; }
+.lsg-color-swatches.lsg-4-columns .lsg-color-swatch {
+  height: 172px;
+  padding-top: 100.4px;
+  width: 172px; }
+.lsg-color-swatches.lsg-5-columns .lsg-color-swatch {
+  height: 136px;
+  padding-top: 75.2px;
+  width: 136px; }
+.lsg-color-swatches.lsg-6-columns .lsg-color-swatch {
+  height: 111px;
+  padding-top: 57.7px;
+  width: 111px; }
+.lsg-color-swatches.lsg-7-columns .lsg-color-swatch {
+  height: 94px;
+  padding-top: 45.8px;
+  width: 94px; }
+.lsg-color-swatches.lsg-8-columns .lsg-color-swatch {
+  height: 81px;
+  padding-top: 36.7px;
+  width: 81px; }
+.lsg-color-swatches.lsg-9-columns .lsg-color-swatch {
+  height: 71px;
+  padding-top: 29.7px;
+  width: 71px; }
+.lsg-color-swatches.lsg-10-columns .lsg-color-swatch {
+  height: 63px;
+  padding-top: 24.1px;
+  width: 63px; }
+.lsg-color-swatches.lsg-11-columns .lsg-color-swatch {
+  height: 56px;
+  padding-top: 19.2px;
+  width: 56px; }
+.lsg-color-swatches.lsg-12-columns .lsg-color-swatch {
+  height: 50px;
+  padding-top: 15px;
+  width: 50px; }
+.lsg-color-95143c02 {
+  color: black; }
+  .lsg-color-95143c02::before {
+    background-color: #2DA7EF; }
+  .lsg-color-95143c02::after {
+    content: "#2DA7EF"; }
+.lsg-color-3e432ae1 {
+  color: white; }
+  .lsg-color-3e432ae1::before {
+    background-color: #2176A8; }
+  .lsg-color-3e432ae1::after {
+    content: "#2176A8"; }
+.lsg-color-eddf35b8 {
+  color: black; }
+  .lsg-color-eddf35b8::before {
+    background-color: #fff; }
+  .lsg-color-eddf35b8::after {
+    content: "#fff"; }
+.lsg-color-498e0ad1 {
+  color: white; }
+  .lsg-color-498e0ad1::before {
+    background-color: #000; }
+  .lsg-color-498e0ad1::after {
+    content: "#000"; }
+.lsg-color-afbc106e {
+  color: black; }
+  .lsg-color-afbc106e::before {
+    background-color: #C8CCD5; }
+  .lsg-color-afbc106e::after {
+    content: "#C8CCD5"; }
+.lsg-color-f99d39a1 {
+  color: black; }
+  .lsg-color-f99d39a1::before {
+    background-color: #E2E4E9; }
+  .lsg-color-f99d39a1::after {
+    content: "#E2E4E9"; }
+.lsg-color-185de10d {
+  color: black; }
+  .lsg-color-185de10d::before {
+    background-color: #A8ADB7; }
+  .lsg-color-185de10d::after {
+    content: "#A8ADB7"; }
+.lsg-color-0a982da5 {
+  color: black; }
+  .lsg-color-0a982da5::before {
+    background-color: #EFF1F7; }
+  .lsg-color-0a982da5::after {
+    content: "#EFF1F7"; }
+.lsg-color-79a6f682 {
+  color: white; }
+  .lsg-color-79a6f682::before {
+    background-color: #707379; }
+  .lsg-color-79a6f682::after {
+    content: "#707379"; }
+.lsg-color-4fa40eab {
+  color: white; }
+  .lsg-color-4fa40eab::before {
+    background-color: #333333; }
+  .lsg-color-4fa40eab::after {
+    content: "#333333"; }
+.lsg-color-03bd1e0c {
+  color: black; }
+  .lsg-color-03bd1e0c::before {
+    background-color: #fbe5e8; }
+  .lsg-color-03bd1e0c::after {
+    content: "#fbe5e8"; }
+.lsg-color-4d1f0382 {
+  color: white; }
+  .lsg-color-4d1f0382::before {
+    background-color: #303641; }
+  .lsg-color-4d1f0382::after {
+    content: "#303641"; }
+.lsg-color-61cf5989 {
+  color: white; }
+  .lsg-color-61cf5989::before {
+    background-color: #1c222c; }
+  .lsg-color-61cf5989::after {
+    content: "#1c222c"; }
+.lsg-color-ae59d913 {
+  color: white; }
+  .lsg-color-ae59d913::before {
+    background-color: #a1c616; }
+  .lsg-color-ae59d913::after {
+    content: "#a1c616"; }
+.lsg-color-8aec4d47 {
+  color: white; }
+  .lsg-color-8aec4d47::before {
+    background-color: #88a80e; }
+  .lsg-color-8aec4d47::after {
+    content: "#88a80e"; }
+.lsg-color-cc5200b0 {
+  color: white; }
+  .lsg-color-cc5200b0::before {
+    background-color: #007d3d; }
+  .lsg-color-cc5200b0::after {
+    content: "#007d3d"; }
+.lsg-color-b796bfba {
+  color: white; }
+  .lsg-color-b796bfba::before {
+    background-color: #1c551e; }
+  .lsg-color-b796bfba::after {
+    content: "#1c551e"; }
+.lsg-color-222bd314 {
+  color: white; }
+  .lsg-color-222bd314::before {
+    background-color: #f07100; }
+  .lsg-color-222bd314::after {
+    content: "#f07100"; }
+.lsg-color-59c8b8e8 {
+  color: white; }
+  .lsg-color-59c8b8e8::before {
+    background-color: #cd6101; }
+  .lsg-color-59c8b8e8::after {
+    content: "#cd6101"; }
+.lsg-color-237f2ddb {
+  color: white; }
+  .lsg-color-237f2ddb::before {
+    background-color: #d0021b; }
+  .lsg-color-237f2ddb::after {
+    content: "#d0021b"; }
+.lsg-color-f678abea {
+  color: white; }
+  .lsg-color-f678abea::before {
+    background-color: #950214; }
+  .lsg-color-f678abea::after {
+    content: "#950214"; }
+.lsg-color-f4dc8ab5 {
+  color: white; }
+  .lsg-color-f4dc8ab5::before {
+    background-color: #8B2A87; }
+  .lsg-color-f4dc8ab5::after {
+    content: "#8B2A87"; }
+.lsg-color-4c360e95 {
+  color: white; }
+  .lsg-color-4c360e95::before {
+    background-color: #4F174C; }
+  .lsg-color-4c360e95::after {
+    content: "#4F174C"; }
+.lsg-color-b8300f9e {
+  color: white; }
+  .lsg-color-b8300f9e::before {
+    background-color: #6c768a; }
+  .lsg-color-b8300f9e::after {
+    content: "#6c768a"; }
+.lsg-color-b60f8844 {
+  color: white; }
+  .lsg-color-b60f8844::before {
+    background-color: #374155; }
+  .lsg-color-b60f8844::after {
+    content: "#374155"; }
+.lsg-color-968ca529 {
+  color: white; }
+  .lsg-color-968ca529::before {
+    background-color: #607d8b; }
+  .lsg-color-968ca529::after {
+    content: "#607d8b"; }
+.lsg-color-60425f5a {
+  color: white; }
+  .lsg-color-60425f5a::before {
+    background-color: #374850; }
+  .lsg-color-60425f5a::after {
+    content: "#374850"; }
+.lsg-color-4dad0896 {
+  color: white; }
+  .lsg-color-4dad0896::before {
+    background-color: rgba(0, 0, 0, 0.8); }
+  .lsg-color-4dad0896::after {
+    content: "rgba(0, 0, 0, 0.8)"; }
+.lsg-code-switch {
+  background-color: white;
+  background-image: url("data:image/svg+xml;utf8,<svg version='1.1' xmlns='http://www.w3.org/2000/svg' height='1000' width='1000'><path d='M0 499.809q5.859 -48.825 64.449 -109.368 78.12 -80.073 175.77 -128.898 128.898 -60.543 259.749 -60.543 136.71 1.953 259.749 60.543 103.509 52.731 175.77 128.898 64.449 72.261 64.449 109.368 -5.859 48.825 -64.449 109.368 -78.12 80.073 -175.77 128.898 -128.898 60.543 -259.749 60.543 -136.71 -1.953 -259.749 -60.543 -103.509 -52.731 -175.77 -128.898 -64.449 -72.261 -64.449 -109.368zm263.655 0q0 93.744 69.332 159.169t166.982 65.425 166.982 -65.425 69.332 -159.169 -69.332 -159.169 -166.982 -65.425 -166.982 65.425 -69.332 159.169zm85.932 -.977q0 -59.567 43.943 -101.556t106.439 -41.989 106.439 41.989 43.943 101.556 -43.943 102.532 -106.439 42.966 -106.439 -42.966 -43.943 -102.532z' fill='white'/></svg>");
+  background-position: 50%;
+  background-repeat: no-repeat;
+  background-size: 90%;
+  border-radius: 0;
+  height: 20px;
+  width: 20px; }
+.lsg-hide-code .lsg-code-switch {
+  background-image: url("data:image/svg+xml;utf8,<svg version='1.1' xmlns='http://www.w3.org/2000/svg' height='1000' width='1000'><path d='M0 523.831q5.859 -48.825 64.449 -109.368 78.12 -80.073 175.77 -128.898 128.898 -60.543 259.749 -60.543 29.295 0 58.59 1.953l74.214 -128.898q9.765 -15.624 23.436 -17.577 3.906 0 7.812 1.953l50.778 31.248q17.577 7.812 1.953 33.201l-56.637 101.556 -46.872 78.12 -41.013 72.261 -144.522 249.984 -41.013 72.261 -46.872 80.073 -56.637 99.603q-15.624 25.389 -31.248 15.624l-52.731 -31.248q-15.624 -7.812 0 -33.201l48.825 -85.932 -7.812 -3.906q-103.509 -52.731 -175.77 -128.898 -64.449 -72.261 -64.449 -109.368zm263.655 0q0 74.214 46.872 132.804l48.825 -83.979q-9.765 -23.436 -9.765 -48.825 0 -50.778 34.178 -90.815t84.956 -49.802l48.825 -83.979l-17.577 0q-97.65 0 -166.982 65.425t-69.332 159.169zm177.723 294.903l41.013 -70.308l17.577 0q97.65 0 166.982 -65.425t69.332 -159.169q0 -74.214 -46.872 -132.804l62.496 -109.368q1.953 1.953 3.906 2.929t3.906 .977q103.509 52.731 175.77 128.898 64.449 72.261 64.449 109.368 -5.859 48.825 -64.449 109.368 -78.12 80.073 -175.77 128.898 -128.898 60.543 -259.749 60.543 -25.389 0 -58.59 -3.906zm89.838 -154.287l109.368 -189.441q9.765 25.389 9.765 48.825 0 50.778 -34.178 89.838t-84.956 50.778z' fill='white'/></svg>"); }
+.lsg-hide-code .lsg-code-block {
+  display: none; }
+.lsg-search-box {
+  -webkit-appearance: none;
+  background: whitesmoke;
+  border: 0;
+  border-radius: 0;
+  color: black;
+  display: block;
+  font-family: helvetica neue, helvetica, sans-serif;
+  font-size: 21px;
+  line-height: inherit;
+  margin: 20px auto;
+  max-width: 720px;
+  outline: 0;
+  padding: 10px;
+  width: 100%; }
+  .lsg-search-box::-moz-placeholder {
+    color: #a4a4a4; }
+  .lsg-search-box::-webkit-input-placeholder {
+    color: #a4a4a4; }
+  .lsg-search-box:-ms-input-placeholder {
+    color: #a4a4a4; }
+  .lsg-search-box::placeholder {
+    color: #a4a4a4; }
+    </style>
+    
+  </head>
+  <body class="lsg">
+    
+    
+    <article class="lsg-container">
+      <div class="my-header">
   <h1>Audius Living Style Guide</h1>
 </div>
-
 <p class="livingstyleguide--paragraph">
   For coding related questions head over to the <a href="README.html">README</a>
   <br>
   So what is this Living Style Guide about? In this guide you can not only see how the HTML and CSS code works that makes the media player come to live, but since the guide is generated from the current SASS code it also adepts to changes in the style files.
 </p>
-
-<div class="livingstyleguide--container">
-<h2 class="livingstyleguide--headline" id="variables"><a class="livingstyleguide--anchor" href="#variables"></a>Variables</h2>
-<h3 class="livingstyleguide--sub-headline" id="time"><a class="livingstyleguide--anchor" href="#time"></a>Time</h3>
-<pre class="livingstyleguide--code-block"><code class="livingstyleguide--code">$transition-time: 250ms</code></pre><h3 class="livingstyleguide--sub-headline" id="space"><a class="livingstyleguide--anchor" href="#space"></a>Space</h3>
-<h4 class="livingstyleguide--sub-sub-headline" id="base-font-size"><a class="livingstyleguide--anchor" href="#base-font-size"></a>Base Font Size</h4>
-<pre class="livingstyleguide--code-block"><code class="livingstyleguide--code">$base-font-size: 2.3vmin</code></pre><h4 class="livingstyleguide--sub-sub-headline" id="grid-base"><a class="livingstyleguide--anchor" href="#grid-base"></a>Grid base</h4>
-<p class="livingstyleguide--paragraph">This is the most important variable since all grid values are based on it</p>
-<pre class="livingstyleguide--code-block"><code class="livingstyleguide--code">$grid-space: 0.45em</code></pre><h4 class="livingstyleguide--sub-sub-headline" id="input-shadows"><a class="livingstyleguide--anchor" href="#input-shadows"></a>Input shadows</h4>
-<p class="livingstyleguide--paragraph">Default shadow for buttons that need a shadow.</p>
-<pre class="livingstyleguide--code-block"><code class="livingstyleguide--code">+card(1)
-+card(2)
-+card(3)</code></pre><h4 class="livingstyleguide--sub-sub-headline" id="touch-sizes"><a class="livingstyleguide--anchor" href="#touch-sizes"></a>Touch sizes</h4>
-<p class="livingstyleguide--paragraph">Touch sizes are multiples of <code class="livingstyleguide--code-span livingstyleguide--code">$grid-size</code> they are used for all buttons and similar elements like striped list.</p>
-<pre class="livingstyleguide--code-block"><code class="livingstyleguide--code">$touch-size-extratiny: 3*$grid-space
-$touch-size-tiny:      4*$grid-space
-$touch-size-small:     5*$grid-space
-$touch-size-medium:    7*$grid-space
-$touch-size-large:     8*$grid-space
-$touch-size-huge:      9*$grid-space</code></pre><h4 class="livingstyleguide--sub-sub-headline" id="border-radius"><a class="livingstyleguide--anchor" href="#border-radius"></a>Border radius</h4>
-<pre class="livingstyleguide--code-block"><code class="livingstyleguide--code">$border-radius: 2px</code></pre><h4 class="livingstyleguide--sub-sub-headline" id="scrollbar"><a class="livingstyleguide--anchor" href="#scrollbar"></a>Scrollbar</h4>
-<pre class="livingstyleguide--code-block"><code class="livingstyleguide--code">::-webkit-scrollbar
-    width: 5px
-    &amp;:hover
-        width: 10px
-
-::-webkit-scrollbar-track
-  background: $color-catskillwhite
-
-::-webkit-scrollbar-thumb
-  background: $color-aluminium-dark</code></pre><h4 class="livingstyleguide--sub-sub-headline" id="input-placeholder"><a class="livingstyleguide--anchor" href="#input-placeholder"></a>Input Placeholder</h4>
-<p class="livingstyleguide--paragraph">Use the <code class="livingstyleguide--code-span livingstyleguide--code">placeholder</code>  mixin.</p>
-<pre class="livingstyleguide--code-block"><code class="livingstyleguide--code">input
-    width: 18em
-    +placeholder
-        color: $color-pictonblue</code></pre><h2 class="livingstyleguide--headline" id="colors"><a class="livingstyleguide--anchor" href="#colors"></a>Colors</h2>
-<ul class="livingstyleguide--color-swatches -lsg-4-columns">
-<li class="livingstyleguide--color-swatch $color-pictonblue">$color-pictonblue</li>
-
-<li class="livingstyleguide--color-swatch $color-pictonblue-dark">$color-pictonblue-dark</li>
-
-<li class="livingstyleguide--color-swatch -lsg-empty">-</li>
-
-<li class="livingstyleguide--color-swatch -lsg-empty">-</li>
-
-<li class="livingstyleguide--color-swatch $color-white">$color-white</li>
-
-<li class="livingstyleguide--color-swatch $color-black">$color-black</li>
-
-<li class="livingstyleguide--color-swatch -lsg-empty">-</li>
-
-<li class="livingstyleguide--color-swatch -lsg-empty">-</li>
-
-<li class="livingstyleguide--color-swatch $color-aluminium">$color-aluminium</li>
-
-<li class="livingstyleguide--color-swatch $color-athensgrey">$color-athensgrey</li>
-
-<li class="livingstyleguide--color-swatch $color-aluminium-dark">$color-aluminium-dark</li>
-
-<li class="livingstyleguide--color-swatch $color-catskillwhite">$color-catskillwhite</li>
-
-<li class="livingstyleguide--color-swatch $color-palesky">$color-palesky</li>
-
-<li class="livingstyleguide--color-swatch $color-mineshaft">$color-mineshaft</li>
-
-<li class="livingstyleguide--color-swatch $color-cherub">$color-cherub</li>
-
-<li class="livingstyleguide--color-swatch -lsg-empty">-</li>
-
-<li class="livingstyleguide--color-swatch $color-tuna">$color-tuna</li>
-
-<li class="livingstyleguide--color-swatch $color-tuna-dark">$color-tuna-dark</li>
-
-<li class="livingstyleguide--color-swatch -lsg-empty">-</li>
-
-<li class="livingstyleguide--color-swatch -lsg-empty">-</li>
-
-</ul>
-<p class="livingstyleguide--paragraph">and more</p>
-<ul class="livingstyleguide--color-swatches -lsg-4-columns">
-<li class="livingstyleguide--color-swatch $color-larioja">$color-larioja</li>
-
-<li class="livingstyleguide--color-swatch $color-larioja-dark">$color-larioja-dark</li>
-
-<li class="livingstyleguide--color-swatch $color-fungreen">$color-fungreen</li>
-
-<li class="livingstyleguide--color-swatch $color-fungreen-dark">$color-fungreen-dark</li>
-
-<li class="livingstyleguide--color-swatch $color-clementine">$color-clementine</li>
-
-<li class="livingstyleguide--color-swatch $color-clementine-dark">$color-clementine-dark</li>
-
-<li class="livingstyleguide--color-swatch $color-monza">$color-monza</li>
-
-<li class="livingstyleguide--color-swatch $color-monza-dark">$color-monza-dark</li>
-
-<li class="livingstyleguide--color-swatch $color-plum">$color-plum</li>
-
-<li class="livingstyleguide--color-swatch $color-plum-dark">$color-plum-dark</li>
-
-<li class="livingstyleguide--color-swatch -lsg-empty">-</li>
-
-<li class="livingstyleguide--color-swatch -lsg-empty">-</li>
-
-<li class="livingstyleguide--color-swatch $color-raven">$color-raven</li>
-
-<li class="livingstyleguide--color-swatch $color-raven-dark">$color-raven-dark</li>
-
-<li class="livingstyleguide--color-swatch $color-lynch">$color-lynch</li>
-
-<li class="livingstyleguide--color-swatch $color-lynch-dark">$color-lynch-dark</li>
-
-</ul>
-<p class="livingstyleguide--paragraph">overlay background color</p>
-<ul class="livingstyleguide--color-swatches -lsg-4-columns">
-<li class="livingstyleguide--color-swatch $color-overlay">$color-overlay</li>
-
-<li class="livingstyleguide--color-swatch -lsg-empty">-</li>
-
-<li class="livingstyleguide--color-swatch -lsg-empty">-</li>
-
-<li class="livingstyleguide--color-swatch -lsg-empty">-</li>
-
-</ul>
-<h2 class="livingstyleguide--headline" id="inputs"><a class="livingstyleguide--anchor" href="#inputs"></a>Inputs</h2>
-<div class="livingstyleguide--example">
-  <div class="audius">
-    <button class="button btn--blue">Join a room</button>
-    <button class="button btn--blue-ghost">Join a room</button>
-    <button class="button btn--blue disabled">Join a room</button>
+<div>
+<section id="src/sass/color">
+    <h2 class="lsg-headline" id="colors"><a class="lsg-anchor" href="#colors"></a>Colors</h2>
+  <ul class="lsg-color-swatches lsg-4-columns">
+  <li class="lsg-color-swatch lsg-color-95143c02"><span class="lsg-color-swatch-source">$color-pictonblue</span><span class="lsg-color-swatch-value lsg-color-95143c02"></span></li>
+  <li class="lsg-color-swatch lsg-color-3e432ae1"><span class="lsg-color-swatch-source">$color-pictonblue-dark</span><span class="lsg-color-swatch-value lsg-color-3e432ae1"></span></li>
+  <li class="lsg-color-swatch lsg-empty"></li>
+  <li class="lsg-color-swatch lsg-empty"></li>
+  <li class="lsg-color-swatch lsg-color-eddf35b8"><span class="lsg-color-swatch-source">$color-white</span><span class="lsg-color-swatch-value lsg-color-eddf35b8"></span></li>
+  <li class="lsg-color-swatch lsg-color-498e0ad1"><span class="lsg-color-swatch-source">$color-black</span><span class="lsg-color-swatch-value lsg-color-498e0ad1"></span></li>
+  <li class="lsg-color-swatch lsg-empty"></li>
+  <li class="lsg-color-swatch lsg-empty"></li>
+  <li class="lsg-color-swatch lsg-color-afbc106e"><span class="lsg-color-swatch-source">$color-aluminium</span><span class="lsg-color-swatch-value lsg-color-afbc106e"></span></li>
+  <li class="lsg-color-swatch lsg-color-f99d39a1"><span class="lsg-color-swatch-source">$color-athensgrey</span><span class="lsg-color-swatch-value lsg-color-f99d39a1"></span></li>
+  <li class="lsg-color-swatch lsg-color-185de10d"><span class="lsg-color-swatch-source">$color-aluminium-dark</span><span class="lsg-color-swatch-value lsg-color-185de10d"></span></li>
+  <li class="lsg-color-swatch lsg-color-0a982da5"><span class="lsg-color-swatch-source">$color-catskillwhite</span><span class="lsg-color-swatch-value lsg-color-0a982da5"></span></li>
+  <li class="lsg-color-swatch lsg-color-79a6f682"><span class="lsg-color-swatch-source">$color-palesky</span><span class="lsg-color-swatch-value lsg-color-79a6f682"></span></li>
+  <li class="lsg-color-swatch lsg-color-4fa40eab"><span class="lsg-color-swatch-source">$color-mineshaft</span><span class="lsg-color-swatch-value lsg-color-4fa40eab"></span></li>
+  <li class="lsg-color-swatch lsg-color-03bd1e0c"><span class="lsg-color-swatch-source">$color-cherub</span><span class="lsg-color-swatch-value lsg-color-03bd1e0c"></span></li>
+  <li class="lsg-color-swatch lsg-empty"></li>
+  <li class="lsg-color-swatch lsg-color-4d1f0382"><span class="lsg-color-swatch-source">$color-tuna</span><span class="lsg-color-swatch-value lsg-color-4d1f0382"></span></li>
+  <li class="lsg-color-swatch lsg-color-61cf5989"><span class="lsg-color-swatch-source">$color-tuna-dark</span><span class="lsg-color-swatch-value lsg-color-61cf5989"></span></li>
+  <li class="lsg-color-swatch lsg-empty"></li>
+  <li class="lsg-color-swatch lsg-empty"></li>
+  </ul>
+  <p class="lsg-paragraph">and more</p>
+  <ul class="lsg-color-swatches lsg-4-columns">
+  <li class="lsg-color-swatch lsg-color-ae59d913"><span class="lsg-color-swatch-source">$color-larioja</span><span class="lsg-color-swatch-value lsg-color-ae59d913"></span></li>
+  <li class="lsg-color-swatch lsg-color-8aec4d47"><span class="lsg-color-swatch-source">$color-larioja-dark</span><span class="lsg-color-swatch-value lsg-color-8aec4d47"></span></li>
+  <li class="lsg-color-swatch lsg-color-cc5200b0"><span class="lsg-color-swatch-source">$color-fungreen</span><span class="lsg-color-swatch-value lsg-color-cc5200b0"></span></li>
+  <li class="lsg-color-swatch lsg-color-b796bfba"><span class="lsg-color-swatch-source">$color-fungreen-dark</span><span class="lsg-color-swatch-value lsg-color-b796bfba"></span></li>
+  <li class="lsg-color-swatch lsg-color-222bd314"><span class="lsg-color-swatch-source">$color-clementine</span><span class="lsg-color-swatch-value lsg-color-222bd314"></span></li>
+  <li class="lsg-color-swatch lsg-color-59c8b8e8"><span class="lsg-color-swatch-source">$color-clementine-dark</span><span class="lsg-color-swatch-value lsg-color-59c8b8e8"></span></li>
+  <li class="lsg-color-swatch lsg-color-237f2ddb"><span class="lsg-color-swatch-source">$color-monza</span><span class="lsg-color-swatch-value lsg-color-237f2ddb"></span></li>
+  <li class="lsg-color-swatch lsg-color-f678abea"><span class="lsg-color-swatch-source">$color-monza-dark</span><span class="lsg-color-swatch-value lsg-color-f678abea"></span></li>
+  <li class="lsg-color-swatch lsg-color-f4dc8ab5"><span class="lsg-color-swatch-source">$color-plum</span><span class="lsg-color-swatch-value lsg-color-f4dc8ab5"></span></li>
+  <li class="lsg-color-swatch lsg-color-4c360e95"><span class="lsg-color-swatch-source">$color-plum-dark</span><span class="lsg-color-swatch-value lsg-color-4c360e95"></span></li>
+  <li class="lsg-color-swatch lsg-empty"></li>
+  <li class="lsg-color-swatch lsg-empty"></li>
+  <li class="lsg-color-swatch lsg-color-b8300f9e"><span class="lsg-color-swatch-source">$color-raven</span><span class="lsg-color-swatch-value lsg-color-b8300f9e"></span></li>
+  <li class="lsg-color-swatch lsg-color-b60f8844"><span class="lsg-color-swatch-source">$color-raven-dark</span><span class="lsg-color-swatch-value lsg-color-b60f8844"></span></li>
+  <li class="lsg-color-swatch lsg-color-968ca529"><span class="lsg-color-swatch-source">$color-lynch</span><span class="lsg-color-swatch-value lsg-color-968ca529"></span></li>
+  <li class="lsg-color-swatch lsg-color-60425f5a"><span class="lsg-color-swatch-source">$color-lynch-dark</span><span class="lsg-color-swatch-value lsg-color-60425f5a"></span></li>
+  </ul>
+  <p class="lsg-paragraph">overlay background color</p>
+  <ul class="lsg-color-swatches lsg-4-columns">
+  <li class="lsg-color-swatch lsg-color-4dad0896"><span class="lsg-color-swatch-source">$color-overlay</span><span class="lsg-color-swatch-value lsg-color-4dad0896"></span></li>
+  <li class="lsg-color-swatch lsg-empty"></li>
+  <li class="lsg-color-swatch lsg-empty"></li>
+  <li class="lsg-color-swatch lsg-empty"></li>
+  </ul>
+  </section>
+  
 </div>
-</div>
-<pre class="livingstyleguide--code-block"><code class="livingstyleguide--code"><b>&lt;<em>div</em></b> <b>class</b>="audius"<b>&gt;</b>
-    <b>&lt;<em>button</em></b> <b>class</b>="button btn--blue"<b>&gt;</b>Join a room<b>&lt;/<em>button</em>&gt;</b>
-    <b>&lt;<em>button</em></b> <b>class</b>="button btn--blue-ghost"<b>&gt;</b>Join a room<b>&lt;/<em>button</em>&gt;</b>
-    <b>&lt;<em>button</em></b> <b>class</b>="button btn--blue disabled"<b>&gt;</b>Join a room<b>&lt;/<em>button</em>&gt;</b>
-<b>&lt;/<em>div</em>&gt;</b></code></pre><div class="livingstyleguide--example">
-  <div class="audius">
-    <input type="text" placeholder="… hello world">
-    <input type="text" placeholder="… hello world" class="input--border">
-    <br><br>
-    <select class="input--border">
-        <option value="">1</option>
-        <option value="">1</option>
-    </select>
-</div>
-</div>
-<pre class="livingstyleguide--code-block"><code class="livingstyleguide--code"><b>&lt;<em>div</em></b> <b>class</b>="audius"<b>&gt;</b>
-    <b>&lt;<em>input</em></b> <b>type</b>="text" <b>placeholder</b>="… hello world"<b>&gt;</b>
-    <b>&lt;<em>input</em></b> <b>type</b>="text" <b>placeholder</b>="… hello world" <b>class</b>="input--border"<b>&gt;</b>
-    <b>&lt;<em>br</em></b><b>&gt;</b><b>&lt;<em>br</em></b><b>&gt;</b>
-    <b>&lt;<em>select</em></b> <b>class</b>="input--border"<b>&gt;</b>
-        <b>&lt;<em>option</em></b> <b>value</b>=""<b>&gt;</b>1<b>&lt;/<em>option</em>&gt;</b>
-        <b>&lt;<em>option</em></b> <b>value</b>=""<b>&gt;</b>1<b>&lt;/<em>option</em>&gt;</b>
-    <b>&lt;/<em>select</em>&gt;</b>
-<b>&lt;/<em>div</em>&gt;</b></code></pre><h2 class="livingstyleguide--headline" id="icons"><a class="livingstyleguide--anchor" href="#icons"></a>Icons</h2>
-<p class="livingstyleguide--paragraph">All icons were generated with icomoon.</p>
-<p class="livingstyleguide--paragraph">The current icomoon export is here: <a href="../icons/media-player.zip">media-player.zip</a>. If you add new icons please overwrite this file and check it into the git.</p>
-<p class="livingstyleguide--paragraph">To update the fonts go to <a href="https://icomoon.io/app/#/select">https://icomoon.io/app/#/select</a> import the <code class="livingstyleguide--code-span livingstyleguide--code">selection.json</code> file in the zip and generate the new font. Download the <code class="livingstyleguide--code-span livingstyleguide--code">media-player.zip</code> to <code class="livingstyleguide--code-span livingstyleguide--code">/src/icons</code> and run <code class="livingstyleguide--code-span livingstyleguide--code">npm run icons</code>.</p>
-<div class="livingstyleguide--example">
-  <span class="wmp-icon-previous"></span>
-<span class="wmp-icon-play"></span>
-<span class="wmp-icon-pause"></span>
-<span class="wmp-icon-next"></span>
-<span class="wmp-icon-shuffle"></span>
-<span class="wmp-icon-repeat"></span>
-<span class="wmp-icon-repeat_one"></span>
-<span class="wmp-icon-volume_off"></span>
-<span class="wmp-icon-volume_up"></span>
-</div>
-<pre class="livingstyleguide--code-block"><code class="livingstyleguide--code"><b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-previous"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-play"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-pause"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-next"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-shuffle"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-repeat"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-repeat_one"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-volume_off"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-volume_up"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b></code></pre><div class="livingstyleguide--example">
-  <span class="wmp-icon-album"></span>
-<span class="wmp-icon-add"></span>
-<span class="wmp-icon-queue2"></span>
-<span class="wmp-icon-copy"></span>
-<span class="wmp-icon-close"></span>
-</div>
-<pre class="livingstyleguide--code-block"><code class="livingstyleguide--code"><b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-album"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-add"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-queue2"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-copy"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-close"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b></code></pre><div class="livingstyleguide--example">
+<div>
+<section id="src/sass/icon">
+    <h2 class="lsg-headline" id="icons"><a class="lsg-anchor" href="#icons"></a>Icons</h2>
+  <p class="lsg-paragraph">All icons were generated with icomoon.</p>
+  <p class="lsg-paragraph">The current icomoon export is here: <a href="../icons/media-player.zip">media-player.zip</a>. If you add new icons please overwrite this file and check it into the git.</p>
+  <p class="lsg-paragraph">To update the fonts go to <a href="https://icomoon.io/app/#/select">https://icomoon.io/app/#/select</a> import the <code class="lsg-code-span lsg-code">selection.json</code> file in the zip and generate the new font. Download the <code class="lsg-code-span lsg-code">media-player.zip</code> to <code class="lsg-code-span lsg-code">/src/icons</code> and run <code class="lsg-code-span lsg-code">npm run icons</code>.</p>
+  <section class="lsg-example lsg-html-example" id="icon-icons-1">
+    <div class="lsg-html">
+      <span class="wmp-icon-previous"></span>
+  <span class="wmp-icon-play"></span>
+  <span class="wmp-icon-pause"></span>
+  <span class="wmp-icon-next"></span>
+  <span class="wmp-icon-shuffle"></span>
+  <span class="wmp-icon-repeat"></span>
+  <span class="wmp-icon-repeat_one"></span>
+  <span class="wmp-icon-volume_off"></span>
+  <span class="wmp-icon-volume_up"></span>
+    </div>
+    <pre class="lsg-code-block"><code class="lsg-code"><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-previous&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-play&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-pause&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-next&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-shuffle&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-repeat&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-repeat_one&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-volume_off&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-volume_up&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b></code></pre>
+  </section>
+  <section class="lsg-example lsg-html-example" id="icon-icons-2">
+    <div class="lsg-html">
+      <span class="wmp-icon-album"></span>
+  <span class="wmp-icon-add"></span>
+  <span class="wmp-icon-queue2"></span>
+  <span class="wmp-icon-copy"></span>
+  <span class="wmp-icon-close"></span>
+    </div>
+    <pre class="lsg-code-block"><code class="lsg-code"><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-album&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-add&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-queue2&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-copy&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-close&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b></code></pre>
+  </section>
+  <section class="lsg-example lsg-html-example" id="icon-icons-3">
+    <div class="lsg-html">
+      <span class="wmp-icon-visibility"></span>
+  <span class="wmp-icon-visibility_off"></span>
   <span class="wmp-icon-dehaze"></span>
-<span class="wmp-icon-reorder"></span>
-<span class="wmp-icon-format_list_bulleted"></span>
-<span class="wmp-icon-more_vert"></span>
-<span class="wmp-icon-unfold_more"></span>
-<span class="wmp-icon-arrow_drop_down"></span>
-<span class="wmp-icon-arrow_drop_up"></span>
-<span class="wmp-icon-search"></span>
-<span class="wmp-icon-link"></span>
-<span class="wmp-icon-delete"></span>
-<span class="wmp-icon-cloud_upload"></span>
+  <span class="wmp-icon-reorder"></span>
+  <span class="wmp-icon-format_list_bulleted"></span>
+  <span class="wmp-icon-more_vert"></span>
+  <span class="wmp-icon-unfold_more"></span>
+  <span class="wmp-icon-arrow_drop_down"></span>
+  <span class="wmp-icon-arrow_drop_up"></span>
+  <span class="wmp-icon-search"></span>
+  <span class="wmp-icon-link"></span>
+  <span class="wmp-icon-delete"></span>
+  <span class="wmp-icon-cloud_upload"></span>
+    </div>
+    <pre class="lsg-code-block"><code class="lsg-code"><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-visibility&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-visibility_off&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-dehaze&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-reorder&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-format_list_bulleted&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-more_vert&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-unfold_more&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-arrow_drop_down&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-arrow_drop_up&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-search&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-link&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-delete&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-cloud_upload&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b></code></pre>
+  </section>
+  <section class="lsg-example lsg-html-example" id="icon-icons-4">
+    <div class="lsg-html">
+      <span class="wmp-icon-sort"></span>
+  <span class="wmp-icon-zoom_out_map"></span>
+  <span class="wmp-icon-queue_music"></span>
+  <span class="wmp-icon-mode_edit"></span>
+  <span class="wmp-icon-fullscreen"></span>
+  <span class="wmp-icon-fullscreen_exit"></span>
+  <span class="wmp-icon-share"></span>
+    </div>
+    <pre class="lsg-code-block"><code class="lsg-code"><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-sort&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-zoom_out_map&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-queue_music&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-mode_edit&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-fullscreen&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-fullscreen_exit&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-share&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b></code></pre>
+  </section>
+  <section class="lsg-example lsg-html-example" id="icon-icons-5">
+    <div class="lsg-html">
+      <span class="wmp-icon-vimeo"></span>
+  <span class="wmp-icon-whatsapp"></span>
+  <span class="wmp-icon-youtube"></span>
+  <span class="wmp-icon-facebook"></span>
+  <span class="wmp-icon-twitter"></span>
+    </div>
+    <pre class="lsg-code-block"><code class="lsg-code"><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-vimeo&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-whatsapp&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-youtube&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-facebook&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-twitter&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b></code></pre>
+  </section>
+  </section>
+  
 </div>
-<pre class="livingstyleguide--code-block"><code class="livingstyleguide--code"><b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-dehaze"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-reorder"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-format_list_bulleted"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-more_vert"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-unfold_more"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-arrow_drop_down"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-arrow_drop_up"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-search"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-link"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-delete"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-cloud_upload"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b></code></pre><div class="livingstyleguide--example">
-  <span class="wmp-icon-sort"></span>
-<span class="wmp-icon-zoom_out_map"></span>
-<span class="wmp-icon-queue_music"></span>
-<span class="wmp-icon-mode_edit"></span>
-<span class="wmp-icon-fullscreen"></span>
-<span class="wmp-icon-fullscreen_exit"></span>
-<span class="wmp-icon-share"></span>
+<div>
+<section id="src/sass/vars">
+    <h2 class="lsg-headline" id="variables"><a class="lsg-anchor" href="#variables"></a>Variables</h2>
+  <h3 class="lsg-sub-headline" id="time"><a class="lsg-anchor" href="#time"></a>Time</h3>
+  <section class="lsg-example lsg-js-example" id="vars-time-1">
+    <pre class="lsg-code-block"><code class="lsg-code">$transition-time: 250ms</code></pre>
+  </section>
+  <h3 class="lsg-sub-headline" id="space"><a class="lsg-anchor" href="#space"></a>Space</h3>
+  <h4 class="lsg-sub-sub-headline" id="base-font-size"><a class="lsg-anchor" href="#base-font-size"></a>Base Font Size</h4>
+  <section class="lsg-example lsg-js-example" id="vars-base-font-size-1">
+    <pre class="lsg-code-block"><code class="lsg-code">$base-font-size: 2.3vmin</code></pre>
+  </section>
+  <h4 class="lsg-sub-sub-headline" id="grid-base"><a class="lsg-anchor" href="#grid-base"></a>Grid base</h4>
+  <p class="lsg-paragraph">This is the most important variable since all grid values are based on it</p>
+  <section class="lsg-example lsg-js-example" id="vars-grid-base-1">
+    <pre class="lsg-code-block"><code class="lsg-code">$grid-space: 0.45em</code></pre>
+  </section>
+  <h4 class="lsg-sub-sub-headline" id="input-shadows"><a class="lsg-anchor" href="#input-shadows"></a>Input shadows</h4>
+  <p class="lsg-paragraph">Default shadow for buttons that need a shadow.</p>
+  <section class="lsg-example lsg-js-example" id="vars-input-shadows-1">
+    <pre class="lsg-code-block"><code class="lsg-code">+card(1)<br>+card(2)<br>+card(3)</code></pre>
+  </section>
+  <h4 class="lsg-sub-sub-headline" id="touch-sizes"><a class="lsg-anchor" href="#touch-sizes"></a>Touch sizes</h4>
+  <p class="lsg-paragraph">Touch sizes are multiples of <code class="lsg-code-span lsg-code">$grid-size</code> they are used for all buttons and similar elements like striped list.</p>
+  <section class="lsg-example lsg-js-example" id="vars-touch-sizes-1">
+    <pre class="lsg-code-block"><code class="lsg-code">$touch-size-extratiny: 3*$grid-space<br>$touch-size-tiny:      4*$grid-space<br>$touch-size-small:     5*$grid-space<br>$touch-size-medium:    7*$grid-space<br>$touch-size-large:     8*$grid-space<br>$touch-size-huge:      9*$grid-space</code></pre>
+  </section>
+  <h4 class="lsg-sub-sub-headline" id="border-radius"><a class="lsg-anchor" href="#border-radius"></a>Border radius</h4>
+  <section class="lsg-example lsg-js-example" id="vars-border-radius-1">
+    <pre class="lsg-code-block"><code class="lsg-code">$border-radius: 2px</code></pre>
+  </section>
+  <h4 class="lsg-sub-sub-headline" id="scrollbar"><a class="lsg-anchor" href="#scrollbar"></a>Scrollbar</h4>
+  <section class="lsg-example lsg-js-example" id="vars-scrollbar-1">
+    <pre class="lsg-code-block"><code class="lsg-code">::-webkit-scrollbar<br>    width: 5px<br>    &:hover<br>        width: 10px<br><br>::-webkit-scrollbar-track<br>  background: $color-catskillwhite<br><br>::-webkit-scrollbar-thumb<br>  background: $color-aluminium-dark</code></pre>
+  </section>
+  <h4 class="lsg-sub-sub-headline" id="input-placeholder"><a class="lsg-anchor" href="#input-placeholder"></a>Input Placeholder</h4>
+  <p class="lsg-paragraph">Use the <code class="lsg-code-span lsg-code">placeholder</code>  mixin.</p>
+  <section class="lsg-example lsg-js-example" id="vars-input-placeholder-1">
+    <pre class="lsg-code-block"><code class="lsg-code">input<br>    width: 18em<br>    +placeholder<br>        color: $color-pictonblue</code></pre>
+  </section>
+  </section>
+  
 </div>
-<pre class="livingstyleguide--code-block"><code class="livingstyleguide--code"><b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-sort"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-zoom_out_map"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-queue_music"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-mode_edit"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-fullscreen"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-fullscreen_exit"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-share"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b></code></pre><div class="livingstyleguide--example">
-  <span class="wmp-icon-vimeo"></span>
-<span class="wmp-icon-whatsapp"></span>
-<span class="wmp-icon-youtube"></span>
-<span class="wmp-icon-facebook"></span>
-<span class="wmp-icon-twitter"></span>
+<div>
+<section id="src/sass/input">
+    <h2 class="lsg-headline" id="inputs"><a class="lsg-anchor" href="#inputs"></a>Inputs</h2>
+  <section class="lsg-example lsg-html-example" id="input-inputs-1">
+    <div class="lsg-html">
+      <div class="audius">
+      <button class="button btn--blue">Join a room</button>
+      <button class="button btn--blue-ghost">Join a room</button>
+      <button class="button btn--blue disabled">Join a room</button>
+  </div>
+    </div>
+    <pre class="lsg-code-block"><code class="lsg-code"><b>&lt;<em>div</em></b> <b>class</b>=&quot;audius&quot;<b>&gt;</b><br>    <b>&lt;<em>button</em></b> <b>class</b>=&quot;button btn--blue&quot;<b>&gt;</b>Join a room<b>&lt;/<em>button</em>&gt;</b><br>    <b>&lt;<em>button</em></b> <b>class</b>=&quot;button btn--blue-ghost&quot;<b>&gt;</b>Join a room<b>&lt;/<em>button</em>&gt;</b><br>    <b>&lt;<em>button</em></b> <b>class</b>=&quot;button btn--blue disabled&quot;<b>&gt;</b>Join a room<b>&lt;/<em>button</em>&gt;</b><br><b>&lt;/<em>div</em>&gt;</b></code></pre>
+  </section>
+  <section class="lsg-example lsg-html-example" id="input-inputs-2">
+    <div class="lsg-html">
+      <div class="audius">
+      <input type="text" placeholder="… hello world">
+      <input type="text" placeholder="… hello world" class="input--border">
+      <br><br>
+      <select class="input--border">
+          <option value="">1</option>
+          <option value="">1</option>
+      </select>
+  </div>
+    </div>
+    <pre class="lsg-code-block"><code class="lsg-code"><b>&lt;<em>div</em></b> <b>class</b>=&quot;audius&quot;<b>&gt;</b><br>    <b>&lt;<em>input</em></b> <b>type</b>=&quot;text&quot; <b>placeholder</b>=&quot;… hello world&quot;<b>&gt;</b><br>    <b>&lt;<em>input</em></b> <b>type</b>=&quot;text&quot; <b>placeholder</b>=&quot;… hello world&quot; <b>class</b>=&quot;input--border&quot;<b>&gt;</b><br>    <b>&lt;<em>br</em></b><b>&gt;</b><b>&lt;<em>br</em></b><b>&gt;</b><br>    <b>&lt;<em>select</em></b> <b>class</b>=&quot;input--border&quot;<b>&gt;</b><br>        <b>&lt;<em>option</em></b> <b>value</b>=&quot;&quot;<b>&gt;</b>1<b>&lt;/<em>option</em>&gt;</b><br>        <b>&lt;<em>option</em></b> <b>value</b>=&quot;&quot;<b>&gt;</b>1<b>&lt;/<em>option</em>&gt;</b><br>    <b>&lt;/<em>select</em>&gt;</b><br><b>&lt;/<em>div</em>&gt;</b></code></pre>
+  </section>
+  </section>
+  
 </div>
-<pre class="livingstyleguide--code-block"><code class="livingstyleguide--code"><b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-vimeo"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-whatsapp"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-youtube"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-facebook"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b>
-<b>&lt;<em>span</em></b> <b>class</b>="wmp-icon-twitter"<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b></code></pre>
+<div>
+<section id="src/sass/font">
+    <h2 class="lsg-headline" id="fonts"><a class="lsg-anchor" href="#fonts"></a>Fonts</h2>
+  <p class="lsg-paragraph">The default font is Nobile</p>
+  <div class="lsg-font-example">
+    <p class="lsg-font-example-text" style="font: 32px Nobile">
+      Aa<br>
+    ABCDEFGHIJKLMNOPQRSTUVWXYZ<br>
+    abcdefghijklmnopqrstuvwxyz<br>
+    0123456789 ! ? &amp; / ( ) € $ £ ¥ ¢ = @ ; : , .
+    </p>
+    <pre class="lsg-code-block"><code class="lsg-code">32px Nobile</code></pre>
+  </div>
+  <p class="lsg-paragraph">it&#39;s imported from google fonts.</p>
+  </section>
+  
 </div>
-<div class="livingstyleguide--footer"><a class="livingstyleguide--logo" href="http://livingstyleguide.org">Made with the LivingStyleGuide gem.</a></div>
-
-</body>
-
+    </article>
+    
+    
+    <a class="lsg-logo" href="https://livingstyleguide.org">
+  Made with The LivingStyleGuide Gem
+</a>
+  </body>
 </html>
-

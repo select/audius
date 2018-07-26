@@ -9,6 +9,7 @@ const WebScraperSettings = () => import(/* webpackChunkName: "components/web-scr
 const MatrixRoomSettings = () => import(/* webpackChunkName: "components/matrix-room-settings" */'./matrix-settings.vue');
 const MediaEdit = () => import(/* webpackChunkName: "components/media-edit" */'./media-edit.vue');
 const Queue = () => import(/* webpackChunkName: "components/queue" */'./queue.vue');
+const ChangeLog = () => import(/* webpackChunkName: "components/changelog" */'./changelog.vue');
 
 function disableSelect(event) {
 	event.preventDefault();
@@ -25,6 +26,7 @@ export default {
 		WebScraperSettings,
 		MatrixRoomSettings,
 		MediaEdit,
+		ChangeLog,
 	},
 	computed: mapState([
 		'website',
@@ -123,11 +125,12 @@ export default {
 	<div class="main-right__content" v-show="mainRightTab">
 		<about-player v-show="mainRightTab == 'about'"></about-player>
 		<search-results v-if="mainRightTab == 'search'"></search-results>
-		<queue v-if="mainRightTab == 'queue'"></queue>
-		<media-edit v-if="mainRightTab == 'mediaEdit'"></media-edit>
-		<web-scraper-settings v-if="mainRightTab == 'webScraperSettings' && currentMediaSource.type === 'webScraper'"></web-scraper-settings>
-		<matrix-room-settings v-if="mainRightTab == 'matrixRoomSettings' && currentMediaSource.type === 'matrix'"></matrix-room-settings>
-		<settings v-if="mainRightTab == 'settings'"></settings>
+		<queue v-else-if="mainRightTab == 'queue'"></queue>
+		<media-edit v-else-if="mainRightTab == 'mediaEdit'"></media-edit>
+		<web-scraper-settings v-else-if="mainRightTab == 'webScraperSettings' && currentMediaSource.type === 'webScraper'"></web-scraper-settings>
+		<matrix-room-settings v-else-if="mainRightTab == 'matrixRoomSettings' && currentMediaSource.type === 'matrix'"></matrix-room-settings>
+		<settings v-else-if="mainRightTab == 'settings'"></settings>
+		<change-log v-else-if="mainRightTab == 'changelog'"></change-log>
 	</div>
 	<div
 		class="main-right__drag-handle"

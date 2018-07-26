@@ -98,7 +98,7 @@ export default {
 	</div>
 	<h3>Extension</h3>
 	<p>
-		Then extension is <b v-if="extensionAvilable">installed</b><span v-else><b>not installed</b>. You can install it from the <a href="https://chrome.google.com/webstore/detail/ekpajajepcojhnjmlibfbjmdjcafajoh" target="_blank" rel="noopener">Chrome web store</a>. If you just installed it please reload this page and this message will disappear</span>.
+		The extension is <b v-if="extensionAvilable">installed</b><span v-else><b>not installed</b>. You can install it from the <a href="https://chrome.google.com/webstore/detail/ekpajajepcojhnjmlibfbjmdjcafajoh" target="_blank" rel="noopener">Chrome web store</a>. If you just installed it please reload this page and this message will disappear</span>.
 	</p>
 	<h3>YouTube</h3>
 	<p>

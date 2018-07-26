@@ -35,6 +35,8 @@ export default {
 			'toggleRepeat',
 			'playPause',
 			'setShowMediaEdit',
+			'showChangelog',
+			'setMainRightTab',
 		]),
 		...mapActions([
 			'nextVideo',
@@ -90,7 +92,7 @@ export default {
 			<div>
 				<img class="au-header__logo" src="img/audius.logo.white.svg" alt="Audius - ♫♪.ılılıll|̲̅̅●̲̅̅|̲̅̅=̲̅̅|̲̅̅●̲̅̅|llılılı.♫♪
  -">
-				<i href="#audius-changelog"><i id="version">2.0.12</i></i>
+				<i class="au-header__version" @click="setMainRightTab('changelog')" title="Show changelog">2.0.12</i>
 			</div>
 			<div class="au-header__search-controls">
 				<div
@@ -312,4 +314,6 @@ header
 	&.active,
 	.active
 		color: $color-black
+.au-header__version
+	cursor: pointer
 </style>

@@ -62,7 +62,7 @@ export default {
 						({ id }) => id === this.media.id)
 					),
 			};
-			if (!data.tags.includes('Default')) data.tags.unshift('Default');
+			if (!data.tags.includes('Default') && !this.playList.includes(this.media.id)) data.tags.unshift('Default');
 			return data;
 		},
 		sourceLink() {

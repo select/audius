@@ -28,6 +28,8 @@ To update the fonts go to https://icomoon.io/app/#/select import the `selection.
 ```
 
 ```
+<span class="wmp-icon-visibility"></span>
+<span class="wmp-icon-visibility_off"></span>
 <span class="wmp-icon-dehaze"></span>
 <span class="wmp-icon-reorder"></span>
 <span class="wmp-icon-format_list_bulleted"></span>

@@ -1,4 +1,5 @@
 #!/usr/bin/env nodejs
+// const path = require("path");
 
 // Read the exported zip files from https://icomoon.io/app/
 // extract the font files and create a SASS file that you can
@@ -9,7 +10,7 @@
 
 const zipFile = process.argv[2] || '../resources/simplyorder.zip';
 const sassMapFile = process.argv[3] || './sass/_pos.icons.map.sass';
-const fontsPath = process.argv[4] || '../../public/fonts/';
+const fontsPath = process.argv[4] || '../../public/fonts';
 // print process.argv
 process.argv.forEach(function (val, index, array) {
 	console.log(index + ': ' + val);
@@ -53,7 +54,7 @@ zipEntries.forEach((zipEntry) => {
 	// Extract all fonts from the font directory.
 	} else if (/fonts\//.test(zipEntry.entryName) && zipEntry.name) {
 		zip.extractEntryTo(zipEntry.entryName, fontsPath, false, /*overwrite*/ true);
-		console.log(`overwritten: ${fontsPath}${zipEntry.name}`);
+		console.log(`overwritten: ${fontsPath}/${zipEntry.name}`);
 	}
 });
 

@@ -246,7 +246,7 @@ export const actions = {
 					}))
 				);
 			})
-			.catch(() => commit('error', 'Getting public matrix Rooms failed'));
+			.catch((error) => commit('error', `Getting public matrix Rooms failed. ${error}`));
 	},
 	matrixLogout({ commit }) {
 		// FIXIME this is async and could return a promis

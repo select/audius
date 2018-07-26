@@ -19,6 +19,7 @@ export default {
 	data() {
 		return {
 			showConfirmDelte: false,
+			showHidden: false,
 		};
 	},
 	created() {
@@ -71,9 +72,18 @@ export default {
 			'matrixLoggedIn',
 			'showMatrixLoginModal',
 		]),
+		_hiddenSourcesOrdered: {
+			get() {
+				return this.sourcesOrdered.filter(id => this.sources[id].hidden);
+			},
+			set(value) {
+				this.error('not implemented');
+			},
+		},
+
 		_sourcesOrdered: {
 			get() {
-				return this.sourcesOrdered;
+				return this.sourcesOrdered.filter(id => !this.sources[id].hidden);
 			},
 			set(value) {
 				this.error('not implemented');
@@ -164,6 +174,47 @@ export default {
 			</draggable>
 		</draggable>
 
+		<div v-if="matrixLoggedIn && _hiddenSourcesOrdered.length">
+			<div v-if="showHidden">
+				<div
+					@click="showHidden = false"
+					class="play-list-manager__show-hidden-rooms">
+					hide
+				</div>
+				<ul>
+					<li v-for="id in _hiddenSourcesOrdered">
+						<div
+							class="play-list-manager__tag-body"
+							@click="selectMediaSource({ type: 'matrix', id: id })">
+							<div>
+								{{matrix.sources[id].name}}
+							</div>
+							<div class="matrix-room__tag-footer">
+								<div> {{sources[id].playList.length - Object.keys(sources[id].playedMedia).length}} New </div>
+								<div> {{sources[id].members ? sources[id].members.length : '?'}} Members </div>
+							</div>
+						</div>
+						<div class="play-list-manager__menu">
+							<span
+								class="wmp-icon-mode_edit"
+								title="Edit room"
+								@click.stop="setShowMediumSettings({ medium: 'matrix', id })"></span>
+							<span
+								class="wmp-icon-close"
+								title="Leave room"
+								@click.stop="showConfirmDelte = id"></span>
+						</div>
+					</li>
+				</ul>
+			</div>
+			<div
+				@click="showHidden = true"
+				class="play-list-manager__show-hidden-rooms"
+				v-if="!showHidden">
+				show hidden
+			</div>
+		</div>
+
 		<ul class="matrix-room__tags">
 			<li
 				class="play-list-manager__input"
@@ -249,6 +300,12 @@ export default {
 	display: flex
 	div
 		min-width: 4em
+.play-list-manager__show-hidden-rooms
+	margin-left: $grid-space
+	text-transform: uppercase
+	font-size: .7rem
+	cursor: pointer
+	text-align: center;
 </style>
 
 

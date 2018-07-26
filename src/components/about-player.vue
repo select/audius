@@ -12,7 +12,7 @@ export default {
 		return { showMore: false };
 	},
 	methods: {
-		...mapMutations(['setShowSettings', 'toggleLeftMenu', 'setLeftMenuTab', 'toggleSearch']),
+		...mapMutations(['setShowSettings', 'toggleLeftMenu', 'setLeftMenuTab', 'toggleSearch', 'setMainRightTab']),
 	},
 	computed: {
 		...mapState(['isMobile']),
@@ -39,6 +39,8 @@ export default {
 			<dd>Find song on YouTube</dd>
 		</dl>
 	</p>
+	<h2>What's new?</h2>
+	Visit the <a @click="setMainRightTab('changelog')">changelog</a> and read about the latest changes.
 	<h2 id="community">Community</h2>
 	<p>
 		If you have questions or feedback, join the chat on matrix (#audius:matrix.org) or create an issue on github.<br>

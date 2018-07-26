@@ -3,13 +3,13 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
-    <title>Audius</title>
+    <title>Audius ([audius.rockdapus.org](https://audius.rockdapus.org/))</title>
     <link type="text/css" rel="stylesheet" href="assets/css/github-markdown.css">
     <link type="text/css" rel="stylesheet" href="assets/css/pilcrow.css">
     <link type="text/css" rel="stylesheet" href="assets/css/hljs-github.min.css"/>
   </head>
   <body>
-    <article class="markdown-body"><h1 id="audius"><a class="header-link" href="#audius"></a>Audius</h1>
+    <article class="markdown-body"><h1 id="audius-([audius.rockdapus.org](https://audius.rockdapus.org/))"><a class="header-link" href="#audius-([audius.rockdapus.org](https://audius.rockdapus.org/))"></a>Audius (<a href="https://audius.rockdapus.org/">audius.rockdapus.org</a>)</h1>
 <p>Audius is the ultimate streaming music player.</p>
 <ul class="list">
 <li>Create playlist, no login required, stored in the indexDB in your browser.</li>
@@ -17,12 +17,13 @@
 <li>Queue songs, play history.</li>
 <li>Organize playlists with drag and drop.</li>
 <li>Supports: YouTube/Vimeo/.mp3/.oga/.wav/.mp4/.webm/.ogg URLs.</li>
-<li>Runs &quot;offline&quot; - a pure HTML5 app that can run without a server.</li>
 <li>Plays Imgur &quot;Most Viral&quot; as video stream.</li>
 <li>Create your own web channels with the build in web scraper.</li>
 <li>Set start end times of media items (e.g. to cut of trailing silence)</li>
-<li>Split YouTube full albums into seperate songs.</li>
+<li>Split YouTube full albums into separate songs.</li>
 <li>Connect to the Matrix network and create rooms to share and discover music with your friends.</li>
+<li>Runs &quot;offline&quot; - a pure HTML5 progressive web app that is self contained.</li>
+<li>Run you own Audius instance as as single HTML file.</li>
 </ul>
 <p class="img-container"><img src="https://audius.rockdapus.org/img/audius.screenshot.1280x800.png" /></p>
 <h2 id="community"><a class="header-link" href="#community"></a>Community</h2>
@@ -31,9 +32,12 @@
 <li><a href="https://riot.im/app/#/room/#audius:matrix.org">Join the chat</a></li>
 <li><a href="https://github.com/select/audius/issues">Create an issue</a></li>
 </ul>
+<h2 id="run-your-own-audius"><a class="header-link" href="#run-your-own-audius"></a>Run your own Audius</h2>
+<p>Easy as - Download the <a href="https://github.com/select/audius/blob/master/dist-website/audius.app.html">audius app</a>, upload it to your server. Done!</p>
+<p>If you run Audius as file (<code>file://</code> URL) all information are lost when you restart.</p>
 <h2 id="extension"><a class="header-link" href="#extension"></a>Extension</h2>
 <p>The <a href="https://chrome.google.com/webstore/detail/ekpajajepcojhnjmlibfbjmdjcafajoh">audius extension</a> helps to search  external webpages.</p>
-<h2 id="share-your-music-with-matrix"><a class="header-link" href="#share-your-music-with-matrix"></a>Share your Music with Matrix</h2>
+<h2 id="share-your-music-with-matrix-/-riot.im"><a class="header-link" href="#share-your-music-with-matrix-/-riot.im"></a>Share your Music with Matrix / Riot.im</h2>
 <p><a href="https://matrix.org/">Matrix</a> is a chat network that Audius uses to share songs.</p>
 <p>Join a room and drag and drop to add new music.</p>
 <ul class="list">
@@ -43,7 +47,31 @@
 </ul>
 <p>Create your own rooms with Audius and share it with your friends.</p>
 <h2 id="change-log"><a class="header-link" href="#change-log"></a>Change log</h2>
-<p><strong>2.0.8</strong></p>
+<p><strong>2.0.12</strong>        </p>
+<ul class="list">
+<li>Singe HTML file Audius app.</li>
+<li>Modularization into main app, matrix, and webscraper to optimize loading speed.</li>
+<li>Bootsplash, and other PWA things.</li>
+<li>Fix share component so it always finds a media object.</li>
+<li>Hide Matrix rooms.</li>
+<li>Show Matrix consent link, now required to use Matrix.</li>
+<li>Better registration flow for Matrix.</li>
+</ul>
+<p><strong>2.0.11</strong></p>
+<ul class="list">
+<li>Backup and recover your Audius data.</li>
+<li>Added media sharing UI.</li>
+<li>Improved Audius logo. Thanks <a href="http://buryat.me"><em>Buryat</em></a>.</li>
+<li>Show matrix login for rooms that don&#39;t allow guests.</li>
+</ul>
+<p><strong>2.0.10</strong></p>
+<ul class="list">
+<li>Add full screen mode for continuous full screen playback. Add controls for prev, next, timeline.</li>
+<li>Custom channel scripts, executed in secure sandbox in extension.</li>
+<li>Change user interface to less technical language. Thanks <i>Caspar</i>.</li>
+<li>Improve matrix room creation and settings: guest access, history readability. Only full members can create rooms.</li>
+</ul>
+<p><strong>2.0.9</strong></p>
 <ul class="list">
 <li>Improved mobile UI.</li>
 <li>Improved search media link detection.</li>
@@ -113,11 +141,12 @@
 <ol class="list">
 <li>At the top right, click <em>More</em>.</li>
 <li>Click <em>More Tools</em>.</li>
-<li>Add the app:
-Windows users: Click <em>Add to taskbar</em>.
-Linux users: Click <em>Add to desktop</em>.
-Chromebook users: Click <em>Add to shelf</em>.</li>
+<li>Add the app:<pre class="hljs"><code>Windows users: Click <span class="hljs-variable">_Add</span> <span class="hljs-keyword">to</span> taskbar_.
+Linux users: Click <span class="hljs-variable">_Add</span> <span class="hljs-keyword">to</span> desktop_.
+Chromebook users: Click <span class="hljs-variable">_Add</span> <span class="hljs-keyword">to</span> shelf_.</code></pre></li>
 </ol>
+<h2 id="run-you-own-audius"><a class="header-link" href="#run-you-own-audius"></a>Run you own Audius</h2>
+<p>Download the <a href="audius.app.hmtl" download>audius app</a> and upload it to you server.</p>
 <p><strong>Chrome android:</strong>
 Tap the menu button and tap <em>Add to homescreen</em>. The app is not yet optimized for mobile phones, it might work on tablets.</p>
 <p><strong>Local HTML5:</strong>
@@ -139,7 +168,98 @@ npm install</code></pre><p>Run the dev server (with hot module replacement).</p>
 <p>Build a production version with with minimal runtime and without source maps</p>
 <pre class="hljs"><code><span class="hljs-selector-tag">npm</span> <span class="hljs-selector-tag">run</span> <span class="hljs-selector-tag">build</span><span class="hljs-selector-pseudo">:prod</span><span class="hljs-selector-pseudo">:app</span></code></pre><p>The build is also located in <code>/dist-website</code>, open <code>index.html</code> to test.</p>
 <p>The chrome extension can be build with</p>
-<pre class="hljs"><code>npm <span class="hljs-keyword">run</span><span class="bash"> build:extension</span></code></pre><h2 id="legality,-security,-saftey,-and-privacy"><a class="header-link" href="#legality,-security,-saftey,-and-privacy"></a>Legality, security, saftey, and privacy</h2>
+<pre class="hljs"><code>npm <span class="hljs-keyword">run</span><span class="bash"> build:extension</span></code></pre><h3 id="media-meta-data-object-`mediametadata`"><a class="header-link" href="#media-meta-data-object-`mediametadata`"></a>Media meta data object <code>MediaMetaData</code></h3>
+<p>This is the internal media data JSON fromat of Audius.</p>
+<pre class="hljs"><code>{
+    <span class="hljs-attribute">id</span>: <span class="hljs-string">'ozD4h9HCHOY'</span>, <span class="hljs-comment">// universal unique id</span>
+    <span class="hljs-attribute">title</span>: <span class="hljs-string">'Human readable title'</span>,
+    <span class="hljs-attribute">duration</span>: { <span class="hljs-attribute">h</span>: <span class="hljs-number">0</span>, <span class="hljs-attribute">m</span>: <span class="hljs-number">58</span>, <span class="hljs-attribute">s</span>: <span class="hljs-string">'51'</span> }, <span class="hljs-comment">// optional if 'video' or 'audio'</span>
+    <span class="hljs-attribute">durationS</span>: <span class="hljs-number">3531</span>, <span class="hljs-comment">// duration in seconds;  optional if 'video' or 'audio'</span>
+    <span class="hljs-attribute">type</span>: <span class="hljs-string">'youtube'</span>, <span class="hljs-comment">// available types: 'audio', 'video', 'vimeo'</span>
+    <span class="hljs-attribute">href</span>: <span class="hljs-string">'https://example.com/items/funny-video'</span>, <span class="hljs-comment">// link to external page; not required for youtube</span>
+    <span class="hljs-attribute">thumbUrl</span>: <span class="hljs-string">'https://example.com/img/funny-video_100x75.jpg'</span>, <span class="hljs-comment">// not req for yt</span>
+    <span class="hljs-attribute">start</span>: <span class="hljs-number">0</span>, <span class="hljs-comment">// optional time in seconds</span>
+    <span class="hljs-attribute">stop</span>: <span class="hljs-number">379</span>, <span class="hljs-comment">// optional time in seconds</span>
+    <span class="hljs-attribute">youtubeId</span>: <span class="hljs-string">'ozD4h9HCHOY'</span>, <span class="hljs-comment">// youtube only</span>
+    <span class="hljs-attribute">vimeoId</span>: <span class="hljs-string">'36579366'</span>, <span class="hljs-comment">// vimeo only</span>
+    <span class="hljs-attribute">tracks</span>: [ <span class="hljs-comment">// optional</span>
+        { <span class="hljs-comment">// this is a full item with </span>
+            <span class="hljs-attribute">trackId</span>: <span class="hljs-number">1</span>,
+            <span class="hljs-attribute">title</span>: <span class="hljs-string">'Kanan neni - Rokia Traoré - Wanita'</span>,
+            <span class="hljs-attribute">duration</span>: { <span class="hljs-attribute">d</span>: <span class="hljs-number">0</span>, <span class="hljs-attribute">h</span>: <span class="hljs-number">0</span>, <span class="hljs-attribute">m</span>: <span class="hljs-number">6</span>, <span class="hljs-attribute">s</span>: <span class="hljs-string">'19'</span>, <span class="hljs-attribute">ms</span>: <span class="hljs-number">0</span> },
+            <span class="hljs-attribute">durationS</span>: <span class="hljs-number">379</span>,
+            <span class="hljs-attribute">id</span>: <span class="hljs-string">'Track1-ozD4h9HCHOY'</span>,
+            <span class="hljs-attribute">type</span>: <span class="hljs-string">'youtube'</span>,
+            <span class="hljs-attribute">start</span>: <span class="hljs-number">0</span>,
+            <span class="hljs-attribute">fullTitle</span>: <span class="hljs-string">'1. Kanan neni : 00:00\r'</span>,
+            <span class="hljs-attribute">durationAlbum</span>: <span class="hljs-number">3531</span>,
+            <span class="hljs-attribute">isTrack</span>: true,
+            <span class="hljs-attribute">youtubeId</span>: <span class="hljs-string">'ozD4h9HCHOY'</span>,
+            <span class="hljs-attribute">stop</span>: <span class="hljs-number">379</span>,
+        },
+    ],
+},</code></pre><h3 id="web-scaper-channels"><a class="header-link" href="#web-scaper-channels"></a>Web scaper channels</h3>
+<p>A web scraper channel can be created by using URL patterns or a custom  object with data entries and functions.
+The functions are evaled and executed in a sandbox in the Audius extension.</p>
+<p>It must implement</p>
+<ul class="list">
+<li><code>getUrl()</code> which returns <code>{ type: &#39;…&#39;, …data, responseTemplate: {type: &#39;…&#39;}}</code></li>
+<li>a fuction that processes the data retrived from the call that <code>getURL</code> triggers</li>
+</ul>
+<p>Available types:</p>
+<ul class="list">
+<li><code>ajaxJSON</code></li>
+<li><code>ajaxRaw</code></li>
+<li><code>scanOneUrl</code></li>
+<li><code>getYouTubeInfo</code></li>
+<li><code>mediaList</code> </li>
+</ul>
+<p>Example plugins</p>
+<pre class="hljs"><code>({
+    <span class="hljs-attr">pageIndex</span>: <span class="hljs-number">0</span>,
+    <span class="hljs-attr">stepSize</span>: <span class="hljs-number">5</span>,
+    getUrl() { <span class="hljs-comment">// return URL to request</span>
+        <span class="hljs-keyword">this</span>.pageIndex += <span class="hljs-keyword">this</span>.stepSize;
+        <span class="hljs-keyword">return</span> {
+            <span class="hljs-attr">type</span>: <span class="hljs-string">'ajaxJSON'</span>,
+            <span class="hljs-attr">data</span>: <span class="hljs-string">`http://www.example.com/feeds/posts/summary?start-index=<span class="hljs-subst">${<span class="hljs-keyword">this</span>.pageIndex}</span>&amp;max-results=1&amp;alt=json`</span>,
+            <span class="hljs-attr">responseTemplate</span>: { <span class="hljs-attr">type</span>: <span class="hljs-string">'parse'</span> },
+        };
+    },
+    parse(data) {
+        <span class="hljs-keyword">const</span> datetime = data.feed.entry[<span class="hljs-number">0</span>].published.$t;
+        <span class="hljs-keyword">return</span> {
+            <span class="hljs-attr">type</span>: <span class="hljs-string">'scanOneUrl'</span>,
+            <span class="hljs-attr">url</span>: <span class="hljs-string">`http://www.example.com/search?updated-max=<span class="hljs-subst">${<span class="hljs-built_in">encodeURIComponent</span>(datetime.replace(<span class="hljs-regexp">/\.\d{3}-/</span>, <span class="hljs-string">'-'</span>))}</span>&amp;max-results=<span class="hljs-subst">${<span class="hljs-keyword">this</span>.stepSize}</span>`</span>,
+        };
+    },
+})</code></pre><pre class="hljs"><code>({
+    <span class="hljs-attr">baseURL</span>: <span class="hljs-string">'https://example.com/api/'</span>,
+    <span class="hljs-attr">lastKey</span>: <span class="hljs-string">''</span>,
+    getUrl() {
+        <span class="hljs-keyword">return</span> {
+            <span class="hljs-attr">type</span>: <span class="hljs-string">'ajaxJSON'</span>,
+            <span class="hljs-attr">data</span>: !<span class="hljs-keyword">this</span>.lastKey
+                ? <span class="hljs-keyword">this</span>.baseURL
+                : <span class="hljs-string">`https://example.com/api/items/get?older=<span class="hljs-subst">${<span class="hljs-keyword">this</span>.lastKey}</span>`</span>,
+            <span class="hljs-attr">responseTemplate</span>: { <span class="hljs-attr">type</span>: <span class="hljs-string">'parseResults'</span> }, <span class="hljs-comment">// call the parse function below with the results from ajaxJSON</span>
+        };
+    },
+    parseResults(data) {
+        <span class="hljs-keyword">this</span>.lastKey = data.items[data.items.length - <span class="hljs-number">1</span>].id;
+        <span class="hljs-keyword">return</span> { <span class="hljs-comment">// return list of MediaMetaData objects</span>
+            type: <span class="hljs-string">'mediaList'</span>,
+            <span class="hljs-attr">data</span>: data.items.filter(<span class="hljs-function"><span class="hljs-params">item</span> =&gt;</span> /\.mp4$/.test(item.image)).map(<span class="hljs-function"><span class="hljs-params">item</span> =&gt;</span> ({
+                <span class="hljs-attr">id</span>: <span class="hljs-string">`example-<span class="hljs-subst">${item.id}</span>`</span>,
+                <span class="hljs-attr">title</span>: item.title,
+                <span class="hljs-attr">type</span>: <span class="hljs-string">'video'</span>,
+                <span class="hljs-attr">thumbUrl</span>: <span class="hljs-string">`https://thumb.example.com/<span class="hljs-subst">${item.id}</span>.jpg`</span>,
+                <span class="hljs-attr">href</span>: <span class="hljs-string">`https://example.com/top/<span class="hljs-subst">${item.id}</span>`</span>,
+                <span class="hljs-attr">url</span>: <span class="hljs-string">`https://vid.example.com/<span class="hljs-subst">${item.image}</span>`</span>,
+            })),
+        };
+    },
+});</code></pre><h2 id="legality,-security,-saftey,-and-privacy"><a class="header-link" href="#legality,-security,-saftey,-and-privacy"></a>Legality, security, saftey, and privacy</h2>
 <ul class="list">
 <li><strong>Legality</strong> This app sould be completely legal since it embedds videos from legal streaming providers (currently only YouTube). I do not provide any links to streams (except for the initial playlist containing only legal links from my friends)</li>
 <li><strong>Security</strong> This app is open source so you can make sure that there is no malicious code included. In addition to that there is no advertisement (... yet :-O) that could spread malicious code. But to be clear streams and streaming APIs are provided by external entites ... read more below about privacy.</li>
