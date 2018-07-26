@@ -86,12 +86,12 @@ export default {
 };
 </script>
 
-<template lang="html">
+<template>
 	<header>
 		<div class="au-header__search">
 			<div>
 				<img class="au-header__logo" src="img/audius.logo.white.svg" alt="Audius - ♫♪.ılılıll|̲̅̅●̲̅̅|̲̅̅=̲̅̅|̲̅̅●̲̅̅|llılılı.♫♪
- -">
+	-">
 				<i class="au-header__version" @click="setMainRightTab('changelog')" title="Show changelog">2.0.12</i>
 			</div>
 			<div class="au-header__search-controls">
@@ -191,30 +191,31 @@ export default {
 	</header>
 </template>
 
-<style lang="sass?indentedSyntax">
+<style lang="sass">
 @import '../sass/vars'
 @import '../sass/color'
 
 header
-	width: 100%
 	position: relative
+	width: 100%
 .au-header__logo
 	width: #{20*$grid-space}
 .au-header__search
-	padding-left: #{2*$grid-space}
-	color: $color-white
-	height: $touch-size-medium
-	background: $color-pictonblue
 	display: flex
-	justify-content: space-between
 	align-items: center
+	justify-content: space-between
+	height: $touch-size-medium
+	padding-left: #{2*$grid-space}
+	background: $color-pictonblue
+	color: $color-white
 	h1
-		font-weight: 100
 		padding-left: #{2*$grid-space}
-	a,a:visited
+		font-weight: 100
+	a,
+	a:visited
 		display: inline-block
-		text-decoration: none
 		color: $color-white
+		text-decoration: none
 		cursor: help
 
 .au-header__control-bar

@@ -4,8 +4,11 @@ const webpack = require('webpack');
 const autoprefixer = require('autoprefixer');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const CircularDependencyPlugin = require('circular-dependency-plugin');
+const { VueLoaderPlugin } = require('vue-loader');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
+	mode: 'development',
 	entry: './src/website/app.js',
 	output: {
 		path: path.resolve(`${__dirname}/../dist-website/`),
@@ -25,8 +28,22 @@ module.exports = {
 		assets: true,
 	},
 	module: {
-		loaders: [
+		rules: [
 			{ test: /\.vue$/, loader: 'vue-loader' },
+			{
+				test: /\.sass$/,
+				use: [
+					process.env.NODE_ENV !== 'production' ? 'vue-style-loader' : MiniCssExtractPlugin.loader,
+					'css-loader',
+					'postcss-loader',
+					{
+						loader: 'sass-loader',
+						options: {
+							indentedSyntax: true,
+						},
+					},
+				],
+			},
 			{ test: /\.ttf$/, loader: 'url-loader' },
 			{ test: /\.html$/, loader: 'raw-loader' },
 			{ test: /\.svg$/, loader: 'raw-loader' },
@@ -38,20 +55,24 @@ module.exports = {
 		],
 	},
 	plugins: [
+		new VueLoaderPlugin(),
 		new CopyWebpackPlugin([{ context: './src/website/static/', from: '**/*', to: './' }]),
 		new CircularDependencyPlugin({
 			failOnError: true,
 		}),
-		new webpack.LoaderOptionsPlugin({
-			options: {
-				context: __dirname,
-				postcss: [autoprefixer],
-				babel: {
-					presets: ['es2015', 'stage-2'],
-					comments: false,
-					plugins: ['transform-es2015-destructuring', 'transform-object-rest-spread'],
-				},
-			},
+		new MiniCssExtractPlugin({
+			filename: 'style.css',
 		}),
+		// new webpack.LoaderOptionsPlugin({
+		// 	options: {
+		// 		context: __dirname,
+		// 		postcss: [autoprefixer],
+		// 		babel: {
+		// 			presets: ['es2015', 'stage-2'],
+		// 			comments: false,
+		// 			plugins: ['transform-es2015-destructuring', 'transform-object-rest-spread'],
+		// 		},
+		// 	},
+		// }),
 	],
 };

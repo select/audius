@@ -90,12 +90,13 @@ export default {
 	</div>
 </template>
 
-<style lang="sass?indentedSyntax">
+<style lang="sass">
 @import '../sass/vars'
 @import '../sass/color'
 
-.play-list-manager__menu .wmp-icon-mode_edit
-	font-size: .9rem;
+.play-list-manager__menu
+	.wmp-icon-mode_edit
+		font-size: .9rem;
 
 </style>
 

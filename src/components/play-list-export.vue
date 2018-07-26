@@ -187,7 +187,7 @@ export default {
 </template>
 
 
-<style lang="sass?indentedSyntax" scoped>
+<style lang="sass" scoped>
 @import '../sass/vars'
 @import '../sass/color'
 

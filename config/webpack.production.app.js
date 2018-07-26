@@ -1,14 +1,20 @@
 /* global __dirname */
 
 const webpack = require('webpack');
+// const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
 const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin');
+// const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+
+process.env.NODE_ENV = 'production';
 
 const configDev = require('./webpack.base.js');
 
 console.log('path: ', `${__dirname}/../dist-website/`);
 
+
 module.exports = Object.assign(configDev, {
+	mode: 'production',
 	entry: './src/website/app.js',
 	output: {
 		path: `${__dirname}/../dist-website/`,
@@ -19,21 +25,20 @@ module.exports = Object.assign(configDev, {
 			vue$: 'vue/dist/vue.runtime.esm.js', // reduce size by including the runtime only (requres precompiled templates)
 		},
 	},
+	// optimization: {
+	// 	minimizer: [
+	// 		new UglifyJsPlugin({
+	// 			output: {
+	// 				comments: false,
+	// 			},
+	// 		}),
+	// 	],
+	// },
 	devtool: undefined,
 	plugins: [
 		...configDev.plugins,
-		new webpack.optimize.ModuleConcatenationPlugin(),
-		new webpack.optimize.OccurrenceOrderPlugin(),
-		new webpack.optimize.UglifyJsPlugin({
-			compress: {
-				warnings: false,
-			},
-		}),
 		new webpack.DefinePlugin({
-			'process.env': {
-				NODE_ENV: JSON.stringify('production'),
-				extension: false,
-			},
+			PRODUCTION: JSON.stringify(true),
 		}),
 		new CompressionPlugin({
 			asset: '[path].gz[query]',

@@ -88,7 +88,7 @@ export default {
 	</div>
 </template>
 
-<style lang="sass?indentedSyntax">
+<style lang="sass">
 @import '../sass/vars'
 @import '../sass/color'
 

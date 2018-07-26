@@ -232,7 +232,7 @@ export default {
 	</li>
 </template>
 
-<style lang="sass?indentedSyntax">re
+<style lang="sass">re
 @import '../sass/vars'
 @import '../sass/color'
 

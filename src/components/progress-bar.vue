@@ -97,9 +97,8 @@ export default {
 };
 </script>
 
-<template lang="html">
+<template>
 	<div class="au-header__progress" @click.stop="skipToTime">
-
 		<div class="au-header__progress-inner">
 			<div
 				v-if="currentMedia.id"
@@ -124,7 +123,7 @@ export default {
 	</div>
 </template>
 
-<style lang="sass?indentedSyntax">
+<style lang="sass">
 @import '../sass/vars'
 @import '../sass/color'
 

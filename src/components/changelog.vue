@@ -112,7 +112,7 @@ export default {
 </div>
 </template>
 
-<style lang="sass?indentedSyntax">
+<style lang="sass">
 
 
 </style>

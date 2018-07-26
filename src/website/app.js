@@ -98,3 +98,13 @@ document.addEventListener('DOMContentLoaded', () => {
 setTimeout(() => {
 	start({ timeout: true });
 }, 2000);
+
+try {
+	if (PRODUCTION && 'serviceWorker' in navigator) {
+		window.addEventListener('load', () => {
+			navigator.serviceWorker.register('./service-worker.js');
+		});
+	}
+} catch (e) {
+	console.log('dev mode, no service worker');
+}
