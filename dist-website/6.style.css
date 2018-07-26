@@ -1,0 +1,14 @@
+
+
+.settings h1{text-align:center
+}
+.settings h3{padding-left:.45rem
+}
+.settings .settings__buttons,.settings p{padding:.45rem
+}
+.settings__buttons .button{align-items:center;display:inline-flex;justify-content:center;white-space:nowrap
+}
+#settings-backup{display:none
+}
+#settings-backup+label{align-items:center;cursor:pointer;display:inline-flex;justify-content:center
+}

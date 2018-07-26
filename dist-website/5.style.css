@@ -1,0 +1,7 @@
+
+.import-modal__row{align-items:center;display:flex;flex-direction:row
+}
+.import-modal__row>:not(:last-child){margin-right:.45rem
+}
+.import-modal__last{text-align:right
+}

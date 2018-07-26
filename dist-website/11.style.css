@@ -1,0 +1,9 @@
+
+.queue{display:flex;flex-direction:column;height:100%;overflow:hidden
+}
+.queue .media-list{flex:1;width:100%
+}
+.queue__hint{align-items:center;display:flex;justify-content:center;text-align:center;width:100%
+}
+.queue__hint span{font-size:.7em
+}

@@ -1,0 +1,17 @@
+
+.ws-settings{overflow:hidden;padding:.45rem 0;width:100%
+}
+.ws-settings input{background:transparent;flex:1
+}
+.ws-settings input::-webkit-input-placeholder{color:#c8ccd5
+}
+.ws-settings input:-moz-placeholder,.ws-settings input::-moz-placeholder{color:#c8ccd5
+}
+.ws-settings .ws-settings__script{padding:.9rem .45rem
+}
+.ws-settings .ws-settings__script textarea{width:100%
+}
+.ws-settings .ws-settings__name{font-size:1.5rem;height:4.05rem;padding:0 .45rem;width:100%
+}
+.ws-settings h3,.ws-settings p{padding:0 .45rem
+}
