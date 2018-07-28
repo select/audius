@@ -80,10 +80,6 @@ export const actions = {
 			({ matrixClient } = mc);
 			matrixClient
 				.register(options)
-				.then(event => {
-					console.log('event', event);
-					return event;
-				})
 				.then(credentials => commit('setMatrixCredentials', { credentials, isGuest: false }))
 				.then(() => matrixClient.login(state.credentials, state.isGuest, dispatch, commit))
 				.catch(error => commit('error', `Register: ${error}`));
@@ -151,7 +147,6 @@ export const actions = {
 			})
 			.catch(error => {
 				// {"errcode":"M_FORBIDDEN","error":"Guest access not allowed"}
-				console.log('err', error);
 				if (error.message === 'Guest access not allowed') commit('toggleMatrixLoginModal', true);
 				if (error.errcode === 'M_CONSENT_NOT_GIVEN') {
 					commit('setLeftMenuTab', 'matrix');

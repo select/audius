@@ -44,7 +44,6 @@ export const mutations = {
 			}
 
 			if (room.currentState) {
-				console.log("room.currentState", room.currentState);
 				// Set members of the room.
 				state.sources[roomId].members = Object.entries(room.currentState.members).map(
 					([id, member]) => ({ id, powerLevel: member.powerLevel })

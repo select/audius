@@ -25,15 +25,6 @@ module.exports = Object.assign(configDev, {
 			vue$: 'vue/dist/vue.runtime.esm.js', // reduce size by including the runtime only (requres precompiled templates)
 		},
 	},
-	// optimization: {
-	// 	minimizer: [
-	// 		new UglifyJsPlugin({
-	// 			output: {
-	// 				comments: false,
-	// 			},
-	// 		}),
-	// 	],
-	// },
 	devtool: undefined,
 	plugins: [
 		...configDev.plugins,

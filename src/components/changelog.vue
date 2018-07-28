@@ -20,7 +20,7 @@ export default {
 		<ul>
 			<li> Singe HTML file <a href="audius.app.html" download>Audius app</a>.</li>
 			<li> Modularization into main app, matrix, and webscraper to optimize loading speed.</li>
-			<li> Bootsplash, and other PWA things.</li>
+			<li> Bootsplash, offline app and other <a href="https://developers.google.com/web/progressive-web-apps/">PWA</a> things.</li>
 			<li> Fix share component so it always finds a media object.</li>
 			<li> Hide Matrix rooms.</li>
 			<li> Show Matrix consent link, now required to use Matrix.</li>

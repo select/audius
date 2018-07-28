@@ -33,7 +33,9 @@ module.exports = {
 			{
 				test: /\.sass$/,
 				use: [
-					process.env.NODE_ENV !== 'production' ? 'vue-style-loader' : MiniCssExtractPlugin.loader,
+					process.env.NODE_ENV !== 'production' || process.env.singleFile
+						? 'vue-style-loader'
+						: MiniCssExtractPlugin.loader,
 					'css-loader',
 					'postcss-loader',
 					{

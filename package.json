@@ -7,7 +7,8 @@
   "scripts": {
     "start": "node ./config/webpack.devserver.js",
     "test": "eslint ./src/**/*.js",
-    "build:prod:app": "./node_modules/.bin/webpack --config='./config/webpack.production.app.js' --progress --display-error-details && ./src/scripts/single-file-release.js",
+    "build:prod:app": "./node_modules/.bin/webpack --config='./config/webpack.production.app.js' --progress --display-error-details",
+    "build:prod:single-file-app": "./node_modules/.bin/webpack --config='./config/webpack.production.single-file-app.js' --progress --display-error-details && ./src/scripts/single-file-release.js",
     "build": "./node_modules/.bin/webpack --config='./config/webpack.base.js' --progress --display-error-details",
     "build:extension": "./node_modules/.bin/webpack --config='./config/webpack.dev.extension.js' --progress --display-error-details --watch",
     "docu": "livingstyleguide compile ./src/sass/styleguide.lsg ./documentation/styleguide.html && nodejs node_modules/.bin/generate-md --layout github --input README.md --output ./documentation/",
@@ -15,7 +16,9 @@
     "version": "src/scripts/bump-version.js",
     "build:prod:extension": "./node_modules/.bin/webpack --config='./config/webpack.production.extension.js' --progress --display-error-details",
     "icons": "./config/convert-icomoon.js ./src/icons/media-player.zip ./src/sass/_icon.map.sass ./src/fonts",
-    "serve-static": "http-server -p 8080 ./dist-website"
+    "serve-static": "http-server -p 8080 ./dist-website",
+    "test": "ssh -t rockdapus 'rm /var/www/audius/*.gz'",
+    "deploy": "npm run build:prod:single-file-app && npm run build:prod:app && ssh -t rockdapus 'rm /var/www/audius/*.gz' || scp -r dist-website/* rockdapus:/var/www/audius/"
   },
   "license": "MIT",
   "private": true,

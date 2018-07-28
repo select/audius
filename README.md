@@ -50,7 +50,7 @@ Create your own rooms with Audius and share it with your friends.
 **2.0.12**		
 * Singe HTML file Audius app.
 * Modularization into main app, matrix, and webscraper to optimize loading speed.
-* Bootsplash, and other PWA things.
+* Bootsplash, offline app and other [PWA](https://developers.google.com/web/progressive-web-apps/) things.
 * Fix share component so it always finds a media object.
 * Hide Matrix rooms.
 * Show Matrix consent link, now required to use Matrix.

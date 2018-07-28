@@ -43,7 +43,7 @@ export const store = new Vuex.Store({
 					dispatch('initMatrix');
 				});
 			} else if (moduleName === 'webScraper') {
-				import(/* webpackChunkmoduleName: "vuex/webScraper" */ './webScraper').then(module => {
+				import(/* webpackChunkName: "vuex/webScraper" */ './webScraper').then(module => {
 					store.registerModule(moduleName, module);
 					_initModule(state, moduleName, module, savedState, commit);
 				});

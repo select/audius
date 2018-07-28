@@ -11,9 +11,11 @@ import { migrateIndexDb2012 } from '../../utils/migrate.2.0.12';
 function playMedia(state, media) {
 	['matrix', 'webScraper'].forEach(sourceName => {
 		if (sourceName in state.loadedModules) {
-			Object.values(state[sourceName].sources).forEach(({ playedMedia }) => {
-				playedMedia[media.id] = new Date();
-			});
+			Object.values(state[sourceName].sources)
+				.filter(({ playedMedia }) => playedMedia)
+				.forEach(({ playedMedia }) => {
+					playedMedia[media.id] = new Date();
+				});
 			state[sourceName].sources = Object.assign({}, state[sourceName].sources);
 		}
 	});
