@@ -316,11 +316,7 @@ export const mutations = {
 	dropMoveItem(state, { itemId, to }) {
 		if (state.leftMenuTab === 'playList') {
 			const media = getMediaEntity(state, itemId);
-			if (media) {
-				state.entities[media.id] = media; // Dropped item comes from a web scraper / matrix room.
-			} else {
-				addMissingMediaToEntities(state, [itemId]); // Dropped item comes from the search results.
-			}
+			if (media.id) state.entities[media.id] = media;
 
 			if (to) {
 				if (!state.sources[to].includes(itemId)) {
@@ -409,10 +405,12 @@ export const mutations = {
 		state.currentTime = s;
 	},
 	movePlayListMedia(state, playList) {
+		const seen = new Set();
+		const cleanPlayList = playList.filter(id => (seen.has(id) ? false : seen.add(id)));
 		addMissingMediaToEntities(state, playList);
 		const { id } = state.currentMediaSource;
-		if (id) state.sources[id] = playList;
-		else state.playList = playList;
+		if (id) state.sources[id] = cleanPlayList;
+		else state.playList = cleanPlayList;
 	},
 	moveTagsOrdered(state, sourcesOrdered) {
 		state.sourcesOrdered = sourcesOrdered;
@@ -491,9 +489,12 @@ export const mutations = {
 	setLoadedModules(state, moduleName) {
 		state.loadedModules = Object.assign({ [moduleName]: true }, state.loadedModules);
 	},
-	setPaginationIndex(state, { id, index }) {
-		state.paginationIndex[id] = index;
-		state.paginationIndex = Object.assign({}, state.paginationIndex);
+	increasePaginationIndex(state, id) {
+		const index = state.paginationIndex[id] || 0;
+		state.paginationIndex = Object.assign({}, state.paginationIndex, { [id]: index + 1 });
+	},
+	toggleIsLoading(state, { id, loading }) {
+		state.isLoading = Object.assign({}, state.isLoading, { [id]: loading });
 	},
 	setShowWatched(state, { id, toggleState }) {
 		state.showWatched[id] = toggleState;

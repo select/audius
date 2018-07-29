@@ -1,10 +1,12 @@
 export function getMediaEntity(state, mediaId) {
 	if (mediaId in state.entities) return state.entities[mediaId];
-	let media = state.search.results.find(item => item.id === mediaId);
+	let media = state.search.results.find(({ id }) => id === mediaId);
+	if (media) return media;
+	media = state.sessionHistory.find(({ id }) => id === mediaId);
 	if (media) return media;
 	for (const sourceName of ['matrix', 'webScraper']) {
 		for (const sourceId of state[sourceName].sourcesOrdered) {
-			media = state[sourceName].sources[sourceId].playList.find(({ id }) => id === mediaId)
+			media = state[sourceName].sources[sourceId].playList.find(({ id }) => id === mediaId);
 			if (media) return media;
 		}
 	}

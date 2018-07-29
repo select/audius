@@ -120,20 +120,24 @@ export const actions = {
 			})
 			.catch(error => commit('error', `Could not remove media from matrix room. ${error}`));
 	},
-	matrixPaginate({ state, commit, rootState }, id) {
+	matrixLoadMore({ state, commit, rootState }, roomId) {
+		if (rootState.isLoading[roomId]) return;
+		commit('toggleIsLoading', { id: roomId, loading: true });
 		matrixClient
-			.paginate(rootState.currentMediaSource.id)
+			.paginate(roomId)
 			.then(res => {
 				if (res) {
-					commit('setPaginationIndex', {
-						id,
-						index: (rootState.paginationIndex[id] || 0) + 1,
-					});
+					commit('increasePaginationIndex', roomId);
 				} else {
 					commit('error', 'You reached the last page of this room.');
 				}
 			})
-			.catch(() => commit('error', 'Paginating matrix room failed'));
+			.catch(() => {
+				commit('error', 'Paginating matrix room failed');
+			})
+			.finally(() => {
+				commit('toggleIsLoading', { id: roomId, loading: false });
+			});
 	},
 	joinMatrixRoom({ commit }, { id, name }) {
 		commit('toggleMatrixRoomDirectory', false);
@@ -241,7 +245,7 @@ export const actions = {
 					}))
 				);
 			})
-			.catch((error) => commit('error', `Getting public matrix Rooms failed. ${error}`));
+			.catch(error => commit('error', `Getting public matrix Rooms failed. ${error}`));
 	},
 	matrixLogout({ commit }) {
 		// FIXIME this is async and could return a promis

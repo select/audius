@@ -60,4 +60,5 @@ export const state = {
 	extensionAvilable: false,
 	loadedModules: {},
 	paginationIndex: {},
+	isLoading: {},
 };

@@ -16,6 +16,11 @@ export default {
 <div class="wmp-about">
 	<h2 id="audius-changelog">Changelog</h2>
 	<p>
+		<b>2.0.13</b><br>
+		<ul>
+			<li> Added play history.</li>
+			<li> Load more room/channel content on (infinite)scroll.</li>
+		</ul>
 		<b>2.0.12</b><br>
 		<ul>
 			<li> Singe HTML file <a href="audius.app.html" download>Audius app</a>.</li>

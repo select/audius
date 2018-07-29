@@ -93,7 +93,7 @@ export const actions = {
 		if (state.currentMediaSource.type === 'webScraper') {
 			const cp = getCurrentPlayListEntities(state);
 			if (cp.length < 7) {
-				dispatch('runWebScraper', state.currentMediaSource.id);
+				dispatch('webScraperLoadMore', state.currentMediaSource.id);
 			}
 		}
 		if (state.currentMediaSource.type === 'matrix') {

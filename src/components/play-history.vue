@@ -11,6 +11,12 @@ export default {
 	},
 	computed: {
 		...mapState(['sessionHistory']),
+		_sessionHistory: {
+			get() {
+				return [...this.sessionHistory].reverse();
+			},
+			set() { return; },
+		},
 	},
 };
 </script>
@@ -26,7 +32,7 @@ export default {
 	<draggable
 		class="media-list"
 		element="ul"
-		v-model="sessionHistory"
+		v-model="_sessionHistory"
 		:options="{
 			animation: 150,
 			scrollSpeed: 20,
@@ -39,7 +45,7 @@ export default {
 			}
 		}">
 		<video-item
-			v-for="(media, index) in sessionHistory"
+			v-for="(media, index) in _sessionHistory"
 			:key="index"
 			:video="media"></video-item>
 	</draggable>

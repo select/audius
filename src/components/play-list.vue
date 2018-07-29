@@ -38,13 +38,23 @@ export default {
 	},
 	mounted() {
 		this.checkElementVisible();
-		this.$el.querySelector('.play-list__body').addEventListener('scroll', throttle(() => {
+		const $playList = this.$el.querySelector('.play-list__body');
+		$playList.addEventListener('scroll', throttle(() => {
 			this.checkElementVisible();
 		}, 500));
 		// only hide on debounced
-		this.$el.querySelector('.play-list__body').addEventListener('scroll', debounce(() => {
+		$playList.addEventListener('scroll', debounce(() => {
 			this.checkElementVisible(true);
 		}, 100));
+		$playList.addEventListener('scroll', () => {
+			// Detect when scrolled to bottom.
+			if ($playList.scrollTop + $playList.clientHeight >= $playList.scrollHeight) {
+				if (['matrix', 'webScraper'].includes(this.currentMediaSource.type)) {
+					this[`${this.currentMediaSource.type}LoadMore`](this.currentMediaSource.id);
+				}
+			}
+			this.checkElementVisible(true);
+		});
 	},
 	updated() {
 		this.checkElementVisible();
@@ -67,7 +77,7 @@ export default {
 			'setLeftMenuTab',
 			'selectMediaSource',
 		]),
-		...mapActions(['importURL', 'matrixPaginate', 'runWebScraper', 'matrixSend']),
+		...mapActions(['importURL', 'matrixPaginate', 'webScraperLoadMore', 'matrixSend', 'matrixLoadMore', 'webScraperLoadMore']),
 		checkElementVisible(hide) {
 			/* eslint-disable no-param-reassign */
 			if (this.$refs.playListEls) {
@@ -103,7 +113,7 @@ export default {
 				}, 800);
 			}
 		},
-		stopPropagation() {
+		stopPropagation(event) {
 			if (this.showJump) event.stopPropagation();
 		},
 		filterInput(event) {
@@ -137,9 +147,8 @@ export default {
 			'jumpCursor',
 			'showWatched',
 			'paginationIndex',
+			'isLoading',
 		]),
-		...mapModuleState('matrix', { matrixRooms: 'sources' }),
-		...mapModuleState('webScraper', { webScrapers: 'sources' }),
 		_entities: {
 			get() {
 				return this.filteredPlayList;
@@ -283,12 +292,18 @@ export default {
 
 			<div
 				v-if="currentMediaSource.type == 'webScraper'"
-				@click="runWebScraper(currentMediaSource.id)"
-				class="play-list__load-more"> … load more (Page {{paginationIndex[currentMediaSource.id] || 0}}) </div>
+				@click="webScraperLoadMore(currentMediaSource.id)"
+				class="play-list__load-more">
+				… load more (Page {{paginationIndex[currentMediaSource.id] || 0}})
+				<div class="loader" v-show="isLoading[currentMediaSource.id]"></div>
+			</div>
 			<div
 				v-if="currentMediaSource.type == 'matrix'"
-				@click="matrixPaginate(currentMediaSource.id)"
-				class="play-list__load-more"> … load more (Page {{paginationIndex[currentMediaSource.id] || 0}}) </div>
+				@click="matrixLoadMore(currentMediaSource.id)"
+				class="play-list__load-more">
+				… load more (Page {{paginationIndex[currentMediaSource.id] || 0}})
+				<div class="loader" v-show="isLoading[currentMediaSource.id]"></div>
+			</div>
 		</div>
 
 	</div>
@@ -534,4 +549,17 @@ li ~ .play-list-manager__tag-body
 .play-list-manager__tags .play-list-manager__tag-name-input
 	height: $touch-size-extratiny
 
+.loader
+	width: #{3 * $grid-space}
+	height: #{3 * $grid-space}
+	border: $grid-space/2 solid $color-catskillwhite
+	border-top-color: $color-pictonblue
+	border-radius: 50%
+	animation: spin 2s linear infinite
+
+@keyframes spin
+	0%
+		transform: rotate(0deg)
+	100%
+		transform: rotate(360deg)
 </style>

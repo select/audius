@@ -43,26 +43,30 @@ export const actions = {
 		}
 		const ws = state.sources[id];
 		if (!ws.playList.length) {
-			dispatch('runWebScraper', id);
+			dispatch('webScraperLoadMore', id);
 		}
 	},
-	runWebScraper({ state, commit, dispatch, rootState }, id) {
+	webScraperLoadMore({ state, commit, dispatch, rootState }, id) {
 		if (!id) {
 			commit('error', `Can not find channel "${id}".`);
 			return;
 		}
+
 		const ws = state.sources[id];
 		const index = rootState.paginationIndex[id] || 0;
 		if (id === 'Imgur') {
-			commit('setPaginationIndex', { id, index: index + 1 });
+			if (rootState.isLoading[id]) return;
+			commit('toggleIsLoading', { id, loading: true });
+			commit('increasePaginationIndex', id);
 			webScraper
 				.getImgurMedia(rootState.paginationIndex[id])
 				.then(mediaList => {
 					dispatch('webScraperUpdateSuccess', { id, mediaList });
 				})
-				.catch(error => commit('error', `Could not get Imgur. ${error}`));
+				.catch(error => commit('error', `Could not get Imgur. ${error}`))
+				.finally(() => commit('toggleIsLoading', { id, loading: false }));
 		} else if (ws.settings.type === 'script') {
-			commit('setPaginationIndex', { id, index: index + 1 });
+			commit('increasePaginationIndex', id);
 			if (state.sourcesInitialized[id]) {
 				extensionMessage({
 					audius: true,
@@ -107,7 +111,7 @@ export const actions = {
 					commit('setShowSettings');
 					return;
 				}
-				commit('setPaginationIndex', { id, index: index + 1 });
+				commit('increasePaginationIndex', id);
 				extensionMessage({
 					audius: true,
 					type: 'scanUrl',

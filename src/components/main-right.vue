@@ -10,6 +10,7 @@ const MatrixRoomSettings = () => import(/* webpackChunkName: "components/matrix-
 const MediaEdit = () => import(/* webpackChunkName: "components/media-edit" */'./media-edit.vue');
 const Queue = () => import(/* webpackChunkName: "components/queue" */'./queue.vue');
 const ChangeLog = () => import(/* webpackChunkName: "components/changelog" */'./changelog.vue');
+const PlayHistory = () => import(/* webpackChunkName: "components/play-history" */'./play-history.vue');
 
 function disableSelect(event) {
 	event.preventDefault();
@@ -27,6 +28,7 @@ export default {
 		MatrixRoomSettings,
 		MediaEdit,
 		ChangeLog,
+		PlayHistory,
 	},
 	computed: mapState([
 		'website',
@@ -38,6 +40,7 @@ export default {
 		'currentMediaSource',
 		'showMediaEdit',
 		'queue',
+		'sessionHistory',
 	]),
 	data() {
 		return { queueActive: false };
@@ -103,6 +106,10 @@ export default {
 			@click="setMainRightTab('search')"
 			v-bind:class="{ active: mainRightTab == 'search' }">Search</li>
 		<li
+			v-if="sessionHistory.length"
+			@click="setMainRightTab('history')"
+			v-bind:class="{ active: mainRightTab == 'history' }">History</li>
+		<li
 			@click="setMainRightTab('about')"
 			v-bind:class="{ active: mainRightTab == 'about' }">About</li>
 		<li
@@ -130,6 +137,7 @@ export default {
 		<web-scraper-settings v-else-if="mainRightTab == 'webScraperSettings' && currentMediaSource.type === 'webScraper'"></web-scraper-settings>
 		<matrix-room-settings v-else-if="mainRightTab == 'matrixRoomSettings' && currentMediaSource.type === 'matrix'"></matrix-room-settings>
 		<settings v-else-if="mainRightTab == 'settings'"></settings>
+		<play-history v-else-if="mainRightTab == 'history'"></play-history>
 		<change-log v-else-if="mainRightTab == 'changelog'"></change-log>
 	</div>
 	<div
