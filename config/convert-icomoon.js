@@ -34,6 +34,8 @@ zipEntries.forEach((zipEntry) => {
 	// The `selection.json` file contains the mapping of the
 	// icon name to the character position in the alphabet.
 	if (zipEntry.entryName === 'selection.json') {
+		zip.extractEntryTo(zipEntry.entryName, fontsPath, false, /*overwrite*/ true);
+		console.log(`overwritten: ${fontsPath}/${zipEntry.name}`);
 		const json = JSON.parse(zipEntry.getData().toString('utf8'));
 		const itemString = json.icons
 			.map((icon) => {
