@@ -3,7 +3,7 @@ import Vue from 'vue';
 import { mapGetters, mapMutations, mapState, mapActions } from 'vuex';
 import draggable from 'vuedraggable';
 
-import { starterPlaylist, throttle, debounce, mapModuleState } from '../utils';
+import { starterPlaylist, throttle, debounce } from '../utils';
 import VideoItem from './video-item.vue';
 
 const PlayListExport = () => import(/* webpackChunkName: "components/play-list-export" */'./play-list-export.vue');
@@ -75,6 +75,7 @@ export default {
 			'dropMoveItem',
 			'setShowWatched',
 			'setLeftMenuTab',
+			'setMainLeftTab',
 			'selectMediaSource',
 		]),
 		...mapActions(['importURL', 'matrixPaginate', 'webScraperLoadMore', 'matrixSend', 'matrixLoadMore', 'webScraperLoadMore']),
@@ -185,6 +186,10 @@ export default {
 
 <template>
 <div class="play-list">
+	<span
+		v-if="this.currentMediaSource.type === 'matrix'"
+		@click="setMainLeftTab('matrix')"
+		class="wmp-icon-chat play-list__chat"></span>
 	<div class="play-list__body">
 		<draggable
 			element="div"
@@ -357,14 +362,15 @@ export default {
 
 .play-list
 	display: flex
+	position: relative
 	flex-direction: column
 	height: 100%
 .play-list__greeting
-	margin: #{2 * $grid-space} 0 #{2 * $grid-space} 0
 	width: 100%
-	text-align: center
-	line-height: 1.5rem
+	margin: #{2 * $grid-space} 0 #{2 * $grid-space} 0
 	font-size: 1.2rem
+	line-height: 1.5rem
+	text-align: center
 	[class^='wmp-icon']
 		height: #{3 * $grid-space}
 		&:before
@@ -375,68 +381,74 @@ export default {
 		margin-top: #{3 * $grid-space}
 		> button.button
 			width: #{5 * $touch-size-medium}
+			height: $touch-size-medium
 			margin-top: #{2 * $grid-space}
 			// padding: 0 #{5 * $grid-space}
-			height: $touch-size-medium
 
-
+.play-list__chat.play-list__chat
+	position: absolute
+	top: 0
+	right: #{1.5 * $grid-space}
+	background: rgba(255, 255, 255, .8)
+	cursor: pointer
+	z-index: 1
 
 .play-list__body
 	flex: 1
 	overflow-y: auto
 	overflow-x: hidden
 .play-list-footer
+	display: flex
 	background: $color-catskillwhite
 	color: $color-aluminium-dark
-	display: flex
 	font-size: 0.7rem
 	overflow: hidden
-	[class^="wmp-icon"]
-		height: $touch-size-tiny
+	[class^='wmp-icon']
 		width: $touch-size-small
+		height: $touch-size-tiny
 	ul
-		flex: 1
-		padding: 0
-		margin: 0
-		list-style: none
 		display: flex
+		flex: 1
 		width: 100%
 		height: $touch-size-small
+		margin: 0
+		padding: 0
+		list-style: none
 		li
-			flex: 1
 			display: flex
-			justify-content: center
+			flex: 1
 			align-items: center
-			white-space: nowrap
+			justify-content: center
 			transition: all $transition-time
+			white-space: nowrap
 			&:not(.play-list-footer--info)
-				cursor: pointer
 				text-transform: uppercase
+				cursor: pointer
 			&.active,
 			&:hover:not(.play-list-footer--info)
 				background: $color-aluminium
 				color: $color-white
 .play-list-footer__search
+	display: flex
+	align-items: center
 	max-width: $touch-size-medium
 	height: $touch-size-small
 	cursor: pointer
-	display: flex
-	align-items: center
 	&:hover:not(.active)
 		background: $color-aluminium
 		color: $color-white
 	&.active
-		max-width: 100%
 		width: 100%
+		max-width: 100%
 		span,
 		input
-			background: $color-white
-			border: none
-			border-top: 1px solid $color-aluminium
 			height: $touch-size-small
+			border: 0
+			border-top: 1px solid $color-aluminium
+			background: $color-white
 	span
-		height: $touch-size-small
 		width: $touch-size-medium
+		height: $touch-size-small
 	input
 		flex: 1
 
@@ -450,14 +462,14 @@ export default {
 .play-list__import-header
 	font-size: 1.5em
 	span
-		font-size: 0.8em
+		font-size: .8em
 		cursor: pointer
 
 .play-list__import-header
 	position: relative
 	width: 100%
-	text-align: center
 	margin-bottom: $grid-space
+	text-align: center
 	> div
 		height: $touch-size-medium
 		line-height: $touch-size-medium
@@ -469,8 +481,8 @@ export default {
 .play-list__import
 	display: flex
 	flex-direction: column
-	justify-content: center
 	align-items: center
+	justify-content: center
 	padding: $grid-space
 	.button,
 	input,
@@ -490,8 +502,8 @@ export default {
 		// 	color: $color-aluminium
 	.play-list__import-url
 		display: flex
-		align-items: center
 		flex-direction: column
+		align-items: center
 	form span
 		font-size: 0.8rem
 
@@ -499,15 +511,15 @@ export default {
 	display: none
 	+ label
 		display: flex
-		justify-content: center
 		align-items: center
+		justify-content: center
 		cursor: pointer
 
 .play-list__load-more
-	padding-left: $touch-size-medium
-	height: $touch-size-medium
 	display: flex
 	align-items: center
+	height: $touch-size-medium
+	padding-left: $touch-size-medium
 	color: $color-aluminium
 	cursor: pointer
 	&:hover
@@ -515,19 +527,19 @@ export default {
 
 // tag
 .play-list-manager__tag-body
-	flex: 1
 	display: flex
+	flex: 1
 	flex-direction: column
 	overflow: hidden
 	> div
-		overflow: hidden
 		text-overflow: ellipsis
 		white-space: nowrap
+		overflow: hidden
 		&:last-child
 			font-size: 0.7em
 	input
-		font-size: 1rem
 		color: $color-palesky
+		font-size: 1rem
 
 .play-list-manager__drag-handle
 	min-width: #{2*$grid-space}
@@ -546,15 +558,16 @@ li ~ .play-list-manager__tag-body
 	overflow: hidden
 
 
-.play-list-manager__tags .play-list-manager__tag-name-input
-	height: $touch-size-extratiny
+.play-list-manager__tags
+	.play-list-manager__tag-name-input
+		height: $touch-size-extratiny
 
 .loader
 	width: #{3 * $grid-space}
 	height: #{3 * $grid-space}
 	border: $grid-space/2 solid $color-catskillwhite
-	border-top-color: $color-pictonblue
 	border-radius: 50%
+	border-top-color: $color-pictonblue
 	animation: spin 2s linear infinite
 
 @keyframes spin

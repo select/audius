@@ -2,6 +2,7 @@ import { youtubeApiKey } from '../../utils/config';
 
 export const state = {
 	errorMessages: [],
+	mediaIndex: {},
 	entities: {},
 	currentMedia: {},
 	currentMediaSource: {
@@ -48,6 +49,7 @@ export const state = {
 		matrix: false,
 	},
 	mainRightTab: 'about',
+	mainLeftTab: 'playList',
 	isMobile: false,
 	website: {
 		showSearch: false,

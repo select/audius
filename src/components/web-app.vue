@@ -8,6 +8,7 @@ import Messages from './messages.vue';
 import WebAppMobile from './web-app-mobile.vue';
 
 const ImportModal = () => import(/* webpackChunkName: "components/import-modal" */'./import-modal.vue');
+const MatrixChat = () => import(/* webpackChunkName: "components/matrix-chat" */'./matrix-chat.vue');
 
 export default {
 	components: {
@@ -18,8 +19,9 @@ export default {
 		ImportModal,
 		Messages,
 		WebAppMobile,
+		MatrixChat,
 	},
-	computed: mapState(['isMobile', 'pendingImportURL']),
+	computed: mapState(['isMobile', 'pendingImportURL', 'mainLeftTab', 'currentMediaSource']),
 };
 </script>
 
@@ -30,7 +32,8 @@ export default {
 		<main class="box">
 			<left-menu></left-menu>
 			<div class="web-app__main">
-				<play-list></play-list>
+				<matrix-chat v-if="currentMediaSource.type === 'matrix' && mainLeftTab == 'matrix'"></matrix-chat>
+				<play-list v-else></play-list>
 				<main-right></main-right>
 			</div>
 		</main>

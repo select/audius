@@ -28,13 +28,16 @@ To update the fonts go to https://icomoon.io/app/#/select import the `selection.
 ```
 
 ```
+<span class="wmp-icon-send"></span>
+<span class="wmp-icon-speaker_notes_off"></span>
+<span class="wmp-icon-chat"></span>
 <span class="wmp-icon-visibility"></span>
 <span class="wmp-icon-visibility_off"></span>
-<span class="wmp-icon-dehaze"></span>
-<span class="wmp-icon-reorder"></span>
 <span class="wmp-icon-format_list_bulleted"></span>
+```
+
+```
 <span class="wmp-icon-more_vert"></span>
-<span class="wmp-icon-unfold_more"></span>
 <span class="wmp-icon-arrow_drop_down"></span>
 <span class="wmp-icon-arrow_drop_up"></span>
 <span class="wmp-icon-search"></span>
@@ -45,7 +48,6 @@ To update the fonts go to https://icomoon.io/app/#/select import the `selection.
 
 ```
 <span class="wmp-icon-sort"></span>
-<span class="wmp-icon-zoom_out_map"></span>
 <span class="wmp-icon-queue_music"></span>
 <span class="wmp-icon-mode_edit"></span>
 <span class="wmp-icon-fullscreen"></span>

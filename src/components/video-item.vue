@@ -13,6 +13,7 @@ export default {
 		isSearchResult: Boolean,
 		expiryDate: Date,
 		isWebScraper: Boolean,
+		elementType: String,
 	},
 	computed: {
 		...mapState([
@@ -232,7 +233,7 @@ export default {
 	</li>
 </template>
 
-<style lang="sass">re
+<style lang="sass">
 @import '../sass/vars'
 @import '../sass/color'
 

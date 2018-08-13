@@ -11,6 +11,8 @@ const matrixRoomTemplate = () =>
 		})
 	);
 
+const matrixNameRegEx = /@(.+):matrix.org/;
+
 /* eslint-disable no-param-reassign */
 export const mutations = {
 	recoverState_matrix(state, recoveredState) {
@@ -47,6 +49,14 @@ export const mutations = {
 				// Set members of the room.
 				state.sources[roomId].members = Object.entries(room.currentState.members).map(
 					([id, member]) => ({ id, powerLevel: member.powerLevel })
+				);
+				state.memberNames = Object.entries(room.currentState.members).reduce(
+					(acc, [id, member]) => {
+						const match = member.name.match(matrixNameRegEx);
+						const name = match ? match[1] : member.name;
+						return Object.assign(acc, { [id]: name });
+					},
+					state.memberNames
 				);
 
 				// Set flag indicating if current user is admin.
@@ -142,5 +152,20 @@ export const mutations = {
 		state.sources[roomId] = Object.assign({}, state.sources[roomId], values);
 		// Update the reference so the UI redraws.
 		state.sources = Object.assign({}, state.sources);
+	},
+	setLastPageReached(state, roomId) {
+		state.lastPageReached[roomId] = true;
+	},
+	addChatlog(state, options) {
+		const { roomId, message } = options;
+		const event = Object.assign({}, options, { type: typeof message });
+		if (!(roomId in state.chatlog)) {
+			state.chatlog[roomId] = [event];
+		} else if (state.chatlog[roomId][0].createdAt < event.createdAt) {
+			state.chatlog[roomId] = [...state.chatlog[roomId], event];
+		} else {
+			state.chatlog[roomId] = [event, ...state.chatlog[roomId]];
+		}
+		state.chatlog = Object.assign({}, state.chatlog);
 	},
 };

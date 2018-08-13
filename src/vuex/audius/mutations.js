@@ -120,6 +120,10 @@ function uniqById(a) {
 	return a.filter(({ id }) => (seen.has(id) ? false : seen.add(id)));
 }
 
+function updateMediaIndex(state, entities) {
+	state.mediaIndex = Object.assign({}, state.mediaIndex, entities);
+}
+
 /* eslint-disable no-param-reassign */
 export const mutations = {
 	recoverState(state, recoveredState) {
@@ -134,6 +138,7 @@ export const mutations = {
 				id: '',
 			};
 		}
+		updateMediaIndex(state, state.entities);
 	},
 	loadBackup(state, backup) {
 		if (backup.AudiusBackup) {
@@ -144,6 +149,7 @@ export const mutations = {
 				state = Object.assign(state, backup.data);
 			}
 		}
+		updateMediaIndex(state, state.entities);
 	},
 	searchSuccess(state, { mediaList = [], id = null, isPlayList }) {
 		if (!mediaList.length) {
@@ -151,6 +157,11 @@ export const mutations = {
 		} else {
 			state.mainRightTab = 'search';
 		}
+
+		updateMediaIndex(
+			state,
+			mediaList.reduce((acc, media) => Object.assign(acc, { [media.id]: media }), {})
+		);
 
 		state.search.isPlayList = isPlayList;
 		if (state.search.id !== id) {
@@ -165,6 +176,9 @@ export const mutations = {
 	},
 	setMainRightTab(state, id) {
 		state.mainRightTab = state.mainRightTab === id ? '' : id;
+	},
+	setMainLeftTab(state, id) {
+		state.mainLeftTab = state.mainLeftTab === id ? '' : id;
 	},
 	setShowSettings(state) {
 		state.showSettings = true;
@@ -232,9 +246,6 @@ export const mutations = {
 	updateCurrentMedia(state, media) {
 		Object.assign(state.currentMedia, media);
 	},
-	upgradeEntities(state, entities) {
-		state.entities = entities;
-	},
 	importPlayList(state, { data, tagName }) {
 		let playList;
 		if (tagName !== undefined) {
@@ -260,6 +271,7 @@ export const mutations = {
 			state.playList = playList;
 		}
 		state.entities = Object.assign({}, state.entities, data.entities);
+		updateMediaIndex(state, data.entities);
 		state.sources = Object.assign({}, state.sources);
 	},
 	importOtherPlayList(state, playListName) {

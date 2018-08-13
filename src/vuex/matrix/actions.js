@@ -85,6 +85,11 @@ export const actions = {
 				.catch(error => commit('error', `Register: ${error}`));
 		});
 	},
+	matrixSendText({ state, rootState, commit }, { roomId, message }) {
+		matrixClient
+			.sendMessage(roomId, message)
+			.catch(error => commit('error', `Posting message to matrix room failed. ${error}`));
+	},
 	matrixSend({ state, rootState, commit }, { itemId, roomId, media }) {
 		const curMedia = media || getMediaEntity(rootState, itemId);
 		if (state.sources[roomId].playList.some(({ id }) => id === curMedia.id)) {
@@ -121,8 +126,11 @@ export const actions = {
 			.catch(error => commit('error', `Could not remove media from matrix room. ${error}`));
 	},
 	matrixLoadMore({ state, commit, rootState }, roomId) {
-		if (rootState.isLoading[roomId]) return;
+		if (rootState.isLoading[roomId] || state.lastPageReached[roomId]) return;
 		commit('toggleIsLoading', { id: roomId, loading: true });
+		setTimeout(() => {
+			commit('toggleIsLoading', { id: roomId, loading: false });
+		}, 40000);
 		matrixClient
 			.paginate(roomId)
 			.then(res => {
@@ -130,6 +138,7 @@ export const actions = {
 					commit('increasePaginationIndex', roomId);
 				} else {
 					commit('error', 'You reached the last page of this room.');
+					commit('setLastPageReached', roomId);
 				}
 			})
 			.catch(() => {
@@ -139,7 +148,7 @@ export const actions = {
 				commit('toggleIsLoading', { id: roomId, loading: false });
 			});
 	},
-	joinMatrixRoom({ commit }, { id, name }) {
+	joinMatrixRoom({ commit, dispatch }, { id, name }) {
 		commit('toggleMatrixRoomDirectory', false);
 		matrixClient
 			.joinRoom(id)
@@ -148,8 +157,14 @@ export const actions = {
 				commit('joinRoom', room);
 				commit('selectMediaSource', { type: 'matrix', id: room.roomId });
 				commit('setLeftMenuTab', 'matrix');
+				setTimeout(() => {
+					dispatch('matrixLoadMore', room.roomId);
+				}, 2000);
 			})
 			.catch(error => {
+				if (error.errcode === 'PAGINATE_NO_ROOM') {
+					return;
+				}
 				// {"errcode":"M_FORBIDDEN","error":"Guest access not allowed"}
 				if (error.message === 'Guest access not allowed') commit('toggleMatrixLoginModal', true);
 				if (error.errcode === 'M_CONSENT_NOT_GIVEN') {
@@ -253,7 +268,8 @@ export const actions = {
 		matrixClient.logout();
 		commit('matrixLogout');
 	},
-	parseMatrixMessage({ state, commit, rootState }, { roomId, eventId, message }) {
+	parseMatrixMessage({ state, commit, rootState }, options) {
+		const { roomId, eventId, message } = options;
 		// Get the room for the message.
 		const room = state.sources[roomId];
 		if (!(roomId in state.sources)) {
@@ -261,6 +277,8 @@ export const actions = {
 			commit('updateMatrixRoom', { roomId });
 			return;
 		}
+
+		commit('addChatlog', options);
 
 		// Build an index of all known media items from this room.
 		// This is used by `findMediaText` to minimize the number of requests.

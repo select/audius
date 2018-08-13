@@ -6,6 +6,7 @@ export const matrixClient = {
 	syncFailCount: 0,
 	paginate(roomId) {
 		const room = this.client.getRoom(roomId);
+		if (!room) throw { errcode: 'PAGINATE_NO_ROOM' };
 		const tls = room.getTimelineSets()[0];
 		// this._timelineSet.getLiveTimeline()
 		return this.client
@@ -22,13 +23,16 @@ export const matrixClient = {
 			});
 
 			this.client.on('Room.timeline', event => {
-				const message = event.event.content.body;
 				const roomId = event.event.room_id;
+				const sender = event.sender.userId;
+				const createdAt = event.event.origin_server_ts;
 				if (!(roomId in this.firstEvent)) this.firstEvent[roomId] = event.event.event_id;
 				if (event.event.type === 'audiusMedia') {
 					// legacy events, remove 2019
 					dispatch('parseMatrixMessage', {
 						roomId,
+						sender,
+						createdAt,
 						eventId: event.event.event_id,
 						message: event.event.content,
 					});
@@ -36,11 +40,16 @@ export const matrixClient = {
 					if (event.event.content.type === 'media') {
 						dispatch('parseMatrixMessage', {
 							roomId,
+							sender,
+							createdAt,
 							eventId: event.event.event_id,
 							message: event.event.content.data,
 						});
 					}
-				} else if (message) dispatch('parseMatrixMessage', { roomId, message });
+				} else if (event.event.type === 'm.room.message') {
+					const message = event.event.content.body;
+					dispatch('parseMatrixMessage', { roomId, message, sender, createdAt });
+				}
 			});
 
 			this.client.on('sync', (syncState, a, event) => {
@@ -108,7 +117,7 @@ export const matrixClient = {
 		return this.client.redactEvent(roomId, eventId);
 	},
 	sendMessage(roomId, media) {
-		return this.client.sendTextMessage(roomId, JSON.stringify(media));
+		return this.client.sendTextMessage(roomId, media);
 	},
 	setRoomAllowGuests(roomId, toggleState) {
 		return this.client.sendStateEvent(roomId, 'm.room.guest_access', {

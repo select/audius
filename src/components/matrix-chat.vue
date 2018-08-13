@@ -1,22 +1,57 @@
 <script >
-import { mapMutations, mapState } from 'vuex';
+import { mapMutations, mapState, mapActions } from 'vuex';
 import { mapModuleState } from '../utils';
+import VideoItem from './video-item.vue';
+import ChatMessage from './matrix-chat-message.vue';
 
+const lastLength = {};
+let hasSend = false;
 export default {
 	components: {
+		VideoItem,
+		ChatMessage,
+	},
+	data() {
+		return {
+			messageText: '',
+		};
+	},
+	mounted() {
+		this.$store.watch(state => state.matrix.chatlog, () => {
+			const roomId = this.currentMediaSource.id;
+			if (hasSend === true && this._chatlog.length !== lastLength[roomId]) {
+				hasSend = false;
+				this.$refs.chatLog.scrollTop = this.$refs.chatLog.scrollHeight;
+				lastLength[roomId] = this._chatlog.length;
+			}
+		});
 	},
 	computed: {
-		...mapState(['currentMediaSource', 'currentMedia']),
-		...mapModuleState('matrix', ['chatlog']),
+		...mapState(['currentMediaSource', 'currentMedia', 'isPlaying', 'paginationIndex', 'isLoading']),
+		...mapModuleState('matrix', ['chatlog', 'credentials', 'memberNames']),
 		_chatlog() {
-			return chatlog[this.currentMediaSource.id];
+			return this.chatlog[this.currentMediaSource.id];
+		},
+		componentMap() {
+			return {
+				object: 'video-item',
+				string: 'chat-message',
+			};
 		},
 	},
-	// data() {
-	// 	return { queueActive: false };
-	// },
 	methods: {
-		...mapMutations(['setMainRightTab']),
+		...mapMutations(['setMainLeftTab']),
+		...mapActions(['matrixLoadMore', 'matrixSendText']),
+		send() {
+			if (this.messageText) {
+				this.matrixSendText({
+					roomId: this.currentMediaSource.id,
+					message: this.messageText,
+				});
+				hasSend === true;
+				this.messageText = '';
+			}
+		},
 	},
 
 };
@@ -24,22 +59,35 @@ export default {
 
 <template>
 <div class="matrix-chat">
-	<div
-		v-for="(message, index) in _chatlog"
-		:key="index">
-		<video-item
-			v-if="typeof message === 'object'"
-			ref="playListEls"
-			:video="message"
-			:isPlayList="currentMediaSource.type === 'playList'"
-			:isSelected="jumpCursor === media.id"
-			:expiryDate="_expiryDate(media.id)"
-			:isWebScraper="currentMediaSource.type == 'webScraper'"
-			:isPlaying="isPlaying && (currentMedia.id == media.id)"></video-item>
+	<span
+		@click="setMainLeftTab('playList')"
+		class="wmp-icon-speaker_notes_off matrix-chat__off"></span>
+	<div class="play-list media-list" ref="chatLog">
 		<div
-			v-if="typeof message === 'string'">
-			{{message}}
+			class="play-list__greeting"
+			v-if="!_chatlog || !_chatlog.length ">
+			Nothing found. Click load more or add from search or playlists.
 		</div>
+		<div
+			@click="matrixLoadMore(currentMediaSource.id)"
+			class="play-list__load-more">
+			… load more (Page {{paginationIndex[currentMediaSource.id] || 0}})
+			<div class="loader" v-show="isLoading[currentMediaSource.id]"></div>
+		</div>
+		<ul>
+			<component
+				v-for="(event, index) in _chatlog"
+				v-bind:is="componentMap[event.type]"
+				:userIsAuthor="event.sender === credentials.userId"
+				:video="event.message"
+				:sender="memberNames[event.sender] || event.sender"
+				:isPlaying="isPlaying && event.type === 'object' && (currentMedia.id == event.message.id)"
+				:key="index"></component>
+		</ul>
+	</div>
+	<div class="matrix-chat__footer">
+		<input type="text" placeholder="… type a message" v-model="messageText">
+		<span class="wmp-icon-send" @click="send"></span>
 	</div>
 </div>
 </template>
@@ -47,5 +95,46 @@ export default {
 <style lang="sass">
 @import '../sass/vars'
 @import '../sass/color'
+
+.matrix-chat
+	position: relative
+	height: 100%
+	padding-bottom: $touch-size-medium
+	background-color: $color-athensgrey
+	.play-list
+		overflow: auto
+	ul
+		margin: 0
+		padding: 0
+		list-style: none
+	.media-list__main
+		background-color: $color-white
+.matrix-chat__off
+	position: absolute
+	top: 0
+	right: #{1.5 * $grid-space}
+	cursor: pointer
+	z-index: 1
+
+.play-list__load-more
+	min-height: $touch-size-medium
+.matrix-chat__footer
+	display: flex
+	position: absolute
+	bottom: 0
+	left: 0
+	align-items: center
+	justify-content: space-between
+	width: 100%
+	height: $touch-size-medium
+	padding-left: #{2 * $grid-space}
+	background-color: $color-catskillwhite
+	color: $color-aluminium-dark
+	.wmp-icon-send
+		cursor: pointer
+	input
+		flex: 1
+		padding: 0 #{2 * $grid-space}
+		font-size: 0.8rem
 
 </style>
