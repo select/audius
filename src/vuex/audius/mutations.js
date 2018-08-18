@@ -121,7 +121,14 @@ function uniqById(a) {
 }
 
 function updateMediaIndex(state, entities) {
-	state.mediaIndex = Object.assign({}, state.mediaIndex, entities);
+	if (Array.isArray(entities)) {
+		state.mediaIndex = entities.reduce(
+			(acc, media) => Object.assign(acc, { [media.id]: media }),
+			state.mediaIndex
+		);
+	} else {
+		state.mediaIndex = Object.assign({}, state.mediaIndex, entities);
+	}
 }
 
 /* eslint-disable no-param-reassign */
@@ -130,6 +137,9 @@ export const mutations = {
 		['matrix', 'webScraper'].forEach(moduleName => {
 			Object.assign(state[moduleName], recoveredState[moduleName]);
 			delete recoveredState[moduleName];
+			state[moduleName].sourcesOrdered.forEach(sourceId => {
+				updateMediaIndex(state, state[moduleName].sources[sourceId].playList);
+			});
 		});
 		Object.assign(state, recoveredState);
 		if (state.currentMediaSource.type !== 'playList') {
@@ -158,10 +168,7 @@ export const mutations = {
 			state.mainRightTab = 'search';
 		}
 
-		updateMediaIndex(
-			state,
-			mediaList.reduce((acc, media) => Object.assign(acc, { [media.id]: media }), {})
-		);
+		updateMediaIndex(state, mediaList);
 
 		state.search.isPlayList = isPlayList;
 		if (state.search.id !== id) {
@@ -246,6 +253,7 @@ export const mutations = {
 	updateCurrentMedia(state, media) {
 		Object.assign(state.currentMedia, media);
 	},
+	updateMediaIndex,
 	importPlayList(state, { data, tagName }) {
 		let playList;
 		if (tagName !== undefined) {

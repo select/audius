@@ -16,7 +16,7 @@ import { getCurrentPlayListEntities } from './getCurrentPlayList';
 export const actions = {
 	search({ commit, state }, query) {
 		query = query.trim();
-		findMediaText(query, state.youtubeApiKey, { extendPlayLists: true }).then(res => {
+		findMediaText(query, state.youtubeApiKey, state.mediaIndex, { extendPlayLists: true }).then(res => {
 			if (res.mediaList.length) {
 				commit('searchSuccess', Object.assign(res, { id: query }));
 				return;

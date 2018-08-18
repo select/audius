@@ -18,45 +18,54 @@ function refineWebSearchResult(media) {
 	});
 }
 
+function reduceKnown(mediaIndex, mediaItems, hashId = false) {
+	const seenIndex = new Set();
+	return (acc, id) => {
+		if (!id || seenIndex.has(id)) return acc;
+		const _id = hashId ? hashCode(id) : id;
+		if (_id in mediaIndex) mediaItems.push(mediaIndex[_id]);
+		else acc.push(id);
+		seenIndex.add(id);
+		return acc;
+	};
+}
+
 /**
  * findMediaLinksText
  * @param {String} text Text to parse
  * @param {Set} indexKnown index of known ids
  * @return {Promise} Promise that returns [{mediaObject}]
  */
-export function findMediaText(
-	text,
-	youtubeApiKey,
-	{ indexKnown = new Set(), extendPlayLists = false }
-) {
+export function findMediaText(text, youtubeApiKey, mediaIndex, options) {
+	const { extendPlayLists } = Object.assign({ extendPlayLists: false }, options);
 	const promises = [];
+	const mediaItems = [];
 	let isPlayList = false;
+
 	// Find YouTube links in text message.
-	const ytIds = findYouTubeIdsText(text)
-		.filter(id => id && !indexKnown.has(id)) // filter empty & known
-		.filter((item, pos, self) => self.indexOf(item) === pos); // filter dublicates
+	const ytIds = findYouTubeIdsText(text).reduce(reduceKnown(mediaIndex, mediaItems), []);
 	if (ytIds.length) {
 		// Get info for all new unknown ids.
 		promises.push(getYouTubeInfo({ ids: ytIds, youtubeApiKey }));
 	}
 
+	// If desired parse playlist link and get all playlist entries.
 	if (extendPlayLists && youTubePlaylistRexEx.test(text)) {
 		isPlayList = true;
 		promises.push(getPlayList(youtubeApiKey, text));
 	}
 
 	// Find Vimeo links in text message.
-	const viIds = findVimeoIdsText(text)
-		.filter(id => id && !indexKnown.has(id)) // filter empty & known
-		.filter((item, pos, self) => self.indexOf(item) === pos); // filter dublicates
+	const viIds = findVimeoIdsText(text).reduce(reduceKnown(mediaIndex, mediaItems), []);
 	if (viIds.length) {
 		promises.push(getVimeoInfo(viIds));
 	}
 
 	// Find audio files
-	const audioUrls = (text.match(audioRegEx) || [])
-		.filter(url => !indexKnown.has(hashCode(url))) // filter known
-		.filter((item, pos, self) => self.indexOf(item) === pos); // filter dublicates
+	const audioUrls = (text.match(audioRegEx) || []).reduce(
+		reduceKnown(mediaIndex, mediaItems, true),
+		[]
+	);
 	if (audioUrls.length) {
 		promises.push(
 			Promise.all(
@@ -69,9 +78,10 @@ export function findMediaText(
 		);
 	}
 
-	const videoUrls = (text.match(videoRegEx) || [])
-		.filter(url => !indexKnown.has(hashCode(url))) // filter known
-		.filter((item, pos, self) => self.indexOf(item) === pos); // filter dublicates
+	const videoUrls = (text.match(videoRegEx) || []).reduce(
+		reduceKnown(mediaIndex, mediaItems, true),
+		[]
+	);
 	if (videoUrls.length) {
 		promises.push(
 			Promise.all(
@@ -87,6 +97,6 @@ export function findMediaText(
 	// Flat map the results so we get one list and not a list of lists.
 	return Promise.all(promises).then(res => ({
 		isPlayList,
-		mediaList: res.reduce((acc, item) => [...acc, ...item], []),
+		mediaList: res.reduce((acc, item) => [...acc, ...item], mediaItems),
 	}));
 }

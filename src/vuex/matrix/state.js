@@ -3,7 +3,7 @@ export const state = {
 	currentMatrixRoom: null,
 	sources: {},
 	chatlog: {},
-	memberNames: {},
+	membersIndex: {},
 	sourcesOrdered: [],
 	createMatrixRoomModal: false,
 	showMatrixRoomDirectory: false,

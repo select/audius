@@ -5,7 +5,7 @@
  * @param {Integer} size number of digits
  * @return {String}
  */
-function zeroPad(num, size) {
+export function zeroPad(num, size) {
 	const s = `000000000${num}`;
 	return s.substr(s.length - size);
 }

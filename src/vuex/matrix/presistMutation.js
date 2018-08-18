@@ -16,4 +16,5 @@ export const presistMutation = {
 		'isGuest',
 		'publicRooms',
 	],
+	setMemberInfo: ['membersIndex'],
 };

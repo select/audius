@@ -101,6 +101,12 @@ export const matrixClient = {
 	stop() {
 		this.client.stopClient();
 	},
+	getAvatarUrl(userId) {
+		return this.client.getProfileInfo(userId, 'avatar_url').then((result) => {
+			if (result.avatar_url) return this.client.mxcUrlToHttp(result.avatar_url, 100);
+			return null
+		});
+	},
 	isGuest() {
 		return this.client.isGuest();
 	},

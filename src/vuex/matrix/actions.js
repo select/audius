@@ -1,4 +1,4 @@
-import { findMediaText, getMediaLink } from '../../utils';
+import { findMediaText, getMediaLink, hashCode } from '../../utils';
 import { getMediaEntity } from '../audius/getCurrentPlayList';
 // This must be avialable in the whole module since it's lazy loaded.
 // Do not delete;
@@ -7,10 +7,9 @@ let matrixClient;
 function addMatrixMessage(state, commit, roomId, eventId, results) {
 	const room = state.sources[roomId];
 	if (!results.length) return;
-	const playList = [
-		...room.playList,
-		...results.filter(({ id }) => id).map(media => Object.assign({}, media, { roomId, eventId })),
-	];
+	results.forEach(media => Object.assign(media, { roomId, eventId }));
+	commit('updateMediaIndex', results);
+	const playList = [...room.playList, ...results];
 	const archive = [...room.archive];
 	while (playList.length > 3000) {
 		const media = playList.shift();
@@ -29,6 +28,49 @@ const urlRegex = /(https?:\/\/[^\s]+)/g;
 function urlify(text) {
 	return text.replace(urlRegex, '<a href="$1" target="_blank">$1</a>');
 }
+const matrixNameRegEx = /@(.+):matrix.org/;
+
+function stringToColour(str) {
+	return `hsl(${hashCode(str) % 360},100%,30%)`;
+}
+
+function getRoomMembers(commit, state, rooms) {
+	// Dedublicate list of members
+	const members = rooms.reduce((acc, room) => {
+		if (room.currentState) {
+			Object.assign(acc, room.currentState.members);
+		}
+		return acc;
+	}, {});
+
+	// Commit member names to the store.
+	commit(
+		'updateMembers',
+		Object.values(members).map(member => {
+			// console.log("member", member);
+			if (!member) return { userid: null };
+			const { userId, name } = member;
+			const match = name.match(matrixNameRegEx);
+			return {
+				userId,
+				name: match ? match[1] : name,
+				nameColor: stringToColour(name),
+			};
+		})
+	);
+
+	// Get member avatar with async request to matrix.
+	// Object.values(members).forEach(member => {
+	// 	const { userId } = member;
+	// 	if (state.membersIndex[userId].avatarUrl === undefined) {
+	// 		matrixClient.getAvatarUrl(member.userId).then((avatarUrl) => {
+	// 			commit('setMemberInfo', { userId, avatarUrl: avatarUrl });
+	// 		}).catch(error => {
+	// 			commit('setMemberInfo', { userId, avatarUrl: null });
+	// 		});
+	// 	}
+	// });
+}
 
 /* eslint-disable no-param-reassign */
 export const actions = {
@@ -43,6 +85,7 @@ export const actions = {
 					.then(rooms => {
 						commit('setMatrixLoggedIn', { rooms });
 						dispatch('updatePublicRooms');
+						getRoomMembers(commit, state, rooms);
 					})
 					.catch(error => commit('error', `${error}1`));
 			} else if (!state.matrixLoggedIn) {
@@ -50,8 +93,9 @@ export const actions = {
 					.login(state.credentials, state.isGuest, dispatch, commit)
 					.then(rooms => {
 						commit('setMatrixLoggedIn', { rooms });
+						getRoomMembers(commit, state, rooms);
 					})
-					.catch(error => commit('error', `${error}2`));
+					.catch(error => commit('error', `${error} initMatrix with credentials`));
 			}
 		});
 	},
@@ -62,7 +106,10 @@ export const actions = {
 				.getCredentialsWithPassword(username, password)
 				.then(credentials => commit('setMatrixCredentials', { credentials, isGuest: false }))
 				.then(() => matrixClient.login(state.credentials, state.isGuest, dispatch, commit))
-				.then(rooms => commit('setMatrixLoggedIn', { rooms }))
+				.then(rooms => {
+					commit('setMatrixLoggedIn', { rooms });
+					getRoomMembers(commit, state, rooms);
+				})
 				.catch(error => commit('error', `${error}3`));
 		});
 	},
@@ -278,10 +325,7 @@ export const actions = {
 			return;
 		}
 
-		commit('addChatlog', options);
-
 		// Build an index of all known media items from this room.
-		// This is used by `findMediaText` to minimize the number of requests.
 		const index = new Set([...room.playList.map(v => v.id), ...room.archive]);
 		if (typeof message === 'object') {
 			// message is a media object
@@ -289,11 +333,22 @@ export const actions = {
 			window.console.log(`[Matrix-Media] %c${message.title}`, 'color: #2DA7EF;');
 		} else {
 			window.console.log(`[Matrix-Text] %c${message}`, 'color: #2DA7EF;');
-			findMediaText(message, rootState.youtubeApiKey, { indexKnown: index }).then(
+			findMediaText(message, rootState.youtubeApiKey, rootState.mediaIndex).then(
 				({ mediaList }) => {
-					addMatrixMessage(state, commit, roomId, eventId, mediaList);
+					addMatrixMessage(
+						state,
+						commit,
+						roomId,
+						eventId,
+						mediaList.filter(({ id }) => !index.has(id))
+					);
+					mediaList.forEach(media => {
+						commit('addChatlog', Object.assign(options, { message: media }));
+					});
 				}
 			);
+			options.message = urlify(options.message);
 		}
+		commit('addChatlog', options);
 	},
 };

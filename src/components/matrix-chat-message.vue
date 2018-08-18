@@ -1,9 +1,20 @@
 <script >
+import { zeroPad } from '../utils';
+
 export default {
 	props: {
 		sender: String,
-		video: { type: String, required: true },
+		createdAt: Number,
+		video: { type: Array, required: true },
 		userIsAuthor: Boolean,
+		nameColor: String,
+	},
+	computed: {
+		_createdAt() {
+			const date = new Date(this.createdAt);
+			return `${date.getHours()}:${zeroPad(date.getMinutes(), 2)}`;
+		},
+
 	},
 };
 </script>
@@ -13,12 +24,15 @@ export default {
 	class="matrix-chat-message"
 	:class="{'matrix-chat-message--author': userIsAuthor}">
 	<div class="matrix-chat-message__container">
-		<div class="matrix-chat-message__header">
+		<div class="matrix-chat-message__header" v-bind:style="{ color: nameColor }">
 			{{sender}}
 		</div>
 		<div class="matrix-chat-message__body">
-			{{video}}
+			<div
+				v-for="message in video"
+				v-html="message"></div>
 		</div>
+		<div class="matrix-chat-message__footer">{{_createdAt}}</div>
 	</div>
 </li>
 </template>
@@ -37,7 +51,6 @@ export default {
 		.matrix-chat-message__container
 			border-top-left-radius: $border-radius
 			border-top-right-radius: 0
-			background: $color-pictonblue
 			color: $color-white
 			&::before
 				right: -$grid-space
@@ -48,19 +61,19 @@ export default {
 			&:hover
 				&::before
 					border-top-color: $color-pictonblue
+		.matrix-chat-message__body > div:first-child
+			padding-top: $grid-space
+		.matrix-chat-message__header,
+		.matrix-chat-message__body > div,
+		.matrix-chat-message__footer
+			background: $color-pictonblue
 .matrix-chat-message__container
 	position: relative
 	max-width: 25rem
 	margin: $grid-space #{2 * $grid-space}
-	padding: $grid-space
 	border-radius: $border-radius
 	border-top-left-radius: 0
-	background: $color-white
 	font-size: .8em
-	&:hover
-		background-color: $color-catskillwhite
-		&::before
-			border-top-color: $color-catskillwhite
 	&::before
 		position: absolute
 		top: 0
@@ -69,11 +82,34 @@ export default {
 		border-bottom: $grid-space solid transparent
 		border-left: $grid-space solid transparent
 		content: ' '
-.matrix-chat-message__header
-	margin-bottom: $grid-space
-	color: $color-aluminium-dark
-.matrix-chat-message__body
-	text-overflow: ellipsis
-	overflow: hidden
 
+.matrix-chat-message__header,
+.matrix-chat-message__body > div,
+.matrix-chat-message__footer
+	padding: 0 $grid-space
+	background: $color-white
+
+.matrix-chat-message__body
+	display: flex
+	flex-direction: column
+	> div
+		text-overflow: ellipsis
+		overflow: hidden
+		&:not(:last-child):not(:first-child)
+			padding: #{2 * $grid-space}
+		&:first-child
+			padding-bottom: $grid-space
+		&:last-child
+			padding-top: $grid-space
+		&:not(:last-child)
+			margin-bottom: $grid-space/2
+.matrix-chat-message__footer
+	display: flex
+	justify-content: flex-end
+	color: $color-aluminium-dark
+
+.matrix-chat-message__header
+	padding: $grid-space
+	color: $color-aluminium-dark
+	font-weight: bold
 </style>

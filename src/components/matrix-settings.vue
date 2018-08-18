@@ -7,7 +7,7 @@ export default {
 	computed: {
 		...mapGetters(['youtubeApiKeyUI']),
 		...mapState(['currentMediaSource']),
-		...mapModuleState('matrix', ['credentials', 'sources', 'memberNames']),
+		...mapModuleState('matrix', ['credentials', 'sources', 'membersIndex']),
 		currentMatrixRoom() {
 			return this.currentMediaSource.type === 'matrix' ? this.currentMediaSource.id : null;
 		},
@@ -68,7 +68,7 @@ export default {
 			v-for="member in admin"
 			v-bind:class="{'matrix-settings__me' : member.id === myId}"
 			:title="member.id">
-			{{memberNames[member.id] || member.id}}
+			{{membersIndex[member.id].name}}
 		</div>
 	</div>
 	<h4 v-if="speaker.length">50+ Powers</h4>
@@ -77,7 +77,7 @@ export default {
 			v-for="member in speaker"
 			v-bind:class="{'matrix-settings__me' : member.id === myId}"
 			:title="member.id">
-			{{memberNames[member.id] || member.id}}
+			{{membersIndex[member.id].name}}
 		</div>
 	</div>
 	<h4>Other</h4>
@@ -86,7 +86,7 @@ export default {
 			v-for="member in listener"
 			v-bind:class="{'matrix-settings__me' : member.id === myId}"
 			:title="member.id">
-			{{memberNames[member.id] || member.id}}
+			{{membersIndex[member.id].name}}
 		</div>
 	</div>
 	<!-- <h4>Invite</h4>

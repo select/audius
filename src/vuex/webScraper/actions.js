@@ -28,6 +28,7 @@ export const actions = {
 			commit('error', `No new videos found for ${id}. Try agin.`);
 			return;
 		}
+		commit('updateMediaIndex', newVideos);
 		const playList = [...pl, ...newVideos];
 		while (playList.length > 3000) {
 			const media = playList.shift();

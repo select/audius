@@ -1,16 +1,9 @@
 export function getMediaEntity(state, mediaId) {
-	if (mediaId in state.entities) return state.entities[mediaId];
-	let media = state.search.results.find(({ id }) => id === mediaId);
-	if (media) return media;
-	media = state.sessionHistory.find(({ id }) => id === mediaId);
-	if (media) return media;
-	for (const sourceName of ['matrix', 'webScraper']) {
-		for (const sourceId of state[sourceName].sourcesOrdered) {
-			media = state[sourceName].sources[sourceId].playList.find(({ id }) => id === mediaId);
-			if (media) return media;
-		}
+	if (!(mediaId in state.mediaIndex)) {
+		console.warn('could not find mediaId getMediaEntity!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+		return {};
 	}
-	return {};
+	return state.mediaIndex[mediaId];
 }
 
 export function getCurrentPlayList(state) {

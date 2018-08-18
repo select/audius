@@ -11,8 +11,6 @@ const matrixRoomTemplate = () =>
 		})
 	);
 
-const matrixNameRegEx = /@(.+):matrix.org/;
-
 /* eslint-disable no-param-reassign */
 export const mutations = {
 	recoverState_matrix(state, recoveredState) {
@@ -32,6 +30,18 @@ export const mutations = {
 		state.sources[roomId] = Object.assign({}, matrixRoomTemplate(), { name: room.name });
 		state.sourcesOrdered = [...state.sourcesOrdered, roomId];
 	},
+	updateMembers(state, members) {
+		members.forEach(member => {
+			const { userId } = member;
+			if (userId in state.membersIndex) Object.assign(state.membersIndex[userId], member);
+			else state.membersIndex[userId] = member;
+		});
+		state.membersIndex = Object.assign({}, state.membersIndex);
+	},
+	setMemberInfo(state, member) {
+		Object.assign(state.membersIndex[member.userId], member);
+		state.membersIndex = Object.assign({}, state.membersIndex);
+	},
 	setMatrixLoggedIn(state, { rooms }) {
 		state.showMatrixLoginModal = false;
 		state.matrixLoggedIn = true;
@@ -50,15 +60,6 @@ export const mutations = {
 				state.sources[roomId].members = Object.entries(room.currentState.members).map(
 					([id, member]) => ({ id, powerLevel: member.powerLevel })
 				);
-				state.memberNames = Object.entries(room.currentState.members).reduce(
-					(acc, [id, member]) => {
-						const match = member.name.match(matrixNameRegEx);
-						const name = match ? match[1] : member.name;
-						return Object.assign(acc, { [id]: name });
-					},
-					state.memberNames
-				);
-
 				// Set flag indicating if current user is admin.
 				const myuser = room.currentState.members[userId] || {};
 				state.sources[roomId].isAdmin = myuser.powerLevel >= 100;
@@ -158,13 +159,36 @@ export const mutations = {
 	},
 	addChatlog(state, options) {
 		const { roomId, message } = options;
-		const event = Object.assign({}, options, { type: typeof message });
+		const type = typeof message;
+		const event = Object.assign({}, options, {
+			message: type === 'object' ? message : [message],
+			type,
+		});
 		if (!(roomId in state.chatlog)) {
 			state.chatlog[roomId] = [event];
-		} else if (state.chatlog[roomId][0].createdAt < event.createdAt) {
-			state.chatlog[roomId] = [...state.chatlog[roomId], event];
 		} else {
-			state.chatlog[roomId] = [event, ...state.chatlog[roomId]];
+			const chatLog = state.chatlog[roomId];
+			const indexPos = chatLog.findIndex(({ createdAt }) => event.createdAt < createdAt);
+			// If no chat message with greater time found, add the message at the end.
+			let previousEvent;
+			if (indexPos === -1) {
+				previousEvent = chatLog[chatLog.length - 1];
+			} else {
+				previousEvent = chatLog[indexPos];
+			}
+			// If the previus message is from the same sender group them into one message.
+			if (
+				previousEvent.type === 'string' &&
+				event.type === 'string' &&
+				previousEvent.sender === event.sender
+			) {
+				previousEvent.message.push(message);
+				previousEvent.createdAt = event.createdAt;
+			} else if (indexPos === -1) {
+				chatLog.push(event);
+			} else {
+				chatLog.splice(indexPos, 0, event);
+			}
 		}
 		state.chatlog = Object.assign({}, state.chatlog);
 	},

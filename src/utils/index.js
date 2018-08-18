@@ -1,14 +1,14 @@
 export { ajaxJSON, ajaxPostJSON } from './ajax';
 export { debounce, throttle } from './debounce';
 export { injectScript } from './injectScript';
-export { duration, s2time, time2s } from './timeConverter';
+export { duration, s2time, time2s, zeroPad } from './timeConverter';
 export {
 	searchYoutube,
 	isYouTubeVideoRegEx,
 	parseYoutubeDescription,
 	getYouTubeInfo,
 	youTubePlaylistRexEx,
-	getPlayList
+	getPlayList,
 } from './youtube';
 export { findMediaText } from './findMediaLinks';
 export { findVimeoIdsText } from './vimeo';

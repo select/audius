@@ -25,10 +25,17 @@ export default {
 				lastLength[roomId] = this._chatlog.length;
 			}
 		});
+		const $playList = this.$el.querySelector('.play-list');
+		$playList.addEventListener('scroll', () => {
+			// Detect when scrolled to top.
+			if ($playList.scrollTop === 0) {
+				this.matrixLoadMore(this.currentMediaSource.id);
+			}
+		});
 	},
 	computed: {
 		...mapState(['currentMediaSource', 'currentMedia', 'isPlaying', 'paginationIndex', 'isLoading']),
-		...mapModuleState('matrix', ['chatlog', 'credentials', 'memberNames']),
+		...mapModuleState('matrix', ['chatlog', 'credentials', 'membersIndex']),
 		_chatlog() {
 			return this.chatlog[this.currentMediaSource.id];
 		},
@@ -48,7 +55,7 @@ export default {
 					roomId: this.currentMediaSource.id,
 					message: this.messageText,
 				});
-				hasSend === true;
+				hasSend = true;
 				this.messageText = '';
 			}
 		},
@@ -80,13 +87,19 @@ export default {
 				v-bind:is="componentMap[event.type]"
 				:userIsAuthor="event.sender === credentials.userId"
 				:video="event.message"
-				:sender="memberNames[event.sender] || event.sender"
+				:sender="(membersIndex[event.sender] && membersIndex[event.sender].name) || event.sender"
+				:nameColor="(membersIndex[event.sender] && membersIndex[event.sender].nameColor)"
+				:createdAt="event.createdAt"
 				:isPlaying="isPlaying && event.type === 'object' && (currentMedia.id == event.message.id)"
 				:key="index"></component>
 		</ul>
 	</div>
 	<div class="matrix-chat__footer">
-		<input type="text" placeholder="… type a message" v-model="messageText">
+		<input
+			type="text"
+			placeholder="… type a message"
+			@keyup.enter="send"
+			v-model="messageText">
 		<span class="wmp-icon-send" @click="send"></span>
 	</div>
 </div>

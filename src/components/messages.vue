@@ -18,7 +18,8 @@ export default {
 				if (!errors.length) return;
 				setTimeout(() => {
 					errors.forEach(error => {
-						el.querySelector(`[data-id="${error.id}"]`).hidden = true;
+						const $el = el.querySelector(`[data-id="${error.id}"]`);
+						if ($el) $el.hidden = true;
 					});
 					kidx.push(...errors.map(({ id }) => id));
 				}, errors[0].timeout || 5000);
