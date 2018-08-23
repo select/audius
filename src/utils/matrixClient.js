@@ -27,28 +27,22 @@ export const matrixClient = {
 				const sender = event.sender.userId;
 				const createdAt = event.event.origin_server_ts;
 				if (!(roomId in this.firstEvent)) this.firstEvent[roomId] = event.event.event_id;
+				const baseEvent = {
+					roomId,
+					sender,
+					createdAt,
+					eventId: event.event.event_id,
+				};
 				if (event.event.type === 'audiusMedia') {
 					// legacy events, remove 2019
-					dispatch('parseMatrixMessage', {
-						roomId,
-						sender,
-						createdAt,
-						eventId: event.event.event_id,
-						message: event.event.content,
-					});
+					dispatch('parseMatrixMessage', Object.assign(event.event.content, baseEvent));
 				} else if (event.event.type === 'org.rockdapus.audius') {
 					if (event.event.content.type === 'media') {
-						dispatch('parseMatrixMessage', {
-							roomId,
-							sender,
-							createdAt,
-							eventId: event.event.event_id,
-							message: event.event.content.data,
-						});
+						dispatch('parseMatrixMessage', Object.assign(event.event.content.data, baseEvent));
 					}
 				} else if (event.event.type === 'm.room.message') {
-					const message = event.event.content.body;
-					dispatch('parseMatrixMessage', { roomId, message, sender, createdAt });
+					const { body } = event.event.content;
+					dispatch('parseMatrixMessage', Object.assign({ body, type: 'text' }, baseEvent));
 				}
 			});
 
@@ -102,9 +96,9 @@ export const matrixClient = {
 		this.client.stopClient();
 	},
 	getAvatarUrl(userId) {
-		return this.client.getProfileInfo(userId, 'avatar_url').then((result) => {
+		return this.client.getProfileInfo(userId, 'avatar_url').then(result => {
 			if (result.avatar_url) return this.client.mxcUrlToHttp(result.avatar_url, 100);
-			return null
+			return null;
 		});
 	},
 	isGuest() {

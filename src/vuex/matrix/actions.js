@@ -4,26 +4,6 @@ import { getMediaEntity } from '../audius/getCurrentPlayList';
 // Do not delete;
 let matrixClient;
 
-function addMatrixMessage(state, commit, roomId, eventId, results) {
-	const room = state.sources[roomId];
-	if (!results.length) return;
-	results.forEach(media => Object.assign(media, { roomId, eventId }));
-	commit('updateMediaIndex', results);
-	const playList = [...room.playList, ...results];
-	const archive = [...room.archive];
-	while (playList.length > 3000) {
-		const media = playList.shift();
-		archive.push(media.id);
-	}
-	commit('updateMatrixRoom', {
-		roomId,
-		values: {
-			playList,
-			archive,
-		},
-	});
-}
-
 const urlRegex = /(https?:\/\/[^\s]+)/g;
 function urlify(text) {
 	return text.replace(urlRegex, '<a href="$1" target="_blank">$1</a>');
@@ -286,9 +266,9 @@ export const actions = {
 		}
 	},
 	leaveMatrixRoom({ commit }, roomIdOrAlias) {
+		commit('deleteMatrixRoom', roomIdOrAlias);
 		matrixClient
 			.leaveRoom(roomIdOrAlias)
-			.then(() => commit('deleteMatrixRoom', roomIdOrAlias))
 			.catch(() => commit('error', 'Leaving matrix room failed'));
 	},
 	updatePublicRooms({ commit }) {
@@ -315,40 +295,25 @@ export const actions = {
 		matrixClient.logout();
 		commit('matrixLogout');
 	},
-	parseMatrixMessage({ state, commit, rootState }, options) {
-		const { roomId, eventId, message } = options;
-		// Get the room for the message.
-		const room = state.sources[roomId];
-		if (!(roomId in state.sources)) {
-			commit('error', `Could not find matrix room ${roomId}`);
-			commit('updateMatrixRoom', { roomId });
-			return;
-		}
-
-		// Build an index of all known media items from this room.
-		const index = new Set([...room.playList.map(v => v.id), ...room.archive]);
-		if (typeof message === 'object') {
-			// message is a media object
-			if (!index.has(message.id)) addMatrixMessage(state, commit, roomId, eventId, [message]);
-			window.console.log(`[Matrix-Media] %c${message.title}`, 'color: #2DA7EF;');
-		} else {
-			window.console.log(`[Matrix-Text] %c${message}`, 'color: #2DA7EF;');
-			findMediaText(message, rootState.youtubeApiKey, rootState.mediaIndex).then(
+	parseMatrixMessage({ state, commit, rootState }, matrixEvent) {
+		const { type, body } = matrixEvent;
+		if (type === 'text') {
+			window.console.log(`[Matrix-Text] %c${body}`, 'color: #2DA7EF;');
+			matrixEvent.body = urlify(body);
+			findMediaText(body, rootState.youtubeApiKey, rootState.mediaIndex).then(
 				({ mediaList }) => {
-					addMatrixMessage(
-						state,
-						commit,
-						roomId,
-						eventId,
-						mediaList.filter(({ id }) => !index.has(id))
-					);
+					commit('updateMediaIndex', mediaList);
 					mediaList.forEach(media => {
-						commit('addChatlog', Object.assign(options, { message: media }));
+						const newEvent = Object.assign({}, matrixEvent, media)
+						delete newEvent.body;
+						commit('addChatlog', newEvent);
 					});
 				}
 			);
-			options.message = urlify(options.message);
+		} else {
+			commit('updateMediaIndex', matrixEvent);
+			window.console.log(`[Matrix-Media] %c${matrixEvent.title}`, 'color: #2DA7EF;');
 		}
-		commit('addChatlog', options);
+		commit('addChatlog', matrixEvent);
 	},
 };

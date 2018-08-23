@@ -17,12 +17,12 @@ export default {
 		};
 	},
 	mounted() {
-		this.$store.watch(state => state.matrix.chatlog, () => {
+		this.$store.watch(state => state.matrix.chatLog, () => {
 			const roomId = this.currentMediaSource.id;
-			if (hasSend === true && this._chatlog.length !== lastLength[roomId]) {
+			if (hasSend === true && this._chatLog.length !== lastLength[roomId]) {
 				hasSend = false;
 				this.$refs.chatLog.scrollTop = this.$refs.chatLog.scrollHeight;
-				lastLength[roomId] = this._chatlog.length;
+				lastLength[roomId] = this._chatLog.length;
 			}
 		});
 		const $playList = this.$el.querySelector('.play-list');
@@ -35,15 +35,9 @@ export default {
 	},
 	computed: {
 		...mapState(['currentMediaSource', 'currentMedia', 'isPlaying', 'paginationIndex', 'isLoading']),
-		...mapModuleState('matrix', ['chatlog', 'credentials', 'membersIndex']),
-		_chatlog() {
-			return this.chatlog[this.currentMediaSource.id];
-		},
-		componentMap() {
-			return {
-				object: 'video-item',
-				string: 'chat-message',
-			};
+		...mapModuleState('matrix', ['chatLog', 'credentials', 'membersIndex', 'sources']),
+		_chatLog() {
+			return (this.chatLog[this.currentMediaSource.id] || []).filter(({ parentEvent }) => !parentEvent);
 		},
 	},
 	methods: {
@@ -72,7 +66,7 @@ export default {
 	<div class="play-list media-list" ref="chatLog">
 		<div
 			class="play-list__greeting"
-			v-if="!_chatlog || !_chatlog.length ">
+			v-if="!_chatLog || !_chatLog.length ">
 			Nothing found. Click load more or add from search or playlists.
 		</div>
 		<div
@@ -83,21 +77,20 @@ export default {
 		</div>
 		<ul>
 			<component
-				v-for="(event, index) in _chatlog"
-				v-bind:is="componentMap[event.type]"
+				v-for="(event, index) in _chatLog"
+				v-bind:is="event.type === 'text' ? 'chat-message' : 'video-item'"
 				:userIsAuthor="event.sender === credentials.userId"
-				:video="event.message"
-				:sender="(membersIndex[event.sender] && membersIndex[event.sender].name) || event.sender"
-				:nameColor="(membersIndex[event.sender] && membersIndex[event.sender].nameColor)"
-				:createdAt="event.createdAt"
-				:isPlaying="isPlaying && event.type === 'object' && (currentMedia.id == event.message.id)"
+				:userIsAdmin="sources[this.currentMediaSource.id].isAdmin"
+				:video="event"
+				:membersIndex="membersIndex"
+				:isPlaying="event.type !== 'text' && isPlaying && (currentMedia.id == event.id)"
 				:key="index"></component>
 		</ul>
 	</div>
 	<div class="matrix-chat__footer">
 		<input
 			type="text"
-			placeholder="… type a message"
+			placeholder="… your message"
 			@keyup.enter="send"
 			v-model="messageText">
 		<span class="wmp-icon-send" @click="send"></span>

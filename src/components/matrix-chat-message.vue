@@ -3,18 +3,37 @@ import { zeroPad } from '../utils';
 
 export default {
 	props: {
-		sender: String,
-		createdAt: Number,
-		video: { type: Array, required: true },
+		video: Object,
 		userIsAuthor: Boolean,
-		nameColor: String,
+		membersIndex: Object,
 	},
 	computed: {
+		event() { return this.video; },
+		sender() {
+			return (this.membersIndex[this.event.sender] && this.membersIndex[this.event.sender].name) || this.event.sender;
+		},
+		nameColor() {
+			return (this.membersIndex[this.event.sender] && this.membersIndex[this.event.sender].nameColor);
+		},
+		createdAt() {
+			return this.event.createdAt;
+		},
+
 		_createdAt() {
 			const date = new Date(this.createdAt);
 			return `${date.getHours()}:${zeroPad(date.getMinutes(), 2)}`;
 		},
-
+		messages() {
+			let currentEvent = this.event;
+			const children = [currentEvent.body];
+			console.log("currentEvent.body", currentEvent.body);
+			while (currentEvent.childEvent) {
+				currentEvent = currentEvent.childEvent;
+				children.push(currentEvent.body);
+			}
+			console.log("children", children);
+			return children;
+		},
 	},
 };
 </script>
@@ -28,9 +47,12 @@ export default {
 			{{sender}}
 		</div>
 		<div class="matrix-chat-message__body">
-			<div
-				v-for="message in video"
-				v-html="message"></div>
+			<div v-for="message in messages">
+				<span v-html="message"></span>
+				<div class="matrix-chat-message__delete" v-if="userIsAuthor">
+					<span class="wmp-icon-close"></span>
+				</div>
+			</div>
 		</div>
 		<div class="matrix-chat-message__footer">{{_createdAt}}</div>
 	</div>
@@ -51,7 +73,7 @@ export default {
 		.matrix-chat-message__container
 			border-top-left-radius: $border-radius
 			border-top-right-radius: 0
-			color: $color-white
+			color: $color-catskillwhite
 			&::before
 				right: -$grid-space
 				left: auto
@@ -67,6 +89,11 @@ export default {
 		.matrix-chat-message__body > div,
 		.matrix-chat-message__footer
 			background: $color-pictonblue
+.matrix-chat-message__delete
+	// display: none
+	position: absolute
+	top: 0
+	right: 0
 .matrix-chat-message__container
 	position: relative
 	max-width: 25rem
@@ -78,7 +105,7 @@ export default {
 		position: absolute
 		top: 0
 		left: -$grid-space
-		border-top: $grid-space solid $color-white
+		border-top: $grid-space solid $color-catskillwhite
 		border-bottom: $grid-space solid transparent
 		border-left: $grid-space solid transparent
 		content: ' '
@@ -87,7 +114,7 @@ export default {
 .matrix-chat-message__body > div,
 .matrix-chat-message__footer
 	padding: 0 $grid-space
-	background: $color-white
+	background: $color-catskillwhite
 
 .matrix-chat-message__body
 	display: flex
@@ -103,6 +130,9 @@ export default {
 			padding-top: $grid-space
 		&:not(:last-child)
 			margin-bottom: $grid-space/2
+		&:hover
+			.matrix-chat-message__delete
+				display: block
 .matrix-chat-message__footer
 	display: flex
 	justify-content: flex-end

@@ -2,7 +2,7 @@
 export const state = {
 	currentMatrixRoom: null,
 	sources: {},
-	chatlog: {},
+	chatLog: {},
 	membersIndex: {},
 	sourcesOrdered: [],
 	createMatrixRoomModal: false,

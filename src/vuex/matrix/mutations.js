@@ -43,6 +43,7 @@ export const mutations = {
 		state.membersIndex = Object.assign({}, state.membersIndex);
 	},
 	setMatrixLoggedIn(state, { rooms }) {
+		console.log("rooms", rooms);
 		state.showMatrixLoginModal = false;
 		state.matrixLoggedIn = true;
 		const { userId } = state.credentials;
@@ -157,39 +158,56 @@ export const mutations = {
 	setLastPageReached(state, roomId) {
 		state.lastPageReached[roomId] = true;
 	},
-	addChatlog(state, options) {
-		const { roomId, message } = options;
-		const type = typeof message;
-		const event = Object.assign({}, options, {
-			message: type === 'object' ? message : [message],
-			type,
-		});
-		if (!(roomId in state.chatlog)) {
-			state.chatlog[roomId] = [event];
-		} else {
-			const chatLog = state.chatlog[roomId];
-			const indexPos = chatLog.findIndex(({ createdAt }) => event.createdAt < createdAt);
-			// If no chat message with greater time found, add the message at the end.
-			let previousEvent;
-			if (indexPos === -1) {
-				previousEvent = chatLog[chatLog.length - 1];
-			} else {
-				previousEvent = chatLog[indexPos];
-			}
-			// If the previus message is from the same sender group them into one message.
-			if (
-				previousEvent.type === 'string' &&
-				event.type === 'string' &&
-				previousEvent.sender === event.sender
-			) {
-				previousEvent.message.push(message);
-				previousEvent.createdAt = event.createdAt;
-			} else if (indexPos === -1) {
-				chatLog.push(event);
-			} else {
-				chatLog.splice(indexPos, 0, event);
+	addChatlog(state, originalEvent) {
+		const { roomId, type } = originalEvent;
+
+		if (type !== 'text' && !state.sources[roomId].playList.some(({ eventId }) => originalEvent.eventId === eventId)) {
+			const { playList, archive } = state.sources[roomId];
+			playList.push(originalEvent);
+			playList.sort(sortEventsChonologically);
+			playList.reverse();
+			while (playList.length > 3000) {
+				const media = playList.shift();
+				archive.push(media.id);
 			}
 		}
-		state.chatlog = Object.assign({}, state.chatlog);
+
+		const event = Object.assign({}, originalEvent, {
+			childEvent: null,
+			parentEvent: null,
+		});
+		if (!(roomId in state.chatLog)) {
+			state.chatLog[roomId] = [event];
+		} else {
+			const chatLog = state.chatLog[roomId];
+			chatLog.push(event);
+			chatLog.sort(sortEventsChonologically);
+			chatLog.forEach((_event, index) => {
+				if (!index) return;
+				const previousEvent = chatLog[index - 1];
+				if (previousEvent.createdAt === _event.createdAt) {
+					if (previousEvent.type !== 'text') ++previousEvent.createdAt;
+					else ++_event.createdAt;
+				}
+				// If the previus message is from the same sender group the messages.
+				// 	previousEvent.childEvent = event;
+				// 	event.parentEvent = previousEvent;
+				// }
+				if (
+					previousEvent.type == 'text' &&
+					_event.type === 'text' &&
+					previousEvent.sender === _event.sender
+				) {
+					previousEvent.childEvent = _event;
+					_event.parentEvent = previousEvent;
+				} else {
+					previousEvent.childEvent = null;
+					_event.parentEvent = null;
+				}
+			});
+		}
+		state.chatLog = Object.assign({}, state.chatLog);
 	},
 };
+
+const sortEventsChonologically = (a, b) => (a.createdAt <= b.createdAt ? -1 : 1);
