@@ -1,0 +1,47 @@
+
+
+.matrix-create input{margin-bottom:.45rem;width:100%
+}
+.matrix-create__group{align-items:flex-end;display:flex
+}
+.create-room__register{margin-bottom:3px
+}
+
+.matrix-create input{margin-bottom:.45rem;width:100%
+}
+.matrix-public-rooms__buttons{display:flex;flex-wrap:wrap
+}
+.matrix-public-rooms__buttons>*{margin:0 .45rem .45rem 0
+}
+
+.matrix-consent p{overflow:hidden;text-overflow:ellipsis
+}
+
+.matrix-room__menu{display:none
+}
+.matrix-room{color:#fff
+}
+.matrix-room .modal__body{color:#707379
+}
+.matrix-room__room-join-create:before,.matrix-room__room-list:before{-webkit-transform:rotate(-53.4deg);-webkit-transform-origin:5.8rem 3.5rem;color:#e2e4e9;font-size:.8rem;pointer-events:none;position:absolute;transform:rotate(-53.4deg);transform-origin:5.8rem 3.5rem
+}
+.matrix-room__room-list:before{content:"ROOMS"
+}
+.matrix-room__room-join-create:before{content:"CREATE"
+}
+.matrix-room__logging-in,.play-list-manager__enable-matrix{margin-top:3.15rem;padding:0 .45rem;text-align:center;width:100%
+}
+.play-list-manager__room-suggestions{margin:.45rem;text-align:center
+}
+.play-list-manager__room-suggestions span{cursor:pointer;text-decoration:underline
+}
+.play-list-manager__room-suggestions>button.button{align-items:center;display:inline-flex;padding:0 .9rem
+}
+.play-list-manager__room-suggestions>button.button>span{margin-right:.9rem
+}
+.matrix-room__tag-footer{display:flex
+}
+.matrix-room__tag-footer div{min-width:4em
+}
+.play-list-manager__show-hidden-rooms{cursor:pointer;font-size:.7rem;margin-left:.45rem;text-align:center;text-transform:uppercase
+}

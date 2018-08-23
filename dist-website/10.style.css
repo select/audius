@@ -1,53 +1,13 @@
 
-.settings.media-edit{display:flex;flex-direction:column;height:100%;overflow:hidden
+.settings.matrix-settings{overflow:hidden;position:relative
 }
-.settings.media-edit p{text-align:center
+.settings.matrix-settings .matrix-settings__name,.settings.matrix-settings .row,.settings.matrix-settings h3,.settings.matrix-settings h4{padding:0 .45rem
 }
-.settings.media-edit ul{list-style:none;padding:0
+.settings.matrix-settings .matrix-settings__name{font-size:1.5rem;height:4.05rem;margin-bottom:.45rem;width:100%
 }
-.settings.media-edit ul li{align-items:center;cursor:pointer;display:flex;height:2.25rem;padding:.45rem
+.settings.matrix-settings .spacer{height:.9rem
 }
-.settings.media-edit ul li.active{color:#2da7ef
+.matrix-settings__me{color:#2da7ef
 }
-.settings.media-edit ul li :first-child{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap
-}
-.settings.media-edit ul li [class^=wmp-icon]{display:none
-}
-.settings.media-edit ul li:hover :last-child{display:block
-}
-.settings.media-edit ul li:nth-child(odd){background:#eff1f7
-}
-.settings.media-edit ul li:hover{background:#e2e4e9
-}
-.settings.media-edit .media-edit__name,.settings.media-edit .row,.settings.media-edit h3,.settings.media-edit h4{padding:0 .45rem
-}
-.settings.media-edit .spacer{height:.9rem
-}
-.settings.media-edit label,.settings.media-edit th{color:#c8ccd5;font-size:.7rem;font-weight:400;padding-right:.9rem;text-align:left;text-transform:uppercase
-}
-.media-edit__header{display:flex;height:3.15rem;margin:.45rem
-}
-.media-edit__header>:first-child{height:3.15rem;width:3.15rem
-}
-.media-edit__header .media-edit__name{flex:1;font-size:1.2rem;height:3.15rem;margin-bottom:.45rem;width:100%
-}
-.media-edit__body{flex:1;overflow-y:auto
-}
-.media-edit__link-buttons>.button{align-items:center;border:0;color:#707379;display:flex;justify-content:center;margin-right:.9rem;white-space:nowrap;width:3.15rem
-}
-.media-edit__link-buttons>.button:hover{color:#2da7ef
-}
-.media-edit__link-buttons>.button span{height:1.8rem
-}
-.copy{transition:all .25s
-}
-.copy.active,.copy.active:hover{background:#a1c616;border-color:#a1c616;color:#fff
-}
-.media-edit__limits{overflow:hidden;padding:0 .45rem;width:100%
-}
-.media-edit__limits>div:first-child{margin-right:.9rem
-}
-.media-edit__limits label+div{align-items:center;display:flex
-}
-.media-edit__limits label+div input{margin-right:.45rem;width:6.3rem
+.matrix-settings__hidden-icon{cursor:pointer;position:absolute;right:0;top:0
 }

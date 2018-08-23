@@ -1,47 +1,39 @@
 
-
-.matrix-create input{margin-bottom:.45rem;width:100%
+.smaller[data-v-b1502ef0]{font-size:.9rem
 }
-.matrix-create__group{align-items:flex-end;display:flex
+.play-list__export-list-wrapper[data-v-b1502ef0]{overflow:hidden;width:100%
 }
-.create-room__register{margin-bottom:3px
+.play-list__exports[data-v-b1502ef0]{list-style:none;padding:0
 }
-
-.matrix-create input{margin-bottom:.45rem;width:100%
+.play-list__exports li[data-v-b1502ef0]{display:flex;flex-direction:row;height:3.15rem
 }
-.matrix-public-rooms__buttons{display:flex;flex-wrap:wrap
+.play-list__exports li>div[data-v-b1502ef0]{cursor:pointer;display:flex;flex-direction:row
 }
-.matrix-public-rooms__buttons>*{margin:0 .45rem .45rem 0
+.play-list__exports li>div[data-v-b1502ef0]:hover{background:#eff1f7
 }
-
-.matrix-consent p{overflow:hidden;text-overflow:ellipsis
+.play-list__exports li>div.active[data-v-b1502ef0],.play-list__exports li>div.active[data-v-b1502ef0]:hover{background:#a1c616;color:#fff
 }
-
-.matrix-room__menu{display:none
+.play-list__exports li [class^=wmp-icon][data-v-b1502ef0]{color:#707379
 }
-.matrix-room{color:#fff
+.play-list__exports li .wmp-icon-copy[data-v-b1502ef0]{font-size:.7rem
 }
-.matrix-room .modal__body{color:#707379
+.play-list__export .button[data-v-b1502ef0]{justify-content:center
 }
-.matrix-room__room-join-create:before,.matrix-room__room-list:before{-webkit-transform:rotate(-53.4deg);-webkit-transform-origin:5.8rem 3.5rem;color:#e2e4e9;font-size:.8rem;pointer-events:none;position:absolute;transform:rotate(-53.4deg);transform-origin:5.8rem 3.5rem
+.play-list__export a.button[data-v-b1502ef0]{align-items:center;justify-content:center;position:relative
 }
-.matrix-room__room-list:before{content:"ROOMS"
+.play-list__export a.button span[data-v-b1502ef0]{left:.45rem;position:absolute
 }
-.matrix-room__room-join-create:before{content:"CREATE"
+.play-list__export-copy-room.active[data-v-b1502ef0]{background:#a1c616;border-color:#a1c616
 }
-.matrix-room__logging-in,.play-list-manager__enable-matrix{margin-top:3.15rem;padding:0 .45rem;text-align:center;width:100%
+.play-list__export-room[data-v-b1502ef0]{padding-top:.9rem
 }
-.play-list-manager__room-suggestions{margin:.45rem;text-align:center
+.play-list__full.play-list__full[data-v-b1502ef0]{align-items:flex-start;flex:1;flex-direction:column;justify-content:center;overflow:hidden
 }
-.play-list-manager__room-suggestions span{cursor:pointer;text-decoration:underline
+.play-list__full.play-list__full div[data-v-b1502ef0],.play-list__full.play-list__full span[data-v-b1502ef0]{white-space:nowrap
 }
-.play-list-manager__room-suggestions>button.button{align-items:center;display:inline-flex;padding:0 .9rem
+.play-list__name[data-v-b1502ef0]{display:flex;justify-content:space-between;width:100%
 }
-.play-list-manager__room-suggestions>button.button>span{margin-right:.9rem
+.play-list__url[data-v-b1502ef0]{color:#2da7ef;font-size:.7rem
 }
-.matrix-room__tag-footer{display:flex
-}
-.matrix-room__tag-footer div{min-width:4em
-}
-.play-list-manager__show-hidden-rooms{cursor:pointer;font-size:.7rem;margin-left:.45rem;text-align:center;text-transform:uppercase
+.play-list__date[data-v-b1502ef0]{font-size:.7rem
 }

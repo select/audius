@@ -1,3 +1,9 @@
 
-.video-player{align-items:center;background:#000;display:flex;height:100%;position:absolute;top:0;width:100%
+.history{display:flex;flex-direction:column;height:100%;overflow:hidden
+}
+.history .media-list{flex:1;width:100%
+}
+.queue__hint{align-items:center;display:flex;justify-content:center;text-align:center;width:100%
+}
+.queue__hint span{font-size:.7em
 }

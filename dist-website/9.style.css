@@ -1,13 +1,17 @@
 
-.settings.matrix-settings{overflow:hidden;position:relative
+.ws-settings{overflow:hidden;padding:.45rem 0;width:100%
 }
-.settings.matrix-settings .matrix-settings__name,.settings.matrix-settings .row,.settings.matrix-settings h3,.settings.matrix-settings h4{padding:0 .45rem
+.ws-settings input{background:transparent;flex:1
 }
-.settings.matrix-settings .matrix-settings__name{font-size:1.5rem;height:4.05rem;margin-bottom:.45rem;width:100%
+.ws-settings input::-webkit-input-placeholder{color:#c8ccd5
 }
-.settings.matrix-settings .spacer{height:.9rem
+.ws-settings input:-moz-placeholder,.ws-settings input::-moz-placeholder{color:#c8ccd5
 }
-.matrix-settings__me{color:#2da7ef
+.ws-settings .ws-settings__script{padding:.9rem .45rem
 }
-.matrix-settings__hidden-icon{cursor:pointer;position:absolute;right:0;top:0
+.ws-settings .ws-settings__script textarea{width:100%
+}
+.ws-settings .ws-settings__name{font-size:1.5rem;height:4.05rem;padding:0 .45rem;width:100%
+}
+.ws-settings h3,.ws-settings p{padding:0 .45rem
 }
