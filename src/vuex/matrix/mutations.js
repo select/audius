@@ -43,7 +43,7 @@ export const mutations = {
 		state.membersIndex = Object.assign({}, state.membersIndex);
 	},
 	setMatrixLoggedIn(state, { rooms }) {
-		console.log("rooms", rooms);
+		console.log('rooms', rooms);
 		state.showMatrixLoginModal = false;
 		state.matrixLoggedIn = true;
 		const { userId } = state.credentials;
@@ -161,7 +161,10 @@ export const mutations = {
 	addChatlog(state, originalEvent) {
 		const { roomId, type } = originalEvent;
 
-		if (type !== 'text' && !state.sources[roomId].playList.some(({ eventId }) => originalEvent.eventId === eventId)) {
+		if (
+			type !== 'text' &&
+			!state.sources[roomId].playList.some(({ eventId }) => originalEvent.eventId === eventId)
+		) {
 			const { playList, archive } = state.sources[roomId];
 			playList.push(originalEvent);
 			playList.sort(sortEventsChonologically);
@@ -170,6 +173,7 @@ export const mutations = {
 				const media = playList.shift();
 				archive.push(media.id);
 			}
+			state.sources = Object.assign({}, state.sources);
 		}
 
 		const event = Object.assign({}, originalEvent, {

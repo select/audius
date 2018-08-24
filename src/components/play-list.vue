@@ -186,10 +186,6 @@ export default {
 
 <template>
 <div class="play-list">
-	<span
-		v-if="this.currentMediaSource.type === 'matrix'"
-		@click="setMainLeftTab('matrix')"
-		class="wmp-icon-chat play-list__chat"></span>
 	<div class="play-list__body">
 		<draggable
 			element="div"
@@ -319,6 +315,12 @@ export default {
 				@click="toggleImport(false); toggleExport(false)">
 				{{filteredPlayListLength}} Songs
 			</li>
+			<li>
+				<span
+					v-if="this.currentMediaSource.type === 'matrix'"
+					@click="setMainLeftTab('matrix')"
+					class="wmp-icon-chat play-list__chat"></span>
+			</li>
 			<li
 				v-if="currentMediaSource.type === 'playList'"
 				v-bind:class="{ active: showImport }"
@@ -385,27 +387,17 @@ export default {
 			margin-top: #{2 * $grid-space}
 			// padding: 0 #{5 * $grid-space}
 
-.play-list__chat.play-list__chat
-	position: absolute
-	top: 0
-	right: #{1.5 * $grid-space}
-	background: rgba(255, 255, 255, .8)
-	cursor: pointer
-	z-index: 1
-
 .play-list__body
 	flex: 1
 	overflow-y: auto
 	overflow-x: hidden
 .play-list-footer
 	display: flex
+	position: relative
 	background: $color-catskillwhite
 	color: $color-aluminium-dark
 	font-size: 0.7rem
 	overflow: hidden
-	[class^='wmp-icon']
-		width: $touch-size-small
-		height: $touch-size-tiny
 	ul
 		display: flex
 		flex: 1
@@ -428,6 +420,9 @@ export default {
 			&:hover:not(.play-list-footer--info)
 				background: $color-aluminium
 				color: $color-white
+		[class^='wmp-icon']
+			width: $touch-size-small
+			height: $touch-size-tiny
 .play-list-footer__search
 	display: flex
 	align-items: center

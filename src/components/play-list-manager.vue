@@ -94,7 +94,6 @@ export default {
 
 .play-list-manager__wrapper
 	flex: 1
-	overflow-y: auto
 	&::-webkit-scrollbar-thumb
 	  background: $color-athensgrey
 	&::-webkit-scrollbar-track
@@ -102,15 +101,15 @@ export default {
 	div
 		text-overflow: ellipsis
 	ul
+		margin: 0
 		padding: 0
 		list-style: none
-		margin: 0
 		li
 			display: flex
-			height: $touch-size-medium
 			margin: $grid-space
-			border-radius: $border-radius
+			height: $touch-size-medium
 			align-items: center
+			border-radius: $border-radius
 			background: $color-athensgrey
 			color: $color-palesky
 			cursor: pointer
@@ -157,14 +156,16 @@ export default {
 			color: $color-aluminium-dark
 		&::-moz-placeholder
 			color: $color-aluminium-dark
-.play-list-manager__create:before
-	position: absolute
-	transform: rotate(-53.4deg)
-	transform-origin: 5.8rem 3.5rem
-	font-size: 0.8rem
-	color: $color-athensgrey
-	content: 'CREATE'
-	pointer-events: none
+.play-list-manager__create
+	position: relative
+	&:before
+		position: absolute
+		transform: rotate(-53.4deg)
+		transform-origin: 5.8rem 3.5rem
+		color: $color-athensgrey
+		font-size: 0.8rem
+		content: 'CREATE'
+		pointer-events: none
 
 </style>
 

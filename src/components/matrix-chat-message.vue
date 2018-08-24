@@ -10,28 +10,20 @@ export default {
 	computed: {
 		event() { return this.video; },
 		sender() {
-			return (this.membersIndex[this.event.sender] && this.membersIndex[this.event.sender].name) || this.event.sender;
+			const { sender } = this.event;
+			return this.membersIndex[sender] || { name: sender, nameColor: '' }
 		},
-		nameColor() {
-			return (this.membersIndex[this.event.sender] && this.membersIndex[this.event.sender].nameColor);
-		},
-		createdAt() {
-			return this.event.createdAt;
-		},
-
 		_createdAt() {
-			const date = new Date(this.createdAt);
+			const date = new Date(this.event.createdAt);
 			return `${date.getHours()}:${zeroPad(date.getMinutes(), 2)}`;
 		},
 		messages() {
 			let currentEvent = this.event;
 			const children = [currentEvent.body];
-			console.log("currentEvent.body", currentEvent.body);
 			while (currentEvent.childEvent) {
 				currentEvent = currentEvent.childEvent;
 				children.push(currentEvent.body);
 			}
-			console.log("children", children);
 			return children;
 		},
 	},
@@ -43,13 +35,13 @@ export default {
 	class="matrix-chat-message"
 	:class="{'matrix-chat-message--author': userIsAuthor}">
 	<div class="matrix-chat-message__container">
-		<div class="matrix-chat-message__header" v-bind:style="{ color: nameColor }">
-			{{sender}}
+		<div class="matrix-chat-message__header" v-bind:style="{ color: sender.nameColor }">
+			{{sender.name}}
 		</div>
 		<div class="matrix-chat-message__body">
 			<div v-for="message in messages">
 				<span v-html="message"></span>
-				<div class="matrix-chat-message__delete" v-if="userIsAuthor">
+				<div class="matrix-chat-message__delete" v-if="userIsAuthor || true">
 					<span class="wmp-icon-close"></span>
 				</div>
 			</div>
@@ -90,10 +82,16 @@ export default {
 		.matrix-chat-message__footer
 			background: $color-pictonblue
 .matrix-chat-message__delete
-	// display: none
+	display: none
 	position: absolute
 	top: 0
 	right: 0
+	cursor: pointer
+	color: $color-aluminium-dark
+	> span
+		width: #{3 * $grid-space}
+		height: #{3 * $grid-space}
+		font-size: 0.5rem
 .matrix-chat-message__container
 	position: relative
 	max-width: 25rem
@@ -130,6 +128,8 @@ export default {
 			padding-top: $grid-space
 		&:not(:last-child)
 			margin-bottom: $grid-space/2
+		&:not(:first-child)
+			position: relative
 		&:hover
 			.matrix-chat-message__delete
 				display: block

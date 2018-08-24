@@ -264,13 +264,17 @@ export default {
 	.modal__body
 		color: $color-palesky
 
+.matrix-room__room-join-create,
+.matrix-room__room-list
+	position: relative
+
 .matrix-room__room-join-create:before,
 .matrix-room__room-list:before
 	position: absolute
 	transform: rotate(-53.4deg)
 	transform-origin: 5.8rem 3.5rem
-	font-size: 0.8rem
 	color: $color-athensgrey
+	font-size: 0.8rem
 	pointer-events: none
 .matrix-room__room-list:before
 	content: 'ROOMS'

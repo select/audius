@@ -294,7 +294,7 @@ export const mutations = {
 			const currentSource = [...sources[id]];
 			sources[id] = [
 				...currentSource,
-				...state.sources[playListName].filter(_id => !currentSource.includes(_id)),
+				...(playListName ? state.sources[playListName] : state.playList).filter(_id => !currentSource.includes(_id)),
 			];
 			state.sources = sources;
 		}

@@ -1,11 +1,13 @@
 <script >
+import Vue from 'vue';
 import { mapMutations, mapState, mapActions } from 'vuex';
 import { mapModuleState } from '../utils';
 import VideoItem from './video-item.vue';
 import ChatMessage from './matrix-chat-message.vue';
 
-const lastLength = {};
-let hasSend = false;
+let latestCreatedAt = null;
+let lastHeight = 0;
+let scrollDown = false;
 export default {
 	components: {
 		VideoItem,
@@ -16,14 +18,42 @@ export default {
 			messageText: '',
 		};
 	},
+	beforeUpdate() {
+		const $chat = this.$refs.chat;
+		scrollDown = ($chat.scrollHeight - $chat.scrollTop - $chat.offsetHeight - 100) < 0;
+	},
 	mounted() {
+		const _chatLog = this.chatLog[this.currentMediaSource.id];
+		latestCreatedAt = _chatLog[_chatLog.length - 1].createdAt;
+		lastHeight = this.$refs.chat.offsetHeight;
+		const $chat = this.$refs.chat;
+		Vue.nextTick(() => {
+			this.$refs.chat.scrollTo(0, $chat.scrollHeight);
+		});
 		this.$store.watch(state => state.matrix.chatLog, () => {
-			const roomId = this.currentMediaSource.id;
-			if (hasSend === true && this._chatLog.length !== lastLength[roomId]) {
-				hasSend = false;
-				this.$refs.chatLog.scrollTop = this.$refs.chatLog.scrollHeight;
-				lastLength[roomId] = this._chatLog.length;
+			const chatLog = this.chatLog[this.currentMediaSource.id];
+			const { createdAt, sender } = chatLog[chatLog.length - 1];
+			if (latestCreatedAt !== createdAt) {
+				Vue.nextTick(() => {
+					if (scrollDown || sender === this.credentials.userId) {
+						console.log('scroll to bottom')
+						// $chat.scrollTop = $chat.scrollHeight;
+						$chat.scrollTo(0, $chat.scrollHeight);
+						lastHeight = $chat.scrollHeight;
+					}
+				});
+			} else {
+				Vue.nextTick(() => {
+					console.log('keep scroll pos after new elem added')
+					const { scrollHeight } = $chat;
+					const diff = scrollHeight - lastHeight;
+					$chat.scrollTop = diff;
+					setTimeout(() => {
+						lastHeight = scrollHeight;
+					}, 200);
+				});
 			}
+			latestCreatedAt = createdAt;
 		});
 		const $playList = this.$el.querySelector('.play-list');
 		$playList.addEventListener('scroll', () => {
@@ -49,7 +79,6 @@ export default {
 					roomId: this.currentMediaSource.id,
 					message: this.messageText,
 				});
-				hasSend = true;
 				this.messageText = '';
 			}
 		},
@@ -60,10 +89,7 @@ export default {
 
 <template>
 <div class="matrix-chat">
-	<span
-		@click="setMainLeftTab('playList')"
-		class="wmp-icon-speaker_notes_off matrix-chat__off"></span>
-	<div class="play-list media-list" ref="chatLog">
+	<div class="play-list media-list" ref="chat">
 		<div
 			class="play-list__greeting"
 			v-if="!_chatLog || !_chatLog.length ">
@@ -75,12 +101,12 @@ export default {
 			… load more (Page {{paginationIndex[currentMediaSource.id] || 0}})
 			<div class="loader" v-show="isLoading[currentMediaSource.id]"></div>
 		</div>
-		<ul>
+		<ul ref="list">
 			<component
 				v-for="(event, index) in _chatLog"
 				v-bind:is="event.type === 'text' ? 'chat-message' : 'video-item'"
 				:userIsAuthor="event.sender === credentials.userId"
-				:userIsAdmin="sources[this.currentMediaSource.id].isAdmin"
+				:userIsAdmin="sources[currentMediaSource.id].isAdmin"
 				:video="event"
 				:membersIndex="membersIndex"
 				:isPlaying="event.type !== 'text' && isPlaying && (currentMedia.id == event.id)"
@@ -88,6 +114,9 @@ export default {
 		</ul>
 	</div>
 	<div class="matrix-chat__footer">
+		<span
+			@click="setMainLeftTab('playList')"
+			class="wmp-icon-speaker_notes_off matrix-chat__off"></span>
 		<input
 			type="text"
 			placeholder="… your message"
@@ -116,9 +145,6 @@ export default {
 	.media-list__main
 		background-color: $color-white
 .matrix-chat__off
-	position: absolute
-	top: 0
-	right: #{1.5 * $grid-space}
 	cursor: pointer
 	z-index: 1
 
@@ -133,7 +159,6 @@ export default {
 	justify-content: space-between
 	width: 100%
 	height: $touch-size-medium
-	padding-left: #{2 * $grid-space}
 	background-color: $color-catskillwhite
 	color: $color-aluminium-dark
 	.wmp-icon-send
