@@ -18,4 +18,7 @@ export const presistMutation = {
 	videoError: ['entities'],
 	updateCurrentMedia: ['entities'],
 	setIsMobile: ['isMobile'],
+	play: ['playedMedia'],
+	nextVideo: ['playedMedia'],
+	queuePlayIndex: ['playedMedia'],
 };

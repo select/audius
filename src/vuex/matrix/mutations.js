@@ -5,7 +5,6 @@ const matrixRoomTemplate = () =>
 		JSON.stringify({
 			name: '',
 			playList: [],
-			playedMedia: {},
 			archive: [],
 			members: 0,
 		})

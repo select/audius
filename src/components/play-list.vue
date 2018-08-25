@@ -46,7 +46,7 @@ export default {
 		$playList.addEventListener('scroll', debounce(() => {
 			this.checkElementVisible(true);
 		}, 100));
-		$playList.addEventListener('scroll', () => {
+		$playList.addEventListener('wheel', () => {
 			// Detect when scrolled to bottom.
 			if ($playList.scrollTop + $playList.clientHeight >= $playList.scrollHeight) {
 				if (['matrix', 'webScraper'].includes(this.currentMediaSource.type)) {
@@ -124,10 +124,8 @@ export default {
 				this.filterPlayList('');
 			}
 		},
-		_expiryDate(mediaId) {
-			const { type, id } = this.currentMediaSource;
-			if (type === 'playList') return null;
-			return this.$store.state[type].sources[id].playedMedia[mediaId];
+		_hasExpiryDate(mediaId) {
+			return mediaId in this.playedMedia;
 		},
 	},
 	computed: {
@@ -136,6 +134,7 @@ export default {
 			'filteredPlayList',
 		]),
 		...mapState([
+			'playedMedia',
 			'currentMedia',
 			'showJump',
 			'showImport',
@@ -275,7 +274,7 @@ export default {
 					:video="media"
 					:isPlayList="currentMediaSource.type === 'playList'"
 					:isSelected="jumpCursor === media.id"
-					:expiryDate="_expiryDate(media.id)"
+					:hasExpiryDate="_hasExpiryDate(media.id)"
 					:isWebScraper="currentMediaSource.type == 'webScraper'"
 					:isPlaying="isPlaying && (currentMedia.id == media.id)"></video-item>
 			</draggable>
@@ -315,9 +314,9 @@ export default {
 				@click="toggleImport(false); toggleExport(false)">
 				{{filteredPlayListLength}} Songs
 			</li>
-			<li>
+			<li
+				v-if="this.currentMediaSource.type === 'matrix'">
 				<span
-					v-if="this.currentMediaSource.type === 'matrix'"
 					@click="setMainLeftTab('matrix')"
 					class="wmp-icon-chat play-list__chat"></span>
 			</li>

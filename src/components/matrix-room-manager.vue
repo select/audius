@@ -5,6 +5,7 @@ import draggable from 'vuedraggable';
 import MatrixCreateRoom from './matrix-create-room.vue';
 import MatrixPublicRooms from './matrix-public-rooms.vue';
 import MatrixConsentModal from './matrix-consent.vue';
+import MatrixRoomTag from './matrix-room-tag.vue';
 import MatrixLogin from './matrix-login.vue';
 import { mapModuleState } from '../utils';
 
@@ -15,10 +16,10 @@ export default {
 		MatrixPublicRooms,
 		MatrixConsentModal,
 		MatrixLogin,
+		MatrixRoomTag,
 	},
 	data() {
 		return {
-			showConfirmDelte: false,
 			showHidden: false,
 		};
 	},
@@ -31,14 +32,13 @@ export default {
 	methods: {
 		...mapMutations([
 			'selectMediaSource',
-			'setShowMediumSettings',
 			'toggleMatrixRoomModal',
 			'toggleMatrixRoomDirectory',
 			'toggleMatrixLoginModal',
 			'setMatrixRoomTag',
 			'error',
 		]),
-		...mapActions(['joinMatrixRoom', 'leaveMatrixRoom', 'matrixSend', 'initModule']),
+		...mapActions(['joinMatrixRoom', 'initModule']),
 		addMatrixRoom() {
 			const el = document.querySelector('.matrix-room input');
 			const roomIdRegEx = /#[\w-]+:[\w-]+\.\w{2,}/;
@@ -49,15 +49,6 @@ export default {
 				this.joinMatrixRoom({ id: el.value });
 			}
 			el.value = '';
-		},
-		dropAdd(event, roomId) { // Element is dropped into the list from another list
-			const itemId = event.item.dataset.id;
-			this.matrixSend({ roomId, itemId });
-		},
-		numWatched(id) {
-			if (!(id in this.sources)) return 0;
-			const res = this.sources[id].archive ? this.sources[id].archive.length : 0;
-			return res + Object.keys(this.sources[id].playedMedia).length;
 		},
 	},
 	computed: {
@@ -137,41 +128,15 @@ export default {
 				scrollSpeed: 20,
 				handle: '.play-list-manager__drag-handle',
 			}">
-			<draggable
-				v-for="id in _sourcesOrdered"
-				:key="id"
-				class="play-list-manager__tag-drop-zone"
-				element="li"
-				@add="dropAdd($event, id)"
-				:options="{
-					sort: false,
-					handle: '.no-handle',
-					group: { name: 'lists' }
-				}"
-				v-bind:class="{ active: currentMediaSource.id == id }">
-				<div class="play-list-manager__drag-handle"></div>
-				<div
-					class="play-list-manager__tag-body"
-					@click="selectMediaSource({ type: 'matrix', id: id })">
-					<div>
-						{{matrix.sources[id].name}}
-					</div>
-					<div class="matrix-room__tag-footer">
-						<div> {{sources[id].playList.length - Object.keys(sources[id].playedMedia).length}} New </div>
-						<div> {{sources[id].members ? sources[id].members.length : '?'}} Members </div>
-					</div>
-				</div>
-				<div class="play-list-manager__menu">
-					<span
-						class="wmp-icon-mode_edit"
-						title="Edit room"
-						@click.stop="setShowMediumSettings({ medium: 'matrix', id })"></span>
-					<span
-						class="wmp-icon-close"
-						title="Leave room"
-						@click.stop="showConfirmDelte = id"></span>
-				</div>
-			</draggable>
+			<matrix-room-tag
+				v-for="(id, index) in _sourcesOrdered"
+				:id="id"
+				:room="sources[id]"
+				:key="index"
+				childElement="li"
+				v-bind:class="{ active: currentMediaSource.id == id }"
+				element="draggable">
+			</matrix-room-tag>
 		</draggable>
 
 		<div v-if="matrixLoggedIn && _hiddenSourcesOrdered.length">
@@ -182,29 +147,12 @@ export default {
 					hide
 				</div>
 				<ul>
-					<li v-for="id in _hiddenSourcesOrdered">
-						<div
-							class="play-list-manager__tag-body"
-							@click="selectMediaSource({ type: 'matrix', id: id })">
-							<div>
-								{{matrix.sources[id].name}}
-							</div>
-							<div class="matrix-room__tag-footer">
-								<div> {{sources[id].playList.length - Object.keys(sources[id].playedMedia).length}} New </div>
-								<div> {{sources[id].members ? sources[id].members.length : '?'}} Members </div>
-							</div>
-						</div>
-						<div class="play-list-manager__menu">
-							<span
-								class="wmp-icon-mode_edit"
-								title="Edit room"
-								@click.stop="setShowMediumSettings({ medium: 'matrix', id })"></span>
-							<span
-								class="wmp-icon-close"
-								title="Leave room"
-								@click.stop="showConfirmDelte = id"></span>
-						</div>
-					</li>
+					<matrix-room-tag
+						v-for="id in _hiddenSourcesOrdered"
+						:id="id"
+						:room="sources[id]"
+						element="li">
+					</matrix-room-tag>
 				</ul>
 			</div>
 			<div
@@ -239,15 +187,7 @@ export default {
 				</div>
 			</li>
 		</ul>
-		<div class="modal" v-if="showConfirmDelte" @click="showConfirmDelte = false">
-			<div class="modal__body" @click.stop>
-				Are you sure you want to leave the room?
-				<div class="modal__btn-group">
-					<button class="button" @click="showConfirmDelte = false">Cancel</button>
-					<button class="button btn--blue" @click.stop="leaveMatrixRoom(showConfirmDelte);showConfirmDelte = false;">Leave</button>
-				</div>
-			</div>
-		</div>
+
 	</div>
 </div>
 </template>
@@ -300,10 +240,7 @@ export default {
 		align-items: center
 		> span
 			margin-right: #{2 * $grid-space}
-.matrix-room__tag-footer
-	display: flex
-	div
-		min-width: 4em
+
 .play-list-manager__show-hidden-rooms
 	margin-left: $grid-space
 	text-transform: uppercase

@@ -25,7 +25,7 @@ export function getCurrentPlayListEntities(state) {
 	if (room) {
 		if (state.showWatched[sourceId]) return room.playList;
 		return room.playList.filter(
-			({ id }) => !(id in room.playedMedia) || new Date() - room.playedMedia[id] < fiveMinutes
+			({ id }) => !(id in state.playedMedia) || Date.now() - state.playedMedia[id].lastPlay < fiveMinutes
 		);
 	}
 	return [];

@@ -11,7 +11,7 @@ export default {
 		queueIndex: Number,
 		isPlayList: Boolean,
 		isSearchResult: Boolean,
-		expiryDate: Date,
+		hasExpiryDate: Boolean,
 		isWebScraper: Boolean,
 		elementType: String,
 	},
@@ -120,10 +120,10 @@ export default {
 			active: isPlaying,
 			selected: selected,
 			error: video.hasError,
-			old: !!expiryDate,
+			old: hasExpiryDate,
 			mobile: isMobile,
 			}"
-		v-bind:title="expiryDate ? '🕑 hide in < 5min' : ''"
+		v-bind:title="hasExpiryDate ? '🕑 hide in < 5min' : ''"
 		v-on:dblclick="_play"
 		v-bind:data-id="video.id">
 		<div v-if="isVisible || !isPlayList || video.tracks">

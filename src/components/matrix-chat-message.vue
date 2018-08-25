@@ -4,7 +4,8 @@ import { zeroPad } from '../utils';
 export default {
 	props: {
 		video: Object,
-		userIsAuthor: Boolean,
+		isAuthor: Boolean,
+		isAdmin: Boolean,
 		membersIndex: Object,
 	},
 	computed: {
@@ -33,7 +34,7 @@ export default {
 <template>
 <li
 	class="matrix-chat-message"
-	:class="{'matrix-chat-message--author': userIsAuthor}">
+	:class="{'matrix-chat-message--author': isAuthor}">
 	<div class="matrix-chat-message__container">
 		<div class="matrix-chat-message__header" v-bind:style="{ color: sender.nameColor }">
 			{{sender.name}}
@@ -41,9 +42,10 @@ export default {
 		<div class="matrix-chat-message__body">
 			<div v-for="message in messages">
 				<span v-html="message"></span>
-				<div class="matrix-chat-message__delete" v-if="userIsAuthor || true">
-					<span class="wmp-icon-close"></span>
-				</div>
+				<div
+					v-if="isAuthor || isAdmin"
+					class="wmp-icon-close matrix-chat-message__delete"
+					title="Delete this message"></div>
 			</div>
 		</div>
 		<div class="matrix-chat-message__footer">{{_createdAt}}</div>
@@ -86,12 +88,11 @@ export default {
 	position: absolute
 	top: 0
 	right: 0
-	cursor: pointer
+	width: #{3 * $grid-space}
+	height: #{3 * $grid-space}
 	color: $color-aluminium-dark
-	> span
-		width: #{3 * $grid-space}
-		height: #{3 * $grid-space}
-		font-size: 0.5rem
+	font-size: .5rem
+	cursor: pointer
 .matrix-chat-message__container
 	position: relative
 	max-width: 25rem

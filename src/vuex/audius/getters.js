@@ -19,7 +19,6 @@ export const getters = {
 				AudiusChannel: true,
 				playList: ws.playList,
 				archive: [],
-				playedMedia: {},
 			});
 		}
 		return {

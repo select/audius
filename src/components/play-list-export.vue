@@ -21,6 +21,13 @@ export default {
 		...mapState({
 			matrixRooms: (state) => state.matrix.sources,
 		}),
+		exportTypeName() {
+			return {
+				playList: 'Playlist',
+				matrix: 'Room',
+				webScraper: 'Channel',
+			}[this.currentMediaSource.type];
+		},
 	},
 	methods: {
 		...mapActions(['exportToURL', 'exportToFile', 'error']),
@@ -95,7 +102,7 @@ export default {
 		</div>
 		<div
 			v-if="currentMediaSource.type === 'webScraper' && currentMediaSource.id == 'Imgur'"
-			class="play-list__export-room">
+			>
 			<button
 				class="button btn--blue play-list__export-copy-room"
 				v-bind:class="{ active: copyURLActive }"
@@ -103,7 +110,7 @@ export default {
 					copy link
 				</button>
 		</div>
-		<div v-if="currentMediaSource.type === 'matrix' && currentMediaSource.id" class="play-list__export-room">
+		<div v-if="currentMediaSource.type === 'matrix'" class="play-list__export-room">
 			<button
 				class="button btn--blue play-list__export-copy-room"
 				v-bind:class="{ active: copyURLActive }"
@@ -187,22 +194,22 @@ export default {
 </template>
 
 
-<style lang="sass" scoped>
+<style lang="sass">
 @import '../sass/vars'
 @import '../sass/color'
 
 .smaller
-	font-size: 0.9rem
+	font-size: .9rem
 .play-list__export-list-wrapper
 	width: 100%
 	overflow: hidden
 .play-list__exports
-	list-style: none
 	padding: 0
+	list-style: none
 	li
-		height: $touch-size-medium
 		display: flex
 		flex-direction: row
+		height: $touch-size-medium
 		> div
 			display: flex
 			flex-direction: row
@@ -213,7 +220,7 @@ export default {
 			&.active:hover
 				background: $color-larioja
 				color: $color-white
-		[class^="wmp-icon"]
+		[class^='wmp-icon']
 			color: $color-palesky
 		.wmp-icon-copy
 			font-size: .7rem
@@ -222,31 +229,36 @@ export default {
 		justify-content: center
 	a.button
 		position: relative
-		justify-content: center
 		align-items: center
+		justify-content: center
 		span
-			left: $grid-space
 			position: absolute
-.play-list__export-copy-room.active
-	background: $color-larioja
-	border-color: $color-larioja
+			left: $grid-space
+.play-list__export-copy-room
+	.active
+		border-color: $color-larioja
+		background: $color-larioja
 .play-list__export-room
+	display: flex
+	flex-direction: column
+	justify-content: center
 	padding-top: #{2 * $grid-space}
 .play-list__full.play-list__full
 	flex: 1
-	align-items: flex-start
-	overflow: hidden
 	flex-direction: column
+	align-items: flex-start
 	justify-content: center
-	div,span
+	overflow: hidden
+	div,
+	span
 		white-space: nowrap
 .play-list__name
 	display: flex
 	justify-content: space-between
 	width: 100%
 .play-list__url
-	font-size: 0.7rem
 	color: $color-pictonblue
+	font-size: .7rem
 .play-list__date
 	font-size: .7rem
 </style>

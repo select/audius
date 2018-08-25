@@ -23,8 +23,8 @@ export default {
 		scrollDown = ($chat.scrollHeight - $chat.scrollTop - $chat.offsetHeight - 100) < 0;
 	},
 	mounted() {
-		const _chatLog = this.chatLog[this.currentMediaSource.id];
-		latestCreatedAt = _chatLog[_chatLog.length - 1].createdAt;
+		const _chatLog = this.chatLog[this.currentMediaSource.id] || [];
+		latestCreatedAt = _chatLog.length && _chatLog[_chatLog.length - 1].createdAt;
 		lastHeight = this.$refs.chat.offsetHeight;
 		const $chat = this.$refs.chat;
 		Vue.nextTick(() => {
@@ -36,15 +36,15 @@ export default {
 			if (latestCreatedAt !== createdAt) {
 				Vue.nextTick(() => {
 					if (scrollDown || sender === this.credentials.userId) {
-						console.log('scroll to bottom')
-						// $chat.scrollTop = $chat.scrollHeight;
-						$chat.scrollTo(0, $chat.scrollHeight);
+						$chat.scrollTo({
+							behavior: 'smooth',
+							top: $chat.scrollHeight,
+						});
 						lastHeight = $chat.scrollHeight;
 					}
 				});
 			} else {
 				Vue.nextTick(() => {
-					console.log('keep scroll pos after new elem added')
 					const { scrollHeight } = $chat;
 					const diff = scrollHeight - lastHeight;
 					$chat.scrollTop = diff;
@@ -56,7 +56,7 @@ export default {
 			latestCreatedAt = createdAt;
 		});
 		const $playList = this.$el.querySelector('.play-list');
-		$playList.addEventListener('scroll', () => {
+		$playList.addEventListener('wheel', () => {
 			// Detect when scrolled to top.
 			if ($playList.scrollTop === 0) {
 				this.matrixLoadMore(this.currentMediaSource.id);
@@ -105,8 +105,8 @@ export default {
 			<component
 				v-for="(event, index) in _chatLog"
 				v-bind:is="event.type === 'text' ? 'chat-message' : 'video-item'"
-				:userIsAuthor="event.sender === credentials.userId"
-				:userIsAdmin="sources[currentMediaSource.id].isAdmin"
+				:isAuthor="event.sender === credentials.userId"
+				:isAdmin="sources[currentMediaSource.id].isAdmin"
 				:video="event"
 				:membersIndex="membersIndex"
 				:isPlaying="event.type !== 'text' && isPlaying && (currentMedia.id == event.id)"
@@ -166,6 +166,6 @@ export default {
 	input
 		flex: 1
 		padding: 0 #{2 * $grid-space}
-		font-size: 0.8rem
+		font-size: .8rem
 
 </style>

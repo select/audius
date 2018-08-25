@@ -16,7 +16,7 @@ export const mutations = {
 			}
 		}
 
-		state.sources[name] = { playList: [], playedMedia: {}, settings: {}, archive: [] };
+		state.sources[name] = { playList: [], settings: {}, archive: [] };
 		if (!state.sourcesOrdered.includes(name)) state.sourcesOrdered.push(name);
 		state.currentWebScraper = name;
 	},

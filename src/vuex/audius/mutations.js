@@ -9,21 +9,20 @@ import { migrateIndexDb2012 } from '../../utils/migrate.2.0.12';
 
 /* eslint-disable no-param-reassign */
 function playMedia(state, media) {
-	['matrix', 'webScraper'].forEach(sourceName => {
-		if (sourceName in state.loadedModules) {
-			Object.values(state[sourceName].sources)
-				.filter(({ playedMedia }) => playedMedia)
-				.forEach(({ playedMedia }) => {
-					playedMedia[media.id] = new Date();
-				});
-			state[sourceName].sources = Object.assign({}, state[sourceName].sources);
-		}
-	});
+	const { playedMedia } = state;
+	if (media.id in playedMedia) {
+		++playedMedia[media.id].count;
+		playedMedia[media.id].lastPlay = Date.now();
+	} else {
+		playedMedia[media.id] = { lastPlay: Date.now(), count: 1 };
+	}
+
 	Object.assign(state, {
 		sessionHistoryPos: -1,
 		sessionHistory: [...state.sessionHistory, media],
 		currentMedia: media,
 		isPlaying: true,
+		playedMedia: Object.assign({}, playedMedia),
 	});
 }
 
