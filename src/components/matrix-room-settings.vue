@@ -4,6 +4,11 @@ import { mapGetters, mapActions, mapState, mapMutations } from 'vuex';
 import { mapModuleState, debounce } from '../utils';
 
 export default {
+	data() {
+		return {
+			showConfirmDelte: false,
+		};
+	},
 	computed: {
 		...mapGetters(['youtubeApiKeyUI']),
 		...mapState(['currentMediaSource']),
@@ -15,7 +20,12 @@ export default {
 			return this.sources[this.currentMediaSource.id];
 		},
 		members() {
-			return this.room.members || [];
+			if (!this.room.members) return [];
+			return this.room.members.map(member => Object.assign(
+				{},
+				member,
+				{ name: this.membersIndex[member.id] ? this.membersIndex[member.id].name : member.id }
+			));
 		},
 		admin() {
 			return this.members.filter(({ powerLevel }) => powerLevel >= 100);
@@ -29,9 +39,10 @@ export default {
 		myId() {
 			return this.credentials.userId;
 		},
+
 	},
 	methods: {
-		...mapActions(['setRoomName', 'updateRoomOptions', 'setRoomTag']),
+		...mapActions(['setRoomName', 'updateRoomOptions', 'setRoomTag', 'leaveMatrixRoom']),
 		...mapMutations(['toggleHideRoom']),
 		_setRoomName: debounce(function debouncedSetName(id, name) {
 			this.setRoomName({ id, name });
@@ -45,10 +56,16 @@ export default {
 
 <template>
 <div class="settings matrix-settings">
-	<div
-		@click="toggleHideRoom(currentMediaSource.id)"
-		class="matrix-settings__hidden-icon"
-		:class="room.hidden ? 'wmp-icon-visibility_off' : 'wmp-icon-visibility'"></div>
+	<div class="matrix-settings__hidden-icon">
+		<div
+			@click="toggleHideRoom(currentMediaSource.id)"
+			:class="room.hidden ? 'wmp-icon-visibility_off' : 'wmp-icon-visibility'"></div>
+		<div
+			class="wmp-icon-close"
+			title="Leave room"
+			@click="showConfirmDelte = currentMediaSource.id"></div>
+	</div>
+
 	<input
 		@input="_setRoomName(currentMatrixRoom, $event.target.value)"
 		type="text"
@@ -68,7 +85,7 @@ export default {
 			v-for="member in admin"
 			v-bind:class="{'matrix-settings__me' : member.id === myId}"
 			:title="member.id">
-			{{membersIndex[member.id].name}}
+			{{member.name}}
 		</div>
 	</div>
 	<h4 v-if="speaker.length">50+ Powers</h4>
@@ -77,7 +94,7 @@ export default {
 			v-for="member in speaker"
 			v-bind:class="{'matrix-settings__me' : member.id === myId}"
 			:title="member.id">
-			{{membersIndex[member.id].name}}
+			{{member.name}}
 		</div>
 	</div>
 	<h4>Other</h4>
@@ -86,7 +103,7 @@ export default {
 			v-for="member in listener"
 			v-bind:class="{'matrix-settings__me' : member.id === myId}"
 			:title="member.id">
-			{{membersIndex[member.id].name}}
+			{{member.name}}
 		</div>
 	</div>
 	<!-- <h4>Invite</h4>
@@ -147,6 +164,15 @@ export default {
 			Post human readable links
 		</div>
 	</div>
+	<div class="modal" v-if="showConfirmDelte" @click="showConfirmDelte = false">
+			<div class="modal__body" @click.stop>
+				Are you sure you want to leave the room?
+				<div class="modal__btn-group">
+					<button class="button" @click="showConfirmDelte = false">Cancel</button>
+					<button class="button btn--blue" @click.stop="leaveMatrixRoom(showConfirmDelte);showConfirmDelte = false;">Leave</button>
+				</div>
+			</div>
+		</div>
 </div>
 </template>
 

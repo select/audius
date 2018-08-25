@@ -6,7 +6,7 @@ import MediaPlayer from './media-player.vue';
 const Settings = () => import(/* webpackChunkName: "components/settings" */'./settings.vue');
 const SearchResults = () => import(/* webpackChunkName: "components/search-results" */'./search-results.vue');
 const WebScraperSettings = () => import(/* webpackChunkName: "components/web-scraper-settings" */'./web-scraper-settings.vue');
-const MatrixRoomSettings = () => import(/* webpackChunkName: "components/matrix-room-settings" */'./matrix-settings.vue');
+const MatrixRoomSettings = () => import(/* webpackChunkName: "components/matrix-room-settings" */'./matrix-room-settings.vue');
 const MediaEdit = () => import(/* webpackChunkName: "components/media-edit" */'./media-edit.vue');
 const Queue = () => import(/* webpackChunkName: "components/queue" */'./queue.vue');
 const ChangeLog = () => import(/* webpackChunkName: "components/changelog" */'./changelog.vue');
