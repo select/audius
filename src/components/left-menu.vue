@@ -51,12 +51,12 @@ export default {
 		<div class="nav-handle__tab"></div>
 		<span class="wmp-icon-queue_music"></span>
 	</div>
-	<div class="tabs">
+	<!-- <div class="tabs">
 		<a
 			v-for="tabName in ['playlists', 'rooms', 'channels']"
 			:href="'#lm-'+tabName"
 			v-bind:class="{ active: tabName == 'playList' }">{{tabName}}</a>
-	</div>
+	</div> -->
 	<div class="left-menu__wrapper">
 		<h2 id="lm-playlists">Playlists</h2>
 		<play-list-manager></play-list-manager>
