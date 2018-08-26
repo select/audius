@@ -256,8 +256,8 @@ export const actions = {
 		matrixEvents.forEach(matrixEvent => {
 			const { type, body, msgtype } = matrixEvent;
 			if (body) matrixEvent.body = urlify(body);
-			if (type === 'text' && !msgtype === 'm.audius.media') {
-				window.console.log(`[Matrix-Text] %c${body}`, 'color: #2DA7EF;');
+			if (type === 'text' && msgtype !== 'm.audius.media') {
+				// window.console.log(`[Matrix-Text] %c${body}`, 'color: #2DA7EF;');
 				findMediaText(body, rootState.youtubeApiKey, rootState.mediaIndex).then(
 					({ mediaList, newMedia }) => {
 						if (newMedia.length) commit('updateMediaIndex', newMedia);
@@ -268,9 +268,9 @@ export const actions = {
 						});
 					}
 				);
-			} else {
+			} else if (type !== 'text') {
+				// window.console.log(`[Matrix-Media] %c${matrixEvent.title}`, 'color: #2DA7EF;');
 				if (!(matrixEvent.id in rootState.mediaIndex)) commit('updateMediaIndex', matrixEvent);
-				window.console.log(`[Matrix-Media] %c${matrixEvent.title}`, 'color: #2DA7EF;');
 			}
 		});
 		commit('addChatlog', matrixEvents);
