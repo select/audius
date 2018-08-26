@@ -244,7 +244,6 @@ export const mutations = {
 	videoError(state, message) {
 		const video = state.currentMedia;
 		state.entities[video.id] = Object.assign({}, video, {
-			errorMessage: message,
 			hasError: true,
 		});
 		next(state);

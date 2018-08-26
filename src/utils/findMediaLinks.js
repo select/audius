@@ -95,8 +95,12 @@ export function findMediaText(text, youtubeApiKey, mediaIndex, options) {
 	}
 
 	// Flat map the results so we get one list and not a list of lists.
-	return Promise.all(promises).then(res => ({
-		isPlayList,
-		mediaList: res.reduce((acc, item) => [...acc, ...item], mediaItems),
-	}));
+	return Promise.all(promises).then(res => {
+		const newMedia = res.reduce((acc, item) => [...acc, ...item], []);
+		return {
+			isPlayList,
+			newMedia,
+			mediaList: [...mediaItems, ...newMedia],
+		};
+	});
 }

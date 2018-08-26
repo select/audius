@@ -113,7 +113,7 @@ export default {
 						});
 					}
 				}).catch((error) => {
-					this.videoError(error.message);
+					this.videoError();
 					this.error(`The video could not be played: ${error.message}`);
 					if (this.failCount >= 3) {
 						this.error('More than 3 failed playback attempts. Stopping playback.');

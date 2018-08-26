@@ -155,14 +155,6 @@ export default {
 			Restricted posting
 			<span class="smaller">Only 50+ power users are allowed to post</span>
 		</div> -->
-		<div v-if="room.alias && !room.alias.includes('audius')">
-			<input
-				type="checkbox"
-				v-bind:checked="room.humanReadablePosts"
-				@change="updateRoomOptions({id: currentMatrixRoom, humanReadablePosts: $event.target.checked})"
-				id="human-read"><label for="human-read"></label>
-			Post human readable links
-		</div>
 	</div>
 	<div class="modal" v-if="showConfirmDelte" @click="showConfirmDelte = false">
 			<div class="modal__body" @click.stop>

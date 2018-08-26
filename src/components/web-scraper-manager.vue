@@ -19,16 +19,12 @@ export default {
 			this.addWebScraper(el.value);
 			el.value = '';
 		},
-		numWatched(id) {
-			if (!(id in this.sources)) return 0;
-			const res = this.sources[id].archive ? this.sources[id].archive.length : 0;
-			return res + Object.keys(this.sources[id].playedMedia).length;
-		},
 	},
 	computed: {
 		...mapState([
 			'loadedModules',
 			'currentMediaSource',
+			'playedMedia',
 		]),
 		...mapModuleState('webScraper', [
 			'sourcesOrdered',
@@ -48,7 +44,7 @@ export default {
 				<div class="play-list-manager__drag-handle"></div>
 				<div class="play-list-manager__tag-body">
 					<div> {{id}} </div>
-					<div v-if="sources[id] && sources[id].playList">{{sources[id].playList.length - Object.keys(sources[id].playedMedia).length}} New {{numWatched(id)}} Watched </div>
+					<div v-if="sources[id] && sources[id].playList">{{sources[id].playList.filter(({id}) => !(id in playedMedia)).length }} New</div>
 				</div>
 				<div
 					v-if="sources[id] && sources[id].settings"

@@ -10,46 +10,55 @@ import {
 	findMediaText,
 } from '../../utils';
 import { getCurrentPlayListEntities } from './getCurrentPlayList';
+import { presistMutation as pmW } from '../webScraper/presistMutation';
+import { presistMutation as pmM } from '../matrix/presistMutation';
+
+const modulePresistMutation = {
+	webScraper: pmW,
+	matrix: pmM,
+};
 // the matrix client will be lazy loaded since it's not need on startup
 
 /* eslint-disable no-param-reassign */
 export const actions = {
 	search({ commit, state }, query) {
 		query = query.trim();
-		findMediaText(query, state.youtubeApiKey, state.mediaIndex, { extendPlayLists: true }).then(res => {
-			if (res.mediaList.length) {
-				commit('searchSuccess', Object.assign(res, { id: query }));
-				return;
-			}
-
-			if (/^https?:\/\//.test(query)) {
-				if (!state.extensionAvilable) {
-					commit('error', 'The audius extension is not installed. Please install it.');
-					commit('setShowSettings');
+		findMediaText(query, state.youtubeApiKey, state.mediaIndex, { extendPlayLists: true }).then(
+			res => {
+				if (res.mediaList.length) {
+					commit('searchSuccess', Object.assign(res, { id: query }));
 					return;
 				}
-				window.dispatchEvent(
-					new CustomEvent('audiusExtension', {
-						detail: {
-							audius: true,
-							type: 'scanUrl',
-							url: query,
-							youtubeApiKey: state.youtubeApiKey,
-							responseTemplate: {
+
+				if (/^https?:\/\//.test(query)) {
+					if (!state.extensionAvilable) {
+						commit('error', 'The audius extension is not installed. Please install it.');
+						commit('setShowSettings');
+						return;
+					}
+					window.dispatchEvent(
+						new CustomEvent('audiusExtension', {
+							detail: {
 								audius: true,
-								type: 'searchSuccess',
-								vuex: 'commit',
-								data: { id: query },
+								type: 'scanUrl',
+								url: query,
+								youtubeApiKey: state.youtubeApiKey,
+								responseTemplate: {
+									audius: true,
+									type: 'searchSuccess',
+									vuex: 'commit',
+									data: { id: query },
+								},
 							},
-						},
-					})
-				);
-			} else if (query.length > 1) {
-				searchYoutube(state.youtubeApiKey, query).then(mediaList => {
-					commit('searchSuccess', { mediaList, id: query });
-				});
+						})
+					);
+				} else if (query.length > 1) {
+					searchYoutube(state.youtubeApiKey, query).then(mediaList => {
+						commit('searchSuccess', { mediaList, id: query });
+					});
+				}
 			}
-		});
+		);
 	},
 
 	importPlayListFromString({ commit }, importString) {
@@ -134,10 +143,13 @@ export const actions = {
 		const fileName = `Audius.${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}.backup`;
 		const data = {
 			AudiusBackup: '2.0.12',
-			data: Array.from(
-				new Set(Object.values(presistMutation).reduce((acc, item) => [...acc, ...item], []))
-			).reduce((acc, key) => Object.assign(acc, { [key]: state[key] }), {}),
+			data: getPresistState(state, presistMutation),
 		};
+		['matrix', 'webScraper'].forEach(moduleName => {
+			Object.assign(data.data, {
+				[moduleName]: getPresistState(state[moduleName], modulePresistMutation[moduleName]),
+			});
+		});
 		dispatch('exportToFile', { fileName, data });
 	},
 	// https://stackoverflow.com/a/46613898/1436151
@@ -153,3 +165,9 @@ export const actions = {
 		document.body.removeChild(element);
 	},
 };
+
+function getPresistState(state, presistMutation) {
+	return Array.from(
+		new Set(Object.values(presistMutation).reduce((acc, item) => [...acc, ...item], []))
+	).reduce((acc, key) => Object.assign(acc, { [key]: state[key] }), {});
+}

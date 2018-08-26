@@ -57,7 +57,7 @@ export default {
 	},
 	computed: mapState(['currentMedia', 'mute', 'skipToTime', 'isPlaying']),
 	methods: {
-		...mapMutations(['play', 'pause', 'setCurrentTime', 'videoError', 'error']),
+		...mapMutations(['play', 'pause', 'setCurrentTime', 'error']),
 		...mapActions(['nextVideo']),
 		clearInterval() {
 			clearInterval(this.timeInterval);

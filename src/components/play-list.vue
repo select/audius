@@ -125,6 +125,7 @@ export default {
 			}
 		},
 		_hasExpiryDate(mediaId) {
+			if (this.currentMediaSource.type === 'playList') return false;
 			return mediaId in this.playedMedia;
 		},
 	},

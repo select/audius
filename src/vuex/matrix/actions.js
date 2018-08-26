@@ -1,4 +1,4 @@
-import { findMediaText, getMediaLink, hashCode } from '../../utils';
+import { findMediaText, getMediaLink } from '../../utils';
 import { getMediaEntity } from '../audius/getCurrentPlayList';
 // This must be avialable in the whole module since it's lazy loaded.
 // Do not delete;
@@ -8,37 +8,9 @@ const urlRegex = /(https?:\/\/[^\s]+)/g;
 function urlify(text) {
 	return text.replace(urlRegex, '<a href="$1" target="_blank">$1</a>');
 }
-const matrixNameRegEx = /@(.+):matrix.org/;
 
-function stringToColour(str) {
-	return `hsl(${hashCode(str) % 360},100%,30%)`;
-}
 
-function getRoomMembers(commit, state, rooms) {
-	// Dedublicate list of members
-	const members = rooms.reduce((acc, room) => {
-		if (room.currentState) {
-			Object.assign(acc, room.currentState.members);
-		}
-		return acc;
-	}, {});
-
-	// Commit member names to the store.
-	commit(
-		'updateMembers',
-		Object.values(members).map(member => {
-			// console.log("member", member);
-			if (!member) return { userid: null };
-			const { userId, name } = member;
-			const match = name.match(matrixNameRegEx);
-			return {
-				userId,
-				name: match ? match[1] : name,
-				nameColor: stringToColour(name),
-			};
-		})
-	);
-
+// function getRoomMembers(commit, state, rooms) {
 	// Get member avatar with async request to matrix.
 	// Object.values(members).forEach(member => {
 	// 	const { userId } = member;
@@ -50,7 +22,7 @@ function getRoomMembers(commit, state, rooms) {
 	// 		});
 	// 	}
 	// });
-}
+// }
 
 /* eslint-disable no-param-reassign */
 export const actions = {
@@ -63,17 +35,15 @@ export const actions = {
 					.then(credentials => commit('setMatrixCredentials', { credentials, isGuest: true }))
 					.then(() => matrixClient.login(state.credentials, state.isGuest, dispatch, commit))
 					.then(rooms => {
-						commit('setMatrixLoggedIn', { rooms });
+						commit('setMatrixLoggedIn', rooms);
 						dispatch('updatePublicRooms');
-						getRoomMembers(commit, state, rooms);
 					})
 					.catch(error => commit('error', `${error}1`));
 			} else if (!state.matrixLoggedIn) {
 				matrixClient
 					.login(state.credentials, state.isGuest, dispatch, commit)
 					.then(rooms => {
-						commit('setMatrixLoggedIn', { rooms });
-						getRoomMembers(commit, state, rooms);
+						commit('setMatrixLoggedIn', rooms);
 					})
 					.catch(error => commit('error', `${error} initMatrix with credentials`));
 			}
@@ -87,8 +57,7 @@ export const actions = {
 				.then(credentials => commit('setMatrixCredentials', { credentials, isGuest: false }))
 				.then(() => matrixClient.login(state.credentials, state.isGuest, dispatch, commit))
 				.then(rooms => {
-					commit('setMatrixLoggedIn', { rooms });
-					getRoomMembers(commit, state, rooms);
+					commit('setMatrixLoggedIn', rooms);
 				})
 				.catch(error => commit('error', `${error}3`));
 		});
@@ -123,15 +92,9 @@ export const actions = {
 			commit('error', 'The media item was already posted.');
 			return;
 		}
-		if (state.sources[roomId].humanReadablePosts) {
-			matrixClient
-				.sendMessage(roomId, getMediaLink(curMedia))
-				.catch(error => commit('error', `Posting message to matrix room failed. ${error}`));
-		} else {
-			matrixClient
-				.sendEvent(roomId, curMedia)
-				.catch(error => commit('error', `Posting media to matrix room failed. ${error}`));
-		}
+		matrixClient
+			.sendMediaMessage(roomId, curMedia, getMediaLink(curMedia))
+			.catch(error => commit('error', `Posting media to matrix room failed. ${error}`));
 	},
 	matrixRedact({ state, commit }, media) {
 		if (!(media.roomId && media.eventId)) {
@@ -211,7 +174,7 @@ export const actions = {
 			.then(room => {
 				room.name = options.name;
 				room.roomId = room.room_id;
-				commit('setMatrixLoggedIn', { rooms: [room] });
+				commit('setMatrixLoggedIn', [room]);
 				commit('updateMatrixRoom', {
 					roomId: room.roomId,
 					values: { isHidden: options.visibility === 'private' },
@@ -237,12 +200,6 @@ export const actions = {
 			.catch(error => commit('error', `Could not set tagName. ${error}`));
 	},
 	updateRoomOptions({ commit }, options) {
-		if ('humanReadablePosts' in options) {
-			commit('updateMatrixRoom', {
-				roomId: options.id,
-				values: { humanReadablePosts: options.humanReadablePosts },
-			});
-		}
 		if ('allowGuests' in options) {
 			matrixClient
 				.setRoomAllowGuests(options.id, options.allowGuests)
@@ -295,25 +252,27 @@ export const actions = {
 		matrixClient.logout();
 		commit('matrixLogout');
 	},
-	parseMatrixMessage({ state, commit, rootState }, matrixEvent) {
-		const { type, body } = matrixEvent;
-		if (type === 'text') {
-			window.console.log(`[Matrix-Text] %c${body}`, 'color: #2DA7EF;');
-			matrixEvent.body = urlify(body);
-			findMediaText(body, rootState.youtubeApiKey, rootState.mediaIndex).then(
-				({ mediaList }) => {
-					commit('updateMediaIndex', mediaList);
-					mediaList.forEach(media => {
-						const newEvent = Object.assign({}, matrixEvent, media)
-						delete newEvent.body;
-						commit('addChatlog', newEvent);
-					});
-				}
-			);
-		} else {
-			commit('updateMediaIndex', matrixEvent);
-			window.console.log(`[Matrix-Media] %c${matrixEvent.title}`, 'color: #2DA7EF;');
-		}
-		commit('addChatlog', matrixEvent);
+	parseMatrixMessages({ state, commit, rootState }, matrixEvents) {
+		matrixEvents.forEach(matrixEvent => {
+			const { type, body, msgtype } = matrixEvent;
+			if (body) matrixEvent.body = urlify(body);
+			if (type === 'text' && !msgtype === 'm.audius.media') {
+				window.console.log(`[Matrix-Text] %c${body}`, 'color: #2DA7EF;');
+				findMediaText(body, rootState.youtubeApiKey, rootState.mediaIndex).then(
+					({ mediaList, newMedia }) => {
+						if (newMedia.length) commit('updateMediaIndex', newMedia);
+						mediaList.forEach(media => {
+							const newEvent = Object.assign({}, matrixEvent, media);
+							delete newEvent.body;
+							commit('addChatlog', [newEvent]);
+						});
+					}
+				);
+			} else {
+				if (!(matrixEvent.id in rootState.mediaIndex)) commit('updateMediaIndex', matrixEvent);
+				window.console.log(`[Matrix-Media] %c${matrixEvent.title}`, 'color: #2DA7EF;');
+			}
+		});
+		commit('addChatlog', matrixEvents);
 	},
 };

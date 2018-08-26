@@ -15,7 +15,7 @@ export const presistMutation = {
 	migrationSuccess: ['migration'],
 	removeMedia: ['playList', 'sources', 'entities'],
 	setStartStopMarker: ['entities'],
-	videoError: ['entities'],
+	videoError: ['playedMedia'],
 	updateCurrentMedia: ['entities'],
 	setIsMobile: ['isMobile'],
 	play: ['playedMedia'],

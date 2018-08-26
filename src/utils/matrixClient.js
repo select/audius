@@ -1,4 +1,7 @@
 import Matrix from 'matrix-js-sdk';
+import { throttle } from './debounce';
+
+let eventQueue = [];
 
 export const matrixClient = {
 	client: null,
@@ -14,6 +17,12 @@ export const matrixClient = {
 			.then(et => this.client.paginateEventTimeline(et, { backwards: true }));
 	},
 	login(credentials, isGuest, dispatch, commit) {
+		const throttledDispatchQueue = throttle(() => {
+			if (eventQueue.length) {
+				dispatch('parseMatrixMessages', eventQueue);
+				eventQueue = [];
+			}
+		}, 250);
 		return new Promise(resolve => {
 			this.client = Matrix.createClient({
 				...credentials,
@@ -24,26 +33,35 @@ export const matrixClient = {
 
 			this.client.on('Room.timeline', event => {
 				const roomId = event.event.room_id;
-				const sender = event.sender.userId;
+				const sender = event.event.sender || event.event.user_id;
+				const eventId = event.event.event_id;
 				const createdAt = event.event.origin_server_ts;
-				if (!(roomId in this.firstEvent)) this.firstEvent[roomId] = event.event.event_id;
+				const { type } = event.event;
+				if (!(roomId in this.firstEvent)) this.firstEvent[roomId] = eventId;
 				const baseEvent = {
 					roomId,
 					sender,
 					createdAt,
-					eventId: event.event.event_id,
+					eventId,
 				};
-				if (event.event.type === 'audiusMedia') {
-					// legacy events, remove 2019
-					dispatch('parseMatrixMessage', Object.assign(event.event.content, baseEvent));
-				} else if (event.event.type === 'org.rockdapus.audius') {
+				let outEvent;
+				if (type === 'audiusMedia') {
+					// legacy event, remove 2019
+					eventQueue.push(Object.assign(event.event.content, baseEvent));
+				} else if (type === 'org.rockdapus.audius') {
+					// another legacy event, remove 2019
 					if (event.event.content.type === 'media') {
-						dispatch('parseMatrixMessage', Object.assign(event.event.content.data, baseEvent));
+						eventQueue.push(Object.assign(event.event.content.data, baseEvent));
 					}
-				} else if (event.event.type === 'm.room.message') {
-					const { body } = event.event.content;
-					dispatch('parseMatrixMessage', Object.assign({ body, type: 'text' }, baseEvent));
+				} else if (type === 'm.room.message') {
+					const { body, msgtype, media } = event.event.content;
+					if (body) eventQueue.push(Object.assign({ body, type: 'text', msgtype }, baseEvent));
+					if (msgtype === 'm.audius.media') {
+						eventQueue.push(Object.assign(media, baseEvent));
+					}
 				}
+				if (outEvent) eventQueue.push(outEvent);
+				throttledDispatchQueue();
 			});
 
 			this.client.on('sync', (syncState, a, event) => {
@@ -110,14 +128,18 @@ export const matrixClient = {
 	leaveRoom(roomIdOrAlias) {
 		return this.client.leave(roomIdOrAlias);
 	},
-	sendEvent(roomId, media) {
-		return this.client.sendEvent(roomId, 'org.rockdapus.audius', { type: 'media', data: media });
-	},
-	redactEvent(roomId, eventId) {
-		return this.client.redactEvent(roomId, eventId);
+	sendMediaMessage(roomId, media, body) {
+		return this.client.sendEvent(roomId, 'm.room.message', {
+			body,
+			msgtype: 'm.audius.media',
+			media,
+		});
 	},
 	sendMessage(roomId, media) {
 		return this.client.sendTextMessage(roomId, media);
+	},
+	redactEvent(roomId, eventId) {
+		return this.client.redactEvent(roomId, eventId);
 	},
 	setRoomAllowGuests(roomId, toggleState) {
 		return this.client.sendStateEvent(roomId, 'm.room.guest_access', {

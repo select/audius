@@ -109,7 +109,7 @@ export default {
 		...mapActions(['nextVideo']),
 
 		onPlayerError(event) {
-			this.videoError(event.data);
+			this.videoError();
 			this.error(`YouTube could not play the video. Error Code ${event.data}`);
 		},
 		onPlayerReady(event) {
