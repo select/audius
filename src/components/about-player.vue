@@ -1,5 +1,5 @@
 <script>
-import { mapMutations, mapState } from 'vuex';
+import { mapMutations, mapState, mapActions } from 'vuex';
 
 const AboutPlayerMore = () => import(/* webpackChunkName: "components/about-player-more" */'./about-player-more.vue');
 
@@ -11,8 +11,28 @@ export default {
 	data() {
 		return { showMore: false };
 	},
+	mounted() {
+		const $page = this.$refs.page.parentElement;
+		$page.addEventListener('wheel', this.scrolled);
+		$page.addEventListener('scroll', this.scrolled);
+	},
 	methods: {
-		...mapMutations(['setShowSettings', 'toggleLeftMenu', 'setLeftMenuTab', 'toggleSearch', 'setMainRightTab']),
+		...mapMutations([
+			'setShowSettings',
+			'toggleLeftMenu',
+			'setLeftMenuTab',
+			'toggleSearch',
+			'setMainRightTab',
+			'setMainLeftTab',
+		]),
+		...mapActions(['joinMatrixRoom']),
+		scrolled() {
+			// Detect when scrolled to bottom.
+			const $page = this.$refs.page.parentElement;
+			if ($page.scrollTop + $page.clientHeight >= $page.scrollHeight) {
+				this.showMore = true;
+			}
+		},
 	},
 	computed: {
 		...mapState(['isMobile']),
@@ -21,7 +41,7 @@ export default {
 </script>
 
 <template>
-	<div class="wmp-about">
+<div class="wmp-about" ref="page">
 	<h2 v-if="!isMobile">Keyboard shortcuts</h2>
 	<p>
 		<dl v-if="!isMobile">
@@ -43,12 +63,13 @@ export default {
 	Visit the <a @click="setMainRightTab('changelog')">changelog</a> and read about the latest changes.
 	<h2 id="community">Community</h2>
 	<p>
-		If you have questions or feedback, join the chat on matrix (#audius:matrix.org) or create an issue on github.<br>
+		If you have questions or feedback, join the chat or create an issue on github.<br>
 		<div class="about-player__community-btns">
-			<a
+			<div
 				class="button btn--blue gitter-chat"
-				href="https://riot.im/app/#/room/#audius:matrix.org"
-				target="_blank" rel="noopener">Join chat</a>
+				@click="joinMatrixRoom({ id: '#audius:matrix.org', name: 'Audius' }); setMainLeftTab('matrix')">
+				Join chat
+			</div>
 			<a class="button btn--blue" href="https://github.com/select/audius/issues" target="_blank" rel="noopener">Create issue</a>
 		</div>
 	</p>

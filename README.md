@@ -47,6 +47,14 @@ Create your own rooms with Audius and share it with your friends.
 
 ## Change log
 
+**2.0.13**	
+* Text chat for Matrix rooms.
+* Removed tabs from left menu, easier navigation between playlists, rooms, and channels.
+* Fix watched media ("42 New"), watched media now tracked globally.
+* Always send human readable matrix messages to other clients.
+* Added play history.
+* Load more room/channel content on (infinite)scroll.
+
 **2.0.12**		
 * Singe HTML file Audius app.
 * Modularization into main app, matrix, and webscraper to optimize loading speed.
