@@ -45,7 +45,7 @@ function updateMembers(state, rooms) {
 }
 
 function updateClientRooms(state, rooms) {
-	console.log('rooms', rooms);
+	// console.log('rooms', rooms);
 	const { userId } = state.credentials;
 	rooms.forEach(room => {
 		const { roomId } = room;

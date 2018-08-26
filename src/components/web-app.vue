@@ -32,7 +32,7 @@ export default {
 		<main class="box">
 			<left-menu></left-menu>
 			<div class="web-app__main">
-				<matrix-chat v-if="currentMediaSource.type === 'matrix' && mainLeftTab == 'matrix'"></matrix-chat>
+				<matrix-chat v-if="currentMediaSource.type === 'matrix' && mainLeftTab === 'matrix'"></matrix-chat>
 				<play-list v-else></play-list>
 				<main-right></main-right>
 			</div>
