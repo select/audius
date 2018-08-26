@@ -18,11 +18,11 @@ export default {
 	<p>
 		<b>2.0.13</b><br>
 		<ul>
+			<li> Added play history in right menu.</li>
 			<li> Text chat for Matrix rooms.</li>
 			<li> Removed tabs from left menu, easier navigation between playlists, rooms, and channels.</li>
 			<li> Fix watched media ("42 New").</li>
 			<li> Always send human readable matrix messages to other clients.</li>
-			<li> Added play history.</li>
 			<li> Load more room/channel content on (infinite)scroll.</li>
 		</ul>
 		<b>2.0.12</b><br>
