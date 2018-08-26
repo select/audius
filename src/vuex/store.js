@@ -13,16 +13,14 @@ Vue.use(Vuex);
 function _initModule(state, moduleName, module, savedState, commit) {
 	if (savedState) commit(`recoverState_${moduleName}`, savedState);
 	// addPresistMutations(moduleName, module.presistMutation);
-	Object.assign(
-		presistMutation,
-		Object.entries(module.presistMutation).reduce(
-			(acc, [mutation, presistStates]) =>
-				Object.assign(acc, {
-					[mutation]: presistStates.map(statePath => `${moduleName}.${statePath}`),
-				}),
-			{}
-		)
-	);
+	Object.entries(module.presistMutation).forEach(([mutation, presistStates]) => {
+		const stateList = presistStates.map(statePath => `${moduleName}.${statePath}`);
+		if (mutation in presistMutation) {
+			presistMutation[mutation] = [...presistMutation[mutation], ...stateList];
+		} else {
+			presistMutation[mutation] = stateList;
+		}
+	});
 	commit('setLoadedModules', moduleName);
 }
 
@@ -59,7 +57,7 @@ export const store = new Vuex.Store({
 								...new Set(
 									Object.values(presistMutation).reduce((acc, item) => [...acc, ...item], [])
 								),
-							]
+						  ]
 						: presistMutation[mutation.type];
 
 				if (presistStates === undefined) return;
