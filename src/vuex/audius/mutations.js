@@ -141,12 +141,6 @@ export const mutations = {
 			});
 		});
 		Object.assign(state, recoveredState);
-		if (state.currentMediaSource.type !== 'playList') {
-			state.currentMediaSource = {
-				type: 'playList',
-				id: '',
-			};
-		}
 		updateMediaIndex(state, state.entities);
 	},
 	loadBackup(state, backup) {
