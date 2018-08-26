@@ -112,7 +112,7 @@ export const mutations = {
 		const { roomId } = room;
 		if (roomId in state.sources) return;
 		state.sources[roomId] = Object.assign({}, matrixRoomTemplate(), { name: room.name });
-		state.sourcesOrdered = [...state.sourcesOrdered, roomId];
+		state.sourcesOrdered = [roomId, ...state.sourcesOrdered];
 	},
 	setMemberInfo(state, member) {
 		Object.assign(state.membersIndex[member.userId], member);
