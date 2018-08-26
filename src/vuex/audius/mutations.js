@@ -178,7 +178,7 @@ export const mutations = {
 		state.mainRightTab = state.mainRightTab === id ? '' : id;
 	},
 	setMainLeftTab(state, id) {
-		state.mainLeftTab = state.mainLeftTab === id ? '' : id;
+		state.mainLeftTab = id;
 	},
 	setShowSettings(state) {
 		state.showSettings = true;
