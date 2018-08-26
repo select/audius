@@ -16,4 +16,5 @@ export const presistMutation = {
 		'publicRooms',
 	],
 	setMemberInfo: ['membersIndex'],
+	addChatlog: ['sources'],
 };
