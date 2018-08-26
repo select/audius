@@ -325,8 +325,8 @@ export const mutations = {
 			state.playList.unshift(id);
 		}
 	},
-	dropMoveItem(state, { itemId, to }) {
-		if (state.leftMenuTab === 'playList') {
+	dropMoveItem(state, { itemId, to, sourceType }) {
+		if (sourceType === 'playList') {
 			const media = getMediaEntity(state, itemId);
 			if (media.id) state.entities[media.id] = media;
 

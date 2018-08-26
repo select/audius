@@ -97,7 +97,7 @@ export default {
 			if (type === 'matrix') {
 				this.matrixSend({ itemId, roomId: id });
 			} else {
-				this.dropMoveItem({ itemId, to: id });
+				this.dropMoveItem({ itemId, to: id, sourceType: type });
 			}
 		},
 		clear(close) {

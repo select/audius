@@ -19,7 +19,7 @@ export default {
 		...mapMutations(['selectMediaSource', 'deletePlayList', 'renamePlayList', 'dropMoveItem']),
 		dropAdd(event) { // Element is dropped into the list from another list
 			const itemId = event.item.dataset.id;
-			this.dropMoveItem({ itemId, from: this.currentMediaSource, to: this.id });
+			this.dropMoveItem({ itemId, from: this.currentMediaSource, to: this.id, sourceType: 'playList' });
 		},
 		_renamePlayList: debounce(function rn(data) { this.renamePlayList(data); }, 900),
 	},
