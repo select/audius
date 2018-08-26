@@ -76,7 +76,7 @@ export default {
 		<a
 			class="button btn--gray-ghost"
 			style="float:right"
-			title="Download Audius app"
+			title="Download the single file Audius app"
 			href="audius.app.html"
 			download>Audius app</a>
 	</p>
