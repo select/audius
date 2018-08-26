@@ -150,6 +150,7 @@ export default {
 					<matrix-room-tag
 						v-for="id in _hiddenSourcesOrdered"
 						:id="id"
+						:key="index"
 						:room="sources[id]"
 						element="li">
 					</matrix-room-tag>
