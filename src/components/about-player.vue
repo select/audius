@@ -67,7 +67,7 @@ export default {
 		<div class="about-player__community-btns">
 			<div
 				class="button btn--blue gitter-chat"
-				@click="joinMatrixRoom({ id: '#audius:matrix.org', name: 'Audius' }); setMainLeftTab('matrix')">
+				@click="setMainLeftTab('matrix'); joinMatrixRoom({ id: '#audius:matrix.org', name: 'Audius' });">
 				Join chat
 			</div>
 			<a class="button btn--blue" href="https://github.com/select/audius/issues" target="_blank" rel="noopener">Create issue</a>
@@ -75,7 +75,7 @@ export default {
 	</p>
 	<h2>Run your own Audius</h2>
 	<p>
-		Easy as - Download the <a href="audius.app.html" download>audius app</a>, upload it to <b>your server</b>. Done!
+		Easy as - Download the <a href="audius.app.html" download>single file audius app</a>, upload it to <b>your server</b>. Done!
 	<p>
 	<p>
 		If you run Audius as file (<pre style="display: inline">file://</pre> URL) all information are <b>lost</b> when you restart.
