@@ -38,7 +38,7 @@ export default {
 	},
 	mounted() {
 		this.checkElementVisible();
-		const $playList = this.$el.querySelector('.play-list__body');
+		const $playList = this.$refs.playlist;
 		$playList.addEventListener('scroll', throttle(() => {
 			this.checkElementVisible();
 		}, 500));
@@ -46,15 +46,7 @@ export default {
 		$playList.addEventListener('scroll', debounce(() => {
 			this.checkElementVisible(true);
 		}, 100));
-		$playList.addEventListener('wheel', () => {
-			// Detect when scrolled to bottom.
-			if ($playList.scrollTop + $playList.clientHeight >= $playList.scrollHeight) {
-				if (['matrix', 'webScraper'].includes(this.currentMediaSource.type)) {
-					this[`${this.currentMediaSource.type}LoadMore`](this.currentMediaSource.id);
-				}
-			}
-			this.checkElementVisible(true);
-		});
+		$playList.addEventListener('wheel', this.scrolled);
 	},
 	updated() {
 		this.checkElementVisible();
@@ -79,6 +71,15 @@ export default {
 			'selectMediaSource',
 		]),
 		...mapActions(['importURL', 'matrixPaginate', 'webScraperLoadMore', 'matrixSend', 'matrixLoadMore', 'webScraperLoadMore']),
+		scrolled(){
+			const $playList = this.$refs.playlist;
+			// Detect when scrolled to bottom.
+			if ($playList.scrollTop + $playList.clientHeight >= $playList.scrollHeight) {
+				if (['matrix', 'webScraper'].includes(this.currentMediaSource.type)) {
+					this[`${this.currentMediaSource.type}LoadMore`](this.currentMediaSource.id);
+				}
+			}
+		},
 		checkElementVisible(hide) {
 			/* eslint-disable no-param-reassign */
 			if (this.$refs.playListEls) {
@@ -186,7 +187,7 @@ export default {
 
 <template>
 <div class="play-list">
-	<div class="play-list__body">
+	<div class="play-list__body" ref="playlist">
 		<draggable
 			element="div"
 			class="play-list__greeting"

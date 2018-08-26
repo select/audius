@@ -55,13 +55,8 @@ export default {
 			}
 			latestCreatedAt = createdAt;
 		});
-		const $playList = this.$el.querySelector('.play-list');
-		$playList.addEventListener('wheel', () => {
-			// Detect when scrolled to top.
-			if ($playList.scrollTop === 0) {
-				this.matrixLoadMore(this.currentMediaSource.id);
-			}
-		});
+		$chat.addEventListener('wheel', this.scrolled);
+		$chat.addEventListener('scroll', this.scrolled);
 	},
 	computed: {
 		...mapState(['currentMediaSource', 'currentMedia', 'isPlaying', 'paginationIndex', 'isLoading']),
@@ -73,6 +68,12 @@ export default {
 	methods: {
 		...mapMutations(['setMainLeftTab']),
 		...mapActions(['matrixLoadMore', 'matrixSendText']),
+		scrolled() {
+			// Detect when scrolled to top.
+			if (this.$refs.chat.scrollTop === 0) {
+				this.matrixLoadMore(this.currentMediaSource.id);
+			}
+		},
 		send() {
 			if (this.messageText) {
 				this.matrixSendText({
