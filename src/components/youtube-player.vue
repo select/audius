@@ -89,6 +89,7 @@ export default {
 			this.player = new YT.Player('youtube-iframe', {
 				height: '100%',
 				width: '100%',
+				enablecastapi: true,
 				videoId: this.currentMedia.youtubeId || this.currentMedia.id || initialVideos[Math.floor(Math.random() * initialVideos.length)],
 				// playerVars: {controls: 0},
 				events: {
