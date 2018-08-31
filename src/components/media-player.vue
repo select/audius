@@ -124,13 +124,18 @@ export default {
 		z-index: 1
 	[class^="wmp-icon-fullscreen"]
 		position: absolute
-		bottom: 1.5 * $grid-space
-		right: 1.5 * $grid-space
-		color: $color-white
-		z-index: 12
-		cursor: pointer
+		right: 3 * $grid-space
+		bottom: 3 * $grid-space
+		width: $touch-size-tiny
+		height: $touch-size-tiny
 		transition: all $transition-time
+		color: $color-white
+		cursor: pointer
 		opacity: 1
+		z-index: 12
+		&:hover
+			background-color: rgba(255, 255, 255, .5)
+
 .media-player--hide.media-player--hide
 	opacity: 0
 .media-player__logo
