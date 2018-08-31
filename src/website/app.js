@@ -40,7 +40,7 @@ indexDB
 		// Recover the last saved state from IndexDb
 		store.commit('recoverState', recoveredState);
 
-		migrate2012(store, recoveredState);
+		migrate2012(store, recoveredState); // migration, remove at version 2.0.18!!!
 
 		// Detect if this a mobile device (before rendering the UI).
 		store.commit('setIsMobile', isMobile());
