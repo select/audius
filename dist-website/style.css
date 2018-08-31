@@ -131,7 +131,9 @@ header{position:relative;width:100%
 }
 .media-player.fullscreen{height:100%!important;left:0;position:fixed;top:0;width:100%;z-index:1
 }
-.media-player [class^=wmp-icon-fullscreen]{bottom:.675rem;color:#fff;cursor:pointer;opacity:1;position:absolute;right:.675rem;transition:all .25s;z-index:12
+.media-player [class^=wmp-icon-fullscreen]{bottom:1.35rem;color:#fff;cursor:pointer;height:1.8rem;opacity:1;position:absolute;right:1.35rem;transition:all .25s;width:1.8rem;z-index:12
+}
+.media-player [class^=wmp-icon-fullscreen]:hover{background-color:hsla(0,0%,100%,.5)
 }
 .media-player--hide.media-player--hide{opacity:0
 }
@@ -182,13 +184,9 @@ span.media-player__full-btn{color:#fff;cursor:pointer;position:absolute;right:0;
 }
 .play-list__greeting>div>button.button{height:3.15rem;margin-top:.9rem;width:15.75rem
 }
-.play-list__chat.play-list__chat{background:hsla(0,0%,100%,.8);cursor:pointer;position:absolute;right:.675rem;top:0;z-index:1
-}
 .play-list__body{flex:1;overflow-x:hidden;overflow-y:auto
 }
-.play-list-footer{background:#eff1f7;color:#a8adb7;display:flex;font-size:.7rem;overflow:hidden
-}
-.play-list-footer [class^=wmp-icon]{height:1.8rem;width:2.25rem
+.play-list-footer{background:#eff1f7;color:#a8adb7;display:flex;font-size:.7rem;overflow:hidden;position:relative
 }
 .play-list-footer ul{display:flex;flex:1;height:2.25rem;list-style:none;margin:0;padding:0;width:100%
 }
@@ -197,6 +195,8 @@ span.media-player__full-btn{color:#fff;cursor:pointer;position:absolute;right:0;
 .play-list-footer ul li:not(.play-list-footer--info){cursor:pointer;text-transform:uppercase
 }
 .play-list-footer ul li.active,.play-list-footer ul li:hover:not(.play-list-footer--info){background:#c8ccd5;color:#fff
+}
+.play-list-footer ul [class^=wmp-icon]{height:1.8rem;width:2.25rem
 }
 .play-list-footer__search{align-items:center;cursor:pointer;display:flex;height:2.25rem;max-width:3.15rem
 }
@@ -280,7 +280,7 @@ to{-webkit-transform:rotate(1turn);transform:rotate(1turn)
 }
 
 
-.play-list-manager__wrapper{flex:1;overflow-y:auto
+.play-list-manager__wrapper{flex:1
 }
 .play-list-manager__wrapper::-webkit-scrollbar-thumb{background:#e2e4e9
 }
@@ -320,12 +320,16 @@ to{-webkit-transform:rotate(1turn);transform:rotate(1turn)
 }
 .play-list-manager__input input:-moz-placeholder,.play-list-manager__input input::-moz-placeholder{color:#a8adb7
 }
+.play-list-manager__create{position:relative
+}
 .play-list-manager__create:before{-webkit-transform:rotate(-53.4deg);-webkit-transform-origin:5.8rem 3.5rem;color:#e2e4e9;content:"CREATE";font-size:.8rem;pointer-events:none;position:absolute;transform:rotate(-53.4deg);transform-origin:5.8rem 3.5rem
 }
 
 .left-menu{background:#a8adb7;border-right:1px solid #c8ccd5;display:flex;flex-direction:column;margin-left:0;position:relative;transition:all .25s;width:25vw
 }
 .left-menu.hide{margin-left:-24.5vw;width:25vw!important
+}
+.left-menu h2{color:#707379;font-size:1.1rem;margin-left:.45rem
 }
 .left-menu__wrapper{height:100%;overflow-y:auto
 }
@@ -334,6 +338,8 @@ to{-webkit-transform:rotate(1turn);transform:rotate(1turn)
 .left-menu__wrapper::-webkit-scrollbar-track{background:#a8adb7
 }
 .left-menu__drag-handle{-moz-user-select:none;-ms-user-select:none;-webkit-user-select:none;background:transparent;cursor:ew-resize;height:100%;position:absolute;right:-.1125rem;top:0;user-select:none;width:.225rem
+}
+.left-menu__spacer{height:3.15rem
 }
 .nav-handle{cursor:pointer;position:absolute;right:-2em;top:calc(50% - 1.125rem);z-index:1
 }
@@ -551,11 +557,11 @@ html{font-size:2.3vmin
 }
 .modal__btn-group{display:flex;justify-content:space-between;margin-top:1.35rem;width:100%
 }
-ul.tabs{display:flex;list-style:none;margin:0;min-height:2.25rem;padding:0;width:100%
+.tabs{display:flex;list-style:none;margin:0;min-height:2.25rem;padding:0;width:100%
 }
-ul.tabs li{align-items:center;background:#eff1f7;color:#a8adb7;cursor:pointer;display:flex;flex:1;font-size:.7em;justify-content:center;text-transform:uppercase;transition:all .25s;white-space:nowrap
+.tabs>*{align-items:center;background:#eff1f7;color:#a8adb7;cursor:pointer;display:flex;flex:1;font-size:.7em;justify-content:center;text-decoration:none;text-transform:uppercase;transition:all .25s;white-space:nowrap
 }
-ul.tabs li.active,ul.tabs li:hover{background:#c8ccd5;color:#fff
+.tabs>.active,.tabs>:hover{background:#c8ccd5;color:#fff
 }
 .box-1-1{display:flex
 }

@@ -35,7 +35,7 @@ module.exports = Object.assign(configDev, {
 			asset: '[path].gz[query]',
 			algorithm: 'gzip',
 			test: /\.(js|html|json)$/,
-			threshold: 10240,
+			threshold: 10,
 			minRatio: 0.8,
 		}),
 		// service worker caching

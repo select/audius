@@ -17,11 +17,18 @@
 .matrix-consent p{overflow:hidden;text-overflow:ellipsis
 }
 
+.matrix-room__tag-footer{display:flex
+}
+.matrix-room__tag-footer div{min-width:4em
+}
+
 .matrix-room__menu{display:none
 }
 .matrix-room{color:#fff
 }
 .matrix-room .modal__body{color:#707379
+}
+.matrix-room__room-join-create,.matrix-room__room-list{position:relative
 }
 .matrix-room__room-join-create:before,.matrix-room__room-list:before{-webkit-transform:rotate(-53.4deg);-webkit-transform-origin:5.8rem 3.5rem;color:#e2e4e9;font-size:.8rem;pointer-events:none;position:absolute;transform:rotate(-53.4deg);transform-origin:5.8rem 3.5rem
 }
@@ -38,10 +45,6 @@
 .play-list-manager__room-suggestions>button.button{align-items:center;display:inline-flex;padding:0 .9rem
 }
 .play-list-manager__room-suggestions>button.button>span{margin-right:.9rem
-}
-.matrix-room__tag-footer{display:flex
-}
-.matrix-room__tag-footer div{min-width:4em
 }
 .play-list-manager__show-hidden-rooms{cursor:pointer;font-size:.7rem;margin-left:.45rem;text-align:center;text-transform:uppercase
 }
