@@ -317,10 +317,11 @@ export default {
 				{{filteredPlayListLength}} Songs
 			</li>
 			<li
+				@click="setMainLeftTab('matrix')"
 				v-if="this.currentMediaSource.type === 'matrix'">
 				<span
-					@click="setMainLeftTab('matrix')"
 					class="wmp-icon-chat play-list__chat"></span>
+					Chat
 			</li>
 			<li
 				v-if="currentMediaSource.type === 'playList'"
