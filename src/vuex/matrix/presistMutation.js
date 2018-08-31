@@ -1,4 +1,5 @@
 export const presistMutation = {
+	recoverState: ['sources'], // migration, remov 2.0.18
 	setMatrixCredentials: ['credentials', 'hasCredentials', 'isGuest'],
 	setPublicRooms: ['publicRooms'],
 	matrixRemoveAccount: ['credentials', 'hasCredentials', 'isGuest'],

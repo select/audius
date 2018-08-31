@@ -134,11 +134,21 @@ function updateMediaIndex(state, entities) {
 export const mutations = {
 	recoverState(state, recoveredState) {
 		['matrix', 'webScraper'].forEach(moduleName => {
+			if (!recoveredState.playedMedia) recoveredState.playedMedia = {};
+			if (recoveredState[moduleName].sources) {
+				Object.values(recoveredState[moduleName].sources).forEach(source => {
+					updateMediaIndex(state, source.playList);
+					if (source.playedMedia) { // migration, remove at version 2.0.18!!!
+						console.log(`Migrating playedMedia, this message should disappear. ${source.name} ${moduleName}`)
+						Object.entries(source.playedMedia).forEach(([id, date]) => {
+							recoveredState.playedMedia[id] = { lastPlay: new Date(date).getTime(), count: 1 };
+						});
+						delete source.playedMedia;
+					}
+				});
+			}
 			Object.assign(state[moduleName], recoveredState[moduleName]);
 			delete recoveredState[moduleName];
-			state[moduleName].sourcesOrdered.forEach(sourceId => {
-				updateMediaIndex(state, state[moduleName].sources[sourceId].playList);
-			});
 		});
 		Object.assign(state, recoveredState);
 		updateMediaIndex(state, state.entities);

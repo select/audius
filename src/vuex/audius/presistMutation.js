@@ -1,4 +1,5 @@
 export const presistMutation = {
+	recoverState: ['playedMedia'], // migration, remov 2.0.18
 	addSearchResult: ['entities', 'playList', 'sources'],
 	dropSearchResult: ['entities', 'playList', 'sources'],
 	dropMoveItem: ['playList', 'sources', 'entities'],
