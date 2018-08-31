@@ -48,6 +48,13 @@ function addMissingMediaToEntities(state, playList) {
 export function next(state) {
 	const playListEntities = getCurrentPlayListEntities(state);
 	const idx = playListEntities.findIndex(m => m.id === state.currentMedia.id);
+	if (!playListEntities.length) {
+		state.errorMessages = [
+			...state.errorMessages,
+			{error: 'The playlist is empty. Please add some songs.', id: state.errorMessages.length },
+		];
+		return;
+	}
 	let media;
 	if (state.repeat1) {
 		state.skipToTime = state.currentMedia.start || 0;
@@ -161,6 +168,8 @@ export const mutations = {
 			} else {
 				state = Object.assign(state, backup.data);
 			}
+		} else {
+			throw Error('Backup is missing the key "AudiusBackup". Please upload a valid backup.');
 		}
 		updateMediaIndex(state, state.entities);
 	},
