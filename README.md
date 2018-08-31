@@ -8,12 +8,12 @@ Audius is the ultimate streaming music player.
 - Organize playlists with drag and drop.
 - Supports: YouTube/Vimeo/.mp3/.oga/.wav/.mp4/.webm/.ogg URLs.
 - Plays Imgur "Most Viral" as video stream.
+- Connect to a Matrix room to chat, share, and discover music with your friends.
 - Create your own web channels with the build in web scraper.
 - Set start end times of media items (e.g. to cut of trailing silence)
 - Split YouTube full albums into separate songs.
-- Connect to the Matrix network and create rooms to share and discover music with your friends.
 - Runs "offline" - a pure HTML5 progressive web app that is self contained.
-- Run you own Audius instance as as single HTML file.
+- Run your own Audius instance as as single HTML file.
 
 <img src="https://audius.rockdapus.org/img/audius.screenshot.1280x800.png" />
 
@@ -135,6 +135,10 @@ Create your own rooms with Audius and share it with your friends.
 *   Fixed, shuffle does not play same songs again.
 *   New (import)/export using [myjson.com](http://myjson.com/).
 
+## Run you own Audius
+
+Download the <a href="audius.app.hmtl" download>audius app</a> and upload it to you server.
+
 ## Install Audius as app
 
 **Chrome desktop:**
@@ -145,11 +149,6 @@ Create your own rooms with Audius and share it with your friends.
 		Windows users: Click _Add to taskbar_.
 		Linux users: Click _Add to desktop_.
 		Chromebook users: Click _Add to shelf_.
-
-## Run you own Audius
-
-Download the <a href="audius.app.hmtl" download>audius app</a> and upload it to you server.
-
 
 **Chrome android:**
 Tap the menu button and tap _Add to homescreen_. The app is not yet optimized for mobile phones, it might work on tablets.
