@@ -2,6 +2,7 @@ import Matrix from 'matrix-js-sdk';
 import { throttle } from './debounce';
 
 let eventQueue = [];
+const knownEvents = new Set();
 
 export const matrixClient = {
 	client: null,
@@ -32,9 +33,14 @@ export const matrixClient = {
 			});
 
 			this.client.on('Room.timeline', event => {
+				const eventId = event.event.event_id;
+				if (knownEvents.has(eventId)) {
+					console.warn('Matrix SDK send duplicate events');
+					return;
+				}
+				knownEvents.add(eventId);
 				const roomId = event.event.room_id;
 				const sender = event.event.sender || event.event.user_id;
-				const eventId = event.event.event_id;
 				const createdAt = event.event.origin_server_ts;
 				const { type } = event.event;
 				if (!(roomId in this.firstEvent)) this.firstEvent[roomId] = eventId;
@@ -95,7 +101,7 @@ export const matrixClient = {
 			});
 
 			if (isGuest === undefined || isGuest) this.client.setGuest(true);
-			this.client.startClient({ initialSyncLimit: 20 });
+			this.client.startClient({ initialSyncLimit: 5 });
 		});
 	},
 	// return promise
@@ -136,6 +142,7 @@ export const matrixClient = {
 		});
 	},
 	sendMessage(roomId, media) {
+		console.log("sendMessage media", media);
 		return this.client.sendTextMessage(roomId, media);
 	},
 	redactEvent(roomId, eventId) {
