@@ -71,7 +71,7 @@ export default {
 			'selectMediaSource',
 		]),
 		...mapActions(['importURL', 'matrixPaginate', 'webScraperLoadMore', 'matrixSend', 'matrixLoadMore', 'webScraperLoadMore']),
-		scrolled(){
+		scrolled() {
 			const $playList = this.$refs.playlist;
 			// Detect when scrolled to bottom.
 			if ($playList.scrollTop + $playList.clientHeight >= $playList.scrollHeight) {
@@ -321,7 +321,8 @@ export default {
 				v-if="this.currentMediaSource.type === 'matrix'">
 				<span
 					class="wmp-icon-chat play-list__chat"></span>
-					Chat
+				Chat
+				<div class="loader" v-show="isLoading[currentMediaSource.id]"></div>
 			</li>
 			<li
 				v-if="currentMediaSource.type === 'playList'"

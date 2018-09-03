@@ -17,7 +17,12 @@ export default {
 		},
 		dropAdd(event) { // Element is dropped into the list from another list
 			const itemId = event.item.dataset.id;
-			this.dropMoveItem({ itemId, from: this.currentMediaSource.id, to: '', sourceType: 'playList' });
+			this.dropMoveItem({
+				itemId,
+				from: this.currentMediaSource.id,
+				to: '',
+				sourceType: 'playList',
+			});
 		},
 	},
 	computed: {
