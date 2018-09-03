@@ -65,16 +65,5 @@ module.exports = {
 		new MiniCssExtractPlugin({
 			filename: 'style.css',
 		}),
-		// new webpack.LoaderOptionsPlugin({
-		// 	options: {
-		// 		context: __dirname,
-		// 		postcss: [autoprefixer],
-		// 		babel: {
-		// 			presets: ['es2015', 'stage-2'],
-		// 			comments: false,
-		// 			plugins: ['transform-es2015-destructuring', 'transform-object-rest-spread'],
-		// 		},
-		// 	},
-		// }),
 	],
 };
