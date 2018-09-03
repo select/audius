@@ -1,5 +1,6 @@
 <script >
 import { zeroPad } from '../utils';
+import { mapActions } from 'vuex';
 
 export default {
 	props: {
@@ -7,6 +8,9 @@ export default {
 		isAuthor: Boolean,
 		isAdmin: Boolean,
 		membersIndex: Object,
+	},
+	methods: {
+		...mapActions(['matrixRedact']),
 	},
 	computed: {
 		event() { return this.video; },
@@ -20,10 +24,10 @@ export default {
 		},
 		messages() {
 			let currentEvent = this.event;
-			const children = [{ body: currentEvent.body, status: currentEvent.status }];
+			const children = [currentEvent];
 			while (currentEvent.childEvent) {
 				currentEvent = currentEvent.childEvent;
-				children.push({ body: currentEvent.body, status: currentEvent.status });
+				children.push(currentEvent);
 			}
 			return children;
 		},
@@ -44,9 +48,11 @@ export default {
 				v-for="message in messages"
 				:class="{'matrix-chat-message--sending': message.status === 'sending'}"
 				>
-				<span v-html="message.body"></span>
+				<span v-if="message.body" v-html="message.body"></span>
+				<img v-if="message.url" :src="message.url">
 				<div
 					v-if="isAuthor || isAdmin"
+					@click="matrixRedact(message)"
 					class="wmp-icon-close matrix-chat-message__delete"
 					title="Delete this message"></div>
 			</div>

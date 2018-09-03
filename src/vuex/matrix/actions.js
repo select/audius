@@ -230,12 +230,16 @@ export const actions = {
 			.leaveRoom(roomIdOrAlias)
 			.catch(() => commit('error', 'Leaving matrix room failed'));
 	},
+	searchRoom({ commit }, query) {
+		matrixClient.searchRoom(query).then(rooms => {
+			commit('setRoomSearchResults', rooms);
+		});
+	},
 	updatePublicRooms({ commit }) {
-		const blacklist = new Set(['!hUkskxfIMmwAQuZIjz:matrix.org']);
+
 		matrixClient
-			.listPublicRooms()
-			.then(res => {
-				const rooms = res.chunk.filter(({ room_id }) => !blacklist.has(room_id));
+			.searchRoom('audius')
+			.then(rooms => {
 				commit(
 					'setPublicRooms',
 					rooms.map(room => ({

@@ -76,9 +76,12 @@ export default {
 			// Detect when scrolled to bottom.
 			if ($playList.scrollTop + $playList.clientHeight >= $playList.scrollHeight) {
 				if (['matrix', 'webScraper'].includes(this.currentMediaSource.type)) {
-					this[`${this.currentMediaSource.type}LoadMore`](this.currentMediaSource.id);
+					this.loadMore();
 				}
 			}
+		},
+		loadMore() {
+			this[`${this.currentMediaSource.type}LoadMore`](this.currentMediaSource.id);
 		},
 		checkElementVisible(hide) {
 			/* eslint-disable no-param-reassign */
@@ -151,6 +154,9 @@ export default {
 			'paginationIndex',
 			'isLoading',
 		]),
+		...mapState({
+			matrixLoggedIn: state => state.matrix.matrixLoggedIn,
+		}),
 		_entities: {
 			get() {
 				return this.filteredPlayList;
@@ -245,8 +251,7 @@ export default {
 		</div>
 
 		<div
-			v-show="!(showImport || showExport)"
-			>
+			v-show="!(showImport || showExport)">
 			<div
 				v-if="['matrix', 'webScraper'].includes(currentMediaSource.type) && !showWatched[currentMediaSource.id]"
 				@click="setShowWatched({ id: currentMediaSource.id, toggleState: true })"
@@ -283,25 +288,17 @@ export default {
 
 			<div
 				class="play-list__greeting"
-				v-if="currentMediaSource.type === 'matrix' && !_entities.length ">
-				Nothing found. Click load more or add from search or playlists.
+				v-if="!_entities.length ">
+				<span v-if="currentMediaSource.type === 'matrix'">
+					Nothing found. Click load more or add from search or playlists.
+				</span>
+				<span v-if="currentMediaSource.type == 'webScraper'">
+					Nothing found. Click below to load more.
+				</span>
 			</div>
 			<div
-				class="play-list__greeting"
-				v-if="currentMediaSource.type == 'webScraper' && !_entities.length ">
-				Nothing found. Click below to load more.
-			</div>
-
-			<div
-				v-if="currentMediaSource.type == 'webScraper'"
-				@click="webScraperLoadMore(currentMediaSource.id)"
-				class="play-list__load-more">
-				… load more (Page {{paginationIndex[currentMediaSource.id] || 0}})
-				<div class="loader" v-show="isLoading[currentMediaSource.id]"></div>
-			</div>
-			<div
-				v-if="currentMediaSource.type == 'matrix'"
-				@click="matrixLoadMore(currentMediaSource.id)"
+				v-if="['webScraper', 'matrix'].includes(currentMediaSource.type)"
+				@click="loadMore()"
 				class="play-list__load-more">
 				… load more (Page {{paginationIndex[currentMediaSource.id] || 0}})
 				<div class="loader" v-show="isLoading[currentMediaSource.id]"></div>
@@ -322,7 +319,7 @@ export default {
 				<span
 					class="wmp-icon-chat play-list__chat"></span>
 				Chat
-				<div class="loader" v-show="isLoading[currentMediaSource.id]"></div>
+				<div class="loader" v-show="!matrixLoggedIn"></div>
 			</li>
 			<li
 				v-if="currentMediaSource.type === 'playList'"

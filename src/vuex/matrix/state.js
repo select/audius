@@ -1,13 +1,14 @@
 // Matrix
 export const state = {
+	matrixLoggedIn: false,
 	currentMatrixRoom: null,
 	sources: {},
 	chatLog: {},
+	roomSearchResults: [],
 	membersIndex: {},
 	sourcesOrdered: [],
 	createMatrixRoomModal: false,
 	showMatrixRoomDirectory: false,
-	matrixLoggedIn: false,
 	lastPageReached: {},
 	showMatrixLoginModal: false,
 	showMatrixConsentModal: false,

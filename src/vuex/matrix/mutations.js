@@ -189,6 +189,9 @@ export const mutations = {
 		// Update the reference so the UI redraws.
 		state.sources = Object.assign({}, state.sources);
 	},
+	setRoomSearchResults(state, rooms) {
+		state.roomSearchResults = rooms;
+	},
 	setLastPageReached(state, roomId) {
 		state.lastPageReached[roomId] = true;
 	},
@@ -201,6 +204,13 @@ export const mutations = {
 		if (update.eventId !== update.data.eventId) {
 			eventIndex[update.data.eventId] = eventIndex[update.eventId];
 		}
+		state.sources = Object.assign({}, state.sources);
+	},
+	matrixRedact(state, { eventId, roomId }) {
+		state.chatLog[roomId] = state.chatLog[roomId].filter(event => event.eventId !== eventId);
+		state.chatLog = Object.assign({}, state.chatLog);
+
+		state.sources[roomId].playList = state.sources[roomId].filter(event => event.eventId !== eventId);
 		state.sources = Object.assign({}, state.sources);
 	},
 	addChatlog(state, originalEvents) {

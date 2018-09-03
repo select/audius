@@ -56,7 +56,9 @@ export const matrixClient = {
 					status: event.status,
 				};
 				let outEvent;
-				if (type === 'audiusMedia') {
+				if (type === 'm.room.redaction') {
+					commit('matrixRedact', { eventId: event.event.redacts, roomId });
+				} else if (type === 'audiusMedia') {
 					// legacy event, remove 2019
 					eventQueue.push(Object.assign(event.event.content, baseEvent));
 				} else if (type === 'org.rockdapus.audius') {
@@ -66,13 +68,22 @@ export const matrixClient = {
 					}
 				} else if (type === 'm.room.message') {
 					const content = event.getContent();
-					const { body } = content;
+					const { body, msgtype } = content;
 					const isAudiusMessage = 'org.rockdapus.audius.media' in content;
+
+					if (msgtype === 'm.image') {
+						const url = this.client.mxcUrlToHttp(content.url, window.innerWidth, window.innerHeight, 'scale');
+						eventQueue.push(Object.assign({ url, type: 'text', parse: false }, baseEvent));
+					}
+
 					if (isAudiusMessage) {
 						eventQueue.push(Object.assign(content['org.rockdapus.audius.media'], baseEvent));
 					}
+
 					if (body) {
-						eventQueue.push(Object.assign({ body, type: 'text', parse: !isAudiusMessage }, baseEvent));
+						eventQueue.push(
+							Object.assign({ body, type: 'text', parse: !isAudiusMessage }, baseEvent)
+						);
 					}
 				}
 				if (outEvent) eventQueue.push(outEvent);
@@ -108,7 +119,6 @@ export const matrixClient = {
 					resolve(this.client.getRooms());
 				}
 			});
-
 			if (isGuest === undefined || isGuest) this.client.setGuest(true);
 			this.client.startClient({ initialSyncLimit: 2 });
 		});
@@ -130,7 +140,7 @@ export const matrixClient = {
 	},
 	getAvatarUrl(userId) {
 		return this.client.getProfileInfo(userId, 'avatar_url').then(result => {
-			if (result.avatar_url) return this.client.mxcUrlToHttp(result.avatar_url, 100);
+			if (result.avatar_url) return this.client.mxcUrlToHttp(result.avatar_url, undefined, 100);
 			return null;
 		});
 	},
@@ -144,13 +154,11 @@ export const matrixClient = {
 		return this.client.leave(roomIdOrAlias);
 	},
 	sendMediaMessage(roomId, media, body) {
-		console.log("media", media);
 		const removeKeys = new Set(['eventId', 'roomId', 'sender']);
 		const newMedia = Object.entries(media).reduce((acc, [key, value]) => {
 			if (!removeKeys.has(key)) Object.assign(acc, { [key]: value });
 			return acc;
 		}, {});
-		console.log("newMedia", newMedia);
 		return this.client.sendEvent(roomId, 'm.room.message', {
 			body,
 			msgtype: 'm.text',
@@ -215,12 +223,16 @@ export const matrixClient = {
 			})
 		);
 	},
-	listPublicRooms() {
+	invite(roomId, userId) {
+		return this.client.invite(roomId, userId);
+	},
+	searchRoom(query) {
+		const blacklist = new Set(['!hUkskxfIMmwAQuZIjz:matrix.org']);
 		return this.client.publicRooms({
 			filter: {
-				generic_search_term: 'audius',
+				generic_search_term: query,
 			},
-		});
+		}).then(res => res.chunk.filter(({ room_id }) => !blacklist.has(room_id)));
 	},
 	getCredentialsWithPassword(username, password) {
 		return new Promise(resolve => {

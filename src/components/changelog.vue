@@ -20,11 +20,12 @@ export default {
 		<ul>
 			<li> Fix audius channels (extension), scrape external sites again.</li>
 			<li> Add option to forward channel scrape results to matrix channel.</li>
-			<li> Matrix search and join all public rooms.</li>
-			<li> Sort matrix rooms in left menu.</li>
-			<li> Matrix message event format improved.</li>
-			<li> Matrix images are shown in chat</li>
-			<li> Show matrix message send staus.</li>
+			<li> Matrix: search and join all public rooms.</li>
+			<li> Matrix: sort rooms in left menu.</li>
+			<li> Matrix: message event format improved.</li>
+			<li> Matrix: images are shown in chat.</li>
+			<li> Matrix: messages can be deleted.</li>
+			<li> Matrix: show message send staus.</li>
 			<li> Enable Chrome Cast for YouTube.</li>
 		</ul>
 		<b>2.0.13</b><br>
