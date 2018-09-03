@@ -16,6 +16,15 @@ export default {
 		MatrixRoomManager,
 		WebScraperManager,
 	},
+	data() {
+		return {
+			fold: {
+				Playlists: true,
+				Rooms: true,
+				Channels: true,
+			},
+		};
+	},
 	mounted() {
 		document.addEventListener('mouseup', () => {
 			this.resize = false;
@@ -58,14 +67,14 @@ export default {
 			v-bind:class="{ active: tabName == 'playList' }">{{tabName}}</a>
 	</div> -->
 	<div class="left-menu__wrapper">
-		<h2 id="lm-playlists">Playlists</h2>
-		<play-list-manager></play-list-manager>
-		<div class="left-menu__spacer"></div>
-		<h2 id="lm-rooms">Rooms</h2>
-		<matrix-room-manager></matrix-room-manager>
-		<div class="left-menu__spacer"></div>
-		<h2 id="lm-channels">Channels</h2>
-		<web-scraper-manager></web-scraper-manager>
+		<h2 id="lm-playlists" title="fold" @click="fold['Playlists'] = !fold['Playlists']">Playlists</h2>
+		<play-list-manager v-show="fold['Playlists']"></play-list-manager>
+		<div class="left-menu__spacer" v-show="fold['Playlists']"></div>
+		<h2 id="lm-rooms" title="fold" @click="fold['Rooms'] = !fold['Rooms']">Rooms</h2>
+		<matrix-room-manager v-show="fold['Rooms']"></matrix-room-manager>
+		<div class="left-menu__spacer" v-show="fold['Rooms']"></div>
+		<h2 id="lm-channels" title="fold" @click="fold['Channels'] = !fold['Channels']">Channels</h2>
+		<web-scraper-manager v-show="fold['Channels']"></web-scraper-manager>
 		<div class="left-menu__spacer"></div>
 	</div>
 	<div
@@ -96,6 +105,7 @@ export default {
 		margin-left: $grid-space
 		color: $color-palesky
 		font-size: 1.1rem
+		cursor: pointer
 
 .left-menu__wrapper
 	height: 100%
