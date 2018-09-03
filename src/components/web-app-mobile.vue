@@ -119,7 +119,7 @@ export default {
 			padding: 0 $grid-space
 			&:first-child
 				flex: 1
-			[class^="wmp-icon"]
+			[class^='wmp-icon-']
 				width: $touch-size-tiny
 	.matrix-room
 		color: $color-palesky

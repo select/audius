@@ -312,7 +312,7 @@ export default {
 				white-space: nowrap
 				overflow: hidden
 				text-overflow: ellipsis
-			[class^="wmp-icon"]
+			[class^='wmp-icon-']
 				display: none
 			&:hover
 				*:last-child

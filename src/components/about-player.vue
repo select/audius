@@ -111,7 +111,7 @@ export default {
 
 .wmp-about
 	padding: $grid-space
-	[class^="wmp-icon-"]
+	[class^='wmp-icon-']
 		height: .5rem
 		width: 1.5rem
 	a
