@@ -36,6 +36,7 @@ export default {
 			'toggleMatrixRoomDirectory',
 			'toggleMatrixLoginModal',
 			'setMatrixRoomTag',
+			'moveMatrixSourcesOrdered',
 			'error',
 		]),
 		...mapActions(['joinMatrixRoom', 'initModule']),
@@ -77,7 +78,7 @@ export default {
 				return this.sourcesOrdered.filter(id => !this.sources[id].hidden);
 			},
 			set(value) {
-				this.error('not implemented');
+				this.moveMatrixSourcesOrdered([...value, ...this._hiddenSourcesOrdered]);
 			},
 		},
 	},
@@ -130,16 +131,21 @@ export default {
 			}">
 			<matrix-room-tag
 				v-for="(id, index) in _sourcesOrdered"
-				:id="id"
-				:room="sources[id]"
-				:key="index"
-				childElement="li"
 				v-bind:class="{ active: currentMediaSource.id == id }"
-				element="draggable">
+				:key="index"
+				:id="id"
+				:room="sources[id]">
 			</matrix-room-tag>
+
 		</draggable>
 
 		<div v-if="matrixLoggedIn && _hiddenSourcesOrdered.length">
+			<div
+				v-if="!showHidden"
+				@click="showHidden = true"
+				class="play-list-manager__show-hidden-rooms">
+				show hidden
+			</div>
 			<div v-if="showHidden">
 				<div
 					@click="showHidden = false"
@@ -148,19 +154,12 @@ export default {
 				</div>
 				<ul>
 					<matrix-room-tag
-						v-for="id in _hiddenSourcesOrdered"
-						:id="id"
+						v-for="(id, index) in _hiddenSourcesOrdered"
 						:key="index"
-						:room="sources[id]"
-						element="li">
+						:id="id"
+						:room="sources[id]">
 					</matrix-room-tag>
 				</ul>
-			</div>
-			<div
-				@click="showHidden = true"
-				class="play-list-manager__show-hidden-rooms"
-				v-if="!showHidden">
-				show hidden
 			</div>
 		</div>
 

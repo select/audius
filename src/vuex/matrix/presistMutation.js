@@ -18,5 +18,6 @@ export const presistMutation = {
 	],
 	setMemberInfo: ['membersIndex'],
 	addChatlog: ['sources'],
+	moveMatrixSourcesOrdered: ['sourcesOrdered'],
 	updateMatrixEvent: ['sources'],
 };

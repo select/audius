@@ -10,8 +10,6 @@ export default {
 	props: {
 		id: { type: String, required: true },
 		room: { type: Object, required: true },
-		element: { type: String, required: true },
-		childElement: String,
 	},
 	data() {
 		return {
@@ -32,35 +30,35 @@ export default {
 </script>
 
 <template>
-	<component
-		v-bind:is="element"
-		:options="{
-			sort: false,
-			handle: '.no-handle',
-			group: { name: 'lists' }
-		}"
-		class="play-list-manager__tag-drop-zone"
-		@add="dropAdd($event)"
-		:element="childElement">
+	<li>
 		<div class="play-list-manager__drag-handle"></div>
-		<div
-			class="play-list-manager__tag-body"
-			@click="selectMediaSource({ type: 'matrix', id: id })">
-			<div>
-				{{room.name}}
+		<draggable
+			class="play-list-manager__tag-drop-zone"
+			@add="dropAdd"
+			:options="{
+				sort: false,
+				handle: '.no-handle',
+				group: { name: 'lists' }
+			}">
+			<div
+				class="play-list-manager__tag-body"
+				@click="selectMediaSource({ type: 'matrix', id: id })">
+				<div>
+					{{room.name}}
+				</div>
+				<div class="matrix-room__tag-footer">
+					<div> {{room.playList.filter(({id}) => !(id in playedMedia)).length}} New</div>
+					<div> {{room.members ? room.members.length : '?'}} Members </div>
+				</div>
 			</div>
-			<div class="matrix-room__tag-footer">
-				<div> {{room.playList.filter(({id}) => !(id in playedMedia)).length}} New</div>
-				<div> {{room.members ? room.members.length : '?'}} Members </div>
-			</div>
-		</div>
+		</draggable>
 		<div class="play-list-manager__menu">
 			<span
 				class="wmp-icon-more_vert"
 				title="Room settings"
 				@click.stop="setShowMediumSettings({ medium: 'matrix', id })"></span>
 		</div>
-	</component>
+	</li>
 
 </template>
 
