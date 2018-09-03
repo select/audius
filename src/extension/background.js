@@ -95,7 +95,7 @@ setTimeout(() => {
 
 /* eslint-disable no-await-in-loop */
 // I use await inside a loop to queue the requests.
-// One a request is finished, wait 2s and then start the next one
+// Once a request is finished, wait 2s and then start the next one
 browser.runtime.onMessage.addListener(async request => {
 	if (request.audius) {
 		sandbox.contentWindow.postMessage({ type: 'handshakeSandbox' }, '*');

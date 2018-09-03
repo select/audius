@@ -1,7 +1,5 @@
 /* global __dirname */
 const path = require('path');
-const webpack = require('webpack');
-const autoprefixer = require('autoprefixer');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const CircularDependencyPlugin = require('circular-dependency-plugin');
 const { VueLoaderPlugin } = require('vue-loader');
@@ -28,6 +26,7 @@ module.exports = {
 		assets: true,
 	},
 	module: {
+		noParse: [/olm[\\\/](javascript[\\\/])?olm\.js$/],
 		rules: [
 			{ test: /\.vue$/, loader: 'vue-loader' },
 			{
@@ -61,6 +60,7 @@ module.exports = {
 		new CopyWebpackPlugin([{ context: './src/website/static/', from: '**/*', to: './' }]),
 		new CircularDependencyPlugin({
 			failOnError: true,
+			exclude: /asn1|readable-stream|elliptic|des\.js/,
 		}),
 		new MiniCssExtractPlugin({
 			filename: 'style.css',

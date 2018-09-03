@@ -10,7 +10,7 @@
     "build:prod:app": "./node_modules/.bin/webpack --config='./config/webpack.production.app.js' --progress --display-error-details",
     "build:prod:single-file-app": "./node_modules/.bin/webpack --config='./config/webpack.production.single-file-app.js' --progress --display-error-details && ./src/scripts/single-file-release.js",
     "build": "./node_modules/.bin/webpack --config='./config/webpack.base.js' --progress --display-error-details",
-    "build:extension": "./node_modules/.bin/webpack --config='./config/webpack.dev.extension.js' --progress --display-error-details --watch",
+    "build:extension": "./node_modules/.bin/webpack --config='./config/webpack.dev.extension.js' --progress --display-error-details",
     "docu": "livingstyleguide compile ./src/sass/styleguide.lsg ./documentation/styleguide.html && nodejs node_modules/.bin/generate-md --layout github --input README.md --output ./documentation/",
     "extension:rls": "npm run version; npm run build:prod:extension; cd dist-extension/; zip -r ../audius.extension.zip . *",
     "version": "src/scripts/bump-version.js",
@@ -22,7 +22,9 @@
   "license": "MIT",
   "private": true,
   "dependencies": {
+    "babel-polyfill": "^6.26.0",
     "matrix-js-sdk": "^0.10.8",
+    "olm": "https://matrix.org/packages/npm/olm/olm-2.2.1.tgz",
     "sortablejs": "^1.7.0",
     "vue": "^2.5.17",
     "vuedraggable": "^2.16.0",

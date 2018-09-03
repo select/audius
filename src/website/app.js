@@ -67,6 +67,10 @@ indexDB
 			},
 			false
 		);
+		// Try to find the audius extension so it can trigger the `setExtensionAvilable` mutation.
+		window.dispatchEvent(
+			new CustomEvent('audiusExtensionHandshake')
+		);
 
 		// Detect if the URL contains the import parameter.
 		// If yes then add this to the store. This will trigger the import
