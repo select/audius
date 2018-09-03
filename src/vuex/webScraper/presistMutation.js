@@ -4,4 +4,5 @@ export const presistMutation = {
 	addUrlPattern: ['sources'],
 	addWebScraper: ['sourcesOrdered', 'sources'],
 	renameWebScraper: ['sourcesOrdered', 'sources'],
+	editWebScraperForward: ['forward'],
 };

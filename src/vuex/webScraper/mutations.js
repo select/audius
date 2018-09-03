@@ -52,4 +52,8 @@ export const mutations = {
 		state.sources = itemsObject;
 		state.sourcesOrdered = itemsOrdered;
 	},
+	editWebScraperForward(state, { id, forward }) {
+		state.forward[id] = forward;
+		state.forward = Object.assign({}, state.forward);
+	},
 };

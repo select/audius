@@ -14,7 +14,8 @@ export const actions = {
 		commit('renameWebScraper', { oldName, newName });
 		commit('selectMediaSource', { type: 'webScraper', id: newName });
 	},
-	webScraperUpdateSuccess({ state, commit }, { id, mediaList }) {
+	webScraperUpdateSuccess({ state, rootState, commit, dispatch }, { id, mediaList }) {
+		commit('toggleIsLoading', { id, loading: false });
 		if (!mediaList) {
 			commit('error', `Requesting ${id} did not return results.`);
 			return;
@@ -37,6 +38,16 @@ export const actions = {
 		if (newVideos.length) {
 			commit('updateWebScraper', { id, values: { playList, archive } });
 		}
+
+		// Forward media to matrix room.
+		if (rootState.matrix.matrixLoggedIn && state.forward[id]) {
+			state.forward[id].forEach(forward => {
+				console.log("forward", forward);
+				mediaList.forEach(newMedia => {
+					dispatch('matrixSend', { roomId: forward.id, media: newMedia, silent: true });
+				});
+			});
+		}
 	},
 	initWebScraper({ state, commit, dispatch }, id) {
 		if (id && !(id in state.sources)) {
@@ -52,6 +63,11 @@ export const actions = {
 			commit('error', `Can not find channel "${id}".`);
 			return;
 		}
+		if (rootState.isLoading[id]) return;
+		commit('toggleIsLoading', { id, loading: true });
+		setTimeout(() => {
+			commit('toggleIsLoading', { id, loading: false });
+		}, 10000);
 
 		const ws = state.sources[id];
 		const index = rootState.paginationIndex[id] || 0;
@@ -66,6 +82,20 @@ export const actions = {
 				})
 				.catch(error => commit('error', `Could not get Imgur. ${error}`))
 				.finally(() => commit('toggleIsLoading', { id, loading: false }));
+		} else if (ws.settings.type === 'watch') {
+			extensionMessage({
+				audius: true,
+				type: 'watch',
+				id,
+				watchUrl: ws.settings.watchUrl,
+				youtubeApiKey: rootState.youtubeApiKey,
+				responseTemplate: {
+					audius: true,
+					vuex: 'commit',
+					type: 'initScraperSuccess',
+					data: id,
+				},
+			});
 		} else if (ws.settings.type === 'script') {
 			commit('increasePaginationIndex', id);
 			if (state.sourcesInitialized[id]) {
@@ -80,7 +110,7 @@ export const actions = {
 					type: 'loadScript',
 					id,
 					code: ws.settings.script,
-					youtubeApiKey: state.youtubeApiKey,
+					youtubeApiKey: rootState.youtubeApiKey,
 					responseTemplate: {
 						audius: true,
 						vuex: 'commit',
@@ -107,7 +137,7 @@ export const actions = {
 					requestIndex -= url.numPages;
 					return true;
 				});
-				if (!state.extensionAvilable) {
+				if (!rootState.extensionAvilable) {
 					commit('error', 'The audius extension is not installed. Please install it.');
 					commit('setShowSettings');
 					return;
@@ -117,7 +147,7 @@ export const actions = {
 					audius: true,
 					type: 'scanUrl',
 					url: webScraper.patternToUrls(requestUrl)[requestIndex],
-					youtubeApiKey: state.youtubeApiKey,
+					youtubeApiKey: rootState.youtubeApiKey,
 					responseTemplate: {
 						audius: true,
 						vuex: 'dispatch',
