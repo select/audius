@@ -32,6 +32,7 @@ export default {
 		});
 		this.$store.watch(state => state.matrix.chatLog, () => {
 			const chatLog = this.chatLog[this.currentMediaSource.id];
+			if (!chatLog) return;
 			const { createdAt, sender } = chatLog[chatLog.length - 1];
 			if (latestCreatedAt !== createdAt) {
 				Vue.nextTick(() => {
@@ -64,11 +65,15 @@ export default {
 		_chatLog() {
 			return (this.chatLog[this.currentMediaSource.id] || []).filter(({ parentEvent }) => !parentEvent);
 		},
+		_isLoading() {
+			return this.isLoading[this.currentMediaSource.id];
+		},
 	},
 	methods: {
 		...mapMutations(['setMainLeftTab']),
 		...mapActions(['matrixLoadMore', 'matrixSendText']),
-		scrolled() {
+		scrolled(event) {
+			if (this._isLoading) event.preventDefault();
 			// Detect when scrolled to top.
 			if (this.$refs.chat.scrollTop === 0) {
 				this.matrixLoadMore(this.currentMediaSource.id);
@@ -100,7 +105,7 @@ export default {
 			@click="matrixLoadMore(currentMediaSource.id)"
 			class="play-list__load-more">
 			… load more (Page {{paginationIndex[currentMediaSource.id] || 0}})
-			<div class="loader" v-show="isLoading[currentMediaSource.id]"></div>
+			<div class="loader" v-show="_isLoading"></div>
 		</div>
 		<ul ref="list">
 			<component

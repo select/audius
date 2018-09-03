@@ -20,10 +20,10 @@ export default {
 		},
 		messages() {
 			let currentEvent = this.event;
-			const children = [currentEvent.body];
+			const children = [{ body: currentEvent.body, status: currentEvent.status }];
 			while (currentEvent.childEvent) {
 				currentEvent = currentEvent.childEvent;
-				children.push(currentEvent.body);
+				children.push({ body: currentEvent.body, status: currentEvent.status });
 			}
 			return children;
 		},
@@ -40,15 +40,20 @@ export default {
 			{{sender.name}}
 		</div>
 		<div class="matrix-chat-message__body">
-			<div v-for="message in messages">
-				<span v-html="message"></span>
+			<div
+				v-for="message in messages"
+				:class="{'matrix-chat-message--sending': message.status === 'sending'}"
+				>
+				<span v-html="message.body"></span>
 				<div
 					v-if="isAuthor || isAdmin"
 					class="wmp-icon-close matrix-chat-message__delete"
 					title="Delete this message"></div>
 			</div>
 		</div>
-		<div class="matrix-chat-message__footer">{{_createdAt}}</div>
+		<div
+			:class="{'matrix-chat-message--sending': messages[messages.length -1].status === 'sending'}"
+			class="matrix-chat-message__footer">{{_createdAt}}</div>
 	</div>
 </li>
 </template>
@@ -134,6 +139,9 @@ export default {
 		&:hover
 			.matrix-chat-message__delete
 				display: block
+.matrix-chat-message--sending
+	opacity: 0.5
+
 .matrix-chat-message__footer
 	display: flex
 	justify-content: flex-end

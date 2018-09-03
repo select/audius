@@ -17,6 +17,9 @@ function stringToColour(str) {
 
 const matrixNameRegEx = /@(.+):matrix.org/;
 
+const eventIndex = {};
+const playListEvents = {};
+
 /* eslint-disable no-param-reassign */
 function updateMembers(state, rooms) {
 	// Dedublicate list of members
@@ -45,7 +48,7 @@ function updateMembers(state, rooms) {
 }
 
 function updateClientRooms(state, rooms) {
-	// console.log('rooms', rooms);
+	console.log('rooms', rooms);
 	const { userId } = state.credentials;
 	rooms.forEach(room => {
 		const { roomId } = room;
@@ -172,6 +175,9 @@ export const mutations = {
 		Object.assign(state.sources[roomId], { hidden: !state.sources[roomId].hidden });
 		state.sources = Object.assign({}, state.sources);
 	},
+	moveMatrixSourcesOrdered(state, sourcesOrdered) {
+		state.sourcesOrdered = sourcesOrdered;
+	},
 	updateMatrixRoom(state, { roomId, values }) {
 		// Create room if it does not exist.
 		if (!state.sources[roomId]) {
@@ -186,17 +192,53 @@ export const mutations = {
 	setLastPageReached(state, roomId) {
 		state.lastPageReached[roomId] = true;
 	},
+	updateMatrixEvent(state, update) {
+		// Update all events (text, media (could be multiple links in one text message)) with this id
+		eventIndex[update.eventId].forEach(event => {
+			Object.assign(event, update.data);
+		});
+		// If the id changed create another entry with the new id.
+		if (update.eventId !== update.data.eventId) {
+			eventIndex[update.data.eventId] = eventIndex[update.eventId];
+		}
+		state.sources = Object.assign({}, state.sources);
+	},
 	addChatlog(state, originalEvents) {
 		originalEvents.forEach(originalEvent => {
 			const { roomId, type } = originalEvent;
+
+			if (originalEvent.eventId in eventIndex) {
+				// The `eventIndex` is used to update all events if the temp id and status changes
+				eventIndex[originalEvent.eventId].push(originalEvent);
+				console.warn(`Duplicate matrix event recieved ${type} ${originalEvent.eventId}`);
+			} else {
+				eventIndex[originalEvent.eventId] = [originalEvent];
+			}
+
+			// Create room if it does not exist
 			if (!(roomId in state.sources)) {
 				state.sources[roomId] = Object.assign({}, matrixRoomTemplate(), { roomId, name: roomId });
 			}
-			if (
-				type !== 'text' &&
-				!state.sources[roomId].playList.some(({ eventId }) => originalEvent.eventId === eventId)
-			) {
+			if (!(roomId in playListEvents)) {
+				// Remove events with temporary id
+				state.sources[roomId].playList = state.sources[roomId].playList
+					.filter(media => typeof media === 'object')
+					.filter(
+						({ eventId }) => !eventId || eventId[0] !== '~'
+					);
+				// Build index of known events on playlist
+				playListEvents[roomId] = new Set(
+					state.sources[roomId].playList
+						.filter(({ eventId }) => eventId)
+						.map((media) => `${media.eventId}-${media.id}`)
+				);
+			}
+
+			// Add media to source[xxx].playList
+			const uuidEvent = `${originalEvent.eventId}-${originalEvent.id}`;
+			if (type !== 'text' && !playListEvents[roomId].has(uuidEvent)) {
 				const { playList, archive } = state.sources[roomId];
+				playListEvents[roomId].add(uuidEvent);
 				playList.push(originalEvent);
 				playList.sort(sortEventsChonologically);
 				playList.reverse();
@@ -206,16 +248,19 @@ export const mutations = {
 				}
 			}
 
-			const event = Object.assign({}, originalEvent, {
+			const event = Object.assign(originalEvent, {
 				childEvent: null,
 				parentEvent: null,
 			});
+			eventIndex[originalEvent.eventId].push(event);
 			if (!(roomId in state.chatLog)) {
 				state.chatLog[roomId] = [event];
 			} else {
 				const chatLog = state.chatLog[roomId];
 				chatLog.push(event);
 				chatLog.sort(sortEventsChonologically);
+				// If a `text` event and a media event have the same timestamp
+				// the media event should be displayed below the text event.
 				chatLog.forEach((_event, index) => {
 					if (!index) return;
 					const previousEvent = chatLog[index - 1];
@@ -223,10 +268,15 @@ export const mutations = {
 						if (previousEvent.type !== 'text') ++previousEvent.createdAt;
 						else ++_event.createdAt;
 					}
-					// If the previus message is from the same sender group the messages.
-					// 	previousEvent.childEvent = event;
-					// 	event.parentEvent = previousEvent;
-					// }
+				});
+				// Sort again since order might have changed in the step before
+				chatLog.sort(sortEventsChonologically);
+				// Group / ungroup messages.
+				chatLog.forEach((_event, index) => {
+					if (!index) return;
+					const previousEvent = chatLog[index - 1];
+					// If the previus message is from the same sender and also of
+					// type `text` group the messages.
 					if (
 						previousEvent.type === 'text' &&
 						_event.type === 'text' &&

@@ -1,8 +1,9 @@
+import 'olm/olm';
+// console.log("Olm", Olm);
 import Matrix from 'matrix-js-sdk';
 import { throttle } from './debounce';
 
 let eventQueue = [];
-const knownEvents = new Set();
 
 export const matrixClient = {
 	client: null,
@@ -31,24 +32,28 @@ export const matrixClient = {
 				// guest: isGuest,
 				timelineSupport: true,
 			});
+			this.client.on('Room.localEchoUpdated', event => {
+				const { status, _txnId } = event;
+				if (status !== 'sent') return;
+				const roomId = event.getRoomId();
+				const oldEventId = `~${roomId}:${_txnId}`;
+				const eventId = event.getId();
+				commit('updateMatrixEvent', { eventId: oldEventId, data: { eventId, status } });
+			});
 
 			this.client.on('Room.timeline', event => {
-				const eventId = event.event.event_id;
-				if (knownEvents.has(eventId)) {
-					console.warn('Matrix SDK send duplicate events');
-					return;
-				}
-				knownEvents.add(eventId);
-				const roomId = event.event.room_id;
-				const sender = event.event.sender || event.event.user_id;
-				const createdAt = event.event.origin_server_ts;
-				const { type } = event.event;
+				const eventId = event.getId();
+				const roomId = event.getRoomId();
+				const sender = event.getSender();
+				const createdAt = event.getTs();
+				const type = event.getType();
 				if (!(roomId in this.firstEvent)) this.firstEvent[roomId] = eventId;
 				const baseEvent = {
 					roomId,
 					sender,
 					createdAt,
 					eventId,
+					status: event.status,
 				};
 				let outEvent;
 				if (type === 'audiusMedia') {
@@ -60,10 +65,14 @@ export const matrixClient = {
 						eventQueue.push(Object.assign(event.event.content.data, baseEvent));
 					}
 				} else if (type === 'm.room.message') {
-					const { body, msgtype, media } = event.event.content;
-					if (body) eventQueue.push(Object.assign({ body, type: 'text', msgtype }, baseEvent));
-					if (msgtype === 'm.audius.media') {
-						eventQueue.push(Object.assign(media, baseEvent));
+					const content = event.getContent();
+					const { body } = content;
+					const isAudiusMessage = 'org.rockdapus.audius.media' in content;
+					if (isAudiusMessage) {
+						eventQueue.push(Object.assign(content['org.rockdapus.audius.media'], baseEvent));
+					}
+					if (body) {
+						eventQueue.push(Object.assign({ body, type: 'text', parse: !isAudiusMessage }, baseEvent));
 					}
 				}
 				if (outEvent) eventQueue.push(outEvent);
@@ -101,7 +110,7 @@ export const matrixClient = {
 			});
 
 			if (isGuest === undefined || isGuest) this.client.setGuest(true);
-			this.client.startClient({ initialSyncLimit: 5 });
+			this.client.startClient({ initialSyncLimit: 2 });
 		});
 	},
 	// return promise
@@ -135,14 +144,20 @@ export const matrixClient = {
 		return this.client.leave(roomIdOrAlias);
 	},
 	sendMediaMessage(roomId, media, body) {
+		console.log("media", media);
+		const removeKeys = new Set(['eventId', 'roomId', 'sender']);
+		const newMedia = Object.entries(media).reduce((acc, [key, value]) => {
+			if (!removeKeys.has(key)) Object.assign(acc, { [key]: value });
+			return acc;
+		}, {});
+		console.log("newMedia", newMedia);
 		return this.client.sendEvent(roomId, 'm.room.message', {
 			body,
-			msgtype: 'm.audius.media',
-			media,
+			msgtype: 'm.text',
+			'org.rockdapus.audius.media': newMedia,
 		});
 	},
 	sendMessage(roomId, media) {
-		console.log("sendMessage media", media);
 		return this.client.sendTextMessage(roomId, media);
 	},
 	redactEvent(roomId, eventId) {

@@ -86,10 +86,12 @@ export const actions = {
 			.sendMessage(roomId, message)
 			.catch(error => commit('error', `Posting message to matrix room failed. ${error}`));
 	},
-	matrixSend({ state, rootState, commit }, { itemId, roomId, media }) {
+	matrixSend({ state, rootState, commit }, { itemId, roomId, media, silent }) {
 		const curMedia = media || getMediaEntity(rootState, itemId);
 		if (state.sources[roomId].playList.some(({ id }) => id === curMedia.id)) {
-			commit('error', 'The media item was already posted.');
+			const message = 'The media item was already posted.';
+			if (silent) window.console.warn(message);
+			else commit('error', message);
 			return;
 		}
 		matrixClient
@@ -254,9 +256,9 @@ export const actions = {
 	},
 	parseMatrixMessages({ state, commit, rootState }, matrixEvents) {
 		matrixEvents.forEach(matrixEvent => {
-			const { type, body, msgtype } = matrixEvent;
+			const { type, body, parse } = matrixEvent;
 			if (body) matrixEvent.body = urlify(body);
-			if (type === 'text' && msgtype !== 'm.audius.media') {
+			if (parse) {
 				// window.console.log(`[Matrix-Text] %c${body}`, 'color: #2DA7EF;');
 				findMediaText(body, rootState.youtubeApiKey, rootState.mediaIndex).then(
 					({ mediaList, newMedia }) => {
