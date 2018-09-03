@@ -16,6 +16,17 @@ export default {
 <div class="wmp-about">
 	<h2 id="audius-changelog">Changelog</h2>
 	<p>
+		<b>2.0.14</b><br>
+		<ul>
+			<li> Fix audius channels (extension), scrape external sites again.</li>
+			<li> Add option to forward channel scrape results to matrix channel.</li>
+			<li> Matrix search and join all public rooms.</li>
+			<li> Sort matrix rooms in left menu.</li>
+			<li> Matrix message event format improved.</li>
+			<li> Matrix images are shown in chat</li>
+			<li> Show matrix message send staus.</li>
+			<li> Enable Chrome Cast for YouTube.</li>
+		</ul>
 		<b>2.0.13</b><br>
 		<ul>
 			<li> Added play history in right menu.</li>
