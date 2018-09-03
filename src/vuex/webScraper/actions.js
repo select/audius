@@ -72,7 +72,6 @@ export const actions = {
 		const ws = state.sources[id];
 		const index = rootState.paginationIndex[id] || 0;
 		if (id === 'Imgur') {
-			if (rootState.isLoading[id]) return;
 			commit('toggleIsLoading', { id, loading: true });
 			commit('increasePaginationIndex', id);
 			webScraper
