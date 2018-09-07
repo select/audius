@@ -8,6 +8,7 @@ import ChatMessage from './matrix-chat-message.vue';
 let latestCreatedAt = null;
 let lastHeight = 0;
 let scrollDown = false;
+let inputLength = 0;
 export default {
 	components: {
 		VideoItem,
@@ -16,6 +17,7 @@ export default {
 	data() {
 		return {
 			messageText: '',
+			overflow: false,
 		};
 	},
 	beforeUpdate() {
@@ -88,6 +90,15 @@ export default {
 				this.messageText = '';
 			}
 		},
+		checkWidth(event) {
+			if (this.$refs.message.offsetHeight - this.$refs.message.scrollHeight < 0) {
+				if (!this.overflow) inputLength = this.$refs.message.value.length;
+				this.overflow = true;
+			} else if (this.$refs.message.value.length < inputLength) {
+				this.overflow = false;
+				inputLength = this.$refs.message.value.length;
+			}
+		},
 	},
 
 };
@@ -119,15 +130,18 @@ export default {
 				:key="index"></component>
 		</ul>
 	</div>
-	<div class="matrix-chat__footer">
+	<div class="matrix-chat__footer" :class="{ 'matrix-chat--overflow' : overflow }">
 		<span
 			@click="setMainLeftTab('playList')"
 			class="wmp-icon-speaker_notes_off matrix-chat__off"></span>
-		<input
-			type="text"
+		<textarea
+			rows="1"
+			ref="message"
 			placeholder="… your message"
 			@keyup.enter="send"
+			@keyup="checkWidth"
 			v-model="messageText">
+		</textarea>
 		<span class="wmp-icon-send" @click="send"></span>
 	</div>
 </div>
@@ -142,6 +156,9 @@ export default {
 	height: 100%
 	padding-bottom: $touch-size-medium
 	background-color: $color-athensgrey
+	background: url('../website/static/img/music-notes.png')
+	// background-repeat: no-repeat;
+	background-size: 200px
 	.play-list
 		overflow: auto
 	ul
@@ -167,11 +184,16 @@ export default {
 	height: $touch-size-medium
 	background-color: $color-catskillwhite
 	color: $color-aluminium-dark
+	&.matrix-chat--overflow
+		height: 2 * $touch-size-medium
+		textarea
+			height: #{12 * $grid-space}
+
 	.wmp-icon-send
 		cursor: pointer
-	input
+	textarea
 		flex: 1
-		padding: 0 #{2 * $grid-space}
+		padding: $grid-space #{2 * $grid-space}
 		font-size: .8rem
 
 </style>

@@ -112,7 +112,7 @@ export default {
 .matrix-chat-message__container
 	position: relative
 	max-width: 25rem
-	margin: $grid-space #{2 * $grid-space}
+	margin: $grid-space 5.5%
 	border-radius: $border-radius
 	border-top-left-radius: 0
 	font-size: .8em
@@ -120,7 +120,7 @@ export default {
 		position: absolute
 		top: 0
 		left: -$grid-space
-		border-top: $grid-space solid $color-catskillwhite
+		border-top: $grid-space solid $color-white
 		border-bottom: $grid-space solid transparent
 		border-left: $grid-space solid transparent
 		content: ' '
@@ -129,7 +129,7 @@ export default {
 .matrix-chat-message__body > div,
 .matrix-chat-message__footer
 	padding: 0 $grid-space
-	background: $color-catskillwhite
+	background-color: $color-white
 
 .matrix-chat-message__body
 	display: flex
@@ -145,6 +145,8 @@ export default {
 			padding-top: $grid-space
 		&:not(:last-child)
 			margin-bottom: $grid-space/2
+			box-shadow: 0 1px .5px rgba(0, 0, 0, .13)
+			border-radius: $border-radius
 		&:not(:first-child)
 			position: relative
 		&:hover
@@ -156,12 +158,18 @@ export default {
 .matrix-chat-message__footer
 	display: flex
 	justify-content: flex-end
+	border-bottom-left-radius: $border-radius
+	border-bottom-right-radius: $border-radius
 	color: $color-aluminium-dark
+	box-shadow: 0 1px .5px rgba(0, 0, 0, .13)
 
 .matrix-chat-message__header
 	padding: $grid-space
+	border-top-left-radius: $border-radius
+	border-top-right-radius: $border-radius
 	color: $color-aluminium-dark
 	font-weight: bold
+
 .matrix-chat-message__image
 	width: 100%
 	height: 200px
