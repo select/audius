@@ -557,14 +557,6 @@ li ~ .play-list-manager__tag-body
 	.play-list-manager__tag-name-input
 		height: $touch-size-extratiny
 
-.loader
-	width: #{3 * $grid-space}
-	height: #{3 * $grid-space}
-	border: $grid-space/2 solid $color-catskillwhite
-	border-radius: 50%
-	border-top-color: $color-pictonblue
-	animation: spin 2s linear infinite
-
 @keyframes spin
 	0%
 		transform: rotate(0deg)
