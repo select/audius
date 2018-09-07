@@ -21,6 +21,7 @@ module.exports = {
 	},
 	// add your custom rules here
 	rules: {
+		'implicit-arrow-linebreak': 'off',
 		'arrow-parens': 'off', // FIXME jsPrettier must fix this and then we can remove the rule again
 		indent: [2, 'tab', { SwitchCase: 1 }], // indent with tabs
 		'no-tabs': 'off',
