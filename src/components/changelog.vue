@@ -18,14 +18,25 @@ export default {
 	<p>
 		<b>2.0.14</b><br>
 		<ul>
-			<li> Fix audius channels (extension), scrape external sites again.</li>
-			<li> Add option to forward channel scrape results to matrix channel.</li>
-			<li> Matrix: search and join all public rooms.</li>
-			<li> Matrix: sort rooms in left menu.</li>
-			<li> Matrix: message event format improved.</li>
-			<li> Matrix: images are shown in chat.</li>
-			<li> Matrix: messages can be deleted.</li>
-			<li> Matrix: show message send staus.</li>
+			<li> Matrix Rooms: <br><br>
+				<ul>
+					<li>Search and join all public rooms.</li>
+					<li>Sort rooms in left menu.</li>
+					<li>Message event format improved.</li>
+					<li>Images are shown in chat.</li>
+					<li>Messages can be deleted.</li>
+					<li>Show message send staus.</li>
+				</ul>
+				<br><br>
+			</li>
+			<li> Webscraper Channels:<br><br>
+				<ul>
+					<li>Fix audius channels (extension), scrape external sites again.</li>
+					<li>Add option to forward channel scrape results to matrix channel.</li>
+					<li>Added ability to watch open tabs for new media (for use with Slack and WhatsApp).</li>
+				</ul>
+				<br><br>
+			</li>
 			<li> Enable Chrome Cast for YouTube.</li>
 		</ul>
 		<b>2.0.13</b><br>
