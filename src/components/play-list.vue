@@ -317,9 +317,10 @@ export default {
 				@click="setMainLeftTab('matrix')"
 				v-if="this.currentMediaSource.type === 'matrix'">
 				<span
+					v-show="matrixLoggedIn"
 					class="wmp-icon-chat play-list__chat"></span>
-				Chat
 				<div class="loader" v-show="!matrixLoggedIn"></div>
+				Chat
 			</li>
 			<li
 				v-if="currentMediaSource.type === 'playList'"
