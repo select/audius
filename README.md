@@ -47,6 +47,22 @@ Create your own rooms with Audius and share it with your friends.
 
 ## Change log
 
+**2.0.14**	
+* Matrix Rooms:
+    * Search and join all public rooms.
+    * Sort rooms in left menu.
+    * Message event format improved.
+    * Images are shown in chat.
+    * Messages can be deleted.
+    * Show message send staus.
+
+* Webscraper Channels:
+    * Fix audius channels (extension), scrape external sites again.
+    * Add option to forward channel scrape results to matrix channel.
+    * Added ability to watch open tabs for new media (for use with Slack and WhatsApp).
+* Enable Chrome Cast for YouTube.
+
+
 **2.0.13**	
 * Text chat for Matrix rooms.
 * Removed tabs from left menu, easier navigation between playlists, rooms, and channels.
