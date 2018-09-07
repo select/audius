@@ -57,20 +57,14 @@ indexDB
 		// Listen to events from the audius extension.
 		// The events contain vuex commands and the according data.
 		// We can therefore delay them directly to the vuex store.
-		window.addEventListener(
-			'audius',
-			event => {
-				// window.console.log('Received extension event ', event);
-				if (event.detail && event.detail.vuex) {
-					store[event.detail.vuex](event.detail.type, event.detail.data);
-				}
-			},
-			false
-		);
+		window.addEventListener('audius', event => {
+			// window.console.log('Received extension event ', event);
+			if (event.detail && event.detail.vuex) {
+				store[event.detail.vuex](event.detail.type, event.detail.data);
+			}
+		});
 		// Try to find the audius extension so it can trigger the `setExtensionAvilable` mutation.
-		window.dispatchEvent(
-			new CustomEvent('audiusExtensionHandshake')
-		);
+		window.dispatchEvent(new CustomEvent('audiusExtensionHandshake'));
 
 		// Detect if the URL contains the import parameter.
 		// If yes then add this to the store. This will trigger the import

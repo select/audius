@@ -44,6 +44,25 @@ export const store = new Vuex.Store({
 				import(/* webpackChunkName: "vuex/webScraper" */ './webScraper').then(module => {
 					store.registerModule(moduleName, module);
 					_initModule(state, moduleName, module, savedState, commit);
+
+					const watchList = Object.entries(savedState.sources).reduce((acc, [id, { settings }]) => {
+						if (settings && settings.type === 'watch') acc.push({ id, url: settings.watchUrl });
+						return acc;
+					}, []);
+					window.dispatchEvent(
+						new CustomEvent('audiusExtension', {
+							detail: {
+								audius: true,
+								type: 'watch',
+								watchList,
+								responseTemplate: {
+									audius: true,
+									vuex: 'commit',
+									type: 'webScraperWatching',
+								},
+							},
+						})
+					);
 				});
 			}
 		},

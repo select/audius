@@ -1,6 +1,6 @@
 import { hashCode } from './hashCode';
-import { getYouTubeInfo, findYouTubeIdsText } from './youtube';
-import { getVimeoInfo, findVimeoIdsText } from './vimeo';
+import { findYouTubeIdsText } from './youtube';
+import { findVimeoIdsText } from './vimeo';
 import { webScraper as wsBase } from './webScraper';
 import { audioRegEx, videoRegEx } from './findMediaLinks';
 
@@ -9,8 +9,9 @@ class MediaConverter {
 		this.localUrl = localUrl;
 		this.remoteUrl = remoteUrl;
 	}
+
 	getMediaData(type, _url, _title) {
-		const url = _url.replace(this.localUrl, this.remoteUrl);
+		const url = this.localUrl ? _url.replace(this.localUrl, this.remoteUrl) : _url;
 		const title = _title || url.substring(url.lastIndexOf('/') + 1, url.length);
 		return {
 			type,
@@ -21,78 +22,67 @@ class MediaConverter {
 	}
 }
 
-export const webScraper = Object.assign({}, wsBase, {
-	getYouTubeInfo,
-	findMediaHtml(html, localUrl, remoteUrl, youtubeApiKey) {
-		const node = document.createElement('div');
-		node.innerHTML = html;
+function findMediaText(mc, text, innerHTML) {
+	const res = [];
+	if (videoRegEx.test(text)) res.push(mc.getMediaData('video', text, innerHTML));
+	else if (audioRegEx.test(text)) res.push(mc.getMediaData('audio', text, innerHTML));
+	return [
+		...res,
+		...findYouTubeIdsText(text).map(id => ({ type: 'youtube', id })),
+		...findVimeoIdsText(text).map(id => ({ type: 'vimeo', id })),
+	];
+}
 
+export const webScraper = Object.assign({}, wsBase, {
+	findMediaInElement(node, localUrl, remoteUrl) {
 		const mc = new MediaConverter(localUrl, remoteUrl);
-		const youtubeIds = [];
-		const vimeoIds = [];
+		// Get all iframes with possible yt or vimeo embed.
+		const iframes = node.querySelectorAll('iframe');
+		const ytEmbedRegEx = /youtube\.com\/(v|embed)\/([^"?]+)/;
+		const vimeoEmbedRegEx = /vimeo.com\/video\/([^"?]+)/;
 
 		// Check all `<audiu>`, `<video>`, `<source>`, `<a>` elements for media.
-		const mediaList = [
-			...Array.from(
-				node.querySelectorAll('[href]')
-			).reduce((acc, _node) => {
-				if (videoRegEx.test(_node.href)) acc.push(mc.getMediaData('video', _node.href, _node.innerHTML));
-				else if (audioRegEx.test(_node.href)) acc.push(mc.getMediaData('audio', _node.href, _node.innerHTML));
-				else {
-					youtubeIds.push(...findYouTubeIdsText(_node.href));
-					vimeoIds.push(...findVimeoIdsText(_node.href));
-				}
+		return [
+			// Search for video audio in [href]
+			...[...node.querySelectorAll('[href]')].reduce(
+				(acc, _node) => [...acc, ...findMediaText(mc, _node.href, node.innerHTML)],
+				[]
+			),
+			// Search for video audio in [srv]
+			...[...node.querySelectorAll('[src]')].reduce(
+				(acc, _node) => [...acc, ...findMediaText(mc, _node.src)],
+				[]
+			),
+			// Search for embeded youtube videos.
+			...[...iframes].reduce((acc, _node) => {
+				const match = ytEmbedRegEx.exec(_node.src);
+				if (match) acc.push({ type: 'youtube', id: match[2] });
 				return acc;
 			}, []),
-			...Array.from(
-				node.querySelectorAll('[src]')
-			).reduce((acc, _node) => {
-				if (videoRegEx.test(_node.src)) acc.push(mc.getMediaData('video', _node.src));
-				else if (audioRegEx.test(_node.src)) acc.push(mc.getMediaData('audio', _node.src));
-				else {
-					youtubeIds.push(...findYouTubeIdsText(_node.src));
-					vimeoIds.push(...findVimeoIdsText(_node.src));
-				}
+			// Search for embeded vimeo videos.
+			...[...iframes].reduce((acc, _node) => {
+				const match = vimeoEmbedRegEx.exec(_node.src);
+				if (match) acc.push({ type: 'vimeo', id: match[1] });
 				return acc;
 			}, []),
 		];
-
-		const promises = [];
-
-		// Get all iframes with possible yt or vimeo embed.
-		const iframes = node.querySelectorAll('iframe');
-
-		// Search for embeded youtube videos.
-		const ytEmbedRegEx = /youtube\.com\/(v|embed)\/([^"?]+)/;
-		youtubeIds.push(...Array.from(iframes).reduce((acc, _node) => {
-			const match = ytEmbedRegEx.exec(_node.src);
-			if (match && !acc.some(id => id === match[2])) acc.push(match[2]);
-			return acc;
-		}, []));
-		if (youtubeIds.length) promises.push(getYouTubeInfo({ ids: youtubeIds, youtubeApiKey }));
-
-		// Search for emedded vimeo videos.
-		const vimeoEmbedRegEx = /vimeo.com\/video\/([^"?]+)/;
-		vimeoIds.push(...Array.from(iframes).reduce((acc, _node) => {
-			const match = vimeoEmbedRegEx.exec(_node.src);
-			if (match && !acc.some(id => id === match[1])) acc.push(match[1]);
-			return acc;
-		}, []));
-		if (vimeoIds.length) {
-			promises.push(getVimeoInfo(vimeoIds));
-		}
-
+	},
+	findMediaHtml(html, localUrl, remoteUrl) {
+		const node = document.createElement('div');
+		node.innerHTML = html;
+		const mediaList = this.findMediaInElement(node, localUrl, remoteUrl);
 		node.remove();
-
-		return Promise.all(promises)
-			.then(results => results.reduce((acc, res) => [...acc, ...res], []))
-			.then(flatResults => [...flatResults, ...mediaList]);
+		return mediaList;
 	},
 
-	scanOneUrl({ url, youtubeApiKey }) {
+	scanOneUrl({ url }) {
 		// FIXME this breaks for root URLs without a trailing `/`` !!
 		return this.ajaxRaw(url).then(rawHTML =>
-			this.findMediaHtml(rawHTML, `${window.location.origin}/`, url.substring(0, url.lastIndexOf('/') + 1), youtubeApiKey)
+			this.findMediaHtml(
+				rawHTML,
+				`${window.location.origin}/`,
+				url.substring(0, url.lastIndexOf('/') + 1)
+			)
 		);
 	},
 	/**

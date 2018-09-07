@@ -155,7 +155,7 @@ export const mutations = {
 				});
 			}
 			Object.assign(state[moduleName], recoveredState[moduleName]);
-			delete recoveredState[moduleName];
+			// delete recoveredState[moduleName];
 		});
 		Object.assign(state, recoveredState);
 		updateMediaIndex(state, state.entities);

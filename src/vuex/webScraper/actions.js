@@ -82,19 +82,8 @@ export const actions = {
 				.catch(error => commit('error', `Could not get Imgur. ${error}`))
 				.finally(() => commit('toggleIsLoading', { id, loading: false }));
 		} else if (ws.settings.type === 'watch') {
-			extensionMessage({
-				audius: true,
-				type: 'watch',
-				id,
-				watchUrl: ws.settings.watchUrl,
-				youtubeApiKey: rootState.youtubeApiKey,
-				responseTemplate: {
-					audius: true,
-					vuex: 'commit',
-					type: 'initScraperSuccess',
-					data: id,
-				},
-			});
+			// Watch jobs are started at the beginning, they dont need an interaction.
+			commit('toggleIsLoading', { id, loading: false });
 		} else if (ws.settings.type === 'script') {
 			commit('increasePaginationIndex', id);
 			if (state.sourcesInitialized[id]) {
