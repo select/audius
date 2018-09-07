@@ -20,11 +20,16 @@ export const actions = {
 			commit('error', `Requesting ${id} did not return results.`);
 			return;
 		}
+
 		const ws = state.sources[id];
 		const pl = ws ? ws.playList : [];
 		const archive = ws && ws.archive ? ws.archive : [];
 		const index = new Set([...pl.map(v => v.id), ...archive]);
-		const newVideos = mediaList.filter(v => !index.has(v.id));
+		const newVideos = Object.values(mediaList.reduce((acc, v) => {
+			if (!index.has(v.id) && !(v.id in acc)) acc[v.id] = v;
+			return acc;
+		}, {}));
+		console.log("newVideos", newVideos);
 		if (!newVideos.length) {
 			commit('error', `No new videos found for ${id}. Try agin.`);
 			return;
