@@ -49,7 +49,12 @@ export default {
 				:class="{'matrix-chat-message--sending': message.status === 'sending'}"
 				>
 				<span v-if="message.body" v-html="message.body"></span>
-				<img v-if="message.url" :src="message.url">
+				<div
+					v-if="message.url"
+					class="matrix-chat-message__image"
+					v-bind:style="{ backgroundImage: 'url('+message.url+')' }">
+				</div>
+				<img >
 				<div
 					v-if="isAuthor || isAdmin"
 					@click="matrixRedact(message)"
@@ -157,4 +162,11 @@ export default {
 	padding: $grid-space
 	color: $color-aluminium-dark
 	font-weight: bold
+.matrix-chat-message__image
+	width: 100%
+	height: 200px
+	background-size: contain
+	background-position: center
+	background-repeat: no-repeat
+
 </style>

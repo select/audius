@@ -24,7 +24,7 @@ export default {
 			return this.room.members.map(member => Object.assign(
 				{},
 				member,
-				{ name: this.membersIndex[member.id] ? this.membersIndex[member.id].name : member.id }
+				this.membersIndex[member.id] || { name: member.id, nameColor: '' }
 			));
 		},
 		admin() {
@@ -80,28 +80,31 @@ export default {
 	<div class="smaller row" v-if="!room.isAdmin"><b>You are not an admin</b>, you can not edit this room.</div>
 	<h3>{{room.members.length}} Members</h3>
 	<h4>Admin</h4>
-	<div class="row">
+	<div class="matrix-settings__members">
 		<div
 			v-for="member in admin"
 			v-bind:class="{'matrix-settings__me' : member.id === myId}"
+			v-bind:style="{ color: member.nameColor }"
 			:title="member.id">
 			{{member.name}}
 		</div>
 	</div>
 	<h4 v-if="speaker.length">50+ Powers</h4>
-	<div class="row">
+	<div class="matrix-settings__members">
 		<div
 			v-for="member in speaker"
 			v-bind:class="{'matrix-settings__me' : member.id === myId}"
+			v-bind:style="{ color: member.nameColor }"
 			:title="member.id">
 			{{member.name}}
 		</div>
 	</div>
 	<h4>Other</h4>
-	<div class="row">
+	<div class="matrix-settings__members">
 		<div
 			v-for="member in listener"
 			v-bind:class="{'matrix-settings__me' : member.id === myId}"
+			v-bind:style="{ color: member.nameColor }"
 			:title="member.id">
 			{{member.name}}
 		</div>
@@ -184,10 +187,22 @@ export default {
 	.spacer
 		height: #{2 * $grid-space}
 .matrix-settings__me
-	color: $color-pictonblue
+	background-color: $color-pictonblue
+	color: $color-white!important
+	&:hover
+		color: inherit!important
 .matrix-settings__hidden-icon
 	position: absolute
 	top: 0
 	right: 0
 	cursor: pointer
+.matrix-settings__members
+	> div
+		display: flex
+		align-items: center
+		height: $touch-size-small
+		padding: #{2 * $grid-space}
+		&:hover
+			background: $color-catskillwhite
+
 </style>

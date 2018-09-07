@@ -32,6 +32,11 @@ export const matrixClient = {
 				// guest: isGuest,
 				timelineSupport: true,
 			});
+
+			// this.client.on('event', event => {
+			// 	console.log('Matix event ', event.getType(), event);
+			// });
+
 			this.client.on('Room.localEchoUpdated', event => {
 				const { status, _txnId } = event;
 				if (status !== 'sent') return;
@@ -72,7 +77,12 @@ export const matrixClient = {
 					const isAudiusMessage = 'org.rockdapus.audius.media' in content;
 
 					if (msgtype === 'm.image') {
-						const url = this.client.mxcUrlToHttp(content.url, window.innerWidth, window.innerHeight, 'scale');
+						const url = this.client.mxcUrlToHttp(
+							content.url,
+							window.innerWidth,
+							window.innerHeight,
+							'scale'
+						);
 						eventQueue.push(Object.assign({ url, type: 'text', parse: false }, baseEvent));
 					}
 
@@ -120,7 +130,7 @@ export const matrixClient = {
 				}
 			});
 			if (isGuest === undefined || isGuest) this.client.setGuest(true);
-			this.client.startClient({ initialSyncLimit: 2 });
+			this.client.startClient({ initialSyncLimit: 4 });
 		});
 	},
 	// return promise
@@ -197,6 +207,16 @@ export const matrixClient = {
 	// deleteRoomTag(roomId, tagName) {
 	// 	return this.client.deleteRoomTag(roomId, tagName);
 	// },
+	invite(roomId, userId) {
+		return this.client.invite(roomId, userId);
+	},
+	createDirectMessageRoom(userId) {
+		return this.client.createRoom({
+			preset: 'trusted_private_chat',
+			invite: [userId],
+			is_direct: true,
+		});
+	},
 	createRoom(options) {
 		return this.client.createRoom(
 			Object.assign(options, {
@@ -223,16 +243,15 @@ export const matrixClient = {
 			})
 		);
 	},
-	invite(roomId, userId) {
-		return this.client.invite(roomId, userId);
-	},
 	searchRoom(query) {
 		const blacklist = new Set(['!hUkskxfIMmwAQuZIjz:matrix.org']);
-		return this.client.publicRooms({
-			filter: {
-				generic_search_term: query,
-			},
-		}).then(res => res.chunk.filter(({ room_id }) => !blacklist.has(room_id)));
+		return this.client
+			.publicRooms({
+				filter: {
+					generic_search_term: query,
+				},
+			})
+			.then(res => res.chunk.filter(({ room_id }) => !blacklist.has(room_id)));
 	},
 	getCredentialsWithPassword(username, password) {
 		return new Promise(resolve => {
