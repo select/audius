@@ -58,7 +58,6 @@ export default {
 	v-bind:class="{ hide: !showLeftMenu }">
 	<div class="nav-handle" title="Playlists" @click="toggleLeftMenu()">
 		<div class="nav-handle__tab"></div>
-		<span class="wmp-icon-queue_music"></span>
 	</div>
 	<!-- <div class="tabs">
 		<a
@@ -148,9 +147,9 @@ export default {
 .nav-handle__tab
 	position: absolute
 	top: 0.1em
-	left: 0.2em
+	left: -2.8em
 	width: 2.5em
-	height: 2em
+	height: 1em
 	transform: rotate(90deg) perspective(2em) rotateX(30deg)
 	border-bottom: 0
 	background: $color-aluminium-dark
