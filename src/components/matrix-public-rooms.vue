@@ -1,5 +1,5 @@
 <script>
-import { mapActions, mapMutations } from 'vuex';
+import { mapActions, mapMutations, mapState } from 'vuex';
 import { mapModuleState } from '../utils';
 
 const roomsList = [
@@ -28,12 +28,10 @@ export default {
 		},
 	},
 	computed: {
-		...mapModuleState('matrix', ['sources', 'showMatrixRoomDirectory', 'publicRooms', 'roomSearchResults']),
-		filteredRoomList() {
-			return roomsList.filter(({ id }) => !(id in this.sources));
-		},
+		...mapState(['isLoading']),
+		...mapModuleState('matrix', ['sources', 'sourcesOrdered', 'showMatrixRoomDirectory', 'publicRooms', 'roomSearchResults']),
 		filteredPublicRooms() {
-			return (this.publicRooms || []).filter(({ id }) => !(id in this.sources));
+			return (this.publicRooms || roomsList).filter(({ id }) => !(this.sourcesOrdered.includes(id)));
 		},
 	},
 };
@@ -46,22 +44,7 @@ export default {
 			class="modal a-mpr">
 			<div class="modal__body" @click.stop>
 				<h3>Public rooms</h3>
-				<div
-					v-if="!(publicRooms && publicRooms.length)"
-					class="about-player__community-btns a-mpr__buttons">
-
-					<div
-						v-for="room in filteredRoomList"
-						class="button btn--blue"
-						@click="joinMatrixRoom({ id: room.id, name: room.name })">
-						{{room.name}}
-					</div>
-				</div>
-				<div v-if="!(publicRooms && publicRooms.length)">
-					<br>
-					… press below to update rooms, it might take a while.
-				</div>
-				<div class="a-mpr__buttons">
+				<div class="a-mpr__filteredPublicRooms">
 					<a
 						class="button btn--blue"
 						v-for="room in filteredPublicRooms"
@@ -72,7 +55,10 @@ export default {
 					<button
 						v-if="filteredPublicRooms.length"
 						class="button btn--blue-ghost"
-						@click="updatePublicRooms">update room list</button>
+						@click="updatePublicRooms">
+						<div class="loader" v-show="isLoading['updatePublicRooms']"></div>
+						update room list
+					</button>
 				</div>
 				<div class="a-mpr__search">
 					<input
@@ -80,7 +66,9 @@ export default {
 						placeholder="… search rooms"
 						ref="query"
 						@keyup.enter="_searchRoom">
+						<div class="loader" v-show="isLoading['searchRoom']"></div>
 						<span
+							v-show="!isLoading['searchRoom']"
 							class="wmp-icon-search"
 							@click="_searchRoom"></span>
 				</div>
@@ -102,7 +90,7 @@ export default {
 				</div>
 				<div class="a-mpr__footer">
 					<button class="button" @click="close">Cancel</button>
-					<div class="smaller">Please reload Audius after joining a room. I will fix this soon ;)</div>
+					<div class="smaller">...</div>
 				</div>
 			</div>
 		</div>
@@ -132,10 +120,12 @@ export default {
 	align-items: center
 	min-height: $touch-size-huge
 	padding: #{2 * $grid-space}
-.a-mpr__buttons
+.a-mpr__filteredPublicRooms
 	display: flex
 	flex-wrap: wrap
+	overflow: hidden
 	padding: 0 #{2 * $grid-space}
+	flex: 1
 	>*
 		margin: 0 $grid-space $grid-space 0
 .a-mpr__search

@@ -9,20 +9,27 @@ function urlify(text) {
 	return text.replace(urlRegex, '<a href="$1" target="_blank">$1</a>');
 }
 
-
 // function getRoomMembers(commit, state, rooms) {
-	// Get member avatar with async request to matrix.
-	// Object.values(members).forEach(member => {
-	// 	const { userId } = member;
-	// 	if (state.membersIndex[userId].avatarUrl === undefined) {
-	// 		matrixClient.getAvatarUrl(member.userId).then((avatarUrl) => {
-	// 			commit('setMemberInfo', { userId, avatarUrl: avatarUrl });
-	// 		}).catch(error => {
-	// 			commit('setMemberInfo', { userId, avatarUrl: null });
-	// 		});
-	// 	}
-	// });
+// Get member avatar with async request to matrix.
+// Object.values(members).forEach(member => {
+// 	const { userId } = member;
+// 	if (state.membersIndex[userId].avatarUrl === undefined) {
+// 		matrixClient.getAvatarUrl(member.userId).then((avatarUrl) => {
+// 			commit('setMemberInfo', { userId, avatarUrl: avatarUrl });
+// 		}).catch(error => {
+// 			commit('setMemberInfo', { userId, avatarUrl: null });
+// 		});
+// 	}
+// });
 // }
+//
+function initLoading(id, rootState, commit, time) {
+	if (rootState.isLoading[id]) return;
+	commit('toggleIsLoading', { id, loading: true });
+	setTimeout(() => {
+		commit('toggleIsLoading', { id, loading: false });
+	}, time || 40000);
+}
 
 /* eslint-disable no-param-reassign */
 export const actions = {
@@ -118,11 +125,8 @@ export const actions = {
 			.catch(error => commit('error', `Could not remove media from matrix room. ${error}`));
 	},
 	matrixLoadMore({ state, commit, rootState }, roomId) {
-		if (rootState.isLoading[roomId] || state.lastPageReached[roomId]) return;
-		commit('toggleIsLoading', { id: roomId, loading: true });
-		setTimeout(() => {
-			commit('toggleIsLoading', { id: roomId, loading: false });
-		}, 40000);
+		if (state.lastPageReached[roomId]) return;
+		initLoading(roomId, rootState, commit);
 		matrixClient
 			.paginate(roomId)
 			.then(res => {
@@ -224,19 +228,25 @@ export const actions = {
 				.catch(error => commit('error', `Could not set room private. ${error}`));
 		}
 	},
-	leaveMatrixRoom({ commit }, roomIdOrAlias) {
+	leaveMatrixRoom({ commit, state }, roomIdOrAlias) {
 		commit('deleteMatrixRoom', roomIdOrAlias);
+		commit('selectMediaSource', { type: 'matrix', id: state.sourcesOrdered[0] });
 		matrixClient
 			.leaveRoom(roomIdOrAlias)
 			.catch(() => commit('error', 'Leaving matrix room failed'));
 	},
-	searchRoom({ commit }, query) {
-		matrixClient.searchRoom(query).then(rooms => {
-			commit('setRoomSearchResults', rooms);
-		});
+	searchRoom({ commit, rootState }, query) {
+		initLoading('searchRoom', rootState, commit, 50000);
+		matrixClient
+			.searchRoom(query)
+			.then(rooms => {
+				commit('setRoomSearchResults', rooms);
+			})
+			.finally(() => commit('toggleIsLoading', { id: 'searchRoom', loading: false }))
+			.catch(error => commit('error', `Searching for rooms failed. ${error}`));
 	},
-	updatePublicRooms({ commit }) {
-
+	updatePublicRooms({ commit, rootState }) {
+		initLoading('updatePublicRooms', rootState, commit, 50000);
 		matrixClient
 			.searchRoom('audius')
 			.then(rooms => {
@@ -250,6 +260,7 @@ export const actions = {
 					}))
 				);
 			})
+			.finally(() => commit('toggleIsLoading', { id: 'updatePublicRooms', loading: false }))
 			.catch(error => commit('error', `Getting public matrix Rooms failed. ${error}`));
 	},
 	matrixLogout({ commit }) {
