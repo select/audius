@@ -1,7 +1,7 @@
 export function getMediaDuration(url, type) {
 	return new Promise((resolve) => {
 		let player;
-		if (type === 'audio'){
+		if (type === 'audio') {
 			player = new Audio();
 		} else if (type === 'video') {
 			player = document.createElement(type);
