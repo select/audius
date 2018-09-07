@@ -124,6 +124,14 @@ var pluginSandbox = {
 						data: 'Error parsing ' + event.data.id + '. ' + error
 					});
 				}
+				if (!parseResult && parseResult.type) {
+					_this.message({
+						audius: true,
+						vuex: 'commit',
+						type: 'error',
+						data: 'Error in scraper ' + event.data.id + ', function ' + event.data.type + ' did not return any data.'
+					});
+				}
 				if (['getYouTubeInfo', 'scanOneUrl', 'ajaxRaw', 'ajaxJSON'].includes(parseResult.type)) {
 					_this.message(Object.assign(parseResult, { id: event.data.id, youtubeApiKey: _this.youtubeApiKey }));
 				} else if (parseResult.type === 'mediaList') {
