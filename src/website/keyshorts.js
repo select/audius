@@ -3,7 +3,7 @@ import { store } from '../vuex/store';
 const state = store.state;
 
 document.addEventListener('keydown', (event) => {
-	if (event.target.tagName.toLowerCase() !== 'input') {
+	if (!['input', 'textarea'].includes(event.target.tagName.toLowerCase())) {
 		if (event.key === 'c' && !event.ctrlKey) {
 			store.commit('playPause');
 		} else if (event.key === 'b') {
