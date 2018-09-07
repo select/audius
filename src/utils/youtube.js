@@ -6,7 +6,7 @@ export const isYouTubeVideoRegEx = /.*youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-_]
 export const youTubePlaylistRexEx = /.*youtu(?:be\.com\/|\.be\/).*list=([\w\-_]*)/;
 
 const youtubeExtract1g = /youtu.be\/([\w-]+)/g;
-const youtubeExtract2g = /youtube.com\/watch\?v=([\w-]+)/g;
+const youtubeExtract2g = /youtube.com\/watch\?.*v=([\w-]+)/g;
 
 const timeRegex = /((\d+):)?(\d+):(\d{1,2})/;
 const trimFRegex = /^[-\W\d]*/;
