@@ -22,33 +22,25 @@ const playListEvents = {};
 
 /* eslint-disable no-param-reassign */
 function updateMembers(state, rooms) {
-	// Dedublicate list of members
-	const members = rooms.reduce((acc, room) => {
-		if (room.currentState) {
-			Object.assign(acc, room.currentState.members);
-		}
-		return acc;
-	}, {});
-
 	// Commit member names to the store.
-	Object.values(members).forEach(member => {
-		// console.log("member", member);
-		if (!member) return { userid: null };
-		const { userId, name } = member;
-		const match = name.match(matrixNameRegEx);
-		const newMember = {
-			userId,
-			name: match ? match[1] : name,
-			nameColor: stringToColour(name),
-		};
-		if (userId in state.membersIndex) Object.assign(state.membersIndex[userId], newMember);
-		else state.membersIndex[userId] = newMember;
+	rooms.forEach(room => {
+		room.getJoinedMembers().forEach(member => {
+			const { userId, name } = member;
+			const match = name.match(matrixNameRegEx);
+			const newMember = {
+				userId,
+				name: match ? match[1] : name,
+				nameColor: stringToColour(name),
+			};
+			if (userId in state.membersIndex) Object.assign(state.membersIndex[userId], newMember);
+			else state.membersIndex[userId] = newMember;
+		});
 	});
 	state.membersIndex = Object.assign({}, state.membersIndex);
 }
 
 function updateClientRooms(state, rooms) {
-	console.log('rooms', rooms);
+	// console.log('rooms', rooms);
 	const { userId } = state.credentials;
 	rooms.forEach(room => {
 		const { roomId } = room;
@@ -58,23 +50,16 @@ function updateClientRooms(state, rooms) {
 			state.sources[roomId] = Object.assign({}, matrixRoomTemplate(), { roomId, name: room.name });
 		}
 
-		if (room.currentState) {
-			// Set members of the room.
-			state.sources[roomId].members = Object.entries(room.currentState.members).map(
-				([id, member]) => ({ id, powerLevel: member.powerLevel })
-			);
-			// Set flag indicating if current user is admin.
-			const myuser = room.currentState.members[userId] || {};
-			state.sources[roomId].isAdmin = myuser.powerLevel >= 100;
+		// Set members of the room.
+		state.sources[roomId].members = room.getJoinedMembers().map(
+			(member) => ({ id: member.userId, powerLevel: member.powerLevel })
+		);
+		state.sources[roomId].avatarUrl = room.getAvatarUrl('https://matrix.org', 200, 200, 'scale');
+		// Set flag indicating if current user is admin.
+		const myuser = room.getMember(userId);
+		state.sources[roomId].isAdmin = myuser.powerLevel >= 100;
 
-			try {
-				[state.sources[roomId].alias] = room.currentState.events['m.room.aliases'][
-					'matrix.org'
-				].event.content.aliases;
-			} catch (e) {
-				console.warn('could not get alias, well it is bad code anyway');
-			}
-		}
+		state.sources[roomId].aliases = room.getAliases();
 
 		// Add to room list if not on the list.
 		if (!state.sourcesOrdered.includes(roomId)) {
@@ -113,9 +98,13 @@ export const mutations = {
 	},
 	joinRoom(state, room) {
 		const { roomId } = room;
-		if (roomId in state.sources) return;
-		state.sources[roomId] = Object.assign({}, matrixRoomTemplate(), { name: room.name });
-		state.sourcesOrdered = [roomId, ...state.sourcesOrdered];
+		if (!state.sourcesOrdered.includes(roomId)) {
+			state.sourcesOrdered = [roomId, ...state.sourcesOrdered];
+		}
+		if (!(roomId in state.sources)) {
+			state.sources[roomId] = Object.assign({}, matrixRoomTemplate(), { name: room.name });
+			state.sources = Object.assign({}, state.sources);
+		}
 	},
 	setMemberInfo(state, member) {
 		Object.assign(state.membersIndex[member.userId], member);
@@ -207,11 +196,15 @@ export const mutations = {
 		state.sources = Object.assign({}, state.sources);
 	},
 	matrixRedact(state, { eventId, roomId }) {
-		state.chatLog[roomId] = state.chatLog[roomId].filter(event => event.eventId !== eventId);
-		state.chatLog = Object.assign({}, state.chatLog);
+		if (roomId in state.chatLog) {
+			state.chatLog[roomId] = state.chatLog[roomId].filter(event => event.eventId !== eventId);
+			state.chatLog = Object.assign({}, state.chatLog);
+		}
 
-		state.sources[roomId].playList = state.sources[roomId].filter(event => event.eventId !== eventId);
-		state.sources = Object.assign({}, state.sources);
+		if (roomId in state.sources) {
+			state.sources[roomId].playList = state.sources[roomId].playList.filter(event => event.eventId !== eventId);
+			state.sources = Object.assign({}, state.sources);
+		}
 	},
 	addChatlog(state, originalEvents) {
 		originalEvents.forEach(originalEvent => {
