@@ -73,8 +73,17 @@ export default {
 		placeholder="… name"
 		v-bind:disabled="!room.isAdmin"
 		:value="room.name">
-	<div class="row">
-		<a v-bind:href="'https://matrix.to/#/'+room.alias" target="_blank" rel="noopener">{{room.alias}}</a>
+	<div
+		:src="room.avatarUrl"
+		:alt="room.name+' logo'"
+		:style="{ backgroundImage: 'url(\''+room.avatarUrl+'\')' }"
+		class="matrix-settings__logo"></div>
+	<div class="row matrix-settings__aliases">
+		<a
+			v-for="alias in room.aliases"
+			v-bind:href="'https://matrix.to/#/'+alias"
+			target="_blank"
+			rel="noopener">{{alias}}</a>
 	</div>
 	<div class="spacer"></div>
 	<div class="smaller row" v-if="!room.isAdmin"><b>You are not an admin</b>, you can not edit this room.</div>
@@ -204,5 +213,15 @@ export default {
 		padding: #{2 * $grid-space}
 		&:hover
 			background: $color-catskillwhite
+.matrix-settings__aliases
+	display: flex
+	flex-direction: column
+.matrix-settings__logo
+	width: $touch-size-medium
+	height: $touch-size-medium
+	background-size: contain
+	background-position: center
+	background-repeat: no-repeat
+	border-radius: 50%
 
 </style>
