@@ -28,15 +28,15 @@
       "type": "image/png"
     },
     {
-      "src": "img/audius.logo256.png",
-      "sizes": "256x256",
+      "src": "img/audius.logo257.png",
+      "sizes": "257x257",
       "type": "image/png"
     },
     {
       "src": "img/audius.logo512.png",
       "sizes": "512x512",
       "type": "image/png"
-    }
+    },
     {
       "src": "img/audius.logo1024.png",
       "sizes": "1024x1024",
