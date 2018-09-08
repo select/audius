@@ -81,13 +81,15 @@ export default {
 				this.matrixLoadMore(this.currentMediaSource.id);
 			}
 		},
-		send() {
+		send(event) {
+			event.preventDefault();
 			if (this.messageText) {
 				this.matrixSendText({
 					roomId: this.currentMediaSource.id,
-					message: this.messageText,
+					message: this.messageText.trim(),
 				});
 				this.messageText = '';
+				this.overflow = false;
 			}
 		},
 		checkWidth(event) {
@@ -138,8 +140,8 @@ export default {
 			rows="1"
 			ref="message"
 			placeholder="… your message"
-			@keyup.enter="send"
 			@keyup="checkWidth"
+			@keyup.enter="send"
 			v-model="messageText">
 		</textarea>
 		<span class="wmp-icon-send" @click="send"></span>
@@ -152,14 +154,18 @@ export default {
 @import '../sass/color'
 
 .matrix-chat
+	display: flex
 	position: relative
+	flex-direction: column
 	height: 100%
-	padding-bottom: $touch-size-medium
-	background-color: $color-athensgrey
 	background: url('../website/static/img/music-notes.png')
+	background-color: $color-athensgrey
 	// background-repeat: no-repeat;
 	background-size: 200px
+	overflow: hidden
 	.play-list
+		flex: 1
+		height: auto
 		overflow: auto
 	ul
 		margin: 0
@@ -167,6 +173,7 @@ export default {
 		list-style: none
 	.media-list__main
 		background-color: $color-white
+		padding: 0 5.5%
 .matrix-chat__off
 	cursor: pointer
 	z-index: 1
@@ -175,9 +182,6 @@ export default {
 	min-height: $touch-size-medium
 .matrix-chat__footer
 	display: flex
-	position: absolute
-	bottom: 0
-	left: 0
 	align-items: center
 	justify-content: space-between
 	width: 100%
