@@ -46,7 +46,7 @@ export const actions = {
 								responseTemplate: {
 									audius: true,
 									type: 'searchSuccess',
-									vuex: 'commit',
+									vuex: 'dispatch',
 									data: { id: query },
 								},
 							},
@@ -60,7 +60,13 @@ export const actions = {
 			}
 		);
 	},
-
+	searchSuccess({commit, state }, data) {
+		findMediaText('', state.youtubeApiKey, state.mediaIndex, { mediaList: data.mediaList }).then(
+			({ newMedia, mediaList }) => {
+				if (newMedia.length) commit('updateMediaIndex', newMedia);
+				commit('searchSuccess', { id: data.id, mediaList });
+			});
+	},
 	importPlayListFromString({ commit }, importString) {
 		importPlayListFromString(importString)
 			.then(data => commit('importPlayList', { data }))

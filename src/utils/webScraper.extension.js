@@ -16,6 +16,7 @@ class MediaConverter {
 		return {
 			type,
 			title,
+			href: this.remoteUrl,
 			url,
 			id: `${hashCode(url)}`,
 		};

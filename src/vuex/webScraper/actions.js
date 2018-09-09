@@ -1,4 +1,4 @@
-import { webScraper } from '../../utils';
+import { webScraper, findMediaText } from '../../utils';
 
 function extensionMessage(detail) {
 	window.dispatchEvent(
@@ -21,38 +21,48 @@ export const actions = {
 			return;
 		}
 
-		const ws = state.sources[id];
-		const pl = ws ? ws.playList : [];
-		const archive = ws && ws.archive ? ws.archive : [];
-		const index = new Set([...pl.map(v => v.id), ...archive]);
-		const newVideos = Object.values(mediaList.reduce((acc, v) => {
-			if (!index.has(v.id) && !(v.id in acc)) acc[v.id] = v;
-			return acc;
-		}, {}));
-		console.log("newVideos", newVideos);
-		if (!newVideos.length) {
-			commit('error', `No new videos found for ${id}. Try agin.`);
-			return;
-		}
-		commit('updateMediaIndex', newVideos);
-		const playList = [...pl, ...newVideos];
-		while (playList.length > 3000) {
-			const media = playList.shift();
-			archive.push(media.id);
-		}
-		if (newVideos.length) {
-			commit('updateWebScraper', { id, values: { playList, archive } });
-		}
+		findMediaText('', rootState.youtubeApiKey, rootState.mediaIndex, { mediaList }).then(
+			res => {
+				const { newMedia } = res;
+				const _mediaList = res.mediaList;
+				if (newMedia.length) commit('updateMediaIndex', newMedia);
 
-		// Forward media to matrix room.
-		if (rootState.matrix.matrixLoggedIn && state.forward[id]) {
-			state.forward[id].forEach(forward => {
-				console.log("forward", forward);
-				mediaList.forEach(newMedia => {
-					dispatch('matrixSend', { roomId: forward.id, media: newMedia, silent: true });
-				});
-			});
-		}
+				const ws = state.sources[id];
+				const pl = ws ? ws.playList : [];
+				const archive = ws && ws.archive ? ws.archive : [];
+				const index = new Set([...pl.map(v => v.id), ...archive]);
+				const newVideos = Object.values(
+					_mediaList.reduce((acc, v) => {
+						if (!index.has(v.id) && !(v.id in acc)) acc[v.id] = v;
+						return acc;
+					}, {})
+				);
+				console.log('newVideos', newVideos);
+				if (!newVideos.length) {
+					commit('error', `No new videos found for ${id}. Try agin.`);
+					return;
+				}
+				commit('updateMediaIndex', newVideos);
+				const playList = [...pl, ...newVideos];
+				while (playList.length > 3000) {
+					const media = playList.shift();
+					archive.push(media.id);
+				}
+				if (newVideos.length) {
+					commit('updateWebScraper', { id, values: { playList, archive } });
+				}
+
+				// Forward media to matrix room.
+				if (rootState.matrix.matrixLoggedIn && state.forward[id]) {
+					state.forward[id].forEach(forward => {
+						console.log('forward', forward);
+						_mediaList.forEach(newMedia => {
+							dispatch('matrixSend', { roomId: forward.id, media: newMedia, silent: true });
+						});
+					});
+				}
+			}
+		);
 	},
 	initWebScraper({ state, commit, dispatch }, id) {
 		if (id && !(id in state.sources)) {
