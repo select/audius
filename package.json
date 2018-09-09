@@ -17,14 +17,14 @@
     "build:prod:extension": "./node_modules/.bin/webpack --config='./config/webpack.production.extension.js' --progress --display-error-details",
     "icons": "./config/convert-icomoon.js ./src/icons/media-player.zip ./src/sass/_icon.map.sass ./src/fonts",
     "serve-static": "http-server -p 8080 ./dist-website",
-    "deploy": "npm run build:prod:single-file-app && npm run build:prod:app && ssh -t rockdapus 'rm /var/www/audius/*.gz' || scp -r dist-website/* rockdapus:/var/www/audius/"
+    "deploy": "npm run build:prod:single-file-app && npm run build:prod:app && ssh -t rockdapus 'rm /var/www/audius/*.gz' || echo 'no gz' && scp -r dist-website/* rockdapus:/var/www/audius/"
   },
   "license": "MIT",
   "private": true,
   "dependencies": {
     "babel-polyfill": "^6.26.0",
     "matrix-js-sdk": "^0.10.8",
-    "olm": "https://matrix.org/packages/npm/olm/olm-2.2.1.tgz",
+    "olm": "https://matrix.org/packages/npm/olm/olm-2.3.0.tgz",
     "sortablejs": "^1.7.0",
     "vue": "^2.5.17",
     "vuedraggable": "^2.16.0",

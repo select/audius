@@ -213,7 +213,6 @@ export const mutations = {
 			if (originalEvent.eventId in eventIndex) {
 				// The `eventIndex` is used to update all events if the temp id and status changes
 				eventIndex[originalEvent.eventId].push(originalEvent);
-				console.warn(`Duplicate matrix event recieved ${type} ${originalEvent.eventId}`);
 			} else {
 				eventIndex[originalEvent.eventId] = [originalEvent];
 			}

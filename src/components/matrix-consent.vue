@@ -9,7 +9,7 @@ export default {
 		};
 	},
 	methods: {
-		...mapMutations(['toggleMatrixConsentModal']),
+		...mapMutations(['toggleMatrixConsentModal', 'toggleMatrixRoomDirectory']),
 		close() {
 			this.toggleMatrixConsentModal(false);
 		},
@@ -26,7 +26,9 @@ export default {
 		@click="close"
 		class="modal matrix-consent">
 		<div class="modal__body" @click.stop>
+			<h1>Matrix.org Terms &amp; Conditions</h1>
 			<p v-html="matrixConsentMessage"></p>
+			<p>After agreeing come back here and <a @click="toggleMatrixConsentModal(false);toggleMatrixRoomDirectory()">join a room</a>.</p>
 		</div>
 	</div>
 </template>
@@ -35,8 +37,12 @@ export default {
 @import '../sass/vars'
 @import '../sass/color'
 
-.matrix-consent p
-	overflow: hidden
-	text-overflow: ellipsis
+.matrix-consent
+	p
+		text-overflow: ellipsis
+		overflow: hidden
+	a
+		text-decoration: underline
+		cursor: pointer
 
 </style>

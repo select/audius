@@ -26,8 +26,10 @@ export const matrixClient = {
 			}
 		}, 250);
 		return new Promise(resolve => {
+			const webStorageSessionStore = new Matrix.WebStorageSessionStore(window.localStorage)
 			this.client = Matrix.createClient({
 				...credentials,
+				sessionStore: webStorageSessionStore,
 				baseUrl: 'https://matrix.org',
 				// guest: isGuest,
 				timelineSupport: true,
@@ -130,6 +132,11 @@ export const matrixClient = {
 				}
 			});
 			if (isGuest === undefined || isGuest) this.client.setGuest(true);
+			window.OLM_OPTIONS = {
+				TOTAL_STACK: 64 * 1024,
+				TOTAL_MEMORY: 256 * 1024,
+			};
+			this.client.initCrypto();
 			this.client.startClient({ initialSyncLimit: 4 });
 		});
 	},

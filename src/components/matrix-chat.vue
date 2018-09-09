@@ -75,7 +75,7 @@ export default {
 		...mapMutations(['setMainLeftTab']),
 		...mapActions(['matrixLoadMore', 'matrixSendText']),
 		scrolled(event) {
-			if (this._isLoading) event.preventDefault();
+			// if (this._isLoading) event.preventDefault();
 			// Detect when scrolled to top.
 			if (this.$refs.chat.scrollTop === 0) {
 				this.matrixLoadMore(this.currentMediaSource.id);
@@ -158,7 +158,7 @@ export default {
 	position: relative
 	flex-direction: column
 	height: 100%
-	background: url('../website/static/img/music-notes.png')
+	background: url('../website/static/img/music-notes.jpg')
 	background-color: $color-athensgrey
 	// background-repeat: no-repeat;
 	background-size: 200px

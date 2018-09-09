@@ -31,7 +31,8 @@ export default {
 		...mapState(['isLoading']),
 		...mapModuleState('matrix', ['sources', 'sourcesOrdered', 'showMatrixRoomDirectory', 'publicRooms', 'roomSearchResults']),
 		filteredPublicRooms() {
-			return (this.publicRooms || roomsList).filter(({ id }) => !(this.sourcesOrdered.includes(id)));
+			const rooms = this.publicRooms && this.publicRooms.length ? this.publicRooms : roomsList;
+			return rooms.filter(({ id }) => !(this.sourcesOrdered.includes(id)));
 		},
 	},
 };

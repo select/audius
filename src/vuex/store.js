@@ -45,7 +45,7 @@ export const store = new Vuex.Store({
 					store.registerModule(moduleName, module);
 					_initModule(state, moduleName, module, savedState, commit);
 
-					const watchList = Object.entries(savedState.sources).reduce((acc, [id, { settings }]) => {
+					const watchList = Object.entries(savedState.sources || {}).reduce((acc, [id, { settings }]) => {
 						if (settings && settings.type === 'watch') acc.push({ id, url: settings.watchUrl });
 						return acc;
 					}, []);

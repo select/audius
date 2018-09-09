@@ -62,7 +62,7 @@ export default {
 		<div class="modal__body" @click.stop>
 			<div v-if="isGuest !== false">
 				Guest users are not allowed to create rooms. <br>
-				Please login or register your Riot.im account. <br><br>
+				Please login or register your Matrix / Riot.im account. <br><br>
 				<matrix-login></matrix-login>
 			</div>
 			<div v-else>

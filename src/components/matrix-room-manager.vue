@@ -114,7 +114,7 @@ export default {
 		<div class="modal" v-if="showMatrixLoginModal" @click="toggleMatrixLoginModal()">
 			<div class="modal__body" @click.stop>
 				Guest users are not allowed to join this room. <br>
-				Please login or register your <b>Riot.im account</b>.<br><br>
+				Please login or register your <b>Matrix / Riot.im account</b>.<br><br>
 				<matrix-login></matrix-login>
 			</div>
 		</div>
