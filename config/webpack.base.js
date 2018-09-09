@@ -45,8 +45,7 @@ module.exports = {
 					},
 				],
 			},
-			{ test: /\.ttf$/, loader: 'url-loader' },
-			{ test: /\.png$/, loader: 'url-loader' },
+			{ test: /\.(ttf|png|jpg)$/, loader: 'url-loader' },
 			{ test: /\.html$/, loader: 'raw-loader' },
 			{ test: /\.svg$/, loader: 'raw-loader' },
 			{
