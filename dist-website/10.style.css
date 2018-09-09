@@ -7,7 +7,17 @@
 }
 .settings.matrix-settings .spacer{height:.9rem
 }
-.matrix-settings__me{color:#2da7ef
+.matrix-settings__me{background-color:#2da7ef;color:#fff!important
+}
+.matrix-settings__me:hover{color:inherit!important
 }
 .matrix-settings__hidden-icon{cursor:pointer;position:absolute;right:0;top:0
+}
+.matrix-settings__members>div{align-items:center;display:flex;height:2.25rem;padding:.9rem
+}
+.matrix-settings__members>div:hover{background:#eff1f7
+}
+.matrix-settings__aliases{display:flex;flex-direction:column
+}
+.matrix-settings__logo{background-position:50%;background-repeat:no-repeat;background-size:contain;border-radius:50%;height:3.15rem;width:3.15rem
 }

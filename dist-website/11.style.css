@@ -11,7 +11,7 @@
 }
 .settings.media-edit ul li :first-child{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap
 }
-.settings.media-edit ul li [class^=wmp-icon]{display:none
+.settings.media-edit ul li [class^=wmp-icon-]{display:none
 }
 .settings.media-edit ul li:hover :last-child{display:block
 }

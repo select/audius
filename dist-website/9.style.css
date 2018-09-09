@@ -1,17 +1,35 @@
 
 .ws-settings{overflow:hidden;padding:.45rem 0;width:100%
 }
+.ws-settings [class^=wmp-icon]{cursor:pointer
+}
 .ws-settings input{background:transparent;flex:1
 }
 .ws-settings input::-webkit-input-placeholder{color:#c8ccd5
 }
 .ws-settings input:-moz-placeholder,.ws-settings input::-moz-placeholder{color:#c8ccd5
 }
-.ws-settings .ws-settings__script{padding:.9rem .45rem
-}
-.ws-settings .ws-settings__script textarea{width:100%
-}
 .ws-settings .ws-settings__name{font-size:1.5rem;height:4.05rem;padding:0 .45rem;width:100%
 }
 .ws-settings h3,.ws-settings p{padding:0 .45rem
+}
+.ws-settings__watch{padding:.9rem .45rem
+}
+.ws-settings__watch>div{align-items:center;display:flex;height:3.15rem
+}
+.ws-settings__watch>div:hover{background:#eff1f7
+}
+.ws-settings__script{padding:.9rem .45rem
+}
+.ws-settings__script textarea{width:100%
+}
+.ws-settings__forward-list>div,.ws-settings__new-forward{align-items:center;display:flex;flex-direction:row;padding:.45rem
+}
+.ws-settings__forward-list>div{height:3.15rem;justify-content:space-between
+}
+.ws-settings__forward-list>div [class^=wmp-icon]{display:none
+}
+.ws-settings__forward-list>div:hover{background-color:#eff1f7
+}
+.ws-settings__forward-list>div:hover [class^=wmp-icon]{display:block
 }
