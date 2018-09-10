@@ -115,6 +115,7 @@ export default {
 			<li><a href="https://lnfwebsite.github.io/Streamly" target="_blank" rel="noopener">Streamly</a></li>
 			<li><a href="http://streamsquid.com/" target="_blank" rel="noopener">StreamSquid</a></li>
 			<li><a href="https://mycloudplayers.com" target="_blank" rel="noopener">My Cloud Player</a></li>
+			<li><a href="https://music.torchbrowser.com/trending">Torch Music</a></li>
 		</ul>
 		Just look at them and appreciate the simplicity of the Audius interface ... wait what don't leave X-D
 	</p>
