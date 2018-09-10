@@ -255,6 +255,10 @@ export const mutations = {
 				parentEvent: null,
 			});
 			eventIndex[originalEvent.eventId].push(event);
+			if (!state.chatLog) {
+				console.warn('This should not happen. state.chatLog is ', state.chatLog);
+				state.chatLog = {};
+			}
 			if (!(roomId in state.chatLog)) {
 				state.chatLog[roomId] = [event];
 			} else {
