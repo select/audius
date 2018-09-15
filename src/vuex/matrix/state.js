@@ -4,6 +4,7 @@ export const state = {
 	currentMatrixRoom: null,
 	sources: {},
 	chatLog: {},
+	directMessages: {},
 	roomSearchResults: [],
 	membersIndex: {},
 	sourcesOrdered: [],

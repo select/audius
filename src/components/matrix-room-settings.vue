@@ -7,17 +7,23 @@ export default {
 	data() {
 		return {
 			showConfirmDelte: false,
+			copyActive: false,
+			showInvite: false,
+			inviteQuery: '',
 		};
 	},
 	computed: {
 		...mapGetters(['youtubeApiKeyUI']),
 		...mapState(['currentMediaSource']),
-		...mapModuleState('matrix', ['credentials', 'sources', 'membersIndex']),
+		...mapModuleState('matrix', ['credentials', 'sources', 'membersIndex', 'directMessages']),
 		currentMatrixRoom() {
 			return this.currentMediaSource.type === 'matrix' ? this.currentMediaSource.id : null;
 		},
 		room() {
 			return this.sources[this.currentMediaSource.id];
+		},
+		roomMemberIndex() {
+			return new Set(this.room.members.map(({ id }) => id));
 		},
 		members() {
 			if (!this.room.members) return [];
@@ -27,28 +33,56 @@ export default {
 				this.membersIndex[member.id] || { name: member.id, nameColor: '' }
 			));
 		},
-		admin() {
-			return this.members.filter(({ powerLevel }) => powerLevel >= 100);
-		},
-		speaker() {
-			return this.members.filter(({ powerLevel }) => powerLevel >= 50 && powerLevel < 100);
-		},
-		listener() {
-			return this.members.filter(({ powerLevel }) => powerLevel < 50);
+		membersByType() {
+			return {
+				admin: this.members.filter(({ powerLevel }) => powerLevel >= 100),
+				moderator: this.members.filter(({ powerLevel }) => powerLevel >= 50 && powerLevel < 100),
+				other: this.members.filter(({ powerLevel }) => powerLevel < 50),
+			};
 		},
 		myId() {
 			return this.credentials.userId;
 		},
-
+		_inviteUserList() {
+			if (!this.inviteQuery) return [];
+			return Object.values(this.membersIndex).filter(({ userId, name }) => !this.roomMemberIndex.has(userId) && `${userId}${name}`.includes(this.inviteQuery));
+		},
 	},
 	methods: {
-		...mapActions(['setRoomName', 'updateRoomOptions', 'setRoomTag', 'leaveMatrixRoom']),
-		...mapMutations(['toggleHideRoom']),
+		...mapActions(['setRoomName', 'updateRoomOptions', 'setRoomTag', 'leaveMatrixRoom', 'inviteToMatrixRoom', 'createMatrixDirectMessageRoom']),
+		...mapMutations(['toggleHideRoom', 'selectMediaSource']),
 		_setRoomName: debounce(function debouncedSetName(id, name) {
 			this.setRoomName({ id, name });
 		}, 1000),
-		_inviteUser() {
-			// TODO
+		_directMessage(userId) {
+			if (userId === this.myId) return;
+			if (this.directMessages[userId]) {
+				this.selectMediaSource({ type: 'matrix', id: this.directMessages[userId] });
+			} else {
+				this.createMatrixDirectMessageRoom(userId);
+			}
+		},
+		copyToClip() {
+			window.getSelection().removeAllRanges();
+			const tmpEl = document.createElement('div');
+			tmpEl.innerHTML = `${window.location.href}?import=${this.currentMediaSource.id}&type=${this.currentMediaSource.type}&title=${encodeURIComponent(this.room.name)}`;
+			document.body.appendChild(tmpEl);
+
+			const range = document.createRange();
+			range.selectNode(tmpEl);
+			window.getSelection().addRange(range);
+
+			try {
+				document.execCommand('copy');
+				this.copyActive = true;
+				setTimeout(() => {
+					this.copyActive = false;
+				}, 800);
+			} catch (error) {
+				this.error(`Could not copy to clipboard. ${error}`);
+			}
+			window.getSelection().removeAllRanges();
+			tmpEl.parentNode.removeChild(tmpEl);
 		},
 	},
 };
@@ -56,28 +90,21 @@ export default {
 
 <template>
 <div class="settings matrix-settings">
-	<div class="matrix-settings__hidden-icon">
-		<div
-			@click="toggleHideRoom(currentMediaSource.id)"
-			:class="room.hidden ? 'wmp-icon-visibility_off' : 'wmp-icon-visibility'"></div>
-		<div
-			class="wmp-icon-close"
-			title="Leave room"
-			@click="showConfirmDelte = currentMediaSource.id"></div>
-	</div>
 
-	<input
-		@input="_setRoomName(currentMatrixRoom, $event.target.value)"
-		type="text"
-		class="matrix-settings__name"
-		placeholder="… name"
-		v-bind:disabled="!room.isAdmin"
-		:value="room.name">
-	<div
-		:src="room.avatarUrl"
-		:alt="room.name+' logo'"
-		:style="{ backgroundImage: 'url(\''+room.avatarUrl+'\')' }"
-		class="matrix-settings__logo"></div>
+	<div class="matrix-settings__header">
+		<div
+			:src="room.avatarUrl"
+			:alt="room.name+' logo'"
+			:style="{ backgroundImage: 'url(\''+room.avatarUrl+'\')' }"
+			class="matrix-settings__logo"></div>
+		<input
+			@input="_setRoomName(currentMatrixRoom, $event.target.value)"
+			type="text"
+			class="matrix-settings__name"
+			placeholder="… name"
+			v-bind:disabled="!room.isAdmin"
+			:value="room.name">
+	</div>
 	<div class="row matrix-settings__aliases">
 		<a
 			v-for="alias in room.aliases"
@@ -86,48 +113,88 @@ export default {
 			rel="noopener">{{alias}}</a>
 	</div>
 	<div class="spacer"></div>
+	<div class="matrix-settings__actions">
+		<button
+			class="button btn--grey-ghost"
+			v-bind:class="{ active: copyActive }"
+			@click="copyToClip">
+			<span class="wmp-icon-share"></span>
+			copy invite link
+		</button>
+		<button
+			class="button btn--grey-ghost"
+			@click="toggleHideRoom(currentMediaSource.id)">
+			<span :class="!room.hidden ? 'wmp-icon-visibility_off' : 'wmp-icon-visibility'"></span>
+			{{room.hidden ? 'show' : 'hide'}}
+		</button>
+		<button
+			class="button btn--grey-ghost"
+			@click="showConfirmDelte = currentMediaSource.id">
+			<span class="wmp-icon-close"></span>
+			leave
+		</button>
+		<!-- <button
+			class="button btn--grey-ghost"
+			@click="forget(room.roomId)">
+			<span class="wmp-icon-delete"></span>
+			forget
+		</button> -->
+
+	</div>
+	<div class="spacer"></div>
 	<div class="smaller row" v-if="!room.isAdmin"><b>You are not an admin</b>, you can not edit this room.</div>
-	<h3>{{room.members.length}} Members</h3>
-	<h4>Admin</h4>
-	<div class="matrix-settings__members">
-		<div
-			v-for="member in admin"
-			v-bind:class="{'matrix-settings__me' : member.id === myId}"
-			v-bind:style="{ color: member.nameColor }"
-			:title="member.id">
-			{{member.name}}
+	<div class="spacer"></div>
+	<div class="matrix-settings__members_header">
+		<h3>{{room.members.length}} Members</h3>
+		<span
+			class="wmp-icon-add_circle"
+			title="add a user"
+			@click="showInvite = !showInvite"></span>
+	</div>
+	<div v-if="showInvite">
+		<h4>Invite</h4>
+		<div class="matrix-settings__invite-in">
+			<input
+				v-model="inviteQuery"
+				type="text"
+				placeholder="... user name, email, telephone">
+			<span class="wmp-icon-search"></span>
+		</div>
+		<div class="matrix-settings__members">
+			<div
+				v-for="user in _inviteUserList"
+				@click="inviteToMatrixRoom({ userId: user.userId, roomId: room.roomId }); inviteQuery = '';"
+				:title="user.userId">
+				<span v-bind:style="{ color: user.nameColor }"> {{user.name}} </span>
+				<div>
+					invite
+					<div class="wmp-icon-add"></div>
+				</div>
+			</div>
+			<div v-if="!_inviteUserList.length"> ... nothing found</div>
 		</div>
 	</div>
-	<h4 v-if="speaker.length">50+ Powers</h4>
-	<div class="matrix-settings__members">
-		<div
-			v-for="member in speaker"
-			v-bind:class="{'matrix-settings__me' : member.id === myId}"
-			v-bind:style="{ color: member.nameColor }"
-			:title="member.id">
-			{{member.name}}
+	<div
+		v-for="type in ['admin', 'moderator', 'other']"
+		v-if="membersByType[type].length">
+		<h4>{{type}}s</h4>
+		<div class="matrix-settings__members">
+			<div
+				v-for="member in membersByType[type]"
+				v-bind:class="{'matrix-settings--me' : member.id === myId}"
+				@click="_directMessage(member.id)"
+				:title="member.id">
+				<span
+					v-bind:style="{ color: member.nameColor }">
+					{{member.name || member.id}}</span>
+				<div>
+					<span
+						title="Send direct message"
+						class="wmp-icon-chat"></span>
+				</div>
+			</div>
 		</div>
 	</div>
-	<h4>Other</h4>
-	<div class="matrix-settings__members">
-		<div
-			v-for="member in listener"
-			v-bind:class="{'matrix-settings__me' : member.id === myId}"
-			v-bind:style="{ color: member.nameColor }"
-			:title="member.id">
-			{{member.name}}
-		</div>
-	</div>
-	<!-- <h4>Invite</h4>
-	<ul class="input-list">
-		<li v-for="userId in []">
-			{{userId}}
-		</li>
-		<li>
-			<input class="input-list__input" type="text" placeholder="… @user-name:matrix.org">
-			<span class="wmp-icon-add" @click="_inviteUser"></span>
-		</li>
-	</ul> -->
 	<h3>Options</h3>
 	<div class="row">
 		<div>
@@ -189,39 +256,80 @@ export default {
 	.row, h3, h4, .matrix-settings__name
 		padding: 0 $grid-space
 	.matrix-settings__name
-		font-size: 1.5rem
-		height: $touch-size-huge
 		width: 100%
+		height: $touch-size-huge
 		margin-bottom: $grid-space
-	.spacer
-		height: #{2 * $grid-space}
-.matrix-settings__me
-	background-color: $color-pictonblue
-	color: $color-white!important
-	&:hover
-		color: inherit!important
-.matrix-settings__hidden-icon
-	position: absolute
-	top: 0
-	right: 0
-	cursor: pointer
-.matrix-settings__members
-	> div
-		display: flex
-		align-items: center
-		height: $touch-size-small
-		padding: #{2 * $grid-space}
-		&:hover
-			background: $color-catskillwhite
+		font-size: 1.5rem
+	h4
+		text-transform: capitalize
+.matrix-settings__header
+	display: flex
+	align-items: center
+.matrix-settings__logo
+	width: $touch-size-medium
+	min-width: $touch-size-medium
+	height: $touch-size-medium
+	min-height: $touch-size-medium
+	margin: 0 #{2 * $grid-space}
+	border-radius: 50%
+	background-repeat: no-repeat
+	background-position: center
+	background-size: contain
 .matrix-settings__aliases
 	display: flex
 	flex-direction: column
-.matrix-settings__logo
-	width: $touch-size-medium
-	height: $touch-size-medium
-	background-size: contain
-	background-position: center
-	background-repeat: no-repeat
-	border-radius: 50%
+.matrix-settings__members_header
+	display: flex
+	align-items: center
+	> span
+		transition: color $transition-time
+		color: $color-aluminium
+		cursor: pointer
+		&:hover
+			color: $color-pictonblue
+.matrix-settings__actions
+	padding: 0 $grid-space
+	button
+		margin-bottom: $grid-space
+	span
+		margin-right: $grid-space
+	.active
+		background: $color-larioja
+		color: $color-white
+.matrix-settings__invite-in
+	display: flex
+	align-items: center
+	padding: 0 $grid-space
+	background: $color-catskillwhite
+	input
+		flex: 1
+		background: transparent
+	span
+		color: $color-aluminium
+.matrix-settings__members
+	> div
+		display: flex
+		justify-content: space-between
+		height: $touch-size-small
+		padding: #{2 * $grid-space}
+		cursor: pointer
+		> div
+			display: none
+			align-items: center
+			color: $color-aluminium
+		&:hover
+			background: $color-catskillwhite
+			> div
+				display: flex
+		&.matrix-settings--me
+			background-color: $color-pictonblue
+			cursor: default
+			span
+				color: $color-white!important
+			&:hover
+				color: inherit
+				> div
+					display: none
+
 
 </style>

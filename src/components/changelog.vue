@@ -16,6 +16,12 @@ export default {
 <div class="wmp-about">
 	<h2 id="audius-changelog">Changelog</h2>
 	<p>
+		<b>2.0.15</b><br>
+		<ul>
+			<li> Send room invitations and join invited rooms.</li>
+			<li> Invite to and join direct messages with other users.</li>
+			<li> Interprete text messages as markdown and render them to HTML using <a href="https://github.com/developit/snarkdown">Snarkdown</a></li>
+		</ul>
 		<b>2.0.14</b><br>
 		<ul>
 			<li> Matrix Rooms: <br><br>

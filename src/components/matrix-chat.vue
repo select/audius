@@ -125,9 +125,10 @@ export default {
 				v-for="(event, index) in _chatLog"
 				v-bind:is="event.type === 'text' ? 'chat-message' : 'video-item'"
 				:isAuthor="event.sender === credentials.userId"
-				:isAdmin="sources[currentMediaSource.id].isAdmin"
+				:isAdmin="sources[currentMediaSource.id].isAdmin || event.sender === credentials.userId"
 				:video="event"
 				:membersIndex="membersIndex"
+				:enableDelete="sources[currentMediaSource.id].isAdmin || event.sender === credentials.userId"
 				:isPlaying="event.type !== 'text' && isPlaying && (currentMedia.id == event.id)"
 				:key="index"></component>
 		</ul>

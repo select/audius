@@ -9,6 +9,7 @@ export const matrixClient = {
 	client: null,
 	firstEvent: {},
 	syncFailCount: 0,
+	started: false,
 	paginate(roomId) {
 		const room = this.client.getRoom(roomId);
 		if (!room) throw { errcode: 'PAGINATE_NO_ROOM' };
@@ -35,9 +36,16 @@ export const matrixClient = {
 				timelineSupport: true,
 			});
 
-			// this.client.on('event', event => {
-			// 	console.log('Matix event ', event.getType(), event);
-			// });
+			this.client.on('event', event => {
+				const type = event.getType();
+				// if (!'m.room.message m.room.redaction m.room.member m.room.name m.room.avatar'.split(' ').includes(type)) {
+				// 	console.log('Matix event ', event.getType(), event);
+				// }
+				if (type === 'm.room.join_rules' && this.started === true) {
+					commit('setMatrixLoggedIn', this.client.getRooms());
+					console.log("this.client.getRooms()", this.client.getRooms());
+				}
+			});
 
 			this.client.on('Room.localEchoUpdated', event => {
 				const { status, _txnId } = event;
@@ -128,14 +136,15 @@ export const matrixClient = {
 					// update UI to remove any "Connection Lost" message
 					this.syncFailCount = 0;
 				} else if (syncState === 'PREPARED') {
+					this.started = true;
 					resolve(this.client.getRooms());
 				}
 			});
 			if (isGuest === undefined || isGuest) this.client.setGuest(true);
-			window.OLM_OPTIONS = {
-				TOTAL_STACK: 64 * 1024,
-				TOTAL_MEMORY: 256 * 1024,
-			};
+			// window.OLM_OPTIONS = {
+			// 	TOTAL_STACK: 64 * 1024,
+			// 	TOTAL_MEMORY: 256 * 1024,
+			// };
 			this.client.initCrypto();
 			this.client.startClient({ initialSyncLimit: 4 });
 		});
@@ -169,6 +178,10 @@ export const matrixClient = {
 	},
 	leaveRoom(roomIdOrAlias) {
 		return this.client.leave(roomIdOrAlias);
+	},
+	forgetRoom(roomIdOrAlias) {
+		console.log("roomIdOrAlias", roomIdOrAlias);
+		return this.client.forget(roomIdOrAlias);
 	},
 	sendMediaMessage(roomId, media, body) {
 		const removeKeys = new Set(['eventId', 'roomId', 'sender']);
@@ -214,7 +227,7 @@ export const matrixClient = {
 	// deleteRoomTag(roomId, tagName) {
 	// 	return this.client.deleteRoomTag(roomId, tagName);
 	// },
-	invite(roomId, userId) {
+	invite(userId, roomId) {
 		return this.client.invite(roomId, userId);
 	},
 	createDirectMessageRoom(userId) {

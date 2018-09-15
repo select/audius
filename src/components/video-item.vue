@@ -13,6 +13,7 @@ export default {
 		isSearchResult: Boolean,
 		hasExpiryDate: Boolean,
 		isWebScraper: Boolean,
+		enableDelete: Boolean,
 		elementType: String,
 	},
 	computed: {
@@ -20,9 +21,6 @@ export default {
 			'isMobile',
 			'currentMediaSource',
 		]),
-		...mapState({
-			matrixRooms: state => state.matrix.sources,
-		}),
 	},
 	data() {
 		return {
@@ -180,7 +178,7 @@ export default {
 						@click="setShowMediaEdit(video.id);selected = false"></span>
 					<span
 						class="wmp-icon-close"
-						v-if="isPlayList || isQueue || (currentMediaSource.type === 'matrix' && matrixRooms[currentMediaSource.id].isAdmin)"
+						v-if="enableDelete"
 						@click="setShowConfirmDelte();selected = false"
 						title="Remove"></span>
 

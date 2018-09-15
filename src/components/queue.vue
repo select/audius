@@ -66,6 +66,7 @@ export default {
 		<video-item
 			v-for="(media, index) in _queue"
 			:isQueue="true"
+			:enableDelete="true"
 			:queueIndex="index"
 			:key="index"
 			:video="media"></video-item>

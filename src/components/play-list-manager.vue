@@ -134,7 +134,7 @@ export default {
 				.play-list-manager__menu
 					color: $color-pictonblue
 				.play-list-manager__menu
-					display: block
+					display: flex
 				input
 					color: $color-pictonblue
 

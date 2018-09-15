@@ -21,10 +21,16 @@ To update the fonts go to https://icomoon.io/app/#/select import the `selection.
 
 ```
 <span class="wmp-icon-album"></span>
-<span class="wmp-icon-add"></span>
 <span class="wmp-icon-queue2"></span>
 <span class="wmp-icon-copy"></span>
+```
+
+```
+<span class="wmp-icon-add"></span>
 <span class="wmp-icon-close"></span>
+<span class="wmp-icon-add_circle"></span>
+<span class="wmp-icon-check"></span>
+<span class="wmp-icon-delete"></span>
 ```
 
 ```
@@ -42,7 +48,6 @@ To update the fonts go to https://icomoon.io/app/#/select import the `selection.
 <span class="wmp-icon-arrow_drop_up"></span>
 <span class="wmp-icon-search"></span>
 <span class="wmp-icon-link"></span>
-<span class="wmp-icon-delete"></span>
 <span class="wmp-icon-cloud_upload"></span>
 ```
 

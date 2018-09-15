@@ -24,6 +24,7 @@ const playListEvents = {};
 function updateMembers(state, rooms) {
 	// Commit member names to the store.
 	rooms.forEach(room => {
+		if (!room.getJoinedMembers) return;
 		room.getJoinedMembers().forEach(member => {
 			const { userId, name } = member;
 			const match = name.match(matrixNameRegEx);
@@ -50,11 +51,37 @@ function updateClientRooms(state, rooms) {
 			state.sources[roomId] = Object.assign({}, matrixRoomTemplate(), { roomId, name: room.name });
 		}
 
+		state.sources[roomId].roomId = roomId;
+
 		// Set members of the room.
 		state.sources[roomId].members = room.getJoinedMembers().map(
 			(member) => ({ id: member.userId, powerLevel: member.powerLevel })
 		);
+
+
+		// Set room name if it changed and is not a matrix id.
+		state.sources[roomId].name = room.name;
 		state.sources[roomId].avatarUrl = room.getAvatarUrl('https://matrix.org', 200, 200, 'scale');
+		// Check if the user is only ivited but not joined.
+		// States to check ["invite", "join", "leave", "ban"]
+		state.sources[roomId].membership = room.getMyMembership();
+		// Find out if this is a direct message room.
+		let type = room.getDMInviter() ? 'directMessage' : 'room';
+		if (type === 'directMessage') {
+			state.directMessages[room.getDMInviter()] = roomId;
+			state.sources[roomId].name = room.name.replace(/@(\w+):.+/, '$1');
+			state.sources[roomId].avatarUrl = room.getMember(room.getDMInviter()).getAvatarUrl('https://matrix.org', 200, 200, 'scale');
+		}
+		const allMembers = room.currentState.getMembers();
+		if (type === 'room' && allMembers.length <= 2) {
+			const inviter = allMembers.find(m => m.getDMInviter());
+			if (inviter) {
+				type = 'directMessage';
+				state.sources[roomId].avatarUrl = inviter.getAvatarUrl('https://matrix.org', 200, 200, 'scale');
+			}
+		}
+		state.sources[roomId].type = type;
+
 		// Set flag indicating if current user is admin.
 		const myuser = room.getMember(userId);
 		state.sources[roomId].isAdmin = myuser.powerLevel >= 100;
@@ -64,10 +91,6 @@ function updateClientRooms(state, rooms) {
 		// Add to room list if not on the list.
 		if (!state.sourcesOrdered.includes(roomId)) {
 			state.sourcesOrdered.unshift(roomId);
-		}
-		// Set room name if it changed and is not a matrix id.
-		if (state.sources[roomId].name !== room.name && !room.name.includes(':matrix.org')) {
-			state.sources[roomId].name = room.name;
 		}
 	});
 	// Remove room from room list if it does not exist any more.
@@ -103,8 +126,11 @@ export const mutations = {
 		}
 		if (!(roomId in state.sources)) {
 			state.sources[roomId] = Object.assign({}, matrixRoomTemplate(), { name: room.name });
-			state.sources = Object.assign({}, state.sources);
+		} else {
+			console.log("room.status", room.getMyMembership());
+			state.sources[roomId].membership = 'join';
 		}
+		state.sources = Object.assign({}, state.sources);
 	},
 	setMemberInfo(state, member) {
 		Object.assign(state.membersIndex[member.userId], member);

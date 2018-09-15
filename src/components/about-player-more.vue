@@ -135,6 +135,7 @@ export default {
 			<li><a target="_blank" href="http://myjson.com/">Myjson.com</a></li>
 			<li>Matrix</li>
 			<li>Imgur</li>
+			<li><a href="https://github.com/developit/snarkdown">Snarkdown</a></li>
 		</ul>
 	</p>
 </div>

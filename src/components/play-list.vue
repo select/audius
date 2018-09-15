@@ -156,6 +156,8 @@ export default {
 		]),
 		...mapState({
 			matrixLoggedIn: state => state.matrix.matrixLoggedIn,
+			matrixSources: state => state.matrix.sources,
+			matrixUserId: state => state.matrix.credentials.userId,
 		}),
 		_entities: {
 			get() {
@@ -281,6 +283,7 @@ export default {
 					:video="media"
 					:isPlayList="currentMediaSource.type === 'playList'"
 					:isSelected="jumpCursor === media.id"
+					:enableDelete="currentMediaSource.type === 'playList' || (currentMediaSource.type === 'matrix' && matrixSources[currentMediaSource.id].isAdmin || media.sender === matrixUserId)"
 					:hasExpiryDate="_hasExpiryDate(media.id)"
 					:isWebScraper="currentMediaSource.type == 'webScraper'"
 					:isPlaying="isPlaying && (currentMedia.id == media.id)"></video-item>

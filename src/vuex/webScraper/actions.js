@@ -37,7 +37,6 @@ export const actions = {
 						return acc;
 					}, {})
 				);
-				console.log('newVideos', newVideos);
 				if (!newVideos.length) {
 					commit('error', `No new videos found for ${id}. Try agin.`);
 					return;
@@ -55,7 +54,6 @@ export const actions = {
 				// Forward media to matrix room.
 				if (rootState.matrix.matrixLoggedIn && state.forward[id]) {
 					state.forward[id].forEach(forward => {
-						console.log('forward', forward);
 						_mediaList.forEach(newMedia => {
 							dispatch('matrixSend', { roomId: forward.id, media: newMedia, silent: true });
 						});

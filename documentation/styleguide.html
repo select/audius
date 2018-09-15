@@ -228,18 +228,29 @@ function createDiv(copyHexColors) {
   .web-app [type='checkbox']:disabled:checked + label:before {
     background-color: #C8CCD5; }
 .audius input,
-.web-app input {
+.audius textarea,
+.web-app input,
+.web-app textarea {
   height: 2.25rem;
-  font-size: 1rem;
   border: 0;
-  font-family: "Nobile", sans-serif; }
-  .audius input[disabled="disabled"],
-  .web-app input[disabled="disabled"] {
+  font-family: "Nobile", sans-serif;
+  font-size: 1rem; }
+  .audius input:focus,
+  .audius textarea:focus,
+  .web-app input:focus,
+  .web-app textarea:focus {
+    outline: 0; }
+  .audius input[disabled='disabled'],
+  .audius textarea[disabled='disabled'],
+  .web-app input[disabled='disabled'],
+  .web-app textarea[disabled='disabled'] {
     background-color: #E2E4E9; }
   .audius input.input--border,
-  .web-app input.input--border {
-    border: 1px solid #C8CCD5;
-    padding: 0 0.45rem; }
+  .audius textarea.input--border,
+  .web-app input.input--border,
+  .web-app textarea.input--border {
+    padding: 0 0.45rem;
+    border: 1px solid #C8CCD5; }
 @font-face {
   font-family: "WampIcons";
   src: url("../fonts/media-player.ttf");
@@ -271,6 +282,10 @@ function createDiv(copyHexColors) {
     height: 100%; }
 .icon--small:before {
   font-size: 1.2em; }
+.wmp-icon-add_circle:before {
+  content: ""; }
+.wmp-icon-check:before {
+  content: ""; }
 .wmp-icon-send:before {
   content: ""; }
 .wmp-icon-speaker_notes_off:before {
@@ -1107,14 +1122,22 @@ hr {
   <section class="lsg-example lsg-html-example" id="icon-icons-2">
     <div class="lsg-html">
       <span class="wmp-icon-album"></span>
-  <span class="wmp-icon-add"></span>
   <span class="wmp-icon-queue2"></span>
   <span class="wmp-icon-copy"></span>
-  <span class="wmp-icon-close"></span>
     </div>
-    <pre class="lsg-code-block"><code class="lsg-code"><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-album&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-add&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-queue2&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-copy&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-close&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b></code></pre>
+    <pre class="lsg-code-block"><code class="lsg-code"><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-album&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-queue2&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-copy&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b></code></pre>
   </section>
   <section class="lsg-example lsg-html-example" id="icon-icons-3">
+    <div class="lsg-html">
+      <span class="wmp-icon-add"></span>
+  <span class="wmp-icon-close"></span>
+  <span class="wmp-icon-add_circle"></span>
+  <span class="wmp-icon-check"></span>
+  <span class="wmp-icon-delete"></span>
+    </div>
+    <pre class="lsg-code-block"><code class="lsg-code"><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-add&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-close&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-add_circle&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-check&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-delete&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b></code></pre>
+  </section>
+  <section class="lsg-example lsg-html-example" id="icon-icons-4">
     <div class="lsg-html">
       <span class="wmp-icon-send"></span>
   <span class="wmp-icon-speaker_notes_off"></span>
@@ -1125,19 +1148,18 @@ hr {
     </div>
     <pre class="lsg-code-block"><code class="lsg-code"><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-send&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-speaker_notes_off&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-chat&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-visibility&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-visibility_off&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-format_list_bulleted&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b></code></pre>
   </section>
-  <section class="lsg-example lsg-html-example" id="icon-icons-4">
+  <section class="lsg-example lsg-html-example" id="icon-icons-5">
     <div class="lsg-html">
       <span class="wmp-icon-more_vert"></span>
   <span class="wmp-icon-arrow_drop_down"></span>
   <span class="wmp-icon-arrow_drop_up"></span>
   <span class="wmp-icon-search"></span>
   <span class="wmp-icon-link"></span>
-  <span class="wmp-icon-delete"></span>
   <span class="wmp-icon-cloud_upload"></span>
     </div>
-    <pre class="lsg-code-block"><code class="lsg-code"><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-more_vert&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-arrow_drop_down&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-arrow_drop_up&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-search&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-link&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-delete&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-cloud_upload&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b></code></pre>
+    <pre class="lsg-code-block"><code class="lsg-code"><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-more_vert&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-arrow_drop_down&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-arrow_drop_up&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-search&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-link&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-cloud_upload&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b></code></pre>
   </section>
-  <section class="lsg-example lsg-html-example" id="icon-icons-5">
+  <section class="lsg-example lsg-html-example" id="icon-icons-6">
     <div class="lsg-html">
       <span class="wmp-icon-sort"></span>
   <span class="wmp-icon-queue_music"></span>
@@ -1148,7 +1170,7 @@ hr {
     </div>
     <pre class="lsg-code-block"><code class="lsg-code"><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-sort&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-queue_music&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-mode_edit&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-fullscreen&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-fullscreen_exit&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b><br><b>&lt;<em>span</em></b> <b>class</b>=&quot;wmp-icon-share&quot;<b>&gt;</b><b>&lt;/<em>span</em>&gt;</b></code></pre>
   </section>
-  <section class="lsg-example lsg-html-example" id="icon-icons-6">
+  <section class="lsg-example lsg-html-example" id="icon-icons-7">
     <div class="lsg-html">
       <span class="wmp-icon-vimeo"></span>
   <span class="wmp-icon-whatsapp"></span>

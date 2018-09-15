@@ -1,11 +1,10 @@
 {
 	"presets": [
-    ["env", {
+    ["@babel/preset-env", {
       "targets": {
-        "browsers": ["last 2 versions", "safari >= 7"]
+        "browsers": ["last 2 years"]
       }
-    }],
-    "stage-3"
+    }]
   ],
-  "plugins": ["syntax-dynamic-import"]
+  "plugins": ["@babel/syntax-dynamic-import"]
 }

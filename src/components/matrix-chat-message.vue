@@ -1,6 +1,7 @@
 <script >
-import { zeroPad } from '../utils';
 import { mapActions } from 'vuex';
+import snarkdown from 'snarkdown';
+import { zeroPad, urlify } from '../utils';
 
 export default {
 	props: {
@@ -11,6 +12,10 @@ export default {
 	},
 	methods: {
 		...mapActions(['matrixRedact']),
+		_snarkdown(md) {
+			return snarkdown(md);
+		},
+		urlify(m) { return urlify(m); },
 	},
 	computed: {
 		event() { return this.video; },
@@ -48,13 +53,12 @@ export default {
 				v-for="message in messages"
 				:class="{'matrix-chat-message--sending': message.status === 'sending'}"
 				>
-				<span v-if="message.body" v-html="message.body"></span>
+				<span v-if="message.body" v-html="urlify(_snarkdown(message.body))"></span>
 				<div
 					v-if="message.url"
 					class="matrix-chat-message__image"
 					v-bind:style="{ backgroundImage: 'url('+message.url+')' }">
 				</div>
-				<img >
 				<div
 					v-if="isAuthor || isAdmin"
 					@click="matrixRedact(message)"
@@ -135,18 +139,22 @@ export default {
 	display: flex
 	flex-direction: column
 	> div
+		position: relative
+		padding: #{2 * $grid-space}
 		text-overflow: ellipsis
 		overflow: hidden
 		&:not(:last-child):not(:first-child)
-			padding: #{2 * $grid-space}
+			padding: $grid-space #{2 * $grid-space}
 		&:first-child
 			padding-bottom: $grid-space
 		&:last-child
+			padding-bottom: 0
+		&:last-child
 			padding-top: $grid-space
 		&:not(:last-child)
-			margin-bottom: $grid-space/2
-			box-shadow: 0 1px .5px rgba(0, 0, 0, .13)
+			margin-bottom: $grid-space / 2
 			border-radius: $border-radius
+			box-shadow: 0 1px .5px rgba(0, 0, 0, .13)
 		&:not(:first-child)
 			position: relative
 		&:hover
@@ -173,8 +181,7 @@ export default {
 .matrix-chat-message__image
 	width: 100%
 	height: 200px
-	background-size: contain
-	background-position: center
 	background-repeat: no-repeat
-
+	background-position: center
+	background-size: contain
 </style>

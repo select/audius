@@ -3,17 +3,17 @@
 Audius is the ultimate streaming music player.
 
 - Create playlist, no login required, stored in the indexDB in your browser.
-- Share your playlists as hyperlinks, files and in Matrix rooms.
 - Queue songs, play history.
 - Organize playlists with drag and drop.
-- Supports: YouTube/Vimeo/.mp3/.oga/.wav/.mp4/.webm/.ogg URLs.
-- Plays Imgur "Most Viral" as video stream.
 - Connect to a Matrix room to chat, share, and discover music with your friends.
-- Create your own web channels with the build in web scraper.
+- Share your playlists as hyperlinks, files and in Matrix rooms.
+- Runs "offline" - a pure HTML5 progressive web app that is self contained.
 - Set start end times of media items (e.g. to cut of trailing silence)
 - Split YouTube full albums into separate songs.
-- Runs "offline" - a pure HTML5 progressive web app that is self contained.
 - Run your own Audius instance as as single HTML file.
+- Plays Imgur "Most Viral" as video stream.
+- Supports: YouTube/Vimeo/.mp3/.oga/.wav/.mp4/.webm/.ogg URLs.
+- Create your own web channels with the build in web scraper.
 
 <img src="https://audius.rockdapus.org/img/audius.screenshot.1280x800.png" />
 
@@ -46,6 +46,12 @@ Create your own rooms with Audius and share it with your friends.
 
 
 ## Change log
+
+**2.0.15**
+* Matrix:
+	* Send room invitations and join invited rooms.
+	* Invite to and join direct messages with other users.
+	* Interprete text messages as markdown and render them to HTML using [Snarkdown](https://github.com/developit/snarkdown)
 
 **2.0.14**	
 * Matrix Rooms:

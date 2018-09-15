@@ -21,6 +21,13 @@ export default {
 	data() {
 		return {
 			showHidden: false,
+			showInvited: true,
+			showHiddenPeople: false,
+			showInvitedPeople: true,
+			fold: {
+				Rooms: true,
+				People: true,
+			},
 		};
 	},
 	created() {
@@ -64,21 +71,46 @@ export default {
 			'matrixLoggedIn',
 			'showMatrixLoginModal',
 		]),
-		_hiddenSourcesOrdered: {
+		_sources() {
+			return this.sourcesOrdered.reduce((acc, id) => {
+				const room = this.sources[id];
+				if (!room.roomId) console.log('aaaa ', room.name)
+				acc[room.type][room.membership === 'invite' ? 'invited' : room.hidden ? 'hidden' : 'visible'].push(id);
+				return acc;
+			},
+			{
+				room: { hidden: [], visible: [], invited: [] },
+				directMessage: { hidden: [], visible: [], invited: [] },
+			});
+		},
+		directMessagesOrdered: {
 			get() {
-				return this.sourcesOrdered.filter(id => this.sources[id].hidden);
+				return this._sources.directMessage.visible;
 			},
 			set(value) {
-				this.error('not implemented');
+				this.moveMatrixSourcesOrdered([
+					...this._sources.room.visible,
+					...this._sources.room.hidden,
+					...this._sources.room.invited,
+					...value,
+					...this._sources.directMessage.hidden,
+					...this._sources.directMessage.invited,
+				]);
 			},
 		},
-
-		_sourcesOrdered: {
+		roomsOrdered: {
 			get() {
-				return this.sourcesOrdered.filter(id => !this.sources[id].hidden);
+				return this._sources.room.visible;
 			},
 			set(value) {
-				this.moveMatrixSourcesOrdered([...value, ...this._hiddenSourcesOrdered]);
+				this.moveMatrixSourcesOrdered([
+					...value,
+					...this._sources.room.hidden,
+					...this._sources.room.invited,
+					...this._sources.directMessage.visible,
+					...this._sources.directMessage.hidden,
+					...this._sources.directMessage.invited,
+				]);
 			},
 		},
 	},
@@ -87,10 +119,10 @@ export default {
 
 <template>
 <div class="matrix-room play-list-manager__wrapper">
-	<div v-if="loadedModules.matrix">
-		<div v-if="!matrixLoggedIn" class="matrix-room__logging-in">
-			&nbsp; … connecting to Matrix.org
-		</div>
+	<div v-if="!(loadedModules.matrix  && matrixLoggedIn)" class="matrix-room__logging-in">
+		&nbsp; … connecting to Matrix.org
+	</div>
+	<div v-if="loadedModules.matrix && matrixLoggedIn">
 		<div
 			class="play-list-manager__room-suggestions"
 			v-if="matrixLoggedIn && !sourcesOrdered.length">
@@ -119,75 +151,163 @@ export default {
 			</div>
 		</div>
 
-		<draggable
-			v-if="matrixLoggedIn"
-			class="matrix-room__tags"
-			v-model="_sourcesOrdered"
-			element="ul"
-			:options="{
-				animation: 150,
-				scrollSpeed: 20,
-				handle: '.play-list-manager__drag-handle',
-			}">
-			<matrix-room-tag
-				v-for="(id, index) in _sourcesOrdered"
-				v-bind:class="{ active: currentMediaSource.id == id }"
-				:key="index"
-				:id="id"
-				:room="sources[id]">
-			</matrix-room-tag>
-
-		</draggable>
-
-		<div v-if="matrixLoggedIn && _hiddenSourcesOrdered.length">
+		<h2 id="lm-rooms" title="fold" @click="fold['Rooms'] = !fold['Rooms']">Rooms</h2>
+		<div v-show="fold['Rooms']">
+			<!-- Invited Room -->
 			<div
-				v-if="!showHidden"
-				@click="showHidden = true"
-				class="play-list-manager__show-hidden-rooms">
-				show hidden
-			</div>
-			<div v-if="showHidden">
+				v-show="_sources.room.invited.length">
 				<div
-					@click="showHidden = false"
-					class="play-list-manager__show-hidden-rooms">
-					hide
+					class="play-list-manager__show-hidden-rooms"
+					@click="showInvited = !showInvited">you are invited ({{_sources.room.invited.length}})</div>
+				<div v-show="showInvited">
+					<ul>
+						<matrix-room-tag
+							v-for="(id, index) in _sources.room.invited"
+							:key="index"
+							:id="id"
+							:room="sources[id]">
+						</matrix-room-tag>
+					</ul>
+					<div class="spacer"></div>
 				</div>
+			</div>
+			<!-- Rooms -->
+			<draggable
+				v-if="roomsOrdered"
+				class="matrix-room__tags"
+				v-model="roomsOrdered"
+				element="ul"
+				:options="{
+					animation: 150,
+					scrollSpeed: 20,
+					handle: '.play-list-manager__drag-handle',
+				}">
+				<matrix-room-tag
+					v-for="(id, index) in roomsOrdered"
+					v-bind:class="{ active: currentMediaSource.id == id }"
+					:key="index"
+					:id="id"
+					:room="sources[id]">
+				</matrix-room-tag>
+
+			</draggable>
+			<!-- Hidden room -->
+			<div v-if="_sources.room.hidden.length">
+				<div
+					v-if="!showHidden"
+					@click="showHidden = true"
+					class="play-list-manager__show-hidden-rooms">
+					show hidden
+				</div>
+				<div v-if="showHidden">
+					<div
+						@click="showHidden = false"
+						class="play-list-manager__show-hidden-rooms">
+						hide
+					</div>
+					<ul>
+						<matrix-room-tag
+							v-for="(id, index) in _sources.room.hidden"
+							v-bind:class="{ active: currentMediaSource.id == id }"
+							:key="index"
+							:id="id"
+							:room="sources[id]">
+						</matrix-room-tag>
+					</ul>
+				</div>
+			</div>
+
+			<!-- Create room / join room -->
+			<ul class="matrix-room__tags">
+				<li
+					class="play-list-manager__input"
+					v-if="matrixLoggedIn">
+					<div class="play-list-manager__tag-body">
+						<input
+							v-on:keyup.enter="addMatrixRoom"
+							type="text"
+							placeholder="… room id or name">
+					</div>
+					<div class="matrix-room__room-join-create">
+						<span
+							class="wmp-icon-add"
+							title="Create / join room"
+							@click="addMatrixRoom"></span>
+					</div>
+					<div class="matrix-room__room-list">
+						<span
+							class="wmp-icon-format_list_bulleted"
+							title="Room List"
+							@click="toggleMatrixRoomDirectory()"></span>
+					</div>
+				</li>
+			</ul>
+			<div class="spacer"></div>
+		</div>
+
+		<h2 id="lm-rooms" title="fold" @click="fold['People'] = !fold['People']">People</h2>
+		<div v-show="fold['People']">
+			<!-- Invited People -->
+			<div
+				class="play-list-manager__show-hidden-rooms"
+				v-show="_sources.directMessage.invited.length"
+				@click="showInvitedPeople = !showInvitedPeople">you are invited ({{_sources.directMessage.invited.length}})</div>
+			<div v-show="showInvitedPeople && _sources.directMessage.invited.length">
 				<ul>
 					<matrix-room-tag
-						v-for="(id, index) in _hiddenSourcesOrdered"
+						v-for="(id, index) in _sources.directMessage.invited"
 						:key="index"
 						:id="id"
 						:room="sources[id]">
 					</matrix-room-tag>
 				</ul>
+				<div class="spacer"></div>
+			</div>
+			<!-- People with active chat -->
+			<draggable
+				v-if="directMessagesOrdered"
+				class="matrix-room__tags"
+				v-model="directMessagesOrdered"
+				element="ul"
+				:options="{
+					animation: 150,
+					scrollSpeed: 20,
+					handle: '.play-list-manager__drag-handle',
+				}">
+				<matrix-room-tag
+					v-for="(id, index) in directMessagesOrdered"
+					v-bind:class="{ active: currentMediaSource.id == id }"
+					:key="index"
+					:id="id"
+					:room="sources[id]">
+				</matrix-room-tag>
+			</draggable>
+			<!-- Hidden People -->
+			<div v-if="matrixLoggedIn && _sources.directMessage.hidden.length">
+				<div
+					v-if="!showHiddenPeople"
+					@click="showHiddenPeople = true"
+					class="play-list-manager__show-hidden-rooms">
+					show hidden
+				</div>
+				<div v-if="showHiddenPeople">
+					<div
+						@click="showHiddenPeople = false"
+						class="play-list-manager__show-hidden-rooms">
+						hide
+					</div>
+					<ul>
+						<matrix-room-tag
+							v-for="(id, index) in _sources.directMessage.hidden"
+							:key="index"
+							:id="id"
+							:room="sources[id]">
+						</matrix-room-tag>
+					</ul>
+				</div>
+
 			</div>
 		</div>
-
-		<ul class="matrix-room__tags">
-			<li
-				class="play-list-manager__input"
-				v-if="matrixLoggedIn">
-				<div class="play-list-manager__tag-body">
-					<input
-						v-on:keyup.enter="addMatrixRoom"
-						type="text"
-						placeholder="… room id or name">
-				</div>
-				<div class="matrix-room__room-join-create">
-					<span
-						class="wmp-icon-add"
-						title="Create / join room"
-						@click="addMatrixRoom"></span>
-				</div>
-				<div class="matrix-room__room-list">
-					<span
-						class="wmp-icon-format_list_bulleted"
-						title="Room List"
-						@click="toggleMatrixRoomDirectory()"></span>
-				</div>
-			</li>
-		</ul>
-
 	</div>
 </div>
 </template>
@@ -222,12 +342,10 @@ export default {
 	content: 'CREATE'
 
 
-.matrix-room__logging-in,
-.play-list-manager__enable-matrix
+.matrix-room__logging-in
 	width: 100%
-	text-align: center
 	padding: 0 $grid-space
-	margin-top: $touch-size-medium
+	text-align: center
 .play-list-manager__room-suggestions
 	margin: $grid-space
 	text-align: center

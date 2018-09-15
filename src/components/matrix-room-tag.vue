@@ -16,7 +16,7 @@ export default {
 		};
 	},
 	methods: {
-		...mapActions(['matrixSend']),
+		...mapActions(['matrixSend', 'joinMatrixRoom', 'leaveMatrixRoom']),
 		...mapMutations(['selectMediaSource', 'setShowMediumSettings']),
 		dropAdd(event) { // Element is dropped into the list from another list
 			const itemId = event.item.dataset.id;
@@ -30,7 +30,7 @@ export default {
 </script>
 
 <template>
-	<li>
+	<li class="a-mrt">
 		<div class="play-list-manager__drag-handle"></div>
 		<draggable
 			class="play-list-manager__tag-drop-zone"
@@ -52,7 +52,21 @@ export default {
 				</div>
 			</div>
 		</draggable>
-		<div class="play-list-manager__menu">
+		<div
+			v-if="room.membership == 'invite'"
+			class="play-list-manager__menu play-list-manager__invited">
+			<span
+				class="wmp-icon-check"
+				title="join"
+				@click="joinMatrixRoom({ id: room.roomId, name: room.name })"></span>
+			<span
+				class="wmp-icon-close"
+				title="reject"
+				@click="leaveMatrixRoom(room.roomId)"></span>
+			</div>
+		<div
+			v-else
+			class="play-list-manager__menu">
 			<span
 				class="wmp-icon-more_vert"
 				title="Room settings"
@@ -63,12 +77,24 @@ export default {
 </template>
 
 <style lang="sass">
-
+@import '../sass/vars'
+@import '../sass/color'
 .matrix-room__tag-footer
 	display: flex
 	div
 		min-width: 4em
-
+.a-mrt
+	&:hover
+		.play-list-manager__invited
+			display: flex
+.play-list-manager__invited.play-list-manager__invited
+	justify-content: space-between
+	width: 100%
+	> span
+		flex: 1
+		&:hover
+			background: $color-pictonblue
+			color: $color-white
 </style>
 
 

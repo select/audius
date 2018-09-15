@@ -1,13 +1,8 @@
-import { findMediaText, getMediaLink } from '../../utils';
+import { findMediaText, getMediaLink, urlify } from '../../utils';
 import { getMediaEntity } from '../audius/getCurrentPlayList';
 // This must be avialable in the whole module since it's lazy loaded.
 // Do not delete;
 let matrixClient;
-
-const urlRegex = /(https?:\/\/[^\s]+)/g;
-function urlify(text) {
-	return text.replace(urlRegex, '<a href="$1" target="_blank">$1</a>');
-}
 
 // function getRoomMembers(commit, state, rooms) {
 // Get member avatar with async request to matrix.
@@ -174,6 +169,15 @@ export const actions = {
 				}
 			});
 	},
+	inviteToMatrixRoom({ commit }, { userId, roomId }) {
+		matrixClient
+			.invite(userId, roomId)
+			.then(() => {
+			})
+			.catch(error => {
+				commit('error', `Could not send invite. ${error}`);
+			});
+	},
 	createMatrixRoom({ commit }, options) {
 		matrixClient
 			.createRoom(options)
@@ -191,6 +195,19 @@ export const actions = {
 			})
 			.catch(error => {
 				commit('error', `Could not create room. ${error}`);
+			});
+	},
+	createMatrixDirectMessageRoom({ commit }, userId) {
+		matrixClient
+			.createDirectMessageRoom(userId)
+			.then(room => {
+				commit('error', `Invited user ${userId} to chat with you.`);
+				commit('selectMediaSource', { type: 'matrix', id: room.room_id });
+				commit('setLeftMenuTab', 'matrix');
+				commit('setMainLeftTab', 'matrix');
+			})
+			.catch(error => {
+				commit('error', `Could not send invite. ${error}`);
 			});
 	},
 	setRoomName({ commit }, { id, name }) {
@@ -235,6 +252,13 @@ export const actions = {
 			.leaveRoom(roomIdOrAlias)
 			.catch(() => commit('error', 'Leaving matrix room failed'));
 	},
+	// forgetMatrixRoom({ commit, state }, roomId) {
+	// 	commit('deleteMatrixRoom', roomId);
+	// 	commit('selectMediaSource', { type: 'matrix', id: state.sourcesOrdered[0] });
+	// 	matrixClient
+	// 		.forget(roomId)
+	// 		.catch(() => commit('error', 'Leaving matrix room failed'));
+	// },
 	searchRoom({ commit, rootState }, query) {
 		initLoading('searchRoom', rootState, commit, 50000);
 		matrixClient
@@ -272,7 +296,6 @@ export const actions = {
 	parseMatrixMessages({ state, commit, rootState }, matrixEvents) {
 		matrixEvents.forEach(matrixEvent => {
 			const { type, body, parse } = matrixEvent;
-			if (body) matrixEvent.body = urlify(body);
 			if (parse) {
 				// window.console.log(`[Matrix-Text] %c${body}`, 'color: #2DA7EF;');
 				findMediaText(body, rootState.youtubeApiKey, rootState.mediaIndex).then(

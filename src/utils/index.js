@@ -10,6 +10,7 @@ export {
 	youTubePlaylistRexEx,
 	getPlayList,
 } from './youtube';
+export { urlify } from './urlify';
 export { findMediaText } from './findMediaLinks';
 export { findVimeoIdsText } from './vimeo';
 export { isElementInViewport } from './isElementInViewport';

@@ -5,7 +5,7 @@ import { hashCode } from './hashCode';
 import { getMediaDuration } from './getMediaDuration';
 import { mediaBaseObject } from '../vuex/audius/mediaBaseObject';
 
-export const audioRegEx = /(http|https)?:\/\/\S+\.(mp3|oga|m4a|flac|wav|aiff|aif|wma|asf)/gi;
+export const audioRegEx = /(http|https)?:\/\/\S+\.(mp3|oga|m4a|flac|wav|aiff|aif|wma|asf|opus)/gi;
 export const videoRegEx = /(http|https)?:\/\/\S+\.(avi|mkv|mp4|webm|ogg)/gi;
 
 function refineWebSearchResult(media) {

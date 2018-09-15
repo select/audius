@@ -20,7 +20,6 @@ export default {
 		return {
 			fold: {
 				Playlists: true,
-				Rooms: true,
 				Channels: true,
 			},
 		};
@@ -69,9 +68,7 @@ export default {
 		<h2 id="lm-playlists" title="fold" @click="fold['Playlists'] = !fold['Playlists']">Playlists</h2>
 		<play-list-manager v-show="fold['Playlists']"></play-list-manager>
 		<div class="left-menu__spacer" v-show="fold['Playlists']"></div>
-		<h2 id="lm-rooms" title="fold" @click="fold['Rooms'] = !fold['Rooms']">Rooms</h2>
-		<matrix-room-manager v-show="fold['Rooms']"></matrix-room-manager>
-		<div class="left-menu__spacer" v-show="fold['Rooms']"></div>
+		<matrix-room-manager></matrix-room-manager>
 		<h2 id="lm-channels" title="fold" @click="fold['Channels'] = !fold['Channels']">Channels</h2>
 		<web-scraper-manager v-show="fold['Channels']"></web-scraper-manager>
 		<div class="left-menu__spacer"></div>
