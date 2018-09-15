@@ -15,6 +15,9 @@ const SearchResults = () => import(/* webpackChunkName: "components/search-resul
 const MatrixRoomManager = () => import(/* webpackChunkName: "components/matrix-room-manager" */'./matrix-room-manager.vue');
 const WebScraperManager = () => import(/* webpackChunkName: "components/web-scraper-manager" */'./web-scraper-manager.vue');
 const Queue = () => import(/* webpackChunkName: "components/queue" */'./queue.vue');
+const MatrixChat = () => import(/* webpackChunkName: "components/matrix-chat" */'./matrix-chat.vue');
+const ChangeLog = () => import(/* webpackChunkName: "components/changelog" */'./changelog.vue');
+const PlayHistory = () => import(/* webpackChunkName: "components/play-history" */'./play-history.vue');
 
 
 export default {
@@ -29,6 +32,9 @@ export default {
 		PlayListManager,
 		MatrixRoomManager,
 		WebScraperManager,
+		MatrixChat,
+		ChangeLog,
+		PlayHistory,
 	},
 	data() {
 		return { queueActive: false };
@@ -41,14 +47,21 @@ export default {
 			}, 800);
 		});
 	},
-	computed: mapState([
-		'currentMedia',
-		'search',
-		'website',
-		'leftMenuTab',
-		'mainRightTab',
-		'queue',
-	]),
+	computed: {
+		...mapState([
+			'currentMedia',
+			'search',
+			'website',
+			'leftMenuTab',
+			'mainRightTab',
+			'queue',
+			'currentMediaSource',
+			'mainLeftTab',
+		]),
+		...mapState({
+			matrixLoggedIn: (state) => state.matrix.matrixLoggedIn,
+		}),
+	},
 	methods: {
 		...mapMutations(['setMainRightTab', 'setLeftMenuTab']),
 	},
@@ -87,15 +100,18 @@ export default {
 				v-bind:class="{ active: mainRightTab == 'settings' }"><span class="wmp-icon-more_vert"></span></li>
 		</ul>
 		<div class="web-app-mobile__playlist">
-			<play-list v-show="!(mainRightTab || leftMenuTab)"></play-list>
+			<play-list v-show="!(mainRightTab || leftMenuTab) && (currentMediaSource.type !== 'matrix' || mainLeftTab !== 'matrix')"></play-list>
+			<matrix-chat v-if="!(mainRightTab || leftMenuTab) && currentMediaSource.type === 'matrix' && mainLeftTab === 'matrix' && matrixLoggedIn"></matrix-chat>
 			<about-player v-show="mainRightTab == 'about'"></about-player>
 			<search-results v-if="mainRightTab == 'search'"></search-results>
 			<queue v-if="mainRightTab == 'queue'"></queue>
+			<play-history v-else-if="mainRightTab == 'history'"></play-history>
+			<change-log v-else-if="mainRightTab == 'changelog'"></change-log>
 			<div class="audius-chat" v-show="mainRightTab == 'chat'"> </div>
 			<settings v-if="mainRightTab == 'settings'"></settings>
 			<play-list-manager v-show="leftMenuTab == 'playList'"></play-list-manager>
-			<matrix-room-manager v-if="leftMenuTab == 'radio'"></matrix-room-manager>
-			<web-scraper-manager v-if="leftMenuTab == 'tv'"></web-scraper-manager>
+			<matrix-room-manager v-if="leftMenuTab == 'matrix'"></matrix-room-manager>
+			<web-scraper-manager v-if="leftMenuTab == 'webScraper'"></web-scraper-manager>
 		</div>
 		<media-player></media-player>
 		<web-header></web-header>

@@ -38,7 +38,7 @@ export default {
 		});
 	},
 	methods: {
-		...mapMutations(['toggleLeftMenu', 'setLeftMenuTab']),
+		...mapMutations(['toggleLeftMenu']),
 		resizeStart(event) {
 			event.preventDefault();
 			this.resize = true;
