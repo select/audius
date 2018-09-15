@@ -32,10 +32,10 @@ module.exports = Object.assign(configDev, {
 			PRODUCTION: JSON.stringify(true),
 		}),
 		new CompressionPlugin({
-			asset: '[path].gz[query]',
+			filename: '[path].gz[query]',
 			algorithm: 'gzip',
 			test: /\.(js|html|json)$/,
-			threshold: 10,
+			// threshold: 10,
 			minRatio: 0.8,
 		}),
 		// service worker caching
