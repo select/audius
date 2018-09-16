@@ -5,19 +5,47 @@
 }
 .settings.matrix-settings .matrix-settings__name{font-size:1.5rem;height:4.05rem;margin-bottom:.45rem;width:100%
 }
-.settings.matrix-settings .spacer{height:.9rem
+.settings.matrix-settings h4{text-transform:capitalize
 }
-.matrix-settings__me{background-color:#2da7ef;color:#fff!important
+.matrix-settings__header{align-items:center;display:flex
 }
-.matrix-settings__me:hover{color:inherit!important
-}
-.matrix-settings__hidden-icon{cursor:pointer;position:absolute;right:0;top:0
-}
-.matrix-settings__members>div{align-items:center;display:flex;height:2.25rem;padding:.9rem
-}
-.matrix-settings__members>div:hover{background:#eff1f7
+.matrix-settings__logo{background-position:50%;background-repeat:no-repeat;background-size:contain;border-radius:50%;height:3.15rem;margin:0 .9rem;min-height:3.15rem;min-width:3.15rem;width:3.15rem
 }
 .matrix-settings__aliases{display:flex;flex-direction:column
 }
-.matrix-settings__logo{background-position:50%;background-repeat:no-repeat;background-size:contain;border-radius:50%;height:3.15rem;width:3.15rem
+.matrix-settings__members_header{align-items:center;display:flex
+}
+.matrix-settings__members_header>span{color:#c8ccd5;cursor:pointer;transition:color .25s
+}
+.matrix-settings__members_header>span:hover{color:#2da7ef
+}
+.matrix-settings__actions{padding:0 .45rem
+}
+.matrix-settings__actions button{margin-bottom:.45rem
+}
+.matrix-settings__actions span{margin-right:.45rem
+}
+.matrix-settings__actions .active{background:#a1c616;color:#fff
+}
+.matrix-settings__invite-in{align-items:center;background:#eff1f7;display:flex;padding:0 .45rem
+}
+.matrix-settings__invite-in input{background:transparent;flex:1
+}
+.matrix-settings__invite-in span{color:#c8ccd5
+}
+.matrix-settings__members>div{cursor:pointer;display:flex;height:2.25rem;justify-content:space-between;padding:.9rem
+}
+.matrix-settings__members>div>div{align-items:center;color:#c8ccd5;display:none
+}
+.matrix-settings__members>div:hover{background:#eff1f7
+}
+.matrix-settings__members>div:hover>div{display:flex
+}
+.matrix-settings__members>div.matrix-settings--me{background-color:#2da7ef;cursor:default
+}
+.matrix-settings__members>div.matrix-settings--me span{color:#fff!important
+}
+.matrix-settings__members>div.matrix-settings--me:hover{color:inherit
+}
+.matrix-settings__members>div.matrix-settings--me:hover>div{display:none
 }

@@ -25,13 +25,13 @@
 }
 .matrix-chat-message__body{display:flex;flex-direction:column
 }
-.matrix-chat-message__body>div{overflow:hidden;text-overflow:ellipsis
+.matrix-chat-message__body>div{overflow:hidden;padding:.9rem;position:relative;text-overflow:ellipsis
 }
-.matrix-chat-message__body>div:not(:last-child):not(:first-child){padding:.9rem
+.matrix-chat-message__body>div:not(:last-child):not(:first-child){padding:.45rem .9rem
 }
 .matrix-chat-message__body>div:first-child{padding-bottom:.45rem
 }
-.matrix-chat-message__body>div:last-child{padding-top:.45rem
+.matrix-chat-message__body>div:last-child{padding-bottom:0;padding-top:.45rem
 }
 .matrix-chat-message__body>div:not(:last-child){border-radius:2px;box-shadow:0 1px .5px rgba(0,0,0,.13);margin-bottom:.225rem
 }
