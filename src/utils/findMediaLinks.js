@@ -6,16 +6,21 @@ import { getMediaDuration } from './getMediaDuration';
 import { mediaBaseObject } from '../vuex/audius/mediaBaseObject';
 
 export const audioRegEx = /(http|https)?:\/\/\S+\.(mp3|oga|m4a|flac|wav|aiff|aif|wma|asf|opus)/gi;
-export const videoRegEx = /(http|https)?:\/\/\S+\.(avi|mkv|mp4|webm|ogg)/gi;
+export const videoRegEx = /((http|https)?:\/\/\S+\.(avi|mkv|mp4|webm|ogg))/gi;
 
 function refineWebSearchResult(media) {
 	const urlParts = media.url.split('/');
 	const title = urlParts.length ? urlParts[urlParts.length - 1] : media.url;
-	return Object.assign({}, mediaBaseObject, {
-		title,
-		duration: media.durationS ? s2time(media.durationS) : undefined,
-		id: media.id || `${hashCode(media.url)}`,
-	}, media);
+	return Object.assign(
+		{},
+		mediaBaseObject,
+		{
+			title,
+			duration: media.durationS ? s2time(media.durationS) : undefined,
+			id: media.id || `${hashCode(media.url)}`,
+		},
+		media
+	);
 }
 // filter duplicates,
 // filter media in `mediaIndex` and add them to `mediaItems`
@@ -43,7 +48,7 @@ function reduceKnown(mediaIndex, mediaItems, hashId = false) {
  */
 export function findMediaText(text, youtubeApiKey, mediaIndex, options) {
 	const { extendPlayLists } = Object.assign({ extendPlayLists: false }, options);
-	const mediaList = options && options.mediaList || [];
+	const mediaList = (options && options.mediaList) || [];
 	const promises = [];
 	const mediaItems = [];
 	let isPlayList = false;
@@ -81,9 +86,9 @@ export function findMediaText(text, youtubeApiKey, mediaIndex, options) {
 
 	// Find audio files
 	const audioUrls = (text.match(audioRegEx) || []).reduce(
-			reduceKnown(mediaIndex, mediaItems, true),
-			[]
-		);
+		reduceKnown(mediaIndex, mediaItems, true),
+		[]
+	);
 	if (audioUrls.length) {
 		promises.push(
 			Promise.all(
@@ -103,7 +108,9 @@ export function findMediaText(text, youtubeApiKey, mediaIndex, options) {
 			Promise.all(
 				audioItems.map(media =>
 					getMediaDuration(media.url, 'audio').then(durationS =>
-						refineWebSearchResult(Object.assign({ href: media.url, durationS, type: 'audio' }, media))
+						refineWebSearchResult(
+							Object.assign({ href: media.url, durationS, type: 'audio' }, media)
+						)
 					)
 				)
 			)
@@ -133,7 +140,9 @@ export function findMediaText(text, youtubeApiKey, mediaIndex, options) {
 			Promise.all(
 				videoItems.map(media =>
 					getMediaDuration(media.url, 'video').then(durationS =>
-						refineWebSearchResult(Object.assign({ href: media.url, durationS, type: 'video' }, media))
+						refineWebSearchResult(
+							Object.assign({ href: media.url, durationS, type: 'video' }, media)
+						)
 					)
 				)
 			)
