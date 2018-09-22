@@ -23,6 +23,11 @@ export const mutations = {
 	deleteWebScraper(state, id) {
 		delete state.sources[id];
 		state.sourcesOrdered = state.sourcesOrdered.filter(n => n !== id);
+		// TODO find a cleaner solution that this clean up code
+		state.sourcesOrdered = state.sourcesOrdered.filter(n => n in state.sources);
+		Object.keys(state.sources).forEach(id => {
+			if (!state.sourcesOrdered.includes(id)) delete state.sources[id];
+		});
 	},
 	initScraperSuccess(state, id) {
 		state.sourcesInitialized[id] = true;
