@@ -12,7 +12,7 @@ Audius is the ultimate streaming music player.
 - Split YouTube full albums into separate songs.
 - Run your own Audius instance as as single HTML file.
 - Plays Imgur "Most Viral" as video stream.
-- Supports: YouTube/Vimeo/.mp3/.oga/.wav/.mp4/.webm/.ogg URLs.
+- Supports: YouTube/Vimeo/.mp3/.opus/.oga/.wav/.mp4/.webm/.ogg URLs.
 - Create your own web channels with the build in web scraper.
 
 <img src="https://audius.rockdapus.org/img/audius.screenshot.1280x800.png" />
@@ -38,9 +38,9 @@ The [audius extension](https://chrome.google.com/webstore/detail/ekpajajepcojhnj
 
 Join a room and drag and drop to add new music.
 
- - [Random](https://audius.rockdapus.org/?import=!zKinTrtpQEyHfnIbnI:matrix.org&type=room&title=Random)
- - [Rock](https://audius.rockdapus.org/?import=!VTIhlnDdHsxZFZQNFh:matrix.org&type=room&title=Rock)
- - [Electronic](https://audius.rockdapus.org/?import=!sgKmJzakMmEdSCgKCE:matrix.org&type=room&title=Electronic)
+ - [Random](https://audius.rockdapus.org/?import=!zKinTrtpQEyHfnIbnI:matrix.org&type=matrix&title=Random)
+ - [Rock](https://audius.rockdapus.org/?import=!VTIhlnDdHsxZFZQNFh:matrix.org&type=matrix&title=Rock)
+ - [Electronic](https://audius.rockdapus.org/?import=!sgKmJzakMmEdSCgKCE:matrix.org&type=matrix&title=Electronic)
 
 Create your own rooms with Audius and share it with your friends.
 
