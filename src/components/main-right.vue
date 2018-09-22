@@ -113,11 +113,11 @@ export default {
 			@click="setMainRightTab('about')"
 			v-bind:class="{ active: mainRightTab == 'about' }">About</li>
 		<li
-			v-if="showMediumSettings.tv && currentMediaSource.type === 'webScraper'"
+			v-if="currentMediaSource.type === 'webScraper' && currentMediaSource.id !== 'Imgur'"
 			@click="setMainRightTab('webScraperSettings')"
 			v-bind:class="{ active: mainRightTab == 'webScraperSettings' }">Channel Settings</li>
 		<li
-			v-if="showMediumSettings.matrix && currentMediaSource.type === 'matrix'"
+			v-if="currentMediaSource.type === 'matrix'"
 			@click="setMainRightTab('matrixRoomSettings')"
 			v-bind:class="{ active: mainRightTab == 'matrixRoomSettings' }">Room Settings</li>
 		<li
@@ -134,7 +134,7 @@ export default {
 		<search-results v-if="mainRightTab == 'search'"></search-results>
 		<queue v-else-if="mainRightTab == 'queue'"></queue>
 		<media-edit v-else-if="mainRightTab == 'mediaEdit'"></media-edit>
-		<web-scraper-settings v-else-if="mainRightTab == 'webScraperSettings' && currentMediaSource.type === 'webScraper'"></web-scraper-settings>
+		<web-scraper-settings v-else-if="mainRightTab == 'webScraperSettings' && currentMediaSource.type === 'webScraper' && currentMediaSource.id !== 'Imgur'"></web-scraper-settings>
 		<matrix-room-settings v-else-if="mainRightTab == 'matrixRoomSettings' && currentMediaSource.type === 'matrix'"></matrix-room-settings>
 		<settings v-else-if="mainRightTab == 'settings'"></settings>
 		<play-history v-else-if="mainRightTab == 'history'"></play-history>
@@ -151,13 +151,12 @@ export default {
 @import '../sass/vars'
 @import '../sass/color'
 
-
 .main-right
 	display: flex
-	flex-direction: column
-	height: 100%
-	width: 50%
 	position: relative
+	flex-direction: column
+	width: 50%
+	height: 100%
 .main-right__content
 	flex: 1
 	overflow-y: auto
@@ -166,16 +165,15 @@ export default {
 	position: absolute
 	top: 0
 	left: 0
+	width: $grid-space/2
 	height: 100%
 	background: transparent
-	width: $grid-space/2
-	z-index: 8
 	cursor: ew-resize
+	z-index: 8
 
 .main-right__drag-handle
-	height: $grid-space/2
 	width: 100%
+	height: $grid-space/2
 	background: transparent
 	cursor: ns-resize
-
 </style>
