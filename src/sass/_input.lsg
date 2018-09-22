@@ -22,3 +22,10 @@ Inputs
 </div>
 ```
 
+```
+<div class="audius">
+  <input type="checkbox" id="overwrite" @change="doSomething">
+  <label for="overwrite"> overwrite channel </label>
+</div>
+```
+
