@@ -11,6 +11,7 @@ export {
 	getPlayList,
 } from './youtube';
 export { urlify } from './urlify';
+export { slugify } from './slugify';
 export { findMediaText } from './findMediaLinks';
 export { findVimeoIdsText } from './vimeo';
 export { isElementInViewport } from './isElementInViewport';

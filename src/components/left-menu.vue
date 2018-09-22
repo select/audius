@@ -1,5 +1,6 @@
 <script>
 import { mapMutations, mapState } from 'vuex';
+import { isElementInViewport, slugify } from '../utils';
 
 import PlayListManager from './play-list-manager.vue';
 
@@ -9,7 +10,7 @@ const WebScraperManager = () => import(/* webpackChunkName: "components/web-scra
 function disableSelect(event) {
 	event.preventDefault();
 }
-
+let lastMediaSource = '';
 export default {
 	components: {
 		PlayListManager,
@@ -36,6 +37,15 @@ export default {
 				if (pos > 5) this.$el.style.width = `${pos}vw`;
 			}
 		});
+		this.$store.watch(state => state.currentMediaSource, () => {
+			const id = slugify(`${this.currentMediaSource.type}${this.currentMediaSource.id}`);
+			if (id !== lastMediaSource) {
+				const $el = document.querySelector(`#${id}`);
+				if ($el && !isElementInViewport($el)) {
+					$el.scrollIntoView();
+				}
+			}
+		});
 	},
 	methods: {
 		...mapMutations(['toggleLeftMenu']),
@@ -46,7 +56,7 @@ export default {
 		},
 	},
 	computed: {
-		...mapState(['showLeftMenu']),
+		...mapState(['showLeftMenu', 'currentMediaSource']),
 	},
 };
 </script>
