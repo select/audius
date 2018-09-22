@@ -129,6 +129,7 @@ export default {
 				<span class="wmp-icon-album media-list__album-hint" v-if="video.tracks"></span>
 				<div class="media-list__thumbnail" v-bind:style="{ backgroundImage: _backgroundImage() }"></div>
 				<div
+					@click="selected = isMobile && !selected"
 					class="media-list__body">
 					<div class="media-list__name">{{video.title}}</div>
 					<div class="media-list__duration" v-if="video.duration">
@@ -187,14 +188,7 @@ export default {
 						class="wmp-icon-add"
 						@click="addToPlaylist(video);selected = false"
 						title="Add to playlist"></span>
-
 				</div>
-				<div v-if="isMobile">
-					<span
-						class="wmp-icon-more_vert"
-						@click="selected = !selected"></span>
-				</div>
-
 			</div>
 			<ul
 				v-if="video.tracks && !isQueue"
