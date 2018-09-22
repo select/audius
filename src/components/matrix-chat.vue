@@ -161,20 +161,20 @@ export default {
 	height: 100%
 	background: url('../website/static/img/music-notes.jpg')
 	background-color: $color-athensgrey
-	// background-repeat: no-repeat;
 	background-size: 200px
 	overflow: hidden
 	.play-list
 		flex: 1
 		height: auto
-		overflow: auto
+		overflow-x: hidden
+		overflow-y: auto
 	ul
 		margin: 0
 		padding: 0
 		list-style: none
 	.media-list__main
-		background-color: $color-white
 		padding: 0 5.5%
+		background-color: $color-white
 .matrix-chat__off
 	cursor: pointer
 	z-index: 1
