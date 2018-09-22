@@ -93,7 +93,7 @@ export default {
 				<img class="au-header__logo" src="img/audius.logo.white.svg" alt="Audius - ♫♪.ılılıll|̲̅̅●̲̅̅|̲̅̅=̲̅̅|̲̅̅●̲̅̅|llılılı.♫♪
 	-">
 				<i class="au-header__version" @click="setMainRightTab('changelog')" title="Show changelog">
-					<i id="version">2.0.15</i>
+					<i id="version">2.0.16</i>
 				</i>
 			</div>
 			<div class="au-header__search-controls">

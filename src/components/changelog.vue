@@ -16,6 +16,11 @@ export default {
 <div class="wmp-about">
 	<h2 id="audius-changelog">Changelog</h2>
 	<p>
+		<b>2.0.16</b><br>
+		<ul>
+			<li> Fixes for the mobile interface.</li>
+			<li> Watch open tabs but only scrape when if a CSS selector is present. This allows you to scrape e.g. only specified WhatsApp chats.</li>
+		</ul>
 		<b>2.0.15</b><br>
 		<ul>
 			<li> Send room invitations and join invited rooms.</li>
