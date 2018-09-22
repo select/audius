@@ -1,6 +1,7 @@
 <script>
 import { mapMutations, mapActions, mapState } from 'vuex';
 import draggable from 'vuedraggable';
+import { slugify } from '../utils';
 
 
 export default {
@@ -25,12 +26,15 @@ export default {
 	},
 	computed: {
 		...mapState(['playedMedia']),
+		slugId() {
+			return slugify(`matrix${this.id}`);
+		},
 	},
 };
 </script>
 
 <template>
-	<li class="a-mrt">
+	<li class="a-mrt" :id="slugId">
 		<div class="play-list-manager__drag-handle"></div>
 		<draggable
 			class="play-list-manager__tag-drop-zone"

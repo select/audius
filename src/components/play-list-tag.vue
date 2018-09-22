@@ -1,7 +1,7 @@
 <script>
 import { mapGetters, mapMutations, mapState } from 'vuex';
 import draggable from 'vuedraggable';
-import { debounce } from '../utils';
+import { debounce, slugify } from '../utils';
 
 export default {
 	components: {
@@ -26,6 +26,9 @@ export default {
 	computed: {
 		...mapGetters(['playListLength']),
 		...mapState(['sources', 'sourcesOrdered', 'currentMediaSource']),
+		slugId() {
+			return slugify(`playlist${this.id}`);
+		},
 	},
 };
 </script>
@@ -33,6 +36,7 @@ export default {
 <template>
 	<li
 		v-bind:data-tag="id"
+		:id="slugId"
 		v-bind:class="{ active: currentMediaSource.id == id }"
 		@click="selectMediaSource({type: 'playList', id })">
 		<div class="play-list-manager__drag-handle"></div>
