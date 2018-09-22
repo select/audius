@@ -2,7 +2,6 @@ import { hashCode } from './hashCode';
 import { findYouTubeIdsText } from './youtube';
 import { findVimeoIdsText } from './vimeo';
 import { webScraper as wsBase } from './webScraper';
-import { audioRegEx, videoRegEx } from './findMediaLinks';
 
 class MediaConverter {
 	constructor(localUrl, remoteUrl) {
@@ -22,7 +21,8 @@ class MediaConverter {
 		};
 	}
 }
-
+const audioRegEx = /(http|https)?:\/\/\S+\.(mp3|oga|m4a|flac|wav|aiff|aif|wma|asf|opus)$/gi;
+const videoRegEx = /(http|https)?:\/\/\S+\.(avi|mkv|mp4|webm|ogg)$/gi;
 function findMediaText(mc, text, innerHTML) {
 	const res = [];
 	if (videoRegEx.test(text)) res.push(mc.getMediaData('video', text, innerHTML));
@@ -77,6 +77,7 @@ export const webScraper = Object.assign({}, wsBase, {
 	},
 
 	scanOneUrl({ url }) {
+		console.log('scanOneUrl url', url);
 		// FIXME this breaks for root URLs without a trailing `/`` !!
 		return this.ajaxRaw(url).then(rawHTML =>
 			this.findMediaHtml(
@@ -90,13 +91,15 @@ export const webScraper = Object.assign({}, wsBase, {
 	 * scanUrl - from a URL or URL pattern return a list of
 	 * promises that each return a list of media objects that could be
 	 * found at the URL or list of URLS
-	 * @param {String} options.url URL or URL pattern e.g. `http://example.com/page/[1-5]`
+	 * @param {Mixed} options.inUrls Array of URLs or URL or URL pattern e.g. `http://example.com/page/[1-5]`
 	 * @param {String} options.youtubeApiKey key for youtube API
 	 * @return {[Promise]} list of promises that each return media a object list
 	 */
-	scanUrl({ url, youtubeApiKey }) {
+	scanUrl({ url }) {
+		console.log('scanUrl url', url);
 		try {
-			return this.patternToUrls(url).map(_url => this.scanOneUrl({ url: _url, youtubeApiKey }));
+			const urls = Array.isArray(url) ? url : this.patternToUrls(url);
+			return urls.map(_url => this.scanOneUrl({ url: _url }));
 		} catch (error) {
 			return [];
 		}

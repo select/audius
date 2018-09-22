@@ -1,4 +1,4 @@
-import 'babel-polyfill';
+import '@babel/polyfill';
 import browser from 'webextension-polyfill';
 
 import { webScraper } from '../utils/webScraper.extension';
@@ -55,7 +55,31 @@ window.addEventListener('message', async event => {
 				});
 			}
 		}
-	} else if (['scanOneUrl'].includes(event.data.type)) {
+	} else if (event.data.type === 'scanUrl') {
+		const promises = webScraper.scanUrl(event.data);
+		for (let i = 0; i < promises.length; i++) {
+			try {
+				const mediaList = await promises[i];
+				sendMessageToAudius({
+					audius: true,
+					vuex: 'dispatch',
+					type: 'webScraperUpdateSuccess',
+					data: {
+						id: event.data.id,
+						mediaList,
+					},
+				});
+				await delay(2000);
+			} catch (error) {
+				sendMessageToAudius({
+					audius: true,
+					vuex: 'commit',
+					type: 'error',
+					data: `${error}`,
+				});
+			}
+		}
+	} else if (event.data.type === 'scanOneUrl') {
 		webScraper[event.data.type](event.data).then(mediaList => {
 			sendMessageToAudius({
 				audius: true,
@@ -93,6 +117,7 @@ browser.tabs.onUpdated.addListener(event => {
 					audius: true,
 					type: 'startWatching',
 					id: watch.id,
+					css: watch.css,
 				}).then();
 			} else {
 				browser.tabs.sendMessage(tab.id, {
@@ -141,6 +166,7 @@ browser.runtime.onMessage.addListener(async request => {
 								audius: true,
 								type: 'startWatching',
 								id: item.id,
+								css: item.css,
 							});
 						})
 					)

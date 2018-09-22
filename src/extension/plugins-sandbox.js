@@ -34,7 +34,7 @@ const pluginSandbox = {
 						data: `Error in scraper ${event.data.id}, function ${event.data.type} did not return any data.`,
 					});
 				}
-				if (['getYouTubeInfo', 'scanOneUrl', 'ajaxRaw', 'ajaxJSON'].includes(parseResult.type)) {
+				if (['getYouTubeInfo', 'scanOneUrl', 'scanUrl', 'ajaxRaw', 'ajaxJSON'].includes(parseResult.type)) {
 					this.message(
 						Object.assign(parseResult, { id: event.data.id, youtubeApiKey: this.youtubeApiKey })
 					);
@@ -55,7 +55,7 @@ const pluginSandbox = {
 						audius: true,
 						vuex: 'commit',
 						type: 'error',
-						data: `Unknown plugin command ${parseResult[0]}.`,
+						data: `Unknown plugin command ${parseResult.type}.`,
 					});
 				}
 			}
