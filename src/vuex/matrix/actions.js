@@ -298,7 +298,7 @@ export const actions = {
 			const { type, body, parse } = matrixEvent;
 			if (parse) {
 				// window.console.log(`[Matrix-Text] %c${body}`, 'color: #2DA7EF;');
-				findMediaText(body, rootState.youtubeApiKey, rootState.mediaIndex).then(
+				findMediaText(body || '', rootState.youtubeApiKey, rootState.mediaIndex).then(
 					({ mediaList, newMedia }) => {
 						if (newMedia.length) commit('updateMediaIndex', newMedia);
 						mediaList.forEach(media => {

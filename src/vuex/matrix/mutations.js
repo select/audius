@@ -54,39 +54,40 @@ function updateClientRooms(state, rooms) {
 		state.sources[roomId].roomId = roomId;
 
 		// Set members of the room.
-		state.sources[roomId].members = room.getJoinedMembers().map(
-			(member) => ({ id: member.userId, powerLevel: member.powerLevel })
-		);
+		if (room.getJoinedMembers && room.getAvatarUrl) {
+			state.sources[roomId].members = room.getJoinedMembers().map(
+				(member) => ({ id: member.userId, powerLevel: member.powerLevel })
+			);
 
-
-		// Set room name if it changed and is not a matrix id.
-		state.sources[roomId].name = room.name;
-		state.sources[roomId].avatarUrl = room.getAvatarUrl('https://matrix.org', 200, 200, 'scale');
-		// Check if the user is only ivited but not joined.
-		// States to check ["invite", "join", "leave", "ban"]
-		state.sources[roomId].membership = room.getMyMembership();
-		// Find out if this is a direct message room.
-		let type = room.getDMInviter() ? 'directMessage' : 'room';
-		if (type === 'directMessage') {
-			state.directMessages[room.getDMInviter()] = roomId;
-			state.sources[roomId].name = room.name.replace(/@(\w+):.+/, '$1');
-			state.sources[roomId].avatarUrl = room.getMember(room.getDMInviter()).getAvatarUrl('https://matrix.org', 200, 200, 'scale');
-		}
-		const allMembers = room.currentState.getMembers();
-		if (type === 'room' && allMembers.length <= 2) {
-			const inviter = allMembers.find(m => m.getDMInviter());
-			if (inviter) {
-				type = 'directMessage';
-				state.sources[roomId].avatarUrl = inviter.getAvatarUrl('https://matrix.org', 200, 200, 'scale');
+			// Set room name if it changed and is not a matrix id.
+			state.sources[roomId].name = room.name;
+			state.sources[roomId].avatarUrl = room.getAvatarUrl('https://matrix.org', 200, 200, 'scale');
+			// Check if the user is only ivited but not joined.
+			// States to check ["invite", "join", "leave", "ban"]
+			state.sources[roomId].membership = room.getMyMembership();
+			// Find out if this is a direct message room.
+			let type = room.getDMInviter() ? 'directMessage' : 'room';
+			if (type === 'directMessage') {
+				state.directMessages[room.getDMInviter()] = roomId;
+				state.sources[roomId].name = room.name.replace(/@(\w+):.+/, '$1');
+				state.sources[roomId].avatarUrl = room.getMember(room.getDMInviter()).getAvatarUrl('https://matrix.org', 200, 200, 'scale');
 			}
+			const allMembers = room.currentState.getMembers();
+			if (type === 'room' && allMembers.length <= 2) {
+				const inviter = allMembers.find(m => m.getDMInviter());
+				if (inviter) {
+					type = 'directMessage';
+					state.sources[roomId].avatarUrl = inviter.getAvatarUrl('https://matrix.org', 200, 200, 'scale');
+				}
+			}
+			state.sources[roomId].type = type;
+			// Set flag indicating if current user is admin.
+			const myuser = room.getMember(userId);
+			state.sources[roomId].isAdmin = myuser.powerLevel >= 100;
+
+			state.sources[roomId].aliases = room.getAliases();
 		}
-		state.sources[roomId].type = type;
 
-		// Set flag indicating if current user is admin.
-		const myuser = room.getMember(userId);
-		state.sources[roomId].isAdmin = myuser.powerLevel >= 100;
-
-		state.sources[roomId].aliases = room.getAliases();
 
 		// Add to room list if not on the list.
 		if (!state.sourcesOrdered.includes(roomId)) {

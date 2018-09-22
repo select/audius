@@ -19,9 +19,11 @@
 }
 .ws-settings__watch>div:hover{background:#eff1f7
 }
+.ws-settings__watch button{float:right
+}
 .ws-settings__script{padding:.9rem .45rem
 }
-.ws-settings__script textarea{width:100%
+.ws-settings__script textarea{height:9.45rem;width:100%
 }
 .ws-settings__forward-list>div,.ws-settings__new-forward{align-items:center;display:flex;flex-direction:row;padding:.45rem
 }

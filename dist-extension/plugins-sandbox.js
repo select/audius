@@ -1,1 +1,214 @@
-!function(e){var t={};function a(r){if(t[r])return t[r].exports;var i=t[r]={i:r,l:!1,exports:{}};return e[r].call(i.exports,i,i.exports,a),i.l=!0,i.exports}a.m=e,a.c=t,a.d=function(e,t,r){a.o(e,t)||Object.defineProperty(e,t,{enumerable:!0,get:r})},a.r=function(e){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(e,"__esModule",{value:!0})},a.t=function(e,t){if(1&t&&(e=a(e)),8&t)return e;if(4&t&&"object"==typeof e&&e&&e.__esModule)return e;var r=Object.create(null);if(a.r(r),Object.defineProperty(r,"default",{enumerable:!0,value:e}),2&t&&"string"!=typeof e)for(var i in e)a.d(r,i,function(t){return e[t]}.bind(null,i));return r},a.n=function(e){var t=e&&e.__esModule?function(){return e.default}:function(){return e};return a.d(t,"a",t),t},a.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},a.p="",a(a.s=340)}({340:function(module,exports,__webpack_require__){"use strict";var logger=window.console.log,pluginSandbox={parsers:{},youtubeApiKey:"",init:function(){var e=this;window.addEventListener("message",function(t){if(logger("## sandbox event",t.data),e.messageSource||(logger("## sandbox handshake complete"),e.messageSource=t.source,e.messageOrigin=t.origin),"loadScript"===t.data.type)e.loadScript(t.data);else if("getNext"===t.data.type)e.getNext(t.data.id);else if(t.data.id in e.parsers&&t.data.type in e.parsers[t.data.id]){var a=void 0;try{a=e.parsers[t.data.id][t.data.type](t.data.data)}catch(a){e.message({audius:!0,vuex:"commit",type:"error",data:"Error parsing "+t.data.id+". "+a})}!a&&a.type&&e.message({audius:!0,vuex:"commit",type:"error",data:"Error in scraper "+t.data.id+", function "+t.data.type+" did not return any data."}),["getYouTubeInfo","scanOneUrl","ajaxRaw","ajaxJSON"].includes(a.type)?e.message(Object.assign(a,{id:t.data.id,youtubeApiKey:e.youtubeApiKey})):"mediaList"===a.type?e.message({audius:!0,vuex:"dispatch",type:"webScraperUpdateSuccess",data:{id:t.data.id,mediaList:a.data}}):"noop"===a.type||e.message({audius:!0,vuex:"commit",type:"error",data:"Unknown plugin command "+a[0]+"."})}})},message:function(e){this.messageSource.postMessage(e,this.messageOrigin)},getNext:function(e){try{var t=this.parsers[e].getUrl();this.message(Object.assign(t,{id:e}))}catch(e){this.message({audius:!0,vuex:"commit",type:"error",data:"Error getting next page. "+e})}},loadScript:function loadScript(options){var id=options.id,code=options.code,youtubeApiKey=options.youtubeApiKey;this.parsers[id]&&this.message({audius:!0,vuex:"commit",type:"error",data:"Script '"+id+"' is already loaded"});try{this.parsers[id]=eval(code),options.responseTemplate&&this.message(options.responseTemplate),this.youtubeApiKey=youtubeApiKey,this.getNext(id)}catch(e){this.message({audius:!0,vuex:"commit",type:"error",data:"Error loading script. "+e})}}};logger("# Plugin sandbox"),pluginSandbox.init()}});
+/******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId]) {
+/******/ 			return installedModules[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.l = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function(exports, name, getter) {
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
+/******/ 		}
+/******/ 	};
+/******/
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = function(exports) {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/
+/******/ 	// create a fake namespace object
+/******/ 	// mode & 1: value is a module id, require it
+/******/ 	// mode & 2: merge all properties of value into the ns
+/******/ 	// mode & 4: return value when already ns object
+/******/ 	// mode & 8|1: behave like require
+/******/ 	__webpack_require__.t = function(value, mode) {
+/******/ 		if(mode & 1) value = __webpack_require__(value);
+/******/ 		if(mode & 8) return value;
+/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
+/******/ 		var ns = Object.create(null);
+/******/ 		__webpack_require__.r(ns);
+/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
+/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
+/******/ 		return ns;
+/******/ 	};
+/******/
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+/******/
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+/******/
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(__webpack_require__.s = "./src/extension/plugins-sandbox.js");
+/******/ })
+/************************************************************************/
+/******/ ({
+
+/***/ "./src/extension/plugins-sandbox.js":
+/*!******************************************!*\
+  !*** ./src/extension/plugins-sandbox.js ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+var logger = window.console.log;
+/* eslint-disable no-eval */
+
+var pluginSandbox = {
+  parsers: {},
+  youtubeApiKey: '',
+  init: function init() {
+    var _this = this;
+
+    window.addEventListener('message', function (event) {
+      logger('## sandbox event', event.data);
+
+      if (!_this.messageSource) {
+        logger('## sandbox handshake complete');
+        _this.messageSource = event.source;
+        _this.messageOrigin = event.origin;
+      }
+
+      if (event.data.type === 'loadScript') _this.loadScript(event.data);else if (event.data.type === 'getNext') _this.getNext(event.data.id);else if (event.data.id in _this.parsers && event.data.type in _this.parsers[event.data.id]) {
+        var parseResult;
+
+        try {
+          parseResult = _this.parsers[event.data.id][event.data.type](event.data.data);
+        } catch (error) {
+          _this.message({
+            audius: true,
+            vuex: 'commit',
+            type: 'error',
+            data: "Error parsing ".concat(event.data.id, ". ").concat(error)
+          });
+        }
+
+        if (!parseResult && parseResult.type) {
+          _this.message({
+            audius: true,
+            vuex: 'commit',
+            type: 'error',
+            data: "Error in scraper ".concat(event.data.id, ", function ").concat(event.data.type, " did not return any data.")
+          });
+        }
+
+        if (['getYouTubeInfo', 'scanOneUrl', 'scanUrl', 'ajaxRaw', 'ajaxJSON'].includes(parseResult.type)) {
+          _this.message(Object.assign(parseResult, {
+            id: event.data.id,
+            youtubeApiKey: _this.youtubeApiKey
+          }));
+        } else if (parseResult.type === 'mediaList') {
+          _this.message({
+            audius: true,
+            vuex: 'dispatch',
+            type: 'webScraperUpdateSuccess',
+            data: {
+              id: event.data.id,
+              mediaList: parseResult.data
+            }
+          });
+        } else if (parseResult.type === 'noop') {// Don't do anything, relax.
+        } else {
+          _this.message({
+            audius: true,
+            vuex: 'commit',
+            type: 'error',
+            data: "Unknown plugin command ".concat(parseResult.type, ".")
+          });
+        }
+      }
+    });
+  },
+  message: function message(data) {
+    this.messageSource.postMessage(data, this.messageOrigin);
+  },
+  getNext: function getNext(id) {
+    try {
+      var result = this.parsers[id].getUrl();
+      this.message(Object.assign(result, {
+        id: id
+      })); // parser calls getJSON
+    } catch (error) {
+      this.message({
+        audius: true,
+        vuex: 'commit',
+        type: 'error',
+        data: "Error getting next page. ".concat(error)
+      });
+    }
+  },
+  loadScript: function loadScript(options) {
+    var id = options.id,
+        code = options.code,
+        youtubeApiKey = options.youtubeApiKey;
+    if (this.parsers[id]) this.message({
+      audius: true,
+      vuex: 'commit',
+      type: 'error',
+      data: "Script '".concat(id, "' is already loaded")
+    });
+
+    try {
+      this.parsers[id] = eval(code);
+      if (options.responseTemplate) this.message(options.responseTemplate);
+      this.youtubeApiKey = youtubeApiKey;
+      this.getNext(id);
+    } catch (error) {
+      this.message({
+        audius: true,
+        vuex: 'commit',
+        type: 'error',
+        data: "Error loading script. ".concat(error)
+      });
+    }
+  }
+};
+logger('# Plugin sandbox');
+pluginSandbox.init();
+
+/***/ })
+
+/******/ });
+//# sourceMappingURL=plugins-sandbox.js.map
