@@ -7,6 +7,11 @@ export default {
 	components: {
 		draggable,
 	},
+	data() {
+		return {
+			showPattern: false,
+		};
+	},
 	computed: {
 		...mapGetters(['youtubeApiKeyUI']),
 		...mapState(['currentMediaSource', 'extensionAvilable']),
@@ -60,7 +65,8 @@ export default {
 			});
 		},
 		_editWatchPage() {
-			const $el = this.$refs.watchInput;
+			const $elUrl = this.$refs.watchInputUrl;
+			const $elCss = this.$refs.watchInputCss;
 			// const url = new URL($el.value);
 			// console.log("url.hostname", url.hostname);
 			this.updateWebScraper({
@@ -68,11 +74,13 @@ export default {
 				values: {
 					settings: {
 						...this.settings,
-						watchUrl: $el.value,
+						watchUrl: $elUrl.value,
+						watchCss: $elCss.value,
 					},
 				},
 			});
-			$el.value = '';
+			$elUrl.value = '';
+			$elCss.value = '';
 		},
 		_addUrlPattern() {
 			const $el = this.$refs.urlInput;
@@ -142,11 +150,22 @@ export default {
 	<div
 		class="ws-settings__watch"
 		v-if="settings.type == 'watch'">
-		<div>{{settings.watchUrl}}</div>
 		<div>
-			<input ref="watchInput" type="text" placeholder="… http://music.slack.com/">
-			<span class="wmp-icon-add" @click="_editWatchPage"></span>
+			{{settings.watchUrl || 'please set a URL pattern'}}
+			<br>
+			{{settings.watchCss}}
 		</div>
+		<div>
+			<input ref="watchInputUrl" type="text" placeholder="… http://*.slack.com/">
+			<div> URL pattern </div>
+		</div>
+		<div>
+			<input ref="watchInputCss" type="text" placeholder="… [title='abc']">
+			<div> CSS rule (optional) </div>
+		</div>
+		<button
+			@click="_editWatchPage"
+			class="button btn--blue"> set </button>
 		<p class="smaller">
 			Scrape media links from an open tab in your browser.
 		</p>
@@ -185,12 +204,9 @@ export default {
 	</div>
 	<div v-if="matrixSourcesOrdered.length">
 		<h3>Forward</h3>
-		<p>
-			Post new items to a matrix room.
-		</p>
 		<div class="ws-settings__forward-list">
 			<div v-for="(f,i) in _forwards" :key="i">
-				<div>{{matrixSources[f.id].name}}</div>
+				<div>{{matrixSources[f.id] ? matrixSources[f.id].name : f.id}}</div>
 				<span class="wmp-icon-close" @click="removeForward(f.id)"></span>
 			</div>
 		</div>
@@ -200,6 +216,9 @@ export default {
 			</select>
 			<span class="wmp-icon-add" @click="addForward"></span>
 		</div>
+		<p class="smaller">
+			Post new items to a matrix room.
+		</p>
 	</div>
 </div>
 </template>
@@ -239,11 +258,13 @@ export default {
 		height: $touch-size-medium
 		&:hover
 			background: $color-catskillwhite
-
+	button
+		float: right
 .ws-settings__script
 	padding: #{2 * $grid-space} $grid-space
 	textarea
 		width: 100%
+		height: #{3 * $touch-size-medium}
 .ws-settings__new-forward
 	display: flex
 	flex-direction: row
