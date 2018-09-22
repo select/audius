@@ -5,4 +5,5 @@ export const presistMutation = {
 	addWebScraper: ['sourcesOrdered', 'sources'],
 	renameWebScraper: ['sourcesOrdered', 'sources'],
 	editWebScraperForward: ['forward'],
+	deleteWebScraper: ['sourcesOrdered', 'sources'],
 };
