@@ -1,7 +1,7 @@
 {
 	"name": "Audius",
 	"description": "Audius - the ultimate streaming music player.",
-	"version": "2.0.16",
+	"version": "2.0.17",
 	"permissions": [
 		"tabs",
 		"activeTab",

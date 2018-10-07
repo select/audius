@@ -1,6 +1,6 @@
 {
   "name": "audius",
-  "version": "2.0.16",
+  "version": "2.0.17",
   "author": "Falko Krause",
   "description": "Play media files posted in conversations",
   "main": "index.js",
