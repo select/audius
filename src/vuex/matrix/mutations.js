@@ -15,6 +15,8 @@ function stringToColour(str) {
 	return `hsl(${hashCode(str) % 360},100%,30%)`;
 }
 
+const sortEventsChonologically = (a, b) => (a.createdAt <= b.createdAt ? -1 : 1);
+
 const matrixNameRegEx = /@(.+):matrix.org/;
 
 const eventIndex = {};
@@ -40,72 +42,73 @@ function updateMembers(state, rooms) {
 	state.membersIndex = Object.assign({}, state.membersIndex);
 }
 
-function updateClientRooms(state, rooms) {
+function matrixUpdateRooms(state, rooms) {
+	console.log('rooms', rooms);
 	// console.log('rooms', rooms);
 	const { userId } = state.credentials;
 	rooms.forEach(room => {
+		// Set members of the room.
+		if (!(room.getJoinedMembers && room.getAvatarUrl)) {
+			console.warn('room not right ', room);
+			return;
+		}
 		const { roomId } = room;
-
+		const isBroadcast = room.currentState.getStateEvents('org.rockdapus.audius.broadcast', '');
 		// Create room if not known yet.
 		if (!(roomId in state.sources)) {
-			state.sources[roomId] = Object.assign({}, matrixRoomTemplate(), { roomId, name: room.name });
+			state.sources[roomId] = Object.assign({}, matrixRoomTemplate(), {
+				roomId,
+				name: room.name,
+			});
 		}
-
-		state.sources[roomId].roomId = roomId;
-
-		// Set members of the room.
-		if (room.getJoinedMembers && room.getAvatarUrl) {
-			state.sources[roomId].members = room.getJoinedMembers().map(
-				(member) => ({ id: member.userId, powerLevel: member.powerLevel })
-			);
-
-			// Set room name if it changed and is not a matrix id.
-			state.sources[roomId].name = room.name;
-			state.sources[roomId].avatarUrl = room.getAvatarUrl('https://matrix.org', 200, 200, 'scale');
-			// Check if the user is only ivited but not joined.
-			// States to check ["invite", "join", "leave", "ban"]
-			state.sources[roomId].membership = room.getMyMembership();
-			// Find out if this is a direct message room.
-			let type = room.getDMInviter() ? 'directMessage' : 'room';
-			if (type === 'directMessage') {
-				state.directMessages[room.getDMInviter()] = roomId;
-				state.sources[roomId].name = room.name.replace(/@(\w+):.+/, '$1');
-				state.sources[roomId].avatarUrl = room.getMember(room.getDMInviter()).getAvatarUrl('https://matrix.org', 200, 200, 'scale');
-			}
-			const allMembers = room.currentState.getMembers();
-			if (type === 'room' && allMembers.length <= 2) {
-				const inviter = allMembers.find(m => m.getDMInviter());
-				if (inviter) {
-					type = 'directMessage';
-					state.sources[roomId].avatarUrl = inviter.getAvatarUrl('https://matrix.org', 200, 200, 'scale');
-				}
-			}
-			state.sources[roomId].type = type;
-			// Set flag indicating if current user is admin.
-			const myuser = room.getMember(userId);
-			state.sources[roomId].isAdmin = myuser.powerLevel >= 100;
-
-			state.sources[roomId].aliases = room.getAliases();
-		}
-
-
 		// Add to room list if not on the list.
 		if (!state.sourcesOrdered.includes(roomId)) {
 			state.sourcesOrdered.unshift(roomId);
 		}
+		const targetRoom = state.sources[roomId];
+
+		targetRoom.roomId = roomId;
+		targetRoom.members = room
+			.getJoinedMembers()
+			.map(member => ({ id: member.userId, powerLevel: member.powerLevel }));
+
+		// Set room name.
+		targetRoom.name = room.name;
+		targetRoom.avatarUrl = room.getAvatarUrl('https://matrix.org', 200, 200, 'scale');
+		// Check if the user is only ivited but not joined.
+		// States to check ["invite", "join", "leave", "ban"]
+		targetRoom.membership = room.getMyMembership();
+		// Find out if this is a direct message room.
+		let type = room.getDMInviter() ? 'directMessage' : 'room';
+		if (type === 'directMessage') {
+			state.directMessages[room.getDMInviter()] = roomId;
+			targetRoom.name = room.name.replace(/@([\w-]+):.+/, '$1');
+			targetRoom.avatarUrl = room
+				.getMember(room.getDMInviter())
+				.getAvatarUrl('https://matrix.org', 200, 200, 'scale');
+		}
+		const allMembers = room.currentState.getMembers();
+		if (type === 'room' && allMembers.length <= 2) {
+			const inviter = allMembers.find(m => m.getDMInviter());
+			if (inviter) {
+				type = 'directMessage';
+				targetRoom.avatarUrl = inviter.getAvatarUrl('https://matrix.org', 200, 200, 'scale');
+			}
+		}
+
+		// Check if this room is a broadcast.
+		targetRoom.type = type;
+		if (isBroadcast) {
+			targetRoom.type = 'broadcast';
+			targetRoom.isBroadcast = true;
+			state.broadcastRoom = targetRoom;
+		}
+		// Set flag indicating if current user is admin.
+		const myuser = room.getMember(userId);
+		targetRoom.isAdmin = myuser.powerLevel >= 100;
+
+		targetRoom.aliases = room.getAliases();
 	});
-	// Remove room from room list if it does not exist any more.
-	// Do not do that if length is one, sice this function is also
-	// called when adding "one" new room
-	if (rooms.length >= 1) {
-		const roomIndex = new Set(rooms.map(({ roomId }) => roomId));
-		state.sourcesOrdered = [
-			// remove old
-			...state.sourcesOrdered.filter(id => roomIndex.has(id)),
-			// add missing
-			...rooms.filter(({ roomId }) => !state.sourcesOrdered.includes(roomId)),
-		];
-	}
 }
 
 export const mutations = {
@@ -120,6 +123,15 @@ export const mutations = {
 		state.credentials = credentials;
 		state.isGuest = isGuest;
 	},
+	joinBroadcast(state) {
+		state.broadcastRoom = { membership: 'pending' };
+	},
+	setSendBroadcast(state, toggleState) {
+		state.sendBroadcast = toggleState !== undefined ? toggleState : !state.sendBroadcast;
+	},
+	joinDirectMessage(state, { userId, roomId }) {
+		if (!(userId in state.directMessages)) state.directMessages[userId] = roomId;
+	},
 	joinRoom(state, room) {
 		const { roomId } = room;
 		if (!state.sourcesOrdered.includes(roomId)) {
@@ -128,7 +140,7 @@ export const mutations = {
 		if (!(roomId in state.sources)) {
 			state.sources[roomId] = Object.assign({}, matrixRoomTemplate(), { name: room.name });
 		} else {
-			console.log("room.status", room.getMyMembership());
+			// console.log("room.status", room.getMyMembership());
 			state.sources[roomId].membership = 'join';
 		}
 		state.sources = Object.assign({}, state.sources);
@@ -137,11 +149,22 @@ export const mutations = {
 		Object.assign(state.membersIndex[member.userId], member);
 		state.membersIndex = Object.assign({}, state.membersIndex);
 	},
+	matrixUpdateRooms,
 	setMatrixLoggedIn(state, rooms) {
 		state.showMatrixLoginModal = false;
 		state.matrixLoggedIn = true;
-		updateClientRooms(state, rooms);
+		matrixUpdateRooms(state, rooms);
 		updateMembers(state, rooms);
+		// Remove room from room list if it does not exist any more.
+		// Do not do that if length is one, sice this function is also
+		// called when adding "one" new room
+		const roomIndex = new Set(rooms.map(({ roomId }) => roomId));
+		state.sourcesOrdered = [
+			// remove old
+			...state.sourcesOrdered.filter(id => roomIndex.has(id)),
+			// add missing
+			...rooms.filter(({ roomId, isBroadcast }) => !isBroadcast && !state.sourcesOrdered.includes(roomId)),
+		];
 	},
 	toggleMatrixLoginModal(state, toggleState) {
 		state.showMatrixLoginModal =
@@ -229,7 +252,9 @@ export const mutations = {
 		}
 
 		if (roomId in state.sources) {
-			state.sources[roomId].playList = state.sources[roomId].playList.filter(event => event.eventId !== eventId);
+			state.sources[roomId].playList = state.sources[roomId].playList.filter(
+				event => event.eventId !== eventId
+			);
 			state.sources = Object.assign({}, state.sources);
 		}
 	},
@@ -252,14 +277,12 @@ export const mutations = {
 				// Remove events with temporary id
 				state.sources[roomId].playList = state.sources[roomId].playList
 					.filter(media => typeof media === 'object')
-					.filter(
-						({ eventId }) => !eventId || eventId[0] !== '~'
-					);
+					.filter(({ eventId }) => !eventId || eventId[0] !== '~');
 				// Build index of known events on playlist
 				playListEvents[roomId] = new Set(
 					state.sources[roomId].playList
 						.filter(({ eventId }) => eventId)
-						.map((media) => `${media.eventId}-${media.id}`)
+						.map(media => `${media.eventId}-${media.id}`)
 				);
 			}
 
@@ -329,4 +352,3 @@ export const mutations = {
 	},
 };
 
-const sortEventsChonologically = (a, b) => (a.createdAt <= b.createdAt ? -1 : 1);
