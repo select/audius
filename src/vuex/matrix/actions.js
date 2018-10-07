@@ -26,6 +26,23 @@ function initLoading(id, rootState, commit, time) {
 	}, time || 40000);
 }
 
+function handleRoomError(commit, error) {
+	if (error.errcode === 'PAGINATE_NO_ROOM') {
+		return;
+	}
+	// {"errcode":"M_FORBIDDEN","error":"Guest access not allowed"}
+	if (error.message === 'Guest access not allowed') commit('toggleMatrixLoginModal', true);
+	if (error.errcode === 'M_CONSENT_NOT_GIVEN') {
+		commit('setLeftMenuTab', 'matrix');
+		commit('toggleMatrixConsentModal', {
+			toggleState: true,
+			message: urlify(error.message.replace(/\.$/, '')),
+		});
+	} else {
+		commit('error', `Room error: ${error.errcode} ${error.message}`);
+	}
+}
+
 /* eslint-disable no-param-reassign */
 export const actions = {
 	initMatrix({ commit, state, dispatch }) {
@@ -82,6 +99,11 @@ export const actions = {
 				.then(() => matrixClient.login(state.credentials, state.isGuest, dispatch, commit))
 				.catch(error => commit('error', `Register: ${error}`));
 		});
+	},
+	matrixUploadContent({ commit }, { roomId, file, info }) {
+		matrixClient
+			.uploadContent(roomId, file, info)
+			.catch(error => commit('error', `Upload failed. ${error}`));
 	},
 	matrixSendText({ state, rootState, commit }, { roomId, message }) {
 		matrixClient
@@ -153,30 +175,64 @@ export const actions = {
 				}, 2000);
 			})
 			.catch(error => {
-				if (error.errcode === 'PAGINATE_NO_ROOM') {
-					return;
-				}
-				// {"errcode":"M_FORBIDDEN","error":"Guest access not allowed"}
-				if (error.message === 'Guest access not allowed') commit('toggleMatrixLoginModal', true);
-				if (error.errcode === 'M_CONSENT_NOT_GIVEN') {
-					commit('setLeftMenuTab', 'matrix');
-					commit('toggleMatrixConsentModal', {
-						toggleState: true,
-						message: urlify(error.message.replace(/\.$/, '')),
-					});
-				} else {
-					commit('error', `Could not join room: ${error.message}`);
-				}
+				handleRoomError(commit, error);
 			});
 	},
 	inviteToMatrixRoom({ commit }, { userId, roomId }) {
 		matrixClient
 			.invite(userId, roomId)
-			.then(() => {
-			})
+			.then(() => {})
 			.catch(error => {
 				commit('error', `Could not send invite. ${error}`);
 			});
+	},
+	broadcast({ commit, state }, toggleState) {
+		if (state.broadcastRoom.membership === 'not avialable') {
+			const name = state.credentials.userId.replace(/@([\w-]+):.+/, '$1');
+			matrixClient
+				.createRoom({
+					visibility: 'private',
+					name: `${name} live radio [Audius]`,
+					topic: 'Live transmission on audius',
+					initial_state: [
+						{
+							type: 'm.room.guest_access',
+							content: { guest_access: 'can_join' },
+						},
+						{
+							type: 'm.room.history_visibility',
+							content: { history_visibility: 'joined' },
+						},
+						{
+							type: 'm.room.join_rules',
+							content: { join_rule: 'invite' }, // invite, public
+						},
+						{
+							type: 'm.room.power_levels',
+							content: {
+								events_default: 50,
+								users: {
+									[state.credentials.userId]: 100,
+								},
+							}, // default is 0 so only moderators can send messages
+						},
+						{
+							type: 'org.rockdapus.audius.broadcast',
+							content: { broadcast: true },
+						},
+					].map(item => Object.assign(item, { state_key: '' })),
+				})
+				.then(room => {
+					commit('joinBroadcast');
+					commit('setMainRightTab', 'broadcast');
+				})
+				.catch(error => {
+					commit('error', 'Could not create broadcast.');
+					handleRoomError(commit, error);
+				});
+		} else if (state.broadcastRoom.membership === 'join') {
+			commit('setMainRightTab', 'broadcast');
+		}
 	},
 	createMatrixRoom({ commit }, options) {
 		matrixClient
@@ -184,30 +240,39 @@ export const actions = {
 			.then(room => {
 				room.name = options.name;
 				room.roomId = room.room_id;
-				commit('setMatrixLoggedIn', [room]);
-				commit('updateMatrixRoom', {
-					roomId: room.roomId,
-					values: { isHidden: options.visibility === 'private' },
-				});
+				// commit('joinRoom', room);
 				commit('toggleMatrixRoomModal', false);
 				commit('selectMediaSource', { type: 'matrix', id: room.room_id });
-				commit('setLeftMenuTab', 'radio');
+				commit('setLeftMenuTab', 'matrix');
 			})
 			.catch(error => {
-				commit('error', `Could not create room. ${error}`);
+				commit('error', 'Could not create room.');
+				handleRoomError(commit, error);
 			});
 	},
+	directMessage({ commit, dispatch, state }, userId) {
+		if (userId === state.credentials.userId) return;
+		if (state.directMessages[userId] === undefined) {
+			dispatch('createMatrixDirectMessageRoom', userId);
+		}
+		if (state.directMessages[userId]) {
+			commit('selectMediaSource', { type: 'matrix', id: state.directMessages[userId] });
+		}
+	},
 	createMatrixDirectMessageRoom({ commit }, userId) {
+		commit('joinDirectMessage', { userId, roomId: null });
 		matrixClient
 			.createDirectMessageRoom(userId)
 			.then(room => {
+				commit('joinDirectMessage', { userId, roomId: room.room_id });
 				commit('error', `Invited user ${userId} to chat with you.`);
 				commit('selectMediaSource', { type: 'matrix', id: room.room_id });
 				commit('setLeftMenuTab', 'matrix');
 				commit('setMainLeftTab', 'matrix');
 			})
 			.catch(error => {
-				commit('error', `Could not send invite. ${error}`);
+				commit('error', 'Could not send invite.');
+				handleRoomError(commit, error);
 			});
 	},
 	setRoomName({ commit }, { id, name }) {
@@ -216,12 +281,12 @@ export const actions = {
 			.then(() => commit('updateMatrixRoom', { roomId: id, values: { name } }))
 			.catch(error => commit('error', `Could not rename matrix room: ${error}`));
 	},
-	setRoomTag({ commit }, { roomId, tagName }) {
-		matrixClient
-			.setRoomTag(roomId, tagName)
-			.then(() => commit('error', { error: 'room tag is set', type: 'success' }))
-			.catch(error => commit('error', `Could not set tagName. ${error}`));
-	},
+	// setRoomTag({ commit }, { roomId, tagName }) {
+	// 	matrixClient
+	// 		.setRoomTag(roomId, tagName)
+	// 		.then(() => commit('error', { error: 'room tag is set', type: 'success' }))
+	// 		.catch(error => commit('error', `Could not set tagName. ${error}`));
+	// },
 	updateRoomOptions({ commit }, options) {
 		if ('allowGuests' in options) {
 			matrixClient
