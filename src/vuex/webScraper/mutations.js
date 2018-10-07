@@ -56,6 +56,11 @@ export const mutations = {
 		delete itemsObject[oldName];
 		state.sources = itemsObject;
 		state.sourcesOrdered = itemsOrdered;
+		if (oldName in state.forward) {
+			state.forward[newName] = state.forward[oldName];
+			delete state.forward[oldName];
+			state.forward = Object.assign({}, state.forward);
+		}
 	},
 	editWebScraperForward(state, { id, forward }) {
 		state.forward[id] = forward;

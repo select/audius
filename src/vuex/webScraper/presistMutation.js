@@ -3,7 +3,7 @@ export const presistMutation = {
 	updateWebScraper: ['sources'],
 	addUrlPattern: ['sources'],
 	addWebScraper: ['sourcesOrdered', 'sources'],
-	renameWebScraper: ['sourcesOrdered', 'sources'],
+	renameWebScraper: ['sourcesOrdered', 'sources', 'forward'],
 	editWebScraperForward: ['forward'],
 	deleteWebScraper: ['sourcesOrdered', 'sources'],
 };
