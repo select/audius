@@ -27,7 +27,7 @@ export const matrixClient = {
 			}
 		}, 250);
 		return new Promise(resolve => {
-			const webStorageSessionStore = new Matrix.WebStorageSessionStore(window.localStorage)
+			const webStorageSessionStore = new Matrix.WebStorageSessionStore(window.localStorage);
 			this.client = Matrix.createClient({
 				...credentials,
 				sessionStore: webStorageSessionStore,
@@ -42,8 +42,8 @@ export const matrixClient = {
 				// 	console.log('Matix event ', event.getType(), event);
 				// }
 				if (type === 'm.room.join_rules' && this.started === true) {
-					commit('setMatrixLoggedIn', this.client.getRooms());
-					console.log("this.client.getRooms()", this.client.getRooms());
+					commit('matrixUpdateRooms', this.client.getRooms());
+					console.log('this.client.getRooms()', this.client.getRooms());
 				}
 			});
 
@@ -83,17 +83,19 @@ export const matrixClient = {
 					}
 				} else if (type === 'm.room.message') {
 					const content = event.getContent();
-					const { body, msgtype } = content;
+					const { body, msgtype, info } = content;
 					const isAudiusMessage = 'org.rockdapus.audius.media' in content;
 
 					if (msgtype === 'm.image') {
+						const { w, h } = info;
+						console.log("content", content);
 						const url = this.client.mxcUrlToHttp(
 							content.url,
 							window.innerWidth,
 							window.innerHeight,
 							'scale'
 						);
-						eventQueue.push(Object.assign({ url, type: 'text', parse: false }, baseEvent));
+						eventQueue.push(Object.assign({ url, type: 'image', h, w, body }, baseEvent));
 					}
 
 					if (isAudiusMessage) {
@@ -113,6 +115,10 @@ export const matrixClient = {
 			this.client.on('sync', (syncState, a, event) => {
 				if (syncState === 'ERROR') {
 					if (event) {
+						if (!event.error.data) {
+							console.warn('event.error.data is missing: ', event.error);
+							return;
+						}
 						commit('error', `${event.error.data.error}`);
 						if (event.error.data.errcode === 'M_UNKNOWN_TOKEN') {
 							commit('toggleMatrixLoginModal', true);
@@ -180,8 +186,18 @@ export const matrixClient = {
 		return this.client.leave(roomIdOrAlias);
 	},
 	forgetRoom(roomIdOrAlias) {
-		console.log("roomIdOrAlias", roomIdOrAlias);
+		console.log('roomIdOrAlias', roomIdOrAlias);
 		return this.client.forget(roomIdOrAlias);
+	},
+	uploadContent(roomId, file, _info) {
+		const info = Object.assign(_info, {
+			mimetype: file.type,
+			orientation: 0,
+			size: file.size,
+		});
+		return this.client
+			.uploadContent(file/*, { name, includeFilename, type }*/)
+			.then(mcxUrl => this.client.sendImageMessage(roomId, mcxUrl, info, file.name));
 	},
 	sendMediaMessage(roomId, media, body) {
 		const removeKeys = new Set(['eventId', 'roomId', 'sender']);
@@ -201,20 +217,25 @@ export const matrixClient = {
 	redactEvent(roomId, eventId) {
 		return this.client.redactEvent(roomId, eventId);
 	},
+	setRoomIviteOnly(roomId, toggleState) {
+		return this.client.sendStateEvent(roomId, 'm.room.join_rules', {
+			join_rule: toggleState ? 'invite' : 'public', // invite, public
+		});
+	},
 	setRoomAllowGuests(roomId, toggleState) {
 		return this.client.sendStateEvent(roomId, 'm.room.guest_access', {
 			guest_access: toggleState ? 'can_join' : 'forbidden',
 		});
 	},
-	setRoomHistoryVisibility(roomId, state) {
-		// m.room.history_visibility
-		if (['invited', 'joined', 'shared', 'world_readable'].includes(state)) {
-			throw `setRoomHistoryVisibility unknown state ${state}`;
-		}
-		return this.client.sendStateEvent(roomId, 'm.room.history_visibility', {
-			history_visibility: state,
-		});
-	},
+	// setRoomHistoryVisibility(roomId, state) {
+	// 	// m.room.history_visibility
+	// 	if (!['invited', 'joined', 'shared', 'world_readable'].includes(state)) {
+	// 		throw `setRoomHistoryVisibility unknown state ${state}`;
+	// 	}
+	// 	return this.client.sendStateEvent(roomId, 'm.room.history_visibility', {
+	// 		history_visibility: state,
+	// 	});
+	// },
 	setRoomName(roomId, name) {
 		return this.client.setRoomName(roomId, name);
 	},
@@ -239,28 +260,31 @@ export const matrixClient = {
 	},
 	createRoom(options) {
 		return this.client.createRoom(
-			Object.assign(options, {
-				initial_state: [
-					{
-						type: 'm.room.guest_access',
-						state_key: '',
-						content: { guest_access: 'can_join' },
-					},
-					{
-						type: 'm.room.history_visibility',
-						state_key: '',
-						content: { history_visibility: 'world_readable' },
-					},
-				],
-				// room_alias_name: 'blaa-audius',
-				// visibility: 'public', // or 'private'
-				// invite: [
-				// 	'@bllakd:matrix.org',
-				// 	'@user1:matrix.org',
-				// ],
-				// name: 'Blaaa [Audius]',
-				// topic: 'Join this room with https://audius.rockdapus.org',
-			})
+			Object.assign(
+				{
+					initial_state: [
+						{
+							type: 'm.room.guest_access',
+							state_key: '',
+							content: { guest_access: 'can_join' },
+						},
+						{
+							type: 'm.room.history_visibility',
+							state_key: '',
+							content: { history_visibility: 'world_readable' },
+						},
+					],
+					// room_alias_name: 'blaa-audius',
+					// visibility: 'public', // or 'private'
+					// invite: [
+					// 	'@bllakd:matrix.org',
+					// 	'@user1:matrix.org',
+					// ],
+					// name: 'Blaaa [Audius]',
+					// topic: 'Join this room with https://audius.rockdapus.org',
+				},
+				options
+			)
 		);
 	},
 	searchRoom(query) {

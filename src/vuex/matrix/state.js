@@ -7,6 +7,8 @@ export const state = {
 	directMessages: {},
 	roomSearchResults: [],
 	membersIndex: {},
+	broadcastRoom: { membership: 'not avialable' },
+	sendBroadcast: false,
 	sourcesOrdered: [],
 	createMatrixRoomModal: false,
 	showMatrixRoomDirectory: false,

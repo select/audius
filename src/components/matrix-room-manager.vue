@@ -21,12 +21,16 @@ export default {
 	data() {
 		return {
 			showHidden: false,
-			showInvited: true,
 			showHiddenPeople: false,
-			showInvitedPeople: true,
+			foldInvite: {
+				room: true,
+				directMessage: true,
+				broadcast: true,
+			},
 			fold: {
 				Rooms: true,
 				People: true,
+				Broadcast: true,
 			},
 		};
 	},
@@ -73,43 +77,52 @@ export default {
 		]),
 		_sources() {
 			return this.sourcesOrdered.reduce((acc, id) => {
-				const room = this.sources[id];
-				if (!room.roomId) console.log('aaaa ', room.name)
-				acc[room.type][room.membership === 'invite' ? 'invited' : room.hidden ? 'hidden' : 'visible'].push(id);
+				const room = this.sources[id] || {};
+				if (!room.type) {
+					window.console.warn('Could not find matrix room ', id);
+					return acc;
+				}
+				let roomCaterory = room.membership;
+				if (room.hidden) roomCaterory = 'hidden';
+				acc[room.type][roomCaterory].push(id);
 				return acc;
 			},
 			{
-				room: { hidden: [], visible: [], invited: [] },
-				directMessage: { hidden: [], visible: [], invited: [] },
+				room: { hidden: [], join: [], invite: [], leave: [] },
+				directMessage: { hidden: [], join: [], invite: [], leave: [] },
+				broadcast: { hidden: [], join: [], invite: [], leave: [] },
 			});
 		},
-		directMessagesOrdered: {
+		broadcastsOrdered: {
 			get() {
-				return this._sources.directMessage.visible;
+				return this._sources.broadcast.join;
 			},
 			set(value) {
 				this.moveMatrixSourcesOrdered([
-					...this._sources.room.visible,
-					...this._sources.room.hidden,
-					...this._sources.room.invited,
 					...value,
-					...this._sources.directMessage.hidden,
-					...this._sources.directMessage.invited,
+					...this.sourcesOrdered.filter(id => !value.includes(id)),
+				]);
+			},
+		},
+		directMessagesOrdered: {
+			get() {
+				return this._sources.directMessage.join;
+			},
+			set(value) {
+				this.moveMatrixSourcesOrdered([
+					...value,
+					...this.sourcesOrdered.filter(id => !value.includes(id)),
 				]);
 			},
 		},
 		roomsOrdered: {
 			get() {
-				return this._sources.room.visible;
+				return this._sources.room.join;
 			},
 			set(value) {
 				this.moveMatrixSourcesOrdered([
 					...value,
-					...this._sources.room.hidden,
-					...this._sources.room.invited,
-					...this._sources.directMessage.visible,
-					...this._sources.directMessage.hidden,
-					...this._sources.directMessage.invited,
+					...this.sourcesOrdered.filter(id => !value.includes(id)),
 				]);
 			},
 		},
@@ -155,14 +168,14 @@ export default {
 		<div v-show="fold['Rooms']">
 			<!-- Invited Room -->
 			<div
-				v-show="_sources.room.invited.length">
+				v-show="_sources.room.invite.length">
 				<div
 					class="play-list-manager__show-hidden-rooms"
-					@click="showInvited = !showInvited">you are invited ({{_sources.room.invited.length}})</div>
-				<div v-show="showInvited">
+					@click="foldInvite.room = !foldInvite.room">you are invite ({{_sources.room.invite.length}})</div>
+				<div v-show="foldInvite.room">
 					<ul>
 						<matrix-room-tag
-							v-for="(id, index) in _sources.room.invited"
+							v-for="(id, index) in _sources.room.invite"
 							:key="index"
 							:id="id"
 							:room="sources[id]">
@@ -216,6 +229,22 @@ export default {
 					</ul>
 				</div>
 			</div>
+			<!-- Left rooms -->
+			<div v-if="_sources.room.leave.length">
+				<div
+					class="play-list-manager__show-hidden-rooms">
+					Left
+				</div>
+				<ul>
+					<matrix-room-tag
+						v-for="(id, index) in _sources.room.leave"
+						v-bind:class="{ active: currentMediaSource.id == id }"
+						:key="index"
+						:id="id"
+						:room="sources[id]">
+					</matrix-room-tag>
+				</ul>
+			</div>
 
 			<!-- Create room / join room -->
 			<ul class="matrix-room__tags">
@@ -250,12 +279,12 @@ export default {
 			<!-- Invited People -->
 			<div
 				class="play-list-manager__show-hidden-rooms"
-				v-show="_sources.directMessage.invited.length"
-				@click="showInvitedPeople = !showInvitedPeople">you are invited ({{_sources.directMessage.invited.length}})</div>
-			<div v-show="showInvitedPeople && _sources.directMessage.invited.length">
+				v-show="_sources.directMessage.invite.length"
+				@click="foldInvite.directMessage = !foldInvite.directMessage">you are invited ({{_sources.directMessage.invite.length}})</div>
+			<div v-show="foldInvite.directMessage && _sources.directMessage.invite.length">
 				<ul>
 					<matrix-room-tag
-						v-for="(id, index) in _sources.directMessage.invited"
+						v-for="(id, index) in _sources.directMessage.invite"
 						:key="index"
 						:id="id"
 						:room="sources[id]">
@@ -307,6 +336,86 @@ export default {
 				</div>
 
 			</div>
+		</div>
+
+		<h2 id="lm-rooms" title="fold" @click="fold['Broadcast'] = !fold['Broadcast']">Broadcast</h2>
+		<div v-show="fold['Broadcast']">
+			<!-- Invited broadcasts -->
+			<div
+				class="play-list-manager__show-hidden-rooms"
+				v-show="_sources.broadcast.invite.length"
+				@click="foldInvite.broadcast = !foldInvite.broadcast">you are invited ({{_sources.broadcast.invite.length}})</div>
+			<div v-show="foldInvite.broadcast && _sources.broadcast.invite.length">
+				<ul>
+					<matrix-room-tag
+						v-for="(id, index) in _sources.broadcast.invite"
+						:key="index"
+						:id="id"
+						:room="sources[id]">
+					</matrix-room-tag>
+				</ul>
+				<div class="spacer"></div>
+			</div>
+			<!-- Broadcasts with active chat -->
+			<draggable
+				v-if="broadcastsOrdered"
+				class="matrix-room__tags"
+				v-model="broadcastsOrdered"
+				element="ul"
+				:options="{
+					animation: 150,
+					scrollSpeed: 20,
+					handle: '.play-list-manager__drag-handle',
+				}">
+				<matrix-room-tag
+					v-for="(id, index) in broadcastsOrdered"
+					v-bind:class="{ active: currentMediaSource.id == id }"
+					:key="index"
+					:id="id"
+					:room="sources[id]">
+				</matrix-room-tag>
+			</draggable>
+			<!-- Hidden broadcasts -->
+			<div v-if="matrixLoggedIn && _sources.broadcast.hidden.length">
+				<div
+					v-if="!showHiddenPeople"
+					@click="showHiddenPeople = true"
+					class="play-list-manager__show-hidden-rooms">
+					show hidden
+				</div>
+				<div v-if="showHiddenPeople">
+					<div
+						@click="showHiddenPeople = false"
+						class="play-list-manager__show-hidden-rooms">
+						hide
+					</div>
+					<ul>
+						<matrix-room-tag
+							v-for="(id, index) in _sources.broadcast.hidden"
+							:key="index"
+							:id="id"
+							:room="sources[id]">
+						</matrix-room-tag>
+					</ul>
+				</div>
+			</div>
+			<!-- Left broadcasts -->
+			<div v-if="_sources.broadcast.leave.length">
+				<div
+					class="play-list-manager__show-hidden-rooms">
+					Left
+				</div>
+				<ul>
+					<matrix-room-tag
+						v-for="(id, index) in _sources.broadcast.leave"
+						v-bind:class="{ active: currentMediaSource.id == id }"
+						:key="index"
+						:id="id"
+						:room="sources[id]">
+					</matrix-room-tag>
+				</ul>
+			</div>
+
 		</div>
 	</div>
 </div>

@@ -1,7 +1,7 @@
 <script>
 import { mapGetters, mapActions, mapState, mapMutations } from 'vuex';
 
-import { mapModuleState, debounce } from '../utils';
+import { mapModuleState } from '../utils';
 
 export default {
 	data() {
@@ -15,12 +15,12 @@ export default {
 	computed: {
 		...mapGetters(['youtubeApiKeyUI']),
 		...mapState(['currentMediaSource']),
-		...mapModuleState('matrix', ['credentials', 'sources', 'membersIndex']),
+		...mapModuleState('matrix', ['credentials', 'sources', 'membersIndex', 'broadcastRoom', 'sendBroadcast']),
 		currentMatrixRoom() {
 			return this.currentMediaSource.type === 'matrix' ? this.currentMediaSource.id : null;
 		},
 		room() {
-			return this.sources[this.currentMediaSource.id];
+			return this.broadcastRoom;
 		},
 		roomMemberIndex() {
 			return new Set(this.room.members.map(({ id }) => id));
@@ -28,9 +28,9 @@ export default {
 		members() {
 			if (!this.room.members) return [];
 			return this.room.members.map(member => Object.assign(
-				{ name: member.id, nameColor: '' },
+				{},
 				member,
-				this.membersIndex[member.id]
+				this.membersIndex[member.id] || { name: member.id, nameColor: '' }
 			));
 		},
 		membersByType() {
@@ -49,11 +49,8 @@ export default {
 		},
 	},
 	methods: {
-		...mapActions(['setRoomName', 'updateRoomOptions', 'leaveMatrixRoom', 'inviteToMatrixRoom', 'directMessage']),
-		...mapMutations(['toggleHideRoom', 'selectMediaSource']),
-		_setRoomName: debounce(function debouncedSetName(id, name) {
-			this.setRoomName({ id, name });
-		}, 1000),
+		...mapActions(['updateRoomOptions', 'leaveMatrixRoom', 'inviteToMatrixRoom', 'directMessage']),
+		...mapMutations(['selectMediaSource', 'setSendBroadcast']),
 		copyToClip() {
 			window.getSelection().removeAllRanges();
 			const tmpEl = document.createElement('div');
@@ -81,29 +78,17 @@ export default {
 </script>
 
 <template>
-<div class="settings matrix-settings">
-
+<div class="matrix-settings__message" v-if="room.membership === 'not avialable'">
+	Your stations is not created yet.
+</div>
+<div class="matrix-settings__message" v-else-if="room.membership === 'pending'">
+	Creating your broadcast …
+</div>
+<div
+	v-else
+	class="settings matrix-settings">
 	<div class="matrix-settings__header">
-		<div
-			v-if="!(room.type === 'broadcast' && room.isAdmin)">
-			<div
-				:src="room.avatarUrl"
-				:alt="room.name+' logo'"
-				:style="{ backgroundImage: 'url(\''+room.avatarUrl+'\')' }"
-				class="matrix-settings__logo"></div>
-			<input
-				class="matrix-settings__name"
-				type="text"
-				placeholder="… name"
-				@input="_setRoomName(currentMatrixRoom, $event.target.value)"
-				:disabled="!room.isAdmin"
-				:value="room.name">
-		</div>
-		<div v-else>
-			<div class="matrix-settings__logo wmp-icon-cast"></div>
-			<div
-				class="matrix-settings__name"> My Broadcast</div>
-		</div>
+		<h1>Broadcast your music</h1>
 	</div>
 	<div class="row matrix-settings__aliases">
 		<a
@@ -115,30 +100,20 @@ export default {
 	<div class="spacer"></div>
 	<div class="matrix-settings__actions">
 		<button
+			:class="{'matrix-settings--live': sendBroadcast}"
+			class="button btn--grey-ghost"
+			v-bind:class="{ active: copyActive }"
+			@click="setSendBroadcast()">
+			<span class="wmp-icon-cast"></span>
+			live
+		</button>
+		<button
 			class="button btn--grey-ghost"
 			v-bind:class="{ active: copyActive }"
 			@click="copyToClip">
 			<span class="wmp-icon-share"></span>
 			copy invite link
 		</button>
-		<button
-			class="button btn--grey-ghost"
-			@click="toggleHideRoom(currentMediaSource.id)">
-			<span :class="!room.hidden ? 'wmp-icon-visibility_off' : 'wmp-icon-visibility'"></span>
-			{{room.hidden ? 'show' : 'hide'}}
-		</button>
-		<button
-			class="button btn--grey-ghost"
-			@click="showConfirmDelte = currentMediaSource.id">
-			<span class="wmp-icon-close"></span>
-			leave
-		</button>
-		<!-- <button
-			class="button btn--grey-ghost"
-			@click="forget(room.roomId)">
-			<span class="wmp-icon-delete"></span>
-			forget
-		</button> -->
 
 	</div>
 	<div class="spacer"></div>
@@ -189,14 +164,14 @@ export default {
 					{{member.name || member.id}}</span>
 				<div>
 					<span
-						:title="'Chat with ' + member.name || member.id"
+						title="Send direct message"
 						class="wmp-icon-chat"></span>
 				</div>
 			</div>
 		</div>
 	</div>
-	<h3 v-if="room.isAdmin">Options</h3>
-	<div v-if="room.isAdmin" class="row">
+	<h3>Options</h3>
+	<div class="row">
 		<div>
 			<input
 				type="checkbox"
@@ -260,14 +235,10 @@ export default {
 		height: $touch-size-huge
 		margin-bottom: $grid-space
 		font-size: 1.5rem
-		display: flex
-		align-items: center
 	h4
 		text-transform: capitalize
 .matrix-settings__header
-	> div
-		display: flex
-		align-items: center
+	margin-left: $grid-space
 .matrix-settings__logo
 	width: $touch-size-medium
 	min-width: $touch-size-medium
@@ -334,5 +305,12 @@ export default {
 				> div
 					display: none
 
-
+.button.matrix-settings--live
+	border-color: $color-monza
+	color: $color-monza
+.matrix-settings__message
+	display: flex
+	justify-content: center
+	padding: #{2 * $grid-space}
+	font-size: 1.5rem
 </style>

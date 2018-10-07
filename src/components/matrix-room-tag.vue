@@ -48,7 +48,7 @@ export default {
 				class="play-list-manager__tag-body"
 				@click="selectMediaSource({ type: 'matrix', id: id })">
 				<div>
-					{{room.name}}
+					{{room.type == 'broadcast' && room.isAdmin ? 'My Broadcast' : room.name}}
 				</div>
 				<div class="matrix-room__tag-footer">
 					<div> {{room.playList.filter(({id}) => !(id in playedMedia)).length}} New</div>
