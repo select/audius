@@ -30,7 +30,7 @@ export default {
 				room_alias_name: this.slugName,
 				visibility,
 				name: `${this.roomName} [Audius]`,
-				topic: `Join this room at https://audius.rockdapus.org?import=#${this.slugName}:matrix.org&type=room&title=${encodeURIComponent(this.roomName)}`,
+				topic: `Join this room at https://audius.rockdapus.org?import=#${this.slugName}:matrix.org&type=matrix&title=${encodeURIComponent(this.roomName)}`,
 			});
 		},
 		matrixLogin() {
