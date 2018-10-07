@@ -11,7 +11,7 @@ export default {
 		membersIndex: Object,
 	},
 	methods: {
-		...mapActions(['matrixRedact']),
+		...mapActions(['matrixRedact', 'directMessage']),
 		_snarkdown(md) {
 			return snarkdown(md);
 		},
@@ -21,7 +21,7 @@ export default {
 		event() { return this.video; },
 		sender() {
 			const { sender } = this.event;
-			return this.membersIndex[sender] || { name: sender, nameColor: '' }
+			return Object.assign({ id: sender, name: sender, nameColor: '' }, this.membersIndex[sender]);
 		},
 		_createdAt() {
 			const date = new Date(this.event.createdAt);
@@ -47,6 +47,13 @@ export default {
 	<div class="matrix-chat-message__container">
 		<div class="matrix-chat-message__header" v-bind:style="{ color: sender.nameColor }">
 			{{sender.name}}
+			<div class="matrix-chat-message__sender-menu">
+				<span
+					class="wmp-icon-chat"
+					:title="'Chat with ' + sender.name"
+					@click="directMessage(sender.id)"></span>
+				</span>
+			</div>
 		</div>
 		<div class="matrix-chat-message__body">
 			<div
@@ -134,6 +141,22 @@ export default {
 .matrix-chat-message__footer
 	padding: 0 $grid-space
 	background-color: $color-white
+
+.matrix-chat-message__header
+	display: flex
+	align-items: center
+	&:hover
+		.matrix-chat-message__sender-menu
+			display: flex
+.matrix-chat-message__sender-menu
+	display: none
+	margin-left: #{2 * $grid-space}
+	[class^='wmp-icon']
+		width: #{2 * $grid-space}
+		height: #{2 * $grid-space}
+		color: $color-aluminium-dark
+		font-size: .7rem
+		cursor: pointer
 
 .matrix-chat-message__body
 	display: flex

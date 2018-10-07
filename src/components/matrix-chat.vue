@@ -4,6 +4,7 @@ import { mapMutations, mapState, mapActions } from 'vuex';
 import { mapModuleState } from '../utils';
 import VideoItem from './video-item.vue';
 import ChatMessage from './matrix-chat-message.vue';
+import ChatImage from './matrix-chat-image.vue';
 
 let latestCreatedAt = null;
 let lastHeight = 0;
@@ -13,6 +14,7 @@ export default {
 	components: {
 		VideoItem,
 		ChatMessage,
+		ChatImage,
 	},
 	data() {
 		return {
@@ -22,6 +24,7 @@ export default {
 	},
 	beforeUpdate() {
 		const $chat = this.$refs.chat;
+		// Scroll down if the chat is scrolled almost to the bottom.
 		scrollDown = ($chat.scrollHeight - $chat.scrollTop - $chat.offsetHeight - 100) < 0;
 	},
 	mounted() {
@@ -36,8 +39,11 @@ export default {
 			const chatLog = this.chatLog[this.currentMediaSource.id];
 			if (!chatLog) return;
 			const { createdAt, sender } = chatLog[chatLog.length - 1];
-			if (latestCreatedAt !== createdAt) {
+			if (latestCreatedAt && (latestCreatedAt !== createdAt)) {
+				// New content was added to the bottom of the chat, a new message was posted.
 				Vue.nextTick(() => {
+					// Scroll down if the chat is scrolled almost to the end of the chat
+					// or if the user is the sender of this new message.
 					if (scrollDown || sender === this.credentials.userId) {
 						$chat.scrollTo({
 							behavior: 'smooth',
@@ -48,6 +54,7 @@ export default {
 				});
 			} else {
 				Vue.nextTick(() => {
+					// New content was added to the top of the chat by paginating to older content.
 					const { scrollHeight } = $chat;
 					const diff = scrollHeight - lastHeight;
 					$chat.scrollTop = diff;
@@ -72,8 +79,8 @@ export default {
 		},
 	},
 	methods: {
-		...mapMutations(['setMainLeftTab']),
-		...mapActions(['matrixLoadMore', 'matrixSendText']),
+		...mapMutations(['setMainLeftTab', 'error']),
+		...mapActions(['matrixLoadMore', 'matrixSendText', 'matrixUploadContent']),
 		scrolled(event) {
 			// if (this._isLoading) event.preventDefault();
 			// Detect when scrolled to top.
@@ -101,13 +108,33 @@ export default {
 				inputLength = this.$refs.message.value.length;
 			}
 		},
+		uploadOpen() {
+			this.$refs.upload.click();
+		},
+		upload() {
+			const { files } = this.$refs.upload;
+			// const filesMeta = [...files].map(({ name, size, type }) => ({ name, size, type }))
+			const file = files[0];
+			console.log("file", file);
+			const img = new Image();
+			img.onload = () => {
+				console.log(img.width + " " + img.height);
+				console.log("file", file);
+				this.matrixUploadContent({
+					roomId: this.currentMediaSource.id,
+					file,
+					info: { w: img.width, h: img.height },
+				});
+			};
+			img.src = (window.URL || window.webkitURL).createObjectURL(file);
+		},
 	},
 
 };
 </script>
 
 <template>
-<div class="matrix-chat">
+<div class="matrix-chat" ref="matrixChat">
 	<div class="play-list media-list" ref="chat">
 		<div
 			class="play-list__greeting"
@@ -122,8 +149,9 @@ export default {
 		</div>
 		<ul ref="list">
 			<component
+				class="hello"
 				v-for="(event, index) in _chatLog"
-				v-bind:is="event.type === 'text' ? 'chat-message' : 'video-item'"
+				v-bind:is="event.type === 'text' ? 'chat-message' : event.type === 'image' ? 'chat-image' : 'video-item'"
 				:isAuthor="event.sender === credentials.userId"
 				:isAdmin="sources[currentMediaSource.id].isAdmin || event.sender === credentials.userId"
 				:video="event"
@@ -145,6 +173,12 @@ export default {
 			@keyup.enter="send"
 			v-model="messageText">
 		</textarea>
+		<input
+			class="wmp-icon-attach_file-upload"
+			@change="upload"
+			type="file"
+			ref="upload">
+		<span class="wmp-icon-attach_file" @click="uploadOpen" accept="image/*"></span>
 		<span class="wmp-icon-send" @click="send"></span>
 	</div>
 </div>
@@ -175,6 +209,12 @@ export default {
 	.media-list__main
 		padding: 0 5.5%
 		background-color: $color-white
+	.wmp-icon-attach_file
+		height: $touch-size-small
+		background: $color-white
+		font-size: 0.7rem
+		cursor: pointer
+
 .matrix-chat__off
 	cursor: pointer
 	z-index: 1
@@ -200,5 +240,7 @@ export default {
 		flex: 1
 		padding: $grid-space #{2 * $grid-space}
 		font-size: .8rem
-
+.wmp-icon-attach_file-upload
+	position: absolute
+	opacity: 0
 </style>

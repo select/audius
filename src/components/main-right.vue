@@ -11,6 +11,7 @@ const MediaEdit = () => import(/* webpackChunkName: "components/media-edit" */'.
 const Queue = () => import(/* webpackChunkName: "components/queue" */'./queue.vue');
 const ChangeLog = () => import(/* webpackChunkName: "components/changelog" */'./changelog.vue');
 const PlayHistory = () => import(/* webpackChunkName: "components/play-history" */'./play-history.vue');
+const MatrixBroadcast = () => import(/* webpackChunkName: "components/matrix-broadcast" */'./matrix-broadcast.vue');
 
 function disableSelect(event) {
 	event.preventDefault();
@@ -29,6 +30,7 @@ export default {
 		MediaEdit,
 		ChangeLog,
 		PlayHistory,
+		MatrixBroadcast,
 	},
 	computed: mapState([
 		'website',
@@ -128,6 +130,10 @@ export default {
 			v-if="showSettings"
 			@click="setMainRightTab('settings')"
 			v-bind:class="{ active: mainRightTab == 'settings' }">Settings</li>
+		<li
+			v-if="mainRightTab == 'broadcast'"
+			@click="setMainRightTab('broadcast')"
+			v-bind:class="{ active: mainRightTab == 'broadcast' }">Live</li>
 	</ul>
 	<div class="main-right__content" v-show="mainRightTab">
 		<about-player v-show="mainRightTab == 'about'"></about-player>
@@ -139,6 +145,7 @@ export default {
 		<settings v-else-if="mainRightTab == 'settings'"></settings>
 		<play-history v-else-if="mainRightTab == 'history'"></play-history>
 		<change-log v-else-if="mainRightTab == 'changelog'"></change-log>
+		<matrix-broadcast v-else-if="mainRightTab == 'broadcast'"></matrix-broadcast>
 	</div>
 	<div
 		class="main-right__drag-handle"

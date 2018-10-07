@@ -41,6 +41,7 @@ export default {
 		...mapActions([
 			'nextVideo',
 			'toggleFullscreen',
+			'broadcast',
 		]),
 		searchInput: debounce(function(event) { store.dispatch('search', event.target.value); }, 500),
 		stopPropagation(event) {
@@ -82,6 +83,10 @@ export default {
 			'repeat1',
 			'repeatAll',
 		]),
+		...mapState({
+			sendBroadcast: (state) => state.matrix.sendBroadcast,
+			matrixLoggedIn: (state) => state.matrix.matrixLoggedIn,
+		}),
 	},
 };
 </script>
@@ -93,7 +98,7 @@ export default {
 				<img class="au-header__logo" src="img/audius.logo.white.svg" alt="Audius - ♫♪.ılılıll|̲̅̅●̲̅̅|̲̅̅=̲̅̅|̲̅̅●̲̅̅|llılılı.♫♪
 	-">
 				<i class="au-header__version" @click="setMainRightTab('changelog')" title="Show changelog">
-					<i id="version">2.0.16</i>
+					<i id="version">2.0.17</i>
 				</i>
 			</div>
 			<div class="au-header__search-controls">
@@ -180,6 +185,12 @@ export default {
 						<span class="wmp-icon-volume_up" v-if="!mute"></span>
 						<span class="wmp-icon-volume_off" v-else></span>
 					</div>
+					<span
+						v-if="matrixLoggedIn"
+						class="wmp-icon-cast au-header__live"
+						:class="{'au-header--live': sendBroadcast}"
+						@click="broadcast()"
+						title="Broadcast your music"></span>
 					<div>
 						<span
 							class="wmp-icon-fullscreen"
@@ -279,14 +290,14 @@ header
 		// 	color: $color-white
 
 .au-header__controls
-	height: 9 * $grid-space
 	display: flex
-	justify-content: flex-end
 	align-items: center
+	justify-content: flex-end
+	height: 9 * $grid-space
 	&[disabled]
-		span
-			color: $color-athensgrey
+		span:not(.au-header__live)
 			pointer-events: none
+			color: $color-athensgrey
 	span
 		cursor: pointer
 		&[disabled]
@@ -310,7 +321,10 @@ header
 			height: $touch-size-medium
 		span:before
 			font-size: 1.5em
-
+.au-header__live
+	color: $color-athensgrey
+	&.au-header--live
+		color: $color-monza
 .au-header__shuffle,
 .au-header__repeat
 	color: $color-athensgrey
