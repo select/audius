@@ -34,6 +34,8 @@ To update the fonts go to https://icomoon.io/app/#/select import the `selection.
 ```
 
 ```
+<span class="wmp-icon-attach_file"></span>
+<span class="wmp-icon-cast"></span>
 <span class="wmp-icon-send"></span>
 <span class="wmp-icon-speaker_notes_off"></span>
 <span class="wmp-icon-chat"></span>
