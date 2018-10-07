@@ -16,6 +16,10 @@ export default {
 <div class="wmp-about">
 	<h2 id="audius-changelog">Changelog</h2>
 	<p>
+		<b>2.0.17</b><br>
+		<ul>
+			<li> </li>
+		</ul>
 		<b>2.0.16</b><br>
 		<ul>
 			<li> Fixes for the mobile interface.</li>
