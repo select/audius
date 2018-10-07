@@ -94,22 +94,28 @@ export default {
 		.matrix-chat-message__container
 			border-top-left-radius: $border-radius
 			border-top-right-radius: 0
-			color: $color-catskillwhite
+			// color: $color-catskillwhite
 			&::before
 				right: -$grid-space
 				left: auto
 				border: 0
-				border-top: $grid-space solid $color-pictonblue
+				border-top: $grid-space solid $color-white
 				border-right: $grid-space solid transparent
-			&:hover
-				&::before
-					border-top-color: $color-pictonblue
 		.matrix-chat-message__body > div:first-child
 			padding-top: $grid-space
 		.matrix-chat-message__header,
 		.matrix-chat-message__body > div,
 		.matrix-chat-message__footer
-			background: $color-pictonblue
+			position: relative
+			padding-left: #{2 * $grid-space}
+			&::before
+				position: absolute
+				top: 0
+				left: 0
+				width: #{1 * $grid-space}
+				height: 100%
+				background: $color-pictonblue
+				content: ''
 .matrix-chat-message__delete
 	display: none
 	position: absolute
