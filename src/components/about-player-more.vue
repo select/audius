@@ -56,19 +56,29 @@ export default {
 	</p>
 	<h2>Legality, security, saftey, and privacy</h2>
 	<p>
-	<ul>
-		<li><b>Legality</b> This app sould be completely legal since it streams audio and videos from other providers.
-			I do not provide any links to streams (except for the initial playlist containing only legal links from my friends). Please mind what you are sharing.</li>
-		<li><b>Security</b> This app is open source so you can make sure that there is no malicious code included.
-			In addition to that there is no advertisement that could spread malicious code.
-			But to be clear streams and streaming APIs are provided by external entites ... read more below about privacy.</li>
-		<li><b>Safety</b> If you back up your playlist (and this app, it runs offline) to a file it will continue working even if this server goes down. Do back up your precius playlists now!</li>
-		<li><b>Privacy</b> This app stores all your data in your browser (Menu > More tools > Developer tools > Application > IndexDB), nothing is saved on my server.
-			I currently do not use any analytics tool (though it's very tempting).
-			The streams however are provided by external entities (Google-YouTube) that will track you.
-			As stated before I currently have no intentions of showing external advertisement.
-			I think if Audius gets popular there are nicer ways to profit from it.</li>
-	</ul>
+		<ul>
+			<li><b>Legality</b> This app sould be completely legal since it streams audio and videos from other providers.
+				I do not provide any links to streams (except for the initial playlist containing only legal links from my friends). Please mind what you are sharing.</li>
+			<li><b>Security</b> This app is open source so you can make sure that there is no malicious code included.
+				In addition to that there is no advertisement that could spread malicious code.
+				But to be clear streams and streaming APIs are provided by external entites ... read more below about privacy.</li>
+			<li><b>Safety</b> If you back up your playlist (and this app, it runs offline) to a file it will continue working even if this server goes down. Do back up your precius playlists now!</li>
+			<li><b>Privacy</b> This app stores all your data in your browser (Menu > More tools > Developer tools > Application > IndexDB), nothing is saved on my server.
+				I currently do not use any analytics tool (though it's very tempting).
+				The streams however are provided by external entities (Google-YouTube) that will track you.
+				As stated before I currently have no intentions of showing external advertisement.
+				I think if Audius gets popular there are nicer ways to profit from it.</li>
+		</ul>
+		<div>
+			Audius is using YouTube. They asked me to link their terms of service
+			<br>
+			<a href="https://www.youtube.com/t/terms">YouTube Terms of service</a>
+			<br>
+			and their privacy policy
+			<br>
+			<a href="https://policies.google.com/privacy">Google Privacy Policy</a>.
+		</div>
+
 	</p>
 	<p>
 		Web apps are true freedom! Support an open and liberal web without geo borders and login screens.

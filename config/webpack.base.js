@@ -40,7 +40,9 @@ module.exports = {
 					{
 						loader: 'sass-loader',
 						options: {
-							indentedSyntax: true,
+							sassOptions: {
+								indentedSyntax: true,
+							},
 						},
 					},
 				],
@@ -57,10 +59,12 @@ module.exports = {
 	},
 	plugins: [
 		new VueLoaderPlugin(),
-		new CopyWebpackPlugin([{ context: './src/website/static/', from: '**/*', to: './' }]),
+		new CopyWebpackPlugin({
+			patterns: [{ context: './src/website/static/', from: '**/*', to: './' }],
+		}),
 		new CircularDependencyPlugin({
 			failOnError: true,
-			exclude: /asn1|readable-stream|elliptic|des\.js/,
+			exclude: /asn1|readable-stream|elliptic|des\.js|node_modules/,
 		}),
 		new MiniCssExtractPlugin({
 			filename: 'style.css',

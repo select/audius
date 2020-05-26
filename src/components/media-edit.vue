@@ -200,8 +200,7 @@ export default {
 				:href="sourceLink">
 				<span
 					:class="{
-						'wmp-icon-link': ['video', 'audio'].includes(media.type),
-						'wmp-icon-youtube icon--small': media.type === 'youtube',
+						'wmp-icon-link': ['video', 'audio', 'youtube'].includes(media.type),
 						'wmp-icon-vimeo  icon--small': media.type === 'vimeo',
 					}"></span>
 			</a>

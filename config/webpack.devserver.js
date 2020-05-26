@@ -26,7 +26,9 @@ config.plugins = [
 		},
 	}),
 	new webpack.NamedModulesPlugin(),
-	new CircularDependencyPlugin(),
+	new CircularDependencyPlugin({
+		exclude: /node_modules/,
+	}),
 	new webpack.HotModuleReplacementPlugin(),
 	new webpack.LoaderOptionsPlugin({
 		options: {
